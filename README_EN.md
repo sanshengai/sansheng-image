@@ -66,7 +66,7 @@ Private styles and personal memory are excluded from the public package. Local m
 
 动态版只在用户明确要求时使用，默认仍是静态图；覆盖公众号配图、信息图、小红书，品牌仅作原创动态示范，PPT 与音乐封面的动态不开放。流程见 [references/motion-scenes.md](./references/motion-scenes.md)（中文）。
 
-额外依赖：`requirements-motion.txt`（只有 numpy；Pillow 已是基线依赖）；Node.js 22+、HyperFrames 0.8.140、ffmpeg/ffprobe、本机浏览器需自行安装，由 `python3 scripts/sb.py animate doctor` 检查，不会自动下载。HyperFrames 是 Apache 2.0 的外部运行依赖，不随仓分发；颜色键 `cutlib` 是原创 MIT 模块，不调用 macOS 的 Vision 工具，也没有自动 Vision 回退。手机端试发尚未做，不承诺任何平台可直接发布。
+额外依赖：`requirements-motion.txt`（只有 numpy；Pillow 已是基线依赖）；Node.js 22+、HyperFrames 0.8.140、ffmpeg/ffprobe、本机浏览器需自行安装，由 `python3 scripts/sb.py animate doctor` 检查，不会自动下载。HyperFrames 是 Apache 2.0 的外部运行依赖，不随仓分发；颜色键 `cutlib` 是原创 MIT 模块，不调用 macOS 的 Vision 工具，也没有自动 Vision 回退。主要流程为电脑网站点选、复制指令后在 Skill 运行，平台上传兼容性尚未验证，不承诺任何平台可直接发布。
 
 ## Contributing
 
