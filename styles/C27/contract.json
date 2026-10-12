@@ -95,6 +95,15 @@
     "音乐封面"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "叠纸层按各自深度错开抬升、平移再落回，投影随层间距离变化；纸面与切边保持硬挺。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "mask_reveal"
+    ],
+    "safety": "不挤压纸层，不引入黏土或布料质感；文字、人物与产品比例锁定，遮罩不用于保护节点，首末呈现完整叠纸画面。"
+  },
   "samples": [
     {
       "topic": "人物",

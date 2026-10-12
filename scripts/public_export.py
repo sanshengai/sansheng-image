@@ -17,13 +17,15 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_FILES = {
     ".claude-plugin/marketplace.json", ".claude-plugin/plugin.json",
     ".env.example", ".githooks/pre-commit", ".gitignore",
-    "ASSET_PROVENANCE.md", "CHANGELOG.md", "LICENSE", "README.md",
+    ".github/ISSUE_TEMPLATE/bug.yml", ".github/ISSUE_TEMPLATE/recommend-style.yml",
+    "ASSET_PROVENANCE.md", "CHANGELOG.md", "CONTRIBUTING.md", "LICENSE", "README.md",
     "README_EN.md", "SKILL.md", "THIRD_PARTY_NOTICES.md",
     "assets/C01-story-sample.png", "assets/C32-infographic-sample.png",
     "examples/book/plan.json", "examples/comic/plan.json",
     "examples/content-plan-v2/article.md", "examples/content-plan-v2/plan.json",
     "examples/quickstart/manifest.json", "gallery/template.html", "gallery/picker.html", "gallery/github-meta.json",
-    "registry.json", "requirements-ppt.txt", "requirements.txt",
+    "gallery/motion.js", "gallery/motion.css", "gallery/motion-data.json",  # 动态展示只放源码；poster/mp4 媒体不进 Git 也不进包
+    "registry.json", "requirements-ppt.txt", "requirements-motion.txt", "requirements.txt",
     "scripts/sb.py", "scripts/first_run.py", "scripts/public_export.py", "scripts/samples_sync.py",
 }
 PUBLIC_DIRS = ("formats/", "palettes/", "references/", "scenes/",

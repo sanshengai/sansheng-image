@@ -1,0 +1,629 @@
+{
+  "code": "C92",
+  "revision": 1,
+  "name": {
+    "zh": "敦煌矿物彩壁画",
+    "en": "Mineral Pigment Cave-Mural Texture"
+  },
+  "family": "国风传统",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "矿物彩泥灰壁画",
+    "density": "中等"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词，按本款技法要点创作；不复制具体历史作品，不主张传统元素版权。实际近邻与能力范围见准入记录。"
+  },
+  "essence": [
+    "泥灰岩壁底肌理清晰可见",
+    "石绿石青朱砂赭石的厚重矿物色块",
+    "铁线描式细长流动深色轮廓",
+    "局部轻微磨损而主体完整"
+  ],
+  "recipe": {
+    "positive": "Dunhuang cave-mural technique: mineral pigments (malachite green, azurite blue, cinnabar red, ochre, oxidised lead white) applied as flat, slightly worn colour fields on rough clay-plaster rock wall, with visible wall grain, hairline cracks, pigment flaking and fading. Flowing iron-wire-like dark outlines define forms and remain darker than the plaster. Decorative lotus and cloud-scroll patterns appear on textiles, borders and open wall surfaces only; do not add deities, Buddhas or figures not present in the current brief. The mural surface feels earth-mineral, matte, aged and hand-painted, with uneven worn edges and readable pigment fields. Earthy mineral palette: malachite green, azurite blue, cinnabar red, ochre, faded cream-white, carbon-black line, on warm brown-grey plaster. Use only text the current brief explicitly requests; otherwise no text.",
+    "hard_constraints": [
+      "Visible rough clay-plaster wall grain, hairline cracks, pigment flaking and fading.",
+      "Mineral pigment colour fields in malachite green, azurite blue, cinnabar red, ochre and faded cream-white, with carbon-black line.",
+      "Flowing iron-wire-like dark outlines; no smooth digital vector look.",
+      "Matte mineral surface; no glossy gold foil.",
+      "No cave photograph, no added deities, Buddhas or figures beyond the current brief, and no text unless explicitly requested."
+    ],
+    "text_mode": [
+      "none",
+      "native"
+    ]
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "泥灰岩壁肌理清晰可见，含少量细裂纹与局部褪色",
+      "石绿、石青、朱砂、赭石的矿物色块",
+      "铁线描式细长流动的深色轮廓，主体轮廓完整"
+    ],
+    "must_not_see": [
+      "剥落或裂纹损坏主体、脸手或可读信息",
+      "光滑数码矢量或闪亮金箔",
+      "洞窟照片或 brief 以外新增的神像佛像人物"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着照画；壁画只提供技法，不换成飞天或供养人造型。"
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-11",
+    "tests": {
+      "T1": "pass",
+      "T2": "pass",
+      "T3": "pass",
+      "T4": "pass",
+      "T5": "pass",
+      "T6": "pass",
+      "T7": "pass",
+      "T8": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "八题最终证据、三次同词稳定性及两项同题近邻均通过；C94原始T8纹样漏项失败保留，最终T8采用有实际编辑链及完整QA的返修图，不伪装原始生成通过。原生中文只验证本轮短标题/标签，不证明长文排字；身份一致性只验证两图，静态远景不证明动态视频。登记三张矩阵示例，全场景和换色另计，尚未正式发布。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-11",
+      "note": "当前标准题最终证据、三次稳定与两项同题近邻通过；保留原失败/误报及编辑链，登记三张矩阵示例；全场景与发布另计。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "anchor": {
+    "enabled": true,
+    "file": "anchor.png",
+    "sha256": "7ac3d087954e8847e8c2a6443a6a2b81896f42a1128ab811eacd51edcd18671b",
+    "isolation": "Transfer only the mineral-pigment colour fields, the flowing dark iron-wire outlines, the plaster-wall tooth and the sparse hairline cracks in empty ground technique from this reference board. Do not reproduce its title, labels, colour dots, panel grid, frames, sample objects, sample figures, house or layout. Do not copy any content of the reference board: its people, animals (such as its sleeping cat), cups and vessels, books, window, reading room, furniture, decorative layout, poses or arrangement. Draw people, animals, cups, books, windows, rooms or furniture only when the current brief itself asks for them, and then compose them fresh from the brief's own wording, never from the board's scene. When the brief gives no setting, use the plaster-wall ground of the technique instead of adding a room or scenery from the board. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering.; reproduce no writing from the board, and add text only where the brief explicitly requests it, spelled exactly as given."
+  },
+  "uses": [
+    "绘本",
+    "文章插图",
+    "信息图",
+    "封面"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "ok",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "矩阵示例：祖孙包饺子",
+      "file": "samples/matrix-T3.png",
+      "source_sha256": "9d25f2612dc9af02f0dd8418847377252e7d9c6b2eb107afea3c0ff7e4342b8e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：番茄工作法短字信息图",
+      "file": "samples/matrix-T7.png",
+      "source_sha256": "916b7197f9caae5b1b04fb829e9189c223b7b3cc5afa15d243a138832ab54583",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：慢慢来封面",
+      "file": "samples/matrix-T8.png",
+      "source_sha256": "ed6c0062dcb577be033b193ad9d89d448ea854ca81ee4c9ae8d1e1eb315b3495",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "四格漫画：四格漫画，2×2等大分格细缝，主角为一位现代短发女孩（同一张脸、同一件赭红色针织外套与石青色围巾，四格不变），起承转合讲一个完整小故事：第一",
+      "file": "samples/cm-2-wave19.png",
+      "source_sha256": "93b27ac8f16f6c432b77c0325e319fc152fc94b02447048b9b2e13defb3cfbdf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "绘本故事：一位现代短发女孩独自坐在窗边木桌前，手边一只陶杯与一本摊开的册子，安静的午后；同一角色身份只描绘一次，画面无第二人。绘本故事页：插画占页面上",
+      "file": "samples/s1-wave20.png",
+      "source_sha256": "501076379dca041f6a3ff6a63f83036f8b8cc180ffffc64c90f2c01c38561c9d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "信息图：一张敦煌矿物彩壁画技法的纵向信息图：顶部是标题区，中部为三个纵向排列的知识模块——第一块讲“泥灰岩壁底”，画一块带清晰颗粒与细裂纹的泥灰岩壁",
+      "file": "samples/inf-wave21.png",
+      "source_sha256": "57e188dc84c533c5fe6559bd3a74e2af15c4e886ba9333035c27e0bb05c7d746",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：敦煌矿物彩壁画技法·泥灰岩壁底",
+      "file": "samples/s3-wave22.png",
+      "source_sha256": "f0777736a5887ba5b7d6253df307cd15654e365f60dac8685c94d631c4c5ff70",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：敦煌矿物彩壁画技法·泥灰岩壁底",
+      "file": "samples/inf-2-wave23.png",
+      "source_sha256": "506488055d5b968c2e134475b8cb0d9fb82257758ff95780ccd770579e2ba325",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "漫画：现代短发女孩用搪瓷盆接住屋檐漏水的一件小事",
+      "file": "samples/cm-wave24.png",
+      "source_sha256": "156635aafd882a4749114d06f36c80c3771473426a691d7d6c12fee66c41a1a0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：出门前选包",
+      "file": "samples/inf-3-wave26.png",
+      "source_sha256": "fd565069e6aa6c08e99a81c5fe1085c3f90c946268901b81d794f603f7af40b9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：社区旧书交换活动：一条让闲置书继续被读的接力",
+      "file": "samples/wxi-wave28.png",
+      "source_sha256": "fe5d77de66405db81ad6b602434ffc77b2e04e7a518c1d9f784e38c5630d14e1",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C92 祖孙包饺子换色验证：forest",
+      "file": "samples/palette-forest-wave29.png",
+      "source_sha256": "f0753795d2f4b453f746aac12caef1880e1217ead6a7b0434c3df1369131c804",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：一壶茶的三个时刻·纵向时间线信息图",
+      "file": "samples/inf-4-wave30.png",
+      "source_sha256": "84a0fb289fd9711e91dc710346911c03f699cf06c84d538e80e8961d59009531",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：敦煌矿物彩壁画技法·本页三色绘画示例",
+      "file": "samples/inf-5-wave31.png",
+      "source_sha256": "281ba3016903119fd208824ae06ab8926958bafde22f5973de75d96e27bbc702",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C92 原生画幅换色验证：ocean",
+      "file": "samples/palette-ocean-wave31.png",
+      "source_sha256": "d9e06862e3d60b7c551fd187da44cc89640e2e84a0c50cc3b51934c377971ba2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号封面：一方安静的书桌角落：完整台灯下摊开的横线本与一支钢笔，旁边一杯温水",
+      "file": "samples/cv-wave32.png",
+      "source_sha256": "ddb23793b947c0d565622139ad280cce3d9416714bffaa36f8215bfe61d9433a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 2.35
+    },
+    {
+      "topic": "PPT：观察一本旧书的三个部位",
+      "file": "samples/ppt-wave33.png",
+      "source_sha256": "dcbf756c23977a2264e6cf254ee8921c2d7e7e29e8f146033bae7d9a75d92099",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C92 原生画幅换色验证：morandi",
+      "file": "samples/palette-morandi-wave34.png",
+      "source_sha256": "18ab46660f4dd7d22858c9368e21b3d20c98c077fdeb49e892912e673e65f15e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：一段文章内容的归纳插图：用三个并列模块把同一主题的三个要点可视化，读者跳过正文也能读懂结论",
+      "file": "samples/wxi-2-wave35.png",
+      "source_sha256": "ee5367280622e6c4bfaaeb1e684efb49d48b6b9026872d77bc5f0ca330580fcd",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "教材单词参考图：书桌四件文具：notebook, pencil, ruler, eraser",
+      "file": "samples/s2-wave36.png",
+      "source_sha256": "45d89b42cb5536b22d231c869c10b98901bd6248e693f4fd4b7523072a089735",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：散步前，看看天：看天空、带雨具、选鞋子三件事的竖版归纳",
+      "file": "samples/wxt-wave37.png",
+      "source_sha256": "6af8f3852a586a622a6f835f45fff80df7c1c6a4e017b6944358255df8904381",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "公众号文章配图：把今天的小收获记下来",
+      "file": "samples/wxx-wave38.png",
+      "source_sha256": "892ab26ec2220b57386892e4c2b0d05c843d576a73a29f6b8e1fc45d8ac02a67",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：书桌桌面局部，三样正在使用的物件各占一区",
+      "file": "samples/wxi-3-wave39.png",
+      "source_sha256": "402ede6527916334167225e1daece45cd589bd4b1550d6a7566dfeeff80289fa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：纸质旅行纪念物的分类保存",
+      "file": "samples/xhs-2-wave42.png",
+      "source_sha256": "affa80a917ecc136f21d57026a101249b79701d75ec43b1d52f2bc70e51c5bb8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：雨天玄关收纳的三个静态区域",
+      "file": "samples/wxt-2-wave45.png",
+      "source_sha256": "309dca7e9901ae1dfc8d4d2cd17f47fbcfc2c102316c5794939d20f9eff2fa73",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "C92 原生画幅换色验证：earth",
+      "file": "samples/palette-earth-wave47.png",
+      "source_sha256": "de035ad20a913d25b8361baba02d293e7b36428bb2cf438d6f09189b7cedacb0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：film",
+      "file": "samples/palette-film-wave49.png",
+      "source_sha256": "2eee30dfe8467e6df5d9817050f739aaf0d2c414a98c51e1e6357b138bbbd973",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：玄关收纳分类单页卡：挂钩钥匙、伞筒雨伞、鞋架鞋子",
+      "file": "samples/xhs-3-wave50repair.png",
+      "source_sha256": "1b333f9be206037020aaac684faef199462dac31fde6641c71280aa10bf1f0a4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "播客 / 音乐封面：蜿蜒河流穿过低矮沙洲与稀疏芦苇，远处低山；无人物、无动物",
+      "file": "samples/au-wave52native.png",
+      "source_sha256": "e41a26eb11c92bff06c2ced51aecdae6e3ed01b44f9c69bd49aeb04492104998",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：阳台种植准备：一只空花盆、一包无字种子袋、一把小铲并列",
+      "file": "samples/xhs-wave54.png",
+      "source_sha256": "3190b6398bf1a68fb4f1012d8e1b90e1039361a1f9a2456a44bb95199d9cd0df",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：书法桌面小物：一支横放毛笔、一方墨色砚台、一块长条镇纸",
+      "file": "samples/xhs-4-wave55.png",
+      "source_sha256": "11ab2963124b99503e1e98017caf5ed34e87be9f9bc1fff7a5fdc1bb375d01cc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：书画收纳三件套",
+      "file": "samples/xhs-5-wave56-repair.png",
+      "source_sha256": "81d7af42f3de771233e4680f6ff58903e46ace744081b0521b577f1cfcae12ed",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：修补衣物小清单",
+      "file": "samples/xhs-6-wave57.png",
+      "source_sha256": "aaeabe390253ecee19acc3afcb76c662dbdc689e9eaf00e467d4a4930de4df7a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：桌面中央摊开的一本无字书，旁放一只无字茶杯，窗外斜入一小枝叶影",
+      "file": "samples/wxx-2-wave58.png",
+      "source_sha256": "330d597930f3f95aca299e998b6b69716fad270f567c74cfb6bf4b1f6d4f9416",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：一个空的圆筒伞架旁立着一把收拢的无字雨伞",
+      "file": "samples/wxx-3-wave59.png",
+      "source_sha256": "4309a89def4ba353a176ca1f8f0fea9c0d1cf53cdc7d1429187b677e2c114df2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：随身物品按工作与生活两组分类",
+      "file": "samples/ppt-2-wave62.png",
+      "source_sha256": "e9fd739eb103fa185cb80777175b41bc0e13679410974d4bacc0af5d4a2c555a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：室内桌面中央的一只浅盘，盘中三个完整梨，盘旁一块折叠布",
+      "file": "samples/wxx-4-wave67.png",
+      "source_sha256": "59e6b9a0dca1a4a85909a37da7fd136c61559129a83aba6ab5c020afce6aaf07",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：两名现代成人并排的不同活动",
+      "file": "samples/ppt-3-wave65.png",
+      "source_sha256": "0caee1b97bbc65537a3118cb4323c879e142bc25264273bf3d0447132e61b2dd",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：两种书籍收纳方式对比：左侧三本平叠，右侧三本竖立靠拢",
+      "file": "samples/ppt-4-wave70.png",
+      "source_sha256": "1f2c2b9d41fd1cc44188a2a054abdd7374e3811cc4075b57cb200a18f066c95b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：晴天户外用品：左侧一顶完整草帽，右侧一把打开的无字折扇",
+      "file": "samples/ppt-5-wave71.png",
+      "source_sha256": "55c6317e8c5e573d03287f55e502e0e247f8cd1d098d405e928d41216aaed0a4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C92 原生画幅换色验证：qinglv",
+      "file": "samples/palette-qinglv-wave72.png",
+      "source_sha256": "56e13d59b08d94c0301df4f214d8b1fbd1edb6c7205d776cb20d3071d26372c8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：zhusha",
+      "file": "samples/palette-zhusha-wave74.png",
+      "source_sha256": "8bf61044074ff255c2112abdda0b7f02596e9692ae6729c2eb82e5795cf58af1",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：mono",
+      "file": "samples/palette-mono-wave76.png",
+      "source_sha256": "375ebc520f46b935f3b2551f1327f67ad4536bfd2a6f2c118897b4958249ab84",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：neon",
+      "file": "samples/palette-neon-wave77.png",
+      "source_sha256": "47373a629333cf10dca925f221fd1ae984946e153f20b8eecc1679cbc4a105fd",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：书桌上的记录工具：左侧一支完整铅笔，右侧一块完整长方形橡皮",
+      "file": "samples/ppt-6-wave78.png",
+      "source_sha256": "c9a19d7ecd986ae1ee60ad904708c4ba3250cb876a8e90b460aa2cbad8aa489e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：出游时的收纳用品：一只闭合随身水壶与一个闭合双肩背包并列展示",
+      "file": "samples/ppt-7-wave80.png",
+      "source_sha256": "1e99c233167ee794ebe6e7f4597d6956fe5dd44f5c39686ea155b49de297ebc6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C92 原生画幅换色验证：sunset",
+      "file": "samples/palette-sunset-wave79.png",
+      "source_sha256": "1ad19493d754722ca105bf12e4fdff5e0d97283a590230aa58d8a8f415a4052d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：creamcoffee",
+      "file": "samples/palette-creamcoffee-wave83.png",
+      "source_sha256": "7ab0801039d70c87c25df867e9d2bb3c2d23fa6b841e547f7a2236226d35ebcd",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：同一件短袖T恤的展开与折叠对比",
+      "file": "samples/ppt-8-wave84.png",
+      "source_sha256": "5a9b1989be3a65795934005e44b47b17b090c33a138809edb65c7fb405f57f7a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：轻装出行三件套静物陈列",
+      "file": "samples/ppt-9-wave85.png",
+      "source_sha256": "7d680a234b0ea9195e06d73d06798f8962f91aacf6607f55e753f14951c054fa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：敦煌矿物彩壁画技法解析",
+      "file": "samples/ppt-10-wave87.png",
+      "source_sha256": "6d975534533f95c953bae4fc0d992ae9a2d58f0c773e6487b0e7ca2936256e02",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C92 原生画幅换色验证：macaron",
+      "file": "samples/palette-macaron-wave88.png",
+      "source_sha256": "b5579f3950b9a90c6e644a5856d1c8605f0438b74538c5f766fb491691301919",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "漫画：修复师在泥灰岩壁前逐格检查脱落矿物颜料并做记录",
+      "file": "samples/cm-3-wave90.png",
+      "source_sha256": "ac56deb542633e1c551f777f3e50c26ced1592104b3ef57eaf07b22db68debd9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：amber",
+      "file": "samples/palette-amber-wave91.png",
+      "source_sha256": "77e294779ac70b263a2d020abbf41c80e4f6585d83d4810ee201b7f693f2f0fc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "漫画：盐湖采盐人清晨收盐的四格小故事",
+      "file": "samples/cm-4-wave93.png",
+      "source_sha256": "6c8bd92f43e9a3b5aff776b345a23765b6f09372ed74cd610d8c0785a00a572b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：mintsoda",
+      "file": "samples/palette-mintsoda-wave92.png",
+      "source_sha256": "ad6db635b0438c50e910661100ab5706161bf9bd34246eb01237dd10f9ee333e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：mistblue",
+      "file": "samples/palette-mistblue-wave95.png",
+      "source_sha256": "86e56614b83195856449687445bb4886dd54785adaf9b64ddb8e6804a9c47d98",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 原生画幅换色验证：sakura",
+      "file": "samples/palette-sakura-wave97.png",
+      "source_sha256": "5e14aa21702fe951b44235a60e7e83da0c54a9bd58c1695dd470391f13d61de6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 换色验证：indigo",
+      "file": "samples/palette-indigo-continuous.png",
+      "source_sha256": "53727210ec45acbb9deb8f6c53472e7f1508a5d63ed68f52ff9edc9c11867762",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C92 换色验证：lilac",
+      "file": "samples/palette-lilac-continuous.png",
+      "source_sha256": "a17adf493dd614ca8efddf6193c95cedf66efb2db4e7a31e0acc897e61a85a1f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矿物颜料与植物颜料的持久性差异",
+      "file": "samples/bd-continuous.png",
+      "source_sha256": "3ea338d7207f96d91a8833ba6271854284cffb8caec368a784a6ed838cfaa2e9",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "一位现代装束的年轻记录员在洞窟式岩壁前核对一件编号陶罐的年代标签，另一名同伴手持登记板在旁比对",
+      "file": "samples/sb-continuous.png",
+      "source_sha256": "d0b6c3fe03ca8800f79bc23fde91eb9475438ffef9ee0032d654a9cca31ab013",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "莫高窟第220窟北壁乐舞图",
+      "file": "samples/ppt-12-continuous.png",
+      "source_sha256": "0a6839bb13c4d090f0ec1d2b82c124f204b0091a64a21a9dd4fb9f0cf820a8f0",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "唐代敦煌石窟壁画的矿物颜料与线描工艺",
+      "file": "samples/ppt-11-continuous.png",
+      "source_sha256": "75bf7c9e82287f6cd802626cba4f9065c8684cb76e221b19b844aa839e82a922",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    }
+  ]
+}

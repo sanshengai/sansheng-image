@@ -109,6 +109,14 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "水粉色块像哑光平涂纸片一样整体平移、轻轻落定，节奏干净克制，近白纸面保持安静。",
+    "primitives": [
+      "keyframes",
+      "easing"
+    ],
+    "safety": "细长的身体比例、面部、文字与产品不拉伸不形变；不加光泽高光，也不以翻页转场代替内容动作。"
+  },
   "samples": [
     {
       "topic": "人物",

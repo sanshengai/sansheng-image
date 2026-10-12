@@ -1,0 +1,477 @@
+{
+  "code": "C95",
+  "revision": 1,
+  "name": {
+    "zh": "汉画像石拓片",
+    "en": "Stone-Relief Rubbing"
+  },
+  "family": "国风传统",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "石刻拓片墨拓",
+    "density": "中等"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词，参考传统技法，不复制具体作品或声明传统元素版权。当前近邻核验范围见admission.json；现役C23已退役，不作为当前比较对象。"
+  },
+  "essence": [
+    "拓印墨色加白纸的黑白两族",
+    "黑色剪影配阴刻白线",
+    "古拙简化的侧面造型与分层排布",
+    "石面颗粒小坑与细微裂纹"
+  ],
+  "recipe": {
+    "positive": "Visual style (follow exactly): stone-relief rubbing technique inspired by Han-dynasty carved stone slabs: black ink pad-dabbed on off-white paper, the scene rendered as flat low-relief silhouettes with incised white lines on a black ground, profile-view figures and objects with archaic simplified proportions, an arrangement in horizontal bands or registers when the scene allows, incised parallel lines for cloth and texture, simple cloud-scroll or geometric filler between forms, speckled ink with small stone-grain pits and a few tiny cracks. The whole scene is expressed as a rubbing at full bleed. Figures, faces, hair, clothing and objects come only from the current brief, including modern clothing and short hair, drawn as profile silhouettes without period costume.",
+    "hard_constraints": [
+      "Tone comes from ink density and stipple only, with no colour and no cast shadow.",
+      "The picture shows the rubbed surface itself, never a photographed slab, stone frame or stele border."
+    ],
+    "text_mode": [
+      "none"
+    ]
+  },
+  "palette": {
+    "colors": [
+      {
+        "name": "浓墨黑 dense ink",
+        "hex": "#141414",
+        "role": "剪影底墨"
+      },
+      {
+        "name": "淡墨灰 pale ink",
+        "hex": "#8C8C8C",
+        "role": "墨点与浓淡过渡"
+      },
+      {
+        "name": "宣纸米白 paper white",
+        "hex": "#F1ECE0",
+        "role": "阴刻白线与纸底"
+      }
+    ],
+    "recolor": "locked"
+  },
+  "qa": {
+    "must_see": [
+      "黑底白线或黑色剪影的拓印质感，含石面颗粒小坑与细裂纹",
+      "侧面剪影造型古拙，阴刻平行线表现衣纹与纹理",
+      "可行时为横向分层排布，云纹或几何纹填充"
+    ],
+    "must_not_see": [
+      "彩色或带投影的灰色立体石材",
+      "石碑照片、石框或碑额边饰",
+      "任何铭文、假文字或签名"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着照画，只取侧面剪影与阴刻线手法，不画成汉代衣冠。"
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-10",
+    "tests": {
+      "T1": "pass",
+      "T2": "pass",
+      "T3": "pass",
+      "T4": "fail",
+      "T5": "pass",
+      "T6": "pass",
+      "T7": "pass",
+      "T8": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "实际matrix-evidence核验当前八题7/8、T3、三次同词稳定及当前同题近邻。未通过题：T4；失败及双方分歧保留。text_mode为none，中文由代码排字，chinese_text保持unknown。video_frame仅为静态远景，不证明动态视频。长篇连续角色未测。登记五项采用样图，词汇卡文字由程序排入，全场景与换色另行完成；正式发布与线上可用另记。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-10",
+      "note": "配方与QA不变，登记实际准入、能力边界和两项采用样图；全场景与发布另记。"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-10",
+      "note": "新增实测教材词汇卡及用途；配方、QA和原生文字能力不变。"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-10",
+      "note": "新增两项横版文章配图；配方与QA、能力边界不变。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "uses": [
+    "绘本",
+    "文章插图",
+    "教材"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "unknown",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "绘本人物场景",
+      "file": "samples/s1.png",
+      "source_sha256": "b4e8245a4266304239681e38d9ec8f27cbd2445402667bdd62f84f9a0b92f662",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.333
+    },
+    {
+      "topic": "公众号配图：走过小桥",
+      "file": "samples/wxi.png",
+      "source_sha256": "0deca4558dac28d0958f992c65af7673fe9c5f902ce2366d0269fe477dc33af9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "教材词汇卡：three pears",
+      "file": "samples/s2.png",
+      "source_sha256": "66143f2bffc032cecf5f31b385f03550c14930ac65ffe488a2ce5be366b47da8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号配图：浇灌两株植物",
+      "file": "samples/wxi-2.png",
+      "source_sha256": "f754760d036fe6c4958b7e17fd08886d937c92c4dd00ea75c9ba0e1526fed5cc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号配图：安静阅读桌面",
+      "file": "samples/wxi-3.png",
+      "source_sha256": "dc74e1d1f1d984ce10deed202b850ed132f297a86ca2a622aa152ca2f1163b6d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "X对比图：雨前与雨后",
+      "file": "samples/wxx-2.png",
+      "source_sha256": "ba8f3aa691c42918a9062133f875332f5cde423e5ea0796ed193ef47d05b6ca9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "四格漫画：办公室休息",
+      "file": "samples/cm-4.png",
+      "source_sha256": "f4b5136cc058e42ef10296698e5f0a8d1186781ce7484ccbb633bc54e8660595",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "四格漫画：早餐后再出发",
+      "file": "samples/cm-2.png",
+      "source_sha256": "29deee817a27a4e298ed454b6ffc4ab56c79c260d1eb5b0afc69237e2ba2bed4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "X单观点：按开关点亮台灯",
+      "file": "samples/wxx-3.png",
+      "source_sha256": "ebab4de643604b7204630b685431ccbbcb179b1294d6876401ad457c3038d0e6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "四格漫画：把井水挑回家",
+      "file": "samples/cm-3.png",
+      "source_sha256": "3bfa6f74b8b355323edbb7ee4ea006f41e18885064d4d7b5b12282d33a709e1c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "X过程图：萝卜播种到收获",
+      "file": "samples/wxx-4.png",
+      "source_sha256": "3a95cf32daa56dfe18b279bcd8d2978ded4edaf476fde8c8bf9f7ad8bbd16c0f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号竖图：读书入门三级台阶",
+      "file": "samples/wxt.png",
+      "source_sha256": "c1b9a1493f84a14746d5fb5de8aa68dc38a74e7685da0cffd324b76296bb7da1",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "漫画：通勤早餐四格故事",
+      "file": "samples/cm-wave16.png",
+      "source_sha256": "c959b2f1529144f9e32adcb7ff1d37980ef9f065354b03c1e3e7205c2e93fb6f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：汉画像石拓片风格竖版信息图，无字底图：一块横幅式的三层关系结构，表现“三件事按先后顺序连接成一条线”。顶部标题区留空；中部三层，每层一个侧面",
+      "file": "samples/s3-wave20.png",
+      "source_sha256": "bf272e5a9384375c89c38c130ca0dda7c57617edefb2697febfa5ddf1d40a3ea",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：一幅汉画像石拓片风格的竖版文章归纳底图：一条从下往上的三段路径，每段由同一名侧面剪影人物牵引一件具体道具，形成连续上升的三级台阶式结构，顶部",
+      "file": "samples/wxt-2-wave21.png",
+      "source_sha256": "7883b01261f757a476fca51457ed71cb92d5d9e019ed901adefad124e6636408",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "信息图：拓片风格竖版信息图底图：三件按先后顺序连接的事",
+      "file": "samples/inf-wave23.png",
+      "source_sha256": "f60bf409238d5c87ef750fde22cbe7e5fc8b600d6d8883b0b43741d191cf8028",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：虚构遗址现场记录板：材料、层位、疑问三块平行记录，一名测量人物",
+      "file": "samples/inf-2-wave25.png",
+      "source_sha256": "fa370cdd8e20f20c57f8f6503b68302a01afcf9d825fdff107220fa42b6b956d",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：把观察变成记录",
+      "file": "samples/ppt-wave28.png",
+      "source_sha256": "f10817c892d55badfca4093da26c91a4c855434852aac489d51bf73434ccc19f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：一张16:9整页PPT比较页：左栏“散放”与右栏“归位”的桌面状态对比",
+      "file": "samples/ppt-2-wave30.png",
+      "source_sha256": "24d8ac4e9df3e5a09110e34fb4c34618abdc91e91f032bda099544dfb3e9ccf8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：旧书修复的四道工序",
+      "file": "samples/inf-3-wave31.png",
+      "source_sha256": "359e2cdf8e849f50261917e7a0367f01a3bbf66308b92f83f17dd46a6d461d2c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号封面：一位正在核对货架标签的超市理货员",
+      "file": "samples/cv-wave32.png",
+      "source_sha256": "b4661b11e0e4026723eecfeb3a74248611580ea188853f000c60f76b21afc7d1",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 2.35
+    },
+    {
+      "topic": "PPT：为书架贴标签的三步示例",
+      "file": "samples/ppt-3-wave33.png",
+      "source_sha256": "e6e2ca155d2d6be0c0a0e7b9b850dade89a451ee8bce41317c3feb3e7cf245fb",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：同一只旅行小包的三分区收纳示例",
+      "file": "samples/ppt-4-wave34.png",
+      "source_sha256": "d70ead41e823776abf8dfda0071bde76a2431f5c90aceacfee0564d4b455b26c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：周末一晚短途旅行打包清单",
+      "file": "samples/inf-4-wave35.png",
+      "source_sha256": "a57325381671d09d628169ba92b01807b3c5b2fbce149b6d1442a82215af0fb4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：工作结束后的桌面归位：文具、文件、水杯各自回到固定位置",
+      "file": "samples/wxx-wave36.png",
+      "source_sha256": "4e88bffd850ace8725aa02bcb6b5022231be4f324216bfa3c1558cc9c177cf68",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：让文件容易找到的整理方法",
+      "file": "samples/ppt-5-wave37.png",
+      "source_sha256": "95ffc8923e04c84ef4b673acb6f8fcc23535e49aa00071b3eb65d2da66edad00",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：抽屉整理分类演示：平放纸张、文具分格、零件装盒三格并列",
+      "file": "samples/xhs-2-wave38-repaired.png",
+      "source_sha256": "d8f4886441438ed8409ff277fde4729e15b17cde4e1dc6316ec480f92e3f39ff",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：出门随身的小收纳",
+      "file": "samples/inf-5-wave39-repaired.png",
+      "source_sha256": "13bf55977b32b556c89ba1701ba8888b580c6571f0e14d07405faa9dbee55e8d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：旧书捐赠的三个方法：挑出完整书籍、写明内容与状态、约定时间地点",
+      "file": "samples/xhs-3-wave44-repair.png",
+      "source_sha256": "1397fa145219b1bb31da47b2d22941add588b2fc0ebe732a712c2e137f6113ff",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：出门前将钥匙、交通卡、折叠伞归并到同一托盘",
+      "file": "samples/xhs-4-wave46.png",
+      "source_sha256": "dbfd32e3bc18639e68fab7415e129fce9b89c07c9f47d9594154286ccee219eb",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "视频分镜首帧：傍晚自家门口的小女孩手提发光纸灯笼",
+      "file": "samples/sb-wave48repair.png",
+      "source_sha256": "fab2a08151603013df6005fa6e7f31a4383eee6da79e21e226d4e2adfb00a4f2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：出门前的随身物静物陈列",
+      "file": "samples/ppt-6-wave51.png",
+      "source_sha256": "b795fa9d165190e863036f165232ea015e77e85c460eb7de5150fbc080008d5a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：桌面收纳三件套：放两支铅笔的笔筒、无字纸盒、空托盘",
+      "file": "samples/ppt-7-wave53.png",
+      "source_sha256": "594bb0532c74c265e97e8f37bf1dfddcb4085c36f611a78e609ba969cbcf17e4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "播客 / 音乐封面：石板古道自画面下部蜿蜒向上进入松林，林间一株苍松为主",
+      "file": "samples/au-wave55.png",
+      "source_sha256": "58837104a4ea8a29528afcca652d713c43c1377a7819ac4e23c93bb5037eb42e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：随身修补小包",
+      "file": "samples/xhs-wave56.png",
+      "source_sha256": "7b13799b60ba19b87c0b442cb71ca83bd5b833aef1f6aa8edf48cb34d24453c3",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：桌边阅读准备：闭合无字书、单独平放的书签、展开镜腿的眼镜",
+      "file": "samples/xhs-5-wave57.png",
+      "source_sha256": "4c5a9cb10e7798ca8ce79d1d23d29310465c8694b1da42c0396a40bf6d1eed6e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：阅读笔记两种写法的单页对比",
+      "file": "samples/ppt-8-wave58.png",
+      "source_sha256": "319367b885e698f86e89dfba7f98d79526f2d90175c2702aacb98f75be385b76",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：出发前的准备三步流程",
+      "file": "samples/ppt-9-wave62.png",
+      "source_sha256": "480b41e84ad1254349113ec872bed9622ed9bfb127bfcd84bbae81d0f92faa3a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：左侧一只无把圆筒水杯，右侧一把带壶嘴和把手的水壶，两种盛水容器并置对比",
+      "file": "samples/ppt-11-wave70.png",
+      "source_sha256": "87fc52ae74485479b12a56a29a28da7bd28240f49aa874052af01360dbb531e0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：旅行收纳用品的静物对照：左侧一只拉杆收起的闭合旅行箱，右侧一只闭合双肩包，两者完整分离摆放。",
+      "file": "samples/ppt-12-wave75.png",
+      "source_sha256": "6a246b4cd7bf52287f1951e4b61504c192ef851662018d6daf35db1abfbeadfa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "窗边一张桌子的阅读角，无人物",
+      "file": "samples/ppt-10-continuous.png",
+      "source_sha256": "f18522f0b3e978bebea0f0e7b55cff8cd9ac020b2077eefa57a065035696ffe7",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "单张汉画像石拓片知识卡：如何把一段文章拆成可执行步骤",
+      "file": "samples/xhs-6-continuous.png",
+      "source_sha256": "9dedbb0a75efbaba0d2d861a6ed16b3f5a814c4f2b66963c742d0885bce4d2c5",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "步行时间逐日增加的柱状图数据页",
+      "file": "samples/bd-continuous.png",
+      "source_sha256": "63254a97f3cfa5db2ecaf2555a30b3a7da56ddf10bff136a27331f7c90365cda",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    }
+  ]
+}

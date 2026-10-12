@@ -2,7 +2,7 @@
 
 **Choose one visual style and keep it across a set of static images.** This Agent skill plans illustrations from source content, compiles style and palette rules, generates images through an available image tool, and checks each result. Article covers and illustrations are its first use case. Slide images, cards, infographics, stories, comics, audio covers, and stickers are at varying trial stages. [中文说明](./README.md)
 
-> Public beta. All 73 public styles have callable contracts, each crediting its inspiration (artists, studios, works) with same-topic previews on the website (the installation package does not include gallery samples). After the 2026-09-30 library rebuild every style is pending admission under its new revision (five had passed the older matrix on earlier revisions and need re-testing). A passing style test does not approve every subject or complete format. Use the website selector to choose styles; `sansheng-write` can discover this Skill to compile illustration plans.
+> Public beta. The local maintainer version contains 81 public style contracts. C91, C92, C93, C94, C95, C96, C97 and C98 (8 styles) passed current style admission, with 344 scene-coverage entries and 108 palette-coverage entries completed; original failed trials, repair lineage and limitations are retained. The other 73 remain pending under rebuilt revisions and have not been retested. The new version is not yet published; the published website still has 73 styles. Installation packages exclude gallery samples. Style admission does not approve every actual use. See the capability boundaries below.
 
 ## Preview
 
@@ -62,6 +62,24 @@ The QA command requires a working independent vision reviewer, or a separately s
 
 Private styles and personal memory are excluded from the public package. Local memory defaults to `~/.config/sansheng-image/profile/` and can be relocated with `SANSHENG_IMAGE_PROFILE`. Provider support and its verified limits are listed in [backends.md](./references/backends.md).
 
+## Motion edition（补充说明）
+
+动态版只在用户明确要求时使用，默认仍是静态图；覆盖公众号配图、信息图、小红书，品牌仅作原创动态示范，PPT 与音乐封面的动态不开放。流程见 [references/motion-scenes.md](./references/motion-scenes.md)（中文）。
+
+额外依赖：`requirements-motion.txt`（只有 numpy；Pillow 已是基线依赖）；Node.js 22+、HyperFrames 0.8.140、ffmpeg/ffprobe、本机浏览器需自行安装，由 `python3 scripts/sb.py animate doctor` 检查，不会自动下载。HyperFrames 是 Apache 2.0 的外部运行依赖，不随仓分发；颜色键 `cutlib` 是原创 MIT 模块，不调用 macOS 的 Vision 工具，也没有自动 Vision 回退。手机端试发尚未做，不承诺任何平台可直接发布。
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) (written in Chinese).
+
+- Recommend a style: use the "推荐画风" (recommend a style) issue template.
+- Report a problem: use the "报问题" (bug report) issue template.
+- Code or documentation changes: open a pull request.
+
+Website submission is not live yet and will arrive with the contribution feature; for now please use a GitHub issue or pull request.
+
 ## Credits and license
 
 See [CHANGELOG.md](./CHANGELOG.md), [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md), and [MIT LICENSE](./LICENSE). Style and workflow ideas were adapted from [threerocks/hand-drawn-styles](https://github.com/threerocks/hand-drawn-styles), [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills), and [yang0/handraw-style](https://github.com/yang0/handraw-style). Maintained by 叁笙 (sansheng).
+
+Maintainers may set `SANSHENG_IMAGE_BRAND_DIR=<brand-image-directory>` when running `python3 scripts/sb.py build --gallery` to supply `logo.webp` and `logo-poster.webp`. Both must be decodable WebP files. Without this input, the builder only lists their filenames; website deployments supply brand and gallery images separately.

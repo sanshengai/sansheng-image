@@ -74,6 +74,15 @@
     "绘本"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "浅墨与淡彩层沿动作方向缓缓显影，雾气般淡入淡出，节奏舒缓，最后回到完整宣纸画面。",
+    "primitives": [
+      "keyframes",
+      "mask_reveal",
+      "easing"
+    ],
+    "safety": "遮罩只用于未标保护的墨色与淡彩层；宣纸底不漂移，文字、人脸与产品不形变，留白不被新装饰占满。"
+  },
   "samples": [
     {
       "topic": "人物",

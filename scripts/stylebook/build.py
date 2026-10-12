@@ -15,14 +15,18 @@ import base64
 import hashlib
 import io
 import json
+import os
 import re
 from pathlib import Path
 
 from . import contract as CT
 from . import data as D
+from . import motion_gallery as MG
+from . import taxonomy as TX
 
 REGISTRY_PATH = CT.ROOT / "registry.json"
 TEMPLATE = CT.ROOT / "gallery" / "template.html"
+CATALOG = CT.ROOT / "styles" / "catalog.json"   # 候选测试可替换；公开目录与词表都从这里读
 PICKER = CT.ROOT / "gallery" / "picker.html"
 BUILD_DIR = CT.ROOT / "gallery" / "build"
 # 旧同题测试的三题与标准测试题的对应：人物 → T3，场景 → T6，讲解 → T7
@@ -32,8 +36,12 @@ TEST_NAMES = {"T1": "半身表情", "T2": "两人互动", "T3": "老人与孩子
               "s1": "人物", "s2": "物件", "s3": "信息图"}  # s1–s3：画风库 v2 的同题样图（种树三题）
 
 
+def _catalog_doc() -> dict:
+    return json.loads(Path(CATALOG).read_text(encoding="utf-8"))
+
+
 def _public_catalog() -> list[dict]:
-    return json.loads((CT.ROOT / "styles" / "catalog.json").read_text(encoding="utf-8"))["styles"]
+    return _catalog_doc()["styles"]
 
 
 def _private_catalog() -> list[dict]:
@@ -61,6 +69,9 @@ def _entry(cat: dict, visibility: str, c: dict | None) -> dict:
          "origin": cat.get("origin", ""), "status": cat.get("status", "draft"), "has_contract": c is not None,
          "recolor": cat.get("recolor", "free"), "recolor_note": cat.get("recolor_note", ""),
          "tone": cat.get("tone", []), "craft": cat.get("craft", "")}
+    for k in TX.NEW_KEYS:  # 标签字段：目录有才带，旧目录（无词表）输出保持不变
+        if k in cat:
+            e[k] = cat[k]
     if c:
         pal = c["palette"]
         e.update({
@@ -71,6 +82,8 @@ def _entry(cat: dict, visibility: str, c: dict | None) -> dict:
             "tests": (c.get("evidence") or {}).get("tests", {}),
             "recipe_sha": hashlib.sha256(c["recipe"]["positive"].encode()).hexdigest()[:12],
         })
+        if "motion_dialect" in c:  # 动态导演建议：原样带入，不参与静态出图提示词
+            e["motion_dialect"] = c["motion_dialect"]
     return e
 
 
@@ -88,7 +101,7 @@ def registry(private: bool = False) -> dict:
     return {
         "version": 1, "private": private,
         "styles": styles,
-        "removed": json.loads((CT.ROOT / "styles" / "catalog.json").read_text(encoding="utf-8")).get("removed", []),
+        "removed": _catalog_doc().get("removed", []),
         "scenes": scenes,
         "structures": list(D.structures().values()),
         "palettes": D.palettes(),
@@ -122,6 +135,9 @@ def check(reg: dict) -> list[str]:
         for code in [sc["default"], *sc["alternates"]]:
             if code not in by:
                 problems.append(f"场景 {sc['id']} 引用了目录里没有的 {code}")
+    tax = _catalog_doc().get("taxonomy")
+    if tax is not None:  # 有词表就强制：公开画风的标签缺失 / 重复 / 词表外取值都不能进页面
+        problems += TX.validate_styles([s for s in reg["styles"] if s["visibility"] == "public"], tax)
     if not reg["private"]:
         leaked = [c for c in codes if not c.startswith("C")] + [s["id"] for s in reg["scenes"] if s.get("source") == "作者档案"]
         blob = json.dumps(reg, ensure_ascii=False)
@@ -253,6 +269,77 @@ KIND_LABELS = {
 
 PAL_SHOT_KEY = {"人物场景": "p", "物件静物": "o", "简易信息图": "i"}  # 色系真图的类别：人物、静物、信息图
 
+# ---- 首页数据：以下常量与函数只服务 picker() 的首页数据 ----
+# 品牌图（展台 Logo 动图与静态海报）不是合同样图，不在 styles/ 下，也不进 Skill 分支；
+# 由调用方通过 brand_dir 参数（或环境变量）显式交给生成器，复制到 <out_dir>/img/。
+BRAND_IMAGES = ("logo.webp", "logo-poster.webp")
+BRAND_DIR_ENV = "SANSHENG_IMAGE_BRAND_DIR"
+RELEASES_URL = "https://github.com/sanshengai/sansheng-image/releases"
+# 首页精选 12 种（顺序即展示顺序）；缺同题物件图 s2 的会被过滤，页面标题随实际数量变
+HOME_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
+# 首屏展台轮播（Logo 之后依次出现）；同样要求有 s2
+HOME_CAROUSEL = ["C01", "C02", "C04", "C17", "C24", "C25", "C31", "C59"]
+# 与页面里 GROUP_KINDS 同口径：一个用途的样图种类属于哪一组
+IMG_GROUP_KINDS = {"cv": ["cv"], "au": ["au"], "xhs": ["xhs"], "wxi": ["wxi", "wxt", "wxx"], "inf": ["inf"], "ppt": ["ppt"],
+                   "comic": ["cm", "cx", "ce"], "sb": ["sb"], "bd": ["bd"], "same": ["s1", "s2", "s3"], "anchor": ["anchor"]}
+SAMPLE_FALLBACK = ["s1", "cv", "xhs", "wxi", "ppt", "inf", "cm", "cx", "ce"]
+
+
+def _load_brand_images(brand_dir: Path | str | None) -> dict[str, bytes]:
+    """读出品牌图字节。没给目录（公开无图包）返回空，不报错；给了目录就必须齐全且真是 WebP。
+
+    必须在清理 img/ 之前读完：调用方若把 brand_dir 指到 <out_dir>/img 本身，清理会先删掉它们。"""
+    brand_dir = brand_dir if brand_dir is not None else (os.environ.get(BRAND_DIR_ENV) or None)
+    if brand_dir is None:
+        return {}
+    root = Path(brand_dir).expanduser()
+    out: dict[str, bytes] = {}
+    for name in BRAND_IMAGES:
+        p = root / name
+        if not p.is_file():
+            raise ValueError(f"品牌图缺少 {name}：{root}")
+        raw = p.read_bytes()
+        if raw[:4] != b"RIFF" or raw[8:12] != b"WEBP":
+            raise ValueError(f"品牌图 {name} 不是 WebP 文件：{p}")
+        from PIL import Image, UnidentifiedImageError
+        try:
+            with Image.open(io.BytesIO(raw)) as image:
+                if image.format != "WEBP":
+                    raise ValueError("格式不是 WebP")
+                image.load()
+        except (OSError, ValueError, UnidentifiedImageError) as error:
+            raise ValueError(f"品牌图 {name} 无法解码：{p}") from error
+        out[name] = raw
+    return out
+
+
+def _package_version() -> str:
+    """官网下载包版本：只认公开包元数据 .claude-plugin/plugin.json 的 version，读不到或格式不对就留空（页面不显示版本）。"""
+    try:
+        v = json.loads((CT.ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8")).get("version")
+    except (OSError, ValueError, AttributeError):
+        return ""
+    return v if isinstance(v, str) and re.fullmatch(r"\d+\.\d+\.\d+", v) else ""
+
+
+def _scene_image(sample: str, default: str, pool: list[str], have: dict[str, list[str]]) -> tuple[str, str]:
+    """场景墙配图：默认画风优先，没有就用池里第一个有样图的；种类按页面 sampleKindFor 同一顺序。无图返回 ("", "")。"""
+    group = next((g for g, ks in IMG_GROUP_KINDS.items() if sample.split("-")[0] in ks), None)
+    order = [sample, *(IMG_GROUP_KINDS[group] if group else []), *SAMPLE_FALLBACK]
+    for code in [default, *pool]:
+        kinds = sorted(have.get(code, []))
+        if not kinds:
+            continue
+        return code, next((k for k in order if k in kinds), kinds[0])
+    return "", ""
+
+
+def _embed_json(obj) -> str:
+    """嵌进 <script type="application/json"> 的数据：<、>、& 与行分隔符一律转义，数据里出现 </script> 或 <!-- 也不会截断页面。"""
+    s = json.dumps(obj, ensure_ascii=False, sort_keys=True)
+    return (s.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
+            .replace("\u2028", "\\u2028").replace("\u2029", "\\u2029"))
+
 
 def _pal_ids() -> set[str]:
     return {p["id"] for p in D.palettes()["palettes"] if p["id"] not in ("orig", "brand")}
@@ -272,18 +359,34 @@ def _pc_kind(stem: str) -> str | None:
     return None
 
 
+def _sample_kind(stem: str) -> str:
+    """样图文件名的种类键：去掉波次编号 及其 native/repair/repaired 后缀。
+
+    合同登记里同一品种的 wave 变体不应产生不同键。
+    """
+    kind = re.sub(r"-wave\d+(?:-?(?:native|repair|repaired))?$", "", stem)
+    return "pl-" + kind[len("palette-"):] if kind.startswith("palette-") else kind
+
 def _sample_files(code: str, cp: Path | None) -> dict[str, tuple[Path, float | None]]:
     """合同登记的样图：键是样图种类（如 ppt-3），值是 (文件路径, 登记的宽高比)。
 
     公开下载包不带样图文件（样图在官网图片目录里），所以这里按合同登记返回，不要求文件存在；
-    文件存在时由 picker() 校验登记比例与实际一致。"""
+    文件存在时由 picker() 校验登记比例与实际一致。
+    """
     out: dict[str, tuple[Path, float | None]] = {}
     if not cp:
         return out
     for sample in CT.load(code).get("samples", []):
         sp = cp.parent / sample["file"]
-        if sp.stem in SITE_KINDS or SET_RE.match(sp.stem) or _pal_kind(sp.stem) or _pc_kind(sp.stem):
-            out[sp.stem] = (sp, sample.get("ratio"))
+        stem = sp.stem
+        key = _sample_kind(stem)
+        if key in SITE_KINDS or SET_RE.match(key) or _pal_kind(key) or _pc_kind(key):
+            if key in out:
+                raise ValueError(
+                    f"duplicate sample kind {key!r} in contract {code!r}: "
+                    f"{out[key][0]} and {sp}"
+                )
+            out[key] = (sp, sample.get("ratio"))
     return out
 
 
@@ -305,17 +408,25 @@ def _github_stars():
         return ""
 
 
-def picker(out_dir: Path | None = None, private: bool = False) -> Path:
-    """写出 index.html 与 img/<码>-<样图种类>.webp。样图缩成外部小文件懒加载；输出确定（无时间戳）。"""
+def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path | str | None = None,
+           motion_dir: Path | str | None = None) -> Path:
+    """写出 index.html 与 img/<码>-<样图种类>.webp。样图缩成外部小文件懒加载；输出确定（无时间戳）。
+
+    brand_dir：放有 logo.webp / logo-poster.webp 的目录（缺省读环境变量 SANSHENG_IMAGE_BRAND_DIR）。
+    给了就校验并复制进 img/；没给（公开无图包）只在 img-manifest.json 里登记这两个名字，不造假图、不报错。
+
+    motion_dir：放有 <id>/poster.png、<id>/share.mp4 的外置目录（缺省读环境变量 SANSHENG_IMAGE_MOTION_DIR）。
+    给了就先全部校验（齐全、普通文件、SHA 与 gallery/motion-data.json 一致）再复制进 motion/；没给只在
+    motion-manifest.json 里登记期望清单。motion.js / motion.css / motion-data.json 总是随页面输出。"""
     reg = registry(private)
     problems = check(reg)
     if problems:
         raise ValueError("注册表自检不通过：" + "；".join(problems))
+    brand_bytes = _load_brand_images(brand_dir)  # 先读后清：见 _load_brand_images
     out_dir = Path(out_dir) if out_dir else BUILD_DIR
+    motion_plan = MG.prepare(motion_dir, out_dir)  # 媒体来源与 SHA 在写任何文件之前核完；与场景的对应见下方 check_scenes
     img_dir = out_dir / "img"
-    img_dir.mkdir(parents=True, exist_ok=True)
-    for old in img_dir.glob("*.webp"):
-        old.unlink()
+    thumb_jobs: list[tuple[str, Path]] = []  # 验完场景与模板再写缩略图
     contract_paths = {p.parent.name: p for p in CT.contract_paths()}
     self_anchors = _self_made_anchors()
     have: dict[str, list[str]] = {}
@@ -338,7 +449,7 @@ def picker(out_dir: Path | None = None, private: bool = False) -> Path:
             src, registered = entry if isinstance(entry, tuple) else (entry, None)
             base_kind = kind.split("-")[0]
             if src.is_file():
-                (img_dir / f"{code}-{kind}.webp").write_bytes(_thumb_bytes(src))
+                thumb_jobs.append((f"{code}-{kind}.webp", src))
                 with Image.open(src) as im:
                     actual = round(im.width / im.height, 3)
                 if registered is not None and abs(actual - registered) > 0.002:
@@ -350,7 +461,7 @@ def picker(out_dir: Path | None = None, private: bool = False) -> Path:
                 raise ValueError(f"{code} 的样图 {kind} 缺少文件，合同里也没有登记宽高比")
             expected_imgs.append(f"{code}-{kind}.webp")
             if _pal_kind(kind):  # 色系真图：只出现在「色系」页，不进画风详情的样图列表
-                topic = next((x.get("topic", "") for x in contract.get("samples", []) if Path(x["file"]).stem == kind), "")
+                topic = next((x.get("topic", "") for x in contract.get("samples", []) if _sample_kind(Path(x["file"]).stem) == kind), "")
                 pal_shots.setdefault(_pal_kind(kind), []).append({"code": code, "kind": kind, "k": PAL_SHOT_KEY.get(topic.split("·")[-1], ""), "ratio": ratio})
                 continue
             if _pc_kind(kind):  # 换色对比图：只给详情里的对比卡用，不进样图缩略图列表
@@ -369,24 +480,50 @@ def picker(out_dir: Path | None = None, private: bool = False) -> Path:
         inspiration[s["code"]] = "、".join(names)
     scene_ids = [sc["id"] for sc in reg["scenes"] if not sc.get("hidden") and not sc.get("site_hide") and sc.get("use")]  # site_hide：Skill 里可用，官网不展示（教材自用；视频分镜待重做样图）
     pools = {sc["id"]: [c for c in D.styles_for_use(sc["use"]) if c in have] for sc in reg["scenes"] if sc["id"] in scene_ids}
+    tax = _catalog_doc().get("taxonomy")
     cands = [{"id": s["code"], "name": s["zh"], "origin": inspiration.get(s["code"], ""), "recolor": s["recolor"],
               "recolorNote": s.get("recolor_note", ""), "essence": "；".join(s.get("essence", [])[:3]), "family": s.get("family", ""),
               "imgs": sorted(have[s["code"]]), "uses": [sid for sid in scene_ids if s["code"] in pools[sid]],
-              "tone": s.get("tone", []), "craft": s.get("craft", "")}
+              "tone": s.get("tone", []), "craft": s.get("craft", ""),
+              **({k: s.get(k, [] if k != "legacyFamily" else "") for k in TX.NEW_KEYS} if tax else {})}
              for s in reg["styles"] if s["code"] in have]
     scenes = []
     for sc in reg["scenes"]:
         if sc["id"] not in scene_ids:
             continue
+        alternates = [a for a in sc["alternates"] if a in have]
+        rep, rep_kind = _scene_image(sc.get("site_sample", "s1"), sc["default"], pools[sc["id"]], have)
         scenes.append({"id": sc["id"], "name": sc.get("site_name", sc["zh"]), "short": sc.get("site_short", sc.get("site_name", sc["zh"])),
                        "more": bool(sc.get("site_more")), "use": sc["use"], "sample": sc.get("site_sample", "s1"), "note": sc.get("site_note", ""), "default": sc["default"],
-                       "alternates": [a for a in sc["alternates"] if a in have], "pool": pools[sc["id"]]})
+                       "alternates": alternates, "pool": pools[sc["id"]],
+                       "representative": rep, "image": f"{rep}-{rep_kind}.webp" if rep else ""})  # 场景墙配图：来自 have，因此必在 manifest 里
+    MG.check_scenes(motion_plan.doc, scenes)  # 动态示范挂到场景上的，画风必须在该场景的静态画风池里；不满足就整体失败，不写任何输出
     pals = [{"id": p["id"], "name": p["name"], "en": p.get("en", ""), "group": p.get("group", ""), "story": p.get("story", ""),
              "colors": p.get("colors", [])} for p in reg["palettes"]["palettes"]]
+    carousel = [{"id": c, "name": next(x["name"] for x in cands if x["id"] == c), "image": f"{c}-s2.webp"}
+                for c in HOME_CAROUSEL if "s2" in have.get(c, [])]
+    featured = [c for c in HOME_FEATURED if "s2" in have.get(c, [])]
+    metrics = {"styles": len(cands), "scenes": len(scenes), "palettes": sum(1 for p in pals if p["colors"]),
+               "samples": sum(not name.endswith("-anchor.webp") for name in expected_imgs)}  # 实测样图不含公版原作参考图；品牌图尚未加入
+    expected_imgs.extend(BRAND_IMAGES)  # 品牌图也是页面引用的图：官网投影检查据 manifest 核对图片目录
     meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
-            "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]}}
-    html = PICKER.read_text(encoding="utf-8").replace("__META__", json.dumps(meta, ensure_ascii=False, sort_keys=True).replace("</", "<\\/"))
+            "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
+            "metrics": metrics, "featured": featured, "carousel": carousel,
+            **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),
+            "site": {"pkgVersion": _package_version(), "releases": RELEASES_URL}}
+    template = PICKER.read_text(encoding="utf-8")
+    if template.count("__META__") != 1:
+        raise ValueError(f"选择器模板里的 __META__ 占位必须恰好出现一次（现在 {template.count('__META__')} 次）")
+    html = template.replace("__META__", _embed_json(meta))
+    img_dir.mkdir(parents=True, exist_ok=True)
+    for old in img_dir.glob("*.webp"):
+        old.unlink()
+    for name, src in thumb_jobs:
+        (img_dir / name).write_bytes(_thumb_bytes(src))
+    for name, raw in brand_bytes.items():
+        (img_dir / name).write_bytes(raw)
+    MG.write(motion_plan, out_dir)  # motion.js / motion.css / motion-data.json / motion-manifest.json，给了外置目录再加 motion/ 媒体
     out = out_dir / ("index.private.html" if private else "index.html")
     out.write_text(html, encoding="utf-8")
     if not private:  # 官网投影检查据此核对官网图片目录：缺一张或多一张都要红

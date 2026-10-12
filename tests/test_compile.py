@@ -413,6 +413,56 @@ def test_format_compose_panels_and_fixes():
 PL_FORMATS = ["wechat-cover-head", "xhs-cover", "podcast-cover", "picturebook-page", "storyboard-frame", "vertical-cover"]
 
 
+@pytest.mark.parametrize("text_mode", ["native", "overlay", "none"])
+def test_center_square_requirement_reaches_generation_prompt(text_mode):
+    m = copy.deepcopy(M)
+    m["palette"] = {"family": "orig"}
+    m["text"] = {"mode": text_mode}
+    if text_mode == "native":
+        m["text"]["items"] = [
+            {"role": "title", "text": "整理书桌", "position": "top"},
+            {"role": "footer", "text": "留出空位", "position": "bottom"},
+        ]
+    compiled = CP.compile_manifest(m, FREE)
+    assert "every requested title, label and footer" in compiled.prompt
+    assert "inside the centered square crop" in compiled.prompt
+    assert "reserved text areas" in compiled.prompt
+    assert compiled.export_px == (1242, 1656)
+    assert "Aspect ratio 3:4." in compiled.prompt
+    if text_mode == "native":
+        assert "整理书桌" in compiled.prompt and "留出空位" in compiled.prompt
+    elif text_mode == "none":
+        assert "No text, letters or captions" in compiled.prompt
+
+
+@pytest.mark.parametrize("fmt", ["infographic", None])
+def test_no_center_square_requirement_without_format_safe_zone(fmt):
+    m = copy.deepcopy(M)
+    m["palette"] = {"family": "orig"}
+    m["text"] = {"mode": "none"}
+    if fmt:
+        m["format"] = fmt
+    else:
+        m.pop("format")
+    assert "inside the centered square crop" not in CP.compile_manifest(m, FREE).prompt
+
+
+@pytest.mark.parametrize("fmt,aspect,expected", [
+    ("xhs-cover", None, "x=0.00% to 100.00% and y=12.50% to 87.50%"),
+    ("wechat-cover-head", None, "x=28.72% to 71.28% and y=0.00% to 100.00%"),
+    ("xhs-cover", "1:1", "x=12.50% to 87.50% and y=12.50% to 87.50%"),
+])
+def test_center_square_prompt_describes_final_preview_bounds(fmt, aspect, expected):
+    m = copy.deepcopy(M)
+    m.update(format=fmt, palette={"family": "orig"}, text={"mode": "none"})
+    if aspect:
+        m["aspect"] = aspect
+    compiled = CP.compile_manifest(m, FREE)
+    assert expected in compiled.prompt
+    assert "relative to this inner square" in compiled.prompt
+    assert "not visible lines" in compiled.prompt
+
+
 def test_disabled_anchor_rejects_forced_use_and_omits_default():
     contract = copy.deepcopy(FREE)
     contract["anchor"] = {"file": "bad.png", "enabled": False, "isolation": "BAD_REFERENCE"}
@@ -455,3 +505,44 @@ def test_chosen_palette_attaches_a_textless_swatch_as_last_reference():
     plain = copy.deepcopy(M)
     plain["palette"] = {"family": "orig"}
     assert not [r for r in c(plain).references if r["role"] == "palette_swatch"]
+
+
+@pytest.mark.parametrize("mode", ["none", "overlay", "native", "hybrid"])
+def test_ppt_composition_respects_text_mode(mode):
+    m = copy.deepcopy(M)
+    m["format"] = "ppt"
+    if mode == "overlay":
+        m["text"] = {"mode": mode, "reserve": "the plain pale left half",
+                     "items": [{"text": "活动企划", "role": "title",
+                                "box": [0.07, 0.3, 0.45, 0.18],
+                                "font_px": 64, "min_px": 24, "require_blank": True}]}
+    elif mode == "hybrid":
+        m["text"] = {"mode": mode, "reserve": "the plain pale left half",
+                     "items": [{"text": "活动企划", "role": "title", "render": "native"},
+                               {"text": "示例", "role": "label", "render": "overlay",
+                                "box": [0.07, 0.8, 0.3, 0.08], "font_px": 32, "min_px": 24}]}
+    else:
+        m["text"] = {"mode": mode, "items": [{"text": "活动企划", "role": "title"}]}
+    prompt = c(m).prompt
+    native_instruction = "the text is part of the slide design and must be exactly the given text"
+    if mode in ("none", "overlay"):
+        assert native_instruction not in prompt
+        assert "Do not render any text, digits or pseudo-characters" in prompt
+        assert "5% margins" in prompt
+    else:
+        assert native_instruction in prompt
+
+
+@pytest.mark.parametrize("with_footer", [False, True])
+def test_infographic_does_not_invent_a_closing_sentence(with_footer):
+    m = copy.deepcopy(M)
+    m["format"] = "infographic"
+    m["palette"] = {"family": "orig"}
+    m["text"] = {"mode": "native", "items": [{"role": "title", "text": "整理", "position": "top"}]}
+    if with_footer:
+        m["text"]["items"].append({"role": "footer", "text": "用完归位", "position": "bottom"})
+    prompt = CP.compile_manifest(m, FREE).prompt
+    assert "only when the exact text list explicitly supplies one" in prompt
+    assert "Never invent a closing sentence" in prompt
+    assert ("用完归位" in prompt) == with_footer
+    assert "and one short closing line at the bottom." not in prompt

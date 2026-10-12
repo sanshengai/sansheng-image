@@ -1,0 +1,49 @@
+name: 报问题
+description: 反馈叁笙生图 Skill 的问题
+title: '[报问题] '
+labels: ['feedback:bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。公开 issue 请勿粘贴 token、账户、密钥或个人隐私信息；截图可匿名或遮挡敏感内容。
+        GitHub Issue 是公开页面并显示 GitHub 账号；官网署名另行征得同意。报问题不要求作品分享勾选。
+  - type: textarea
+    id: steps
+    attributes:
+      label: 实际步骤
+      description: 请描述如何复现问题。
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+      description: 你期望发生什么。
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 实际发生了什么。
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: 平台
+      description: 可选，例如 Windows/macOS/Linux/浏览器/客户端版本。
+    validations:
+      required: false
+  - type: input
+    id: skill_version
+    attributes:
+      label: Skill 版本
+      description: 可选，例如叁笙生图版本或提交号。
+    validations:
+      required: false

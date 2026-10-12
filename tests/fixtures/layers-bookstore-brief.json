@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "style": "C64",
+  "reason": "书店场景分件示范：同一画风、同一机位下的空景 + 两个可动物件 + 一个物件状态，用于动效图层库",
+  "camera": {
+    "position": "eye-level medium-wide shot from the shop doorway, camera fixed on a tripod",
+    "angle": "straight-on, slightly toward the left shelves, no tilt",
+    "lens": "equivalent to a 35mm lens, mild depth, everything in the shop in focus",
+    "perspective": "one-point perspective, horizon at 45% of the canvas height, vanishing point at the centre of the back wall",
+    "canvas": {"width": 1600, "height": 900}
+  },
+  "background": {
+    "description": "an empty cosy old bookstore interior, tall wooden shelves full of books on both sides, a wooden floor, warm window light from the right, an empty floor space in the middle-left where a cart and a cat will be placed later"
+  },
+  "objects": [
+    {"id": "cart", "description": "a small wooden book cart with two shelves of stacked books, standing on the floor in the middle-left of the shop"},
+    {"id": "cat", "description": "an orange tabby cat sitting upright on the floor to the right of the cart, facing the viewer"}
+  ],
+  "states": [
+    {"id": "cat-asleep", "object": "cat", "description": "the cat curled up asleep with eyes closed, occupying the same spot"}
+  ],
+  "text": [
+    {"id": "sign", "text": "翻页书店", "box": [0.35, 0.05, 0.3, 0.1]}
+  ]
+}

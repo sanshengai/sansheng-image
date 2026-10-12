@@ -1,9 +1,7 @@
-"""独立看图：每张图单独调用 Claude CLI 或 Ark Agent Plan 视觉模型，按合同逐条转述。
+"""独立看图默认 Coding Plan deepseek-v4.1-flash；发送实际图片，失败停止。
 
-环境变量：SANSHENG_IMAGE_QA_BACKEND（claude_cli 默认，或 ark_agent_plan）；Claude 路径还可设
-SANSHENG_IMAGE_QA_MODEL（默认 claude-sonnet-5）、SANSHENG_IMAGE_QA_CLAUDE（claude 可执行文件）。
-Ark 路径只认现有 Agent Plan 套餐地址及其环境变量，不回退到按量平台。
-没有 claude CLI 的宿主（如 Codex）：用 manual 模式，由宿主模型按 review_prompt 看图后写出同样的 JSON。
+SANSHENG_IMAGE_QA_BACKEND 可显式选择既有适配器；不会自动回退。
+本项目执行仅用 ark_coding_plan，旧 Claude/Agent Plan 保留历史兼容。
 """
 from __future__ import annotations
 
@@ -19,12 +17,12 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from . import missing_items, review_prompt, review_schema
+from . import active_items, missing_items, review_prompt, review_schema
 
 DEFAULT_MODEL = os.environ.get("SANSHENG_IMAGE_QA_MODEL", "claude-sonnet-5")
 ARK_MODEL = "doubao-seed-2.1-turbo"
 ARK_PLAN_URL = "https://ark.cn-beijing.volces.com/api/plan/v3"
-INDEPENDENT_SOURCES = frozenset({"claude_cli", "ark_agent_plan"})
+INDEPENDENT_SOURCES = frozenset({"claude_cli", "ark_agent_plan", "ark_coding_plan"})
 
 
 class QuotaExhausted(RuntimeError):
@@ -37,6 +35,50 @@ class ReviewerAuthUnavailable(RuntimeError):
 
 class ReviewerNetworkUnavailable(RuntimeError):
     """独立看图请求无法连接：整轮停下，保留已有结果。"""
+
+
+class ReviewerIncompleteResult(RuntimeError):
+    """保留漏答的原始回答，交消费者记录失败，不自动再请求。"""
+
+    def __init__(self, data: dict | None, response: dict, gaps: list[str]):
+        super().__init__("Coding Plan 看图缺少完整逐项结论；保留图片，不自动重试")
+        self.review = dict(data or {})
+        self.review["_reviewer"] = f"ark_coding_plan:{response['model']}"
+        self.review["_response_metadata"] = response
+        self.review["_incomplete_review"] = gaps
+
+
+def _bind_clause_ids(data: dict | None, contract: dict, text_mode: str) -> tuple[dict | None, list[str]]:
+    """仅按本次完整合同的明确标识绑定；不模糊匹配、不猜漏项。"""
+    if data is None:
+        return None, []
+    bound, errors = dict(data), []
+    mapping = {}
+    for key, prefix, clauses in zip(("must_see", "must_not_see"), ("M", "B"),
+                                    active_items(contract, text_mode)):
+        lookup = {f"{prefix}{i}": label for i, label in enumerate(clauses, 1)}
+        mapping.update(lookup)
+        rows = data.get(key)
+        if not isinstance(rows, list):
+            continue
+        seen, normalized = set(), []
+        for row in rows:
+            entry = dict(row) if isinstance(row, dict) else row
+            if isinstance(entry, dict) and "id" in entry:
+                ident = entry["id"]
+                label = lookup.get(ident) if isinstance(ident, str) else None
+                if label is None or ident in seen:
+                    errors.append(f"{key}：未知或重复条款标识 {ident!r}")
+                elif "item" in entry and entry["item"] != label:
+                    errors.append(f"{key}：条款标识与原文冲突 {ident}")
+                else:
+                    entry["item"] = label
+                if isinstance(ident, str):
+                    seen.add(ident)
+            normalized.append(entry)
+        bound[key] = normalized
+    bound["_criteria_id_map"] = mapping
+    return bound, errors
 
 
 def _quota_hit(text: str) -> bool:
@@ -82,7 +124,7 @@ def _extract(text: str) -> dict | None:
 
 
 def source() -> str:
-    backend = os.environ.get("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
+    backend = os.environ.get("SANSHENG_IMAGE_QA_BACKEND", "ark_coding_plan")
     if backend not in INDEPENDENT_SOURCES:
         raise ValueError(f"未知看图后端：{backend}")
     return backend
@@ -170,6 +212,24 @@ def _review_ark(image: Path, contract: dict, expected_text: list[str] | None, te
 
 def review(image: Path, contract: dict, expected_text: list[str] | None = None, text_mode: str = "none",
            model: str | None = None, timeout: int = 420, tries: int = 2) -> dict:
+    if source() == "ark_coding_plan":
+        from .coding_plan import request
+        content = [{"type": "text", "text": review_prompt(contract, expected_text, text_mode, clause_ids=True)},
+                   {"type": "text", "text": "待验收的大图："},
+                   {"type": "image_url", "image_url": {"url": _image_uri(image.resolve())}}]
+        for key, label in [("_thumbnail_expectation", "真实展示尺寸预览：只据此判断 thumbnail_readable。"),
+                           ("_square_crop_expectation", "实际居中方形裁切：只据此判断 square_crop。")]:
+            if contract.get(key):
+                content.extend([{"type": "text", "text": label},
+                                {"type": "image_url", "image_url": {"url": _image_uri(Path(contract[key]))}}])
+        answer, response = request(content, model=model, timeout=timeout)
+        data, id_errors = _bind_clause_ids(_extract(answer), contract, text_mode)
+        gaps = id_errors + missing_items(data, contract, text_mode)
+        if not data or gaps:
+            raise ReviewerIncompleteResult(data, response, gaps)
+        data["_reviewer"] = f"ark_coding_plan:{response['model']}"
+        data["_response_metadata"] = response
+        return data
     if source() == "ark_agent_plan":
         return _review_ark(image.resolve(), contract, expected_text, text_mode, model, timeout, tries)
     claude = _claude_bin()

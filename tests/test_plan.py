@@ -388,6 +388,7 @@ def test_plan_review_threshold_uses_exact_counts_before_display_rounding():
     {"items": [{"id": "01"}, {"id": "99"}], "missed_positions": []},
 ])
 def test_plan_review_rejects_missing_coverage_or_extra_item(tmp_path, monkeypatch, response):
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
     from types import SimpleNamespace
     from stylebook.qa import plan_review as PR
 

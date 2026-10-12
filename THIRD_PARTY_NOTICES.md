@@ -99,6 +99,19 @@ Thirty-eight `styles/C*/anchor.png` files are downsized samples from `yang0/hand
 
 Artist, studio and work names in the contracts (`inspiration.names`) and in the prompts (for example Hayao Miyazaki and Studio Ghibli, Quentin Blake, Jimmy Liao, Hergé, Makoto Shinkai, Aardman, Mary Blair, Osamu Tezuka) are credits for where a look comes from. They are descriptive references to publicly known styles; this project is not affiliated with, endorsed by, or sponsored by any of them, and no artwork by them is included.
 
+## Motion edition: runtime dependencies (not bundled)
+
+The optional motion edition (`sb.py animate`, see `references/motion-scenes.md`) uses these tools at run time. None of them is bundled in this repository or downloaded automatically; users install them and `sb.py animate doctor` checks they are present.
+
+- **HyperFrames** (Apache License 2.0) — version 0.8.140 is the supported version. It is invoked as an external command-line program that renders a local HTML project. No HyperFrames source or binary is copied into this repository.
+- **Node.js 22+**, **ffmpeg** and **ffprobe**, and a local render browser (Chrome or chrome-headless-shell) — separate programs under their own licenses, installed by the user.
+- **GSAP** — optional local HTML animation dependency; not bundled. The local 3.14.2 distribution carries the GreenSock Standard License notice (`https://gsap.com/standard-license`); obtain and use your own copy under its license.
+- **NumPy** (`requirements-motion.txt`) and **Pillow** — Python packages installed by the user; not bundled.
+
+## Motion edition: bundled colour-key module
+
+`scripts/stylebook/vendor/cutlib.py` is an original MIT-licensed module of this project (the chroma-key matte and edge statistics used by `sb.py layers`). It contains no third-party code, and `vendor/SOURCE.json` records its SHA-256, which the loader checks before use. The macOS-only binary `vision` helper that other tooling around it may have used is not bundled and is never called here; there is no automatic Vision fallback, and layer matting uses only this colour-key code.
+
 ## Ideas without copied text
 
 Design ideas (no text or code copied) were also learned from: yanliudesign/mono-color-skill

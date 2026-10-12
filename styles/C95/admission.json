@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "style": "C95",
+  "scope": "style admission; full samples and publication tracked separately",
+  "review_routes": [
+    "codex_builtin_native",
+    "ark_coding_plan/deepseek-v4.1-flash"
+  ],
+  "tested_contract_sha256": "90a501328a8c8b8ce1977f83d07797ef23cfe9d224705eedd8012ad6e1e38c84",
+  "evidence_state_sha256": "ff5570caa6c26fbfe51e142d8c6700611bee8c9b06f214b702979f73adce6c86",
+  "evidence_bundle_sha256": "f5945d1a8c80d1d8ff3895307f827c8fba93548c552246030737640ee7ff634c",
+  "current_contract_sha256": "125bae412348e8dd9f505e894b1e2f3ee4c6bce0501b7f4797e1bd6c0ab29392",
+  "matrix": {
+    "T1": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "86083e675646d05211370a722731b97f8832d8edb950018a5ac6d3994ca22b59"
+    },
+    "T2": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "43a40863814fe7bbe1fb8541d0e57344abb04137d30b5ca7e95e584ba1542243"
+    },
+    "T3": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "42d7c91a65fd6b645a776b2c13833470d88eee0a5db23dc38f9e23577ca82276"
+    },
+    "T4": {
+      "result": "fail",
+      "root_result": "partial",
+      "original_sha256": "cc4147af4a2f0d2c4f06cae5c409838dbd4dd659fff81469f1fc02b7af1e22d2"
+    },
+    "T5": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "f546c6ea52852ea702dda5fe0ccffae4aca1ca32924c3db881b252f4f11f745f"
+    },
+    "T6": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "ad2e965acc741ef5544a42fd876ba32590e10ff7d288551cda5a021d5ef8e3ac"
+    },
+    "T7": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "5f44588ab5045b3e769f752390d7367c896323ac0bb4e59495404e2f38564f58"
+    },
+    "T8": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "36e87472e68726972c0fbc0fd1ea7b7d98cbb97dbbab8a83ea940330c3029c43"
+    }
+  },
+  "stability_verified": true,
+  "neighbors_verified": true,
+  "neighbor_limitations": [
+    "仅此同题实测近邻，不泛化全部场景。",
+    "C48/C84/C06/C63是保留具体画法/QA的脱人名候选，不冒充正式原合同输入。",
+    "C53为现役同题对照；旧C23已退役不重建。"
+  ],
+  "generation_input_preserved": true,
+  "registered_sample_count": 5,
+  "full_scene_coverage_complete": false,
+  "native_text_supported": false,
+  "backend_model": null
+}

@@ -69,3 +69,8 @@ def test_check_staged_uses_the_same_rules_as_export(tmp_path):
     found = check_staged(tmp_path)
     assert any("leak.md" in f for f in found) and any("key.txt" in f for f in found)
     assert not any("pic.png" in f for f in found)              # 图片不按文本扫
+
+
+def test_motion_requirements_are_part_of_public_surface():
+    from public_export import PUBLIC_FILES
+    assert "requirements-motion.txt" in PUBLIC_FILES

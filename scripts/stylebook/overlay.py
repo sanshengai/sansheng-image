@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 import hashlib
 import random
+import re
 
 from PIL import Image, ImageChops, ImageColor, ImageDraw, ImageFilter, ImageFont
 
@@ -47,6 +48,12 @@ FONT_CANDIDATES = {
     },
 }
 
+# blank_background 模式的固定判据；刻意不进配置，避免用调大阈值绕过闸门。
+_DECLARED_CHANNEL_DELTA = 32      # 任一 RGB 通道与声明色的绝对差超过它即算异物
+_DECLARED_FOREIGN_RATIO = 0.02    # 异物像素占文字盒面积超过它即拒绝
+_DECLARED_MIN_LUMA_GAP = 80       # 字色与底色的亮度差下限（只保证基本明暗区分）
+_STRICT_RGB = re.compile(r"#[0-9A-Fa-f]{6}")
+
 
 def _font(weight: str, size: int, family: str = "sans") -> ImageFont.FreeTypeFont:
     for path, index in FONT_CANDIDATES[family][weight]:
@@ -54,6 +61,53 @@ def _font(weight: str, size: int, family: str = "sans") -> ImageFont.FreeTypeFon
             return ImageFont.truetype(str(path), size, index=index)
     hint = "请安装 Hannotate SC 手写字体" if family == "hand" else "请安装对应中文字体"
     raise ValueError(f"找不到可用的中文 {family}/{weight} 字体；{hint}")
+
+
+def _strict_rgb(value: object) -> tuple[int, int, int] | None:
+    """只接受 #RRGGBB 六位十六进制；不收 alpha、简写、颜色名或带空白的写法。"""
+    if not isinstance(value, str) or not _STRICT_RGB.fullmatch(value):
+        return None
+    return int(value[1:3], 16), int(value[3:5], 16), int(value[5:7], 16)
+
+
+def _luma(rgb: tuple[int, int, int]) -> float:
+    r, g, b = rgb
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _validate_declared_blank(tag: str, item: dict) -> list[str]:
+    """校验 blank_background 模式：底色格式、必须配 require_blank=true、显式字色与明暗差。"""
+    problems: list[str] = []
+    background = _strict_rgb(item.get("blank_background"))
+    if background is None:
+        problems.append(f"{tag} blank_background 必须是 #RRGGBB 六位十六进制颜色（不接受 alpha、颜色名、简写或空值）")
+    if item.get("require_blank") is not True:
+        problems.append(f"{tag} blank_background 必须同时设 require_blank 为 true")
+    if item.get("pill") is not None:
+        problems.append(f"{tag} blank_background 不能与 pill 同用（胶囊会改变字下的实际底色）")
+    colors: list[object] = []
+    if "spans" in item:
+        spans = item["spans"]
+        if isinstance(spans, list) and spans and all(isinstance(s, dict) for s in spans):
+            colors = [s.get("color") for s in spans]
+        else:
+            problems.append(f"{tag} blank_background 无法确认 spans 字色")
+    else:
+        colors = [item.get("color")]
+    missing_reported = False
+    for color in colors:
+        text_rgb = _strict_rgb(color)
+        if text_rgb is None:
+            if not missing_reported:
+                problems.append(f"{tag} blank_background 模式必须显式给 #RRGGBB 字色（color 或每个 spans 的 color）")
+                missing_reported = True
+            continue
+        if background is not None:
+            gap = abs(_luma(text_rgb) - _luma(background))
+            if gap < _DECLARED_MIN_LUMA_GAP:
+                problems.append(f"{tag} 字色 {color} 与 blank_background {item['blank_background']} "
+                                f"亮度差 {gap:.0f}，低于 {_DECLARED_MIN_LUMA_GAP}")
+    return problems
 
 
 def validate(spec: dict) -> list[str]:
@@ -112,6 +166,8 @@ def validate(spec: dict) -> list[str]:
             problems.append(f"{tag} valign 只能是 top 或 center")
         if "require_blank" in item and type(item["require_blank"]) is not bool:
             problems.append(f"{tag} require_blank 必须是布尔值")
+        if "blank_background" in item:
+            problems.extend(_validate_declared_blank(tag, item))
         if "spans" in item:
             spans = item["spans"]
             if (not isinstance(spans, list) or not spans or not isinstance(item.get("text"), str)
@@ -247,8 +303,37 @@ def _draw_overlay_item(out: Image.Image, draw: ImageDraw.ImageDraw, item: dict, 
             draw.text(xy, line, font=font, fill=color, anchor="lt")
 
 
+def _check_declared_blank(image: Image.Image, item: dict, n: int) -> None:
+    """blank_background 模式：在原尺寸 crop 上逐像素比对声明底色，不缩小、不猜背景。"""
+    problems = _validate_declared_blank(f"overlay 第 {n} 条", item)
+    if problems:
+        raise ValueError("；".join(problems))
+    background = _strict_rgb(item["blank_background"])
+    x, y, w, h = item["box"]
+    box = (round(x * image.width), round(y * image.height),
+           round((x + w) * image.width), round((y + h) * image.height))
+    if box[2] <= box[0] or box[3] <= box[1]:
+        raise ValueError(f"overlay 第 {n} 条留白区域为空")
+    sample = image.crop(box).convert("RGB")
+    total = sample.width * sample.height
+    if total == 0:
+        raise ValueError(f"overlay 第 {n} 条留白区域为空")
+    diff = ImageChops.difference(sample, Image.new("RGB", sample.size, background))
+    foreign = None
+    for channel in diff.split():
+        flagged = channel.point(lambda v: 255 if v > _DECLARED_CHANNEL_DELTA else 0)
+        foreign = flagged if foreign is None else ImageChops.lighter(foreign, flagged)
+    ratio = foreign.histogram()[255] / total
+    if ratio > _DECLARED_FOREIGN_RATIO:
+        raise ValueError(f"overlay 第 {n} 条预留文字区与声明底色 {item['blank_background']} 不一致"
+                         f"（异物像素占比 {ratio:.1%}）；请先修底图、改声明或改文字位置")
+
+
 def _check_reserved_blank(image: Image.Image, item: dict, n: int) -> None:
-    """只对明确要求浅色干净底板的文字盒做保守碰撞预检。"""
+    """对浅色干净底板或显式声明色的平底文字盒做保守碰撞预检。"""
+    if "blank_background" in item:
+        _check_declared_blank(image, item, n)
+        return
     if not item.get("require_blank"):
         return
     x, y, w, h = item["box"]

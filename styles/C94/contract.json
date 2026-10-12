@@ -1,0 +1,510 @@
+{
+  "code": "C94",
+  "revision": 1,
+  "name": {
+    "zh": "青花蓝白装饰",
+    "en": "Blue-and-White Underglaze Decoration"
+  },
+  "family": "国风传统",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "青花釉下蓝绘",
+    "density": "中等"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词，按本款技法要点创作；不复制具体历史作品，不主张传统元素版权。实际近邻与能力范围见准入记录。"
+  },
+  "essence": [
+    "仅钴蓝各深浅与瓷白两族色",
+    "分水浓淡与积料深点",
+    "纹样作为画面装饰填充",
+    "整幅是青花绘饰而非瓷器摄影"
+  ],
+  "recipe": {
+    "positive": "Visual style (follow exactly): blue-and-white porcelain underglaze decoration technique applied to the entire scene: cobalt-blue only on a white porcelain ground, fine contour lines filled with graded 'fen-shui' wash (dark to light), pooled darker blue dots where brush pauses, repeating ceramic border motifs (wave, ruyi cloud, lotus scroll) used as frames and pattern fills, faint glaze sheen and tiny crackle. The scene itself fills the whole requested image frame as painted decoration; do not place the entire artwork on a photographed or isolated vase or plate; vessels explicitly requested by the brief remain valid depicted props. Draw with fine Chinese-brush contour lines in deep cobalt, using graded fen-shui wash to model forms in several tonal depths from dark to light. Place small pooled dark cobalt dots visibly at brush pauses, line ends, petal bases, fold corners and leaf tips. Use repeating ceramic border motifs (wave, ruyi cloud, lotus scroll) as frames and pattern fills, subordinate to the main subject. Keep the palette strictly cobalt blue and porcelain white with a faint glaze sheen and tiny crackle. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering. Do not use hatching, cross-hatching, engraving, pen-and-ink, pencil or etching strokes, stippled shading, or photographic volume modelling.",
+    "hard_constraints": [
+      "Every colour is a cobalt tone or porcelain white, so the entire scene is rendered in blue tonal depths on white.",
+      "Fine contour lines are filled with graded fen-shui wash from dark to light.",
+      "Small pooled dark cobalt dots are clearly visible at brush pauses, line ends and petal or fold bases.",
+      "Repeating ceramic border motifs (wave, ruyi cloud, lotus scroll) are used as frames and pattern fills and stay subordinate to the main subject.",
+      "The requested scene fills the entire image frame as painted decoration. Do not present the entire artwork on a photographed or isolated ceramic object; explicitly requested vessels remain valid props within the scene.",
+      "The palette is strictly cobalt blue and porcelain white with faint glaze sheen and tiny crackle.",
+      "Do not use hatching, cross-hatching, engraving, pen-and-ink, pencil or etching strokes, stippled shading, or photographic volume modelling."
+    ],
+    "text_mode": [
+      "none",
+      "native"
+    ]
+  },
+  "palette": {
+    "colors": [
+      {
+        "name": "深钴蓝 deep cobalt",
+        "hex": "#17358A",
+        "role": "轮廓与积料深点"
+      },
+      {
+        "name": "中钴蓝 mid cobalt",
+        "hex": "#3F6BC4",
+        "role": "主体分水中调"
+      },
+      {
+        "name": "浅钴蓝 pale cobalt",
+        "hex": "#A9C3EA",
+        "role": "分水浅调"
+      },
+      {
+        "name": "瓷白 porcelain white",
+        "hex": "#F7F8F5",
+        "role": "底色"
+      }
+    ],
+    "recolor": "locked"
+  },
+  "qa": {
+    "must_see": [
+      "仅钴蓝与瓷白，蓝色有分水浓淡与积料深点",
+      "海水、缠枝、如意等纹样作为装饰点缀而不淹没主体",
+      "整幅是青花绘饰，场景铺满画幅"
+    ],
+    "must_not_see": [
+      "蓝白以外的任何色相",
+      "把画面拍成带摄影棚反光的瓷器照片或立体陶瓷陈列",
+      "无字任务禁止任何文字；原生文字任务仅允许题面逐字指定的准确文字，禁止缺字、错字、额外文字、假文字、签名、署名、艺术家签名、印款和窑款，不因标题、标签、边框或标题板的位置而扩大许可。"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着照画；肤色与衣色都以蓝色深浅表达，不古装化。",
+    "animals": "Render the requested animal as painted blue-and-white underglaze decoration. Use fine cobalt Chinese-brush contour lines and graded fen-shui dark-to-light wash to describe its species, coat shapes, anatomy, pose and expression. Contours may be lifted and re-started where needed; neither a single uninterrupted contour nor hard stepped flat wash blocks is required. Preserve the species and relationships specified by the brief. Use small pooled deep cobalt dots where the brush pauses, faint glaze sheen and tiny crackle; no photographic volume, hatching or cross-hatching. Any wave, ruyi or lotus ornament decorates an existing surface requested by the brief, never an added flower plant or other scene object."
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-11",
+    "tests": {
+      "T1": "pass",
+      "T2": "pass",
+      "T3": "pass",
+      "T4": "pass",
+      "T5": "pass",
+      "T6": "pass",
+      "T7": "pass",
+      "T8": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "八题最终证据、三次同词稳定性及两项同题近邻均通过；C94原始T8纹样漏项失败保留，最终T8采用有实际编辑链及完整QA的返修图，不伪装原始生成通过。原生中文只验证本轮短标题/标签，不证明长文排字；身份一致性只验证两图，静态远景不证明动态视频。登记三张矩阵示例，全场景和换色另计，尚未正式发布。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-11",
+      "note": "当前标准题最终证据、三次稳定与两项同题近邻通过；保留原失败/误报及编辑链，登记三张矩阵示例；全场景与发布另计。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "anchor": {
+    "enabled": true,
+    "file": "anchor.png",
+    "sha256": "2c76ee9acc332f6aaeb75e6956606420cb55d32799574572692f0218cf5cabf0",
+    "isolation": "Transfer only the cobalt brush contours, the graded fen-shui wash tones (soft wet transitions between cobalt depths, dark at edge reading through mid cobalt into pale blue or bare porcelain white), the pooled dark dots and the faint crackled glaze technique from this reference board. Do not reproduce its title, labels, swatches, panel grid, border bands, landscape strip, sample figures, flowers as layout or composition. Do not copy any content of the reference board: its people, animals (such as its sleeping cat), cups and vessels, books, window, reading room, furniture, decorative layout, poses or arrangement. Draw people, animals, cups, books, windows, rooms or furniture only when the current brief itself asks for them, and then compose them fresh from the brief's own wording, never from the board's scene. When the brief gives no setting, use the crackled porcelain-glaze ground of the technique instead of adding a room or scenery from the board. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering.; reproduce no writing from the board, and add text only where the brief explicitly requests it, spelled exactly as given."
+  },
+  "uses": [
+    "绘本",
+    "文章插图",
+    "信息图",
+    "封面"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "ok",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "矩阵示例：祖孙包饺子",
+      "file": "samples/matrix-T3.png",
+      "source_sha256": "12d0cbd6ed12ec936d20b7154a73dcb6b5ef71e7c297284a2932d7f1fca707ad",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：番茄工作法短字信息图",
+      "file": "samples/matrix-T7.png",
+      "source_sha256": "4dc6ce1a64f157a79c06501ba9f45ffbeaaad4d0fe27c74eb9f08cf4c3af42f9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：慢慢来封面",
+      "file": "samples/matrix-T8.png",
+      "source_sha256": "2e117e0f0ee69fe1e7a8463144a4cbe37b527ca2e7c8bf2303ca3e8814989325",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "四格漫画：四格漫画，2×2等大格、细格沟，从左到右从上到下读：起——青花分水远景，一只青花小猫蹲在瓷白院墙外，墙上一枝缠枝莲，猫背对读者望向半开的院门",
+      "file": "samples/cm-2-wave19.png",
+      "source_sha256": "eafe0fb18645f86c9b214634e8c915b8541d7c08fb865f96e311833eadf298e0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "绘本故事：青花釉下蓝绘的绘本故事页，一幅叙事插图而非实体书商品照：一个穿现代短袖衬衫的短发孩子蹲在瓷白院墙根，双手托着一只青花小碗，碗里盛着清水，水面",
+      "file": "samples/s1-wave20.png",
+      "source_sha256": "7190e3bf922edd776522e0cebfd0529945b393669e44b79ca2d5f344e7c7d669",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "公众号封面：青花釉下蓝绘风格的公众号头条封面：一枝由深钴蓝细笔勾线、分水浓淡渲染的缠枝莲从画面左下方斜伸向右上方，花朵饱满、叶片翻卷，花瓣根部与叶尖留在",
+      "file": "samples/cv-wave21.png",
+      "source_sha256": "0c353fc36ce6b98cd16654017d5332bf51ae916934aa79521116da45f874c11a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 2.35
+    },
+    {
+      "topic": "漫画：青花绘饰的四格小故事：一个短发孩子给瓷白院墙边的青花水缸换水",
+      "file": "samples/cm-wave22.png",
+      "source_sha256": "2cd9b8135fef543de42d57cfd9fff8ca07424bd3aa78a55c1b53c60107feb5fa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：出门写生前的工具清单",
+      "file": "samples/ppt-wave27.png",
+      "source_sha256": "9be697f05cb430dd8522c7fa70de257c8e32fcb9f340e8190c12c9f36421efe2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：一页竖向知识卡：给书桌留出写字的位置",
+      "file": "samples/xhs-2-wave29.png",
+      "source_sha256": "df668a7f3d01a030acafee11797f8407c323b8b20ee4eeead60e71eb7f3579fe",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：两种记录方式的对比信息图",
+      "file": "samples/inf-wave30.png",
+      "source_sha256": "d684b2cb5cc1b0dbea2b0a198b78f9e6d6a825086ca534a8ceed68e58f3295e0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：把「一周读书笔记」整理成一张可保存的竖版复盘卡",
+      "file": "samples/wxt-wave32.png",
+      "source_sha256": "3ed0ee44863e051f477cdc9e51b00ba583e3fbbfa26257712e54dbcaec9120ad",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "信息图：桌面上一盆小花的摆放安排示例",
+      "file": "samples/inf-2-wave33.png",
+      "source_sha256": "bd459a1496e517d1ee1ff748aebe8700f1be5dff1eb5c4521506ec43482be05e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：同一把现代木椅的三个观察层级：整体、靠背接合处、椅脚",
+      "file": "samples/ppt-2-wave34.png",
+      "source_sha256": "46e45c700c235265bf6874fb62ca229de97d22a901609537e8f82f350c1394c6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：个人物品整理的三组前后对照",
+      "file": "samples/wxx-wave35.png",
+      "source_sha256": "6e10abb85fd99aee2e9d0710a70ec781f7fa69088c23cfb4df6c46d43b109732",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：给植物浇水前的三步观察清单",
+      "file": "samples/s3-wave36.png",
+      "source_sha256": "0d413b7d1518d1b1f5191d46176f0932db17efc40ed0d42448d1d40b8b9700dc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "漫画：同一成年女性整理掉落的书签并归书",
+      "file": "samples/cm-3-wave37.png",
+      "source_sha256": "b4224890ff2ac676250320fe7eca441555aa4c0cf0ab8497f7b6ee13cdf6306f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：茶桌上的三件器物：茶壶、茶杯、茶罐并列陈列",
+      "file": "samples/wxi-wave38.png",
+      "source_sha256": "27b9d9c2fb30484dfebbdaae23a9d58579f32b5b34eed749a17617056dedad6f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "教材单词参考图：一只青花瓷绘茶壶",
+      "file": "samples/s2-wave39.png",
+      "source_sha256": "a1b20367901660df52edeb2556b576dede9de2bdb87e751a4dba3a0b72eb243b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：青花釉下蓝绘技法在信息图中的应用说明",
+      "file": "samples/inf-3-wave40.png",
+      "source_sha256": "4733989207c18bdda33151a630b015070ac6e8818191ff1183aab5ea00efd5d0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：远足归来后，背包与物资已完成分类归位",
+      "file": "samples/wxi-2-wave42.png",
+      "source_sha256": "23c9ea0d0991064a72c40aaa0747181db9530649bc365e446ee55e1de280eb38",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：厨房工具各归其位的归纳场景：砧板竖放、锅铲挂起、抹布晾开三个区域",
+      "file": "samples/wxi-3-wave45.png",
+      "source_sha256": "005a43400c524b4143c4f75e5ef11049c42d6a17bb01861e75e52c8a33ce081e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：雨天随身物品的并列展示",
+      "file": "samples/ppt-3-wave48.png",
+      "source_sha256": "67c263fae543dd12ed6fb5120673add476a5f73e1e750fd2e8554eaf3e61a845",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "视频分镜首帧：清晨尚未开门的书店门口空镜",
+      "file": "samples/sb-wave50repair.png",
+      "source_sha256": "781998fba4ac1bd7d93dc542f17b3e377137d376d619c9f6fd99c9879e443c83",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "播客 / 音乐封面：月夜水面与岸边系泊的一艘空小船，岸边垂柳，无人物",
+      "file": "samples/au-wave52native.png",
+      "source_sha256": "1b2e79fd97eacdd27629715bf9a8aac8d19008c002ef0bc4101734a34a91117f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：青花蓝白装饰风格的茶席三件小物：一把茶壶、一只空茶杯、一个带盖茶罐",
+      "file": "samples/ppt-4-wave53.png",
+      "source_sha256": "fb38a01223b921ebb4b205d0f57c91bf712d2a52f8de876eab6016c0ebfb4b5a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：一支牙刷、一管无字牙膏、一只空杯子并列的旅行洗漱小包封面",
+      "file": "samples/xhs-wave54.png",
+      "source_sha256": "fa0d683f9117724f042bc645c47bc6ab3d60f57dc13f595e20aba5d660153b38",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：茶席清理小物的单页展示：一支短柄茶刷、一块折叠软布、一只盛清水的碗",
+      "file": "samples/xhs-3-wave56.png",
+      "source_sha256": "c77a81e66d4add09cbdf6c6ee58e4854560237704d14180f1b7bbb631ff75554",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：浇水前备齐三样：上层一只盛清水的浇水壶，中层一盆带叶盆栽，下层一块折好的软布",
+      "file": "samples/wxt-2-wave57.png",
+      "source_sha256": "fcc5805e72e105ab4ef2e8f985cb5b2a76aa89d66bf7525c7f244f281a3fbc00",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "公众号文章配图：雨停后敞开的窗与窗台小盆栽",
+      "file": "samples/wxx-2-wave58.png",
+      "source_sha256": "12e187fbe5159aae527a024092c2a7acc163030dc551781059094500e6aa3def",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：种子发芽的三步过程",
+      "file": "samples/inf-4-wave60.png",
+      "source_sha256": "48054d4d350baa3c76303caeeba2c08d443dd916663b8c8689210a692eb36cc2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：并排的花与叶结构观察",
+      "file": "samples/inf-5-wave61.png",
+      "source_sha256": "1ca453515930ac1bf1454b3675c644092612464100447ad911ac5bb831080cee",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：纸张回收的三步示意",
+      "file": "samples/ppt-5-wave62.png",
+      "source_sha256": "4772352c2b72fb8dd03c4b751ac75e3ae96311874d42c5854cf28bc84eb00e47",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "漫画：一只短毛猫在矮凳旁找回滚走的小球",
+      "file": "samples/cm-4-wave62.png",
+      "source_sha256": "933034a01bd01847bb86b6b3afc3f9de8135572a4564e49fd299955aaea96713",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：圆形托盘上的一只茶壶与两个小茶杯",
+      "file": "samples/wxx-3-wave66.png",
+      "source_sha256": "c580556ec7e87a3a674408065d146064139557d5c6053155b8b05c96f7061da6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：雨天出门前的三层检查示意：窗、伞、雨靴",
+      "file": "samples/xhs-4-wave68.png",
+      "source_sha256": "535086b92c35b194c483c7ebacf16fa527fa5197524f9924ca0ac2956e892c71",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：雨天的两件装备",
+      "file": "samples/ppt-6-wave68.png",
+      "source_sha256": "262dc0ba8f2aa5caa4a3873b741b1b4fcf93a8b8a61d6ea260c3e5f2e1bcdf53",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：一只完整打开的贝壳，壳内正卧一颗圆珍珠",
+      "file": "samples/wxx-4-wave69.png",
+      "source_sha256": "ddb2d81635501649f4ab7d0d5c335882e43ed69cceeb67fa90d13839aee1ed21",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：书桌文具静物：左侧一个空笔筒，右侧一个闭合墨水瓶，二者分离完整，无笔、无其他物件",
+      "file": "samples/ppt-7-wave71.png",
+      "source_sha256": "0b2b17bc64a373c32c312c02e3f6c4d010ad493ebc8a82af07789dce6c239255",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：庭院里的两件工具",
+      "file": "samples/ppt-8-wave73.png",
+      "source_sha256": "56879ce8c87ac4f2ea056036c4a136297d7c795e7ebd60c2b331d2d9f0e6ea27",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：青花蓝白装饰风格下，一只空饭碗与一只长柄汤勺并置的餐桌容器对照画面",
+      "file": "samples/ppt-9-wave75.png",
+      "source_sha256": "aac92d5e8e2e3b9b53aec7237bd47fe0ddc1dcf7f9fc0c4a4b3ac5e45b952f4c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：早餐桌上的一只空茶杯与一只空圆碟",
+      "file": "samples/ppt-10-wave78.png",
+      "source_sha256": "f3675443e1f44c9be9a53d1d5d4bc1f7a7d44ebc24aa11bba4019e7d9bcc36bc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：同一面书架两种整理方式的对比",
+      "file": "samples/ppt-11-wave82.png",
+      "source_sha256": "691995e04cb0e8945c40c00dbdf66d131fca459ee7f9632fe2a38d7677817787",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：一张空白信纸与一个已打开封口的信封并置的静物页面",
+      "file": "samples/ppt-12-wave85.png",
+      "source_sha256": "f2be8e086270fdb29e18a7b97903f4d1547cd56b451c1444e53764f919daf4c1",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：青花蓝白绘制工艺的四步演示：调蓝、勾线、分水、点积料",
+      "file": "samples/xhs-5-wave92.png",
+      "source_sha256": "3d8075b0db6ea81fe38a789b02f7fc7b8d2db991d4e3dcd3a9f6b5a7c4cbe825",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：青花蓝白风格的小红书轮播首图：衣物分色洗护指南",
+      "file": "samples/xhs-6-wave94.png",
+      "source_sha256": "82848764cb7d976d657a9a315681f86c1fbda996d53d12fd75f21eab790b4642",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "十二页轮播的资料整理术主题封面页",
+      "file": "samples/bd-continuous.png",
+      "source_sha256": "2d7a8cc3a20fb1f795b62f22928fafecfaa6f15498324ac30c3e70765f63013c",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    }
+  ]
+}

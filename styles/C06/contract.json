@@ -95,6 +95,15 @@
     "绘本"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "蘸水笔墨线像快速速写一样抖动生长，水彩随后松散跟上，节奏跳脱诙谐；夸张靠整体位移与旋转，不靠改结构。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "path_draw"
+    ],
+    "safety": "描线只用于未标保护的非文字线条；人脸、文字与肢体结构不形变；水彩保留静态画面原有的出线松散感，动画过程中不扩张原有涂色范围。"
+  },
   "samples": [
     {
       "topic": "人物",

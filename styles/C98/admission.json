@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "style": "C98",
+  "scope": "style admission; full scenes and publication tracked separately",
+  "review_routes": [
+    "codex_builtin_native",
+    "ark_coding_plan/deepseek-v4.1-flash"
+  ],
+  "tested_contract_sha256": "06dce67bc31feda74be2bf491b47bb467ab47e46172e281f218164d9b95bfeb5",
+  "current_contract_sha256": "f3070b8f8526506648997d5a90b28308ee63480ee3772a1a4c386a8821d5ac7b",
+  "evidence_state_sha256": "f86cde74c21081cfcf564760ea65dc01708279deab672084f5cfde3af3ef4b9c",
+  "evidence_bundle_sha256": "4a49f0c8d312da6333aaaf5bed733da9d2f7843694da5570ba02ea715c2fb863",
+  "matrix": {
+    "T6": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "d827f348dee60017e1db332dc5fdefc3abea35841c28b4faa2a25eca1cf26a39"
+    },
+    "T1": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "0ffdd4b314bcaf41a9a05132fe346b654577fa4154331f1d4ee869aacfec6db2"
+    },
+    "T3": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "fd4844dcc6cf17d000521650d7126c147e60725f3b2f7b5b5c6820f65a3f7176"
+    },
+    "T4": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "7638d5ca697678e55ff641d33a8c55e3636c570e72b06a8e1a1bcc492a4bb2ec"
+    },
+    "T5": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "9e3b34cbacd131b30abf41d9fc1844338e7d6dfcb2eb93510eb7d8eacbd9a91f"
+    },
+    "T7": {
+      "result": "fail",
+      "root_result": "fail",
+      "original_sha256": "c3b9b7c25b44ddc25fafa6bdd8462e1f19b5ea4f1bff122e2e19a3624cf19c5d"
+    },
+    "T8": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "b5c3d2113d81b08d986ce684735d79e9bd3262ac9d50896bee6f0c7663e471a3"
+    },
+    "T2": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "a8b14f0c70258658b56c7518f31149ce50c87262d67aec50ce9584a5f169c2bc"
+    }
+  },
+  "stability_verified": true,
+  "stability_question": "T1",
+  "neighbors_verified": true,
+  "neighbor_limitations": [
+    "仅当前同题C84/C59近邻比较，不代表其完整矩阵或全部场景；未测试C97/C74。",
+    "C98强识别特征集中于画面几何秩序，紧裁人物可能削弱风格识别；使用时保留相应构图空间。",
+    "DS关于图2省略鼻梁、图3毛衣排线的说明偏概括；Root依据实际负形切口、颗粒肌理与形体比例裁定，保留DS原文。"
+  ],
+  "generation_prompt_preserved": true,
+  "reference_bytes_and_roles_preserved": true,
+  "anchor_packaged_same_bytes": true,
+  "registered_sample_count": 1,
+  "full_scene_coverage_complete": false,
+  "native_text_supported": false,
+  "backend_model": null
+}

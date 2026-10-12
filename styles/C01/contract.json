@@ -130,6 +130,15 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "水彩色块与笔触边缘像透明颜料一样柔和过渡，动作慢入慢出、幅度轻；暖光可缓缓掠过画面，收束后回到静止的完整一帧。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "light_sweep"
+    ],
+    "safety": "文字、人脸与产品只做平移或等比缩放，不融化、不非等比挤压；光扫避让受保护节点，不遮挡主体信息。"
+  },
   "samples": [
     {
       "topic": "人物",

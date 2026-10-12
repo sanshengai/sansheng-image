@@ -37,7 +37,16 @@
     {
       "code": "C01",
       "zh": "暖光手绘动画",
-      "family": "温暖手绘·绘本动画",
+      "family": "绘本动画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -66,7 +75,15 @@
     {
       "code": "C02",
       "zh": "情绪淡彩速写",
-      "family": "温暖手绘·绘本动画",
+      "family": "细线速写",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -91,7 +108,15 @@
     {
       "code": "C04",
       "zh": "北欧绘本水粉",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "北欧"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -117,7 +142,15 @@
     {
       "code": "C06",
       "zh": "松散墨线淡彩绘本",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -141,7 +174,15 @@
     {
       "code": "C07",
       "zh": "透明水彩人物",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -165,7 +206,15 @@
     {
       "code": "C08",
       "zh": "空灵留白诗意绘本",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -192,7 +241,15 @@
     {
       "code": "C11",
       "zh": "温暖清线漫画",
-      "family": "温暖手绘·绘本动画",
+      "family": "漫画卡通",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -215,7 +272,15 @@
     {
       "code": "C12",
       "zh": "细线都市小人",
-      "family": "细线与生活",
+      "family": "细线速写",
+      "legacyFamily": "细线与生活",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -238,7 +303,15 @@
     {
       "code": "C14",
       "zh": "北欧细线奇趣",
-      "family": "细线与生活",
+      "family": "细线速写",
+      "legacyFamily": "细线与生活",
+      "region": [
+        "北欧"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -262,7 +335,16 @@
     {
       "code": "C16",
       "zh": "平成少女手帐",
-      "family": "细线与生活",
+      "family": "细线速写",
+      "legacyFamily": "细线与生活",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -283,7 +365,18 @@
     {
       "code": "C17",
       "zh": "新国潮工笔扁平",
-      "family": "中国风",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [
+        "跨朝代"
+      ],
       "fit": [
         "封面",
         "讲故事"
@@ -307,7 +400,17 @@
     {
       "code": "C18",
       "zh": "宋画淡彩现代化",
-      "family": "中国风",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [
+        "宋"
+      ],
       "fit": [
         "封面",
         "讲故事"
@@ -332,7 +435,17 @@
     {
       "code": "C19",
       "zh": "新中式水墨小人",
-      "family": "中国风",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "fit": [
         "封面",
         "讲故事"
@@ -357,7 +470,17 @@
     {
       "code": "C20",
       "zh": "海派月份牌",
-      "family": "中国风",
+      "family": "复古印刷",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "fit": [
         "封面"
       ],
@@ -382,7 +505,17 @@
     {
       "code": "C21",
       "zh": "八九十年代课本插图",
-      "family": "中国风",
+      "family": "手绘媒材",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "fit": [
         "讲故事",
         "讲道理"
@@ -408,7 +541,11 @@
     {
       "code": "C22",
       "zh": "老式木偶定格",
-      "family": "中国风",
+      "family": "立体材质",
+      "legacyFamily": "中国风",
+      "region": [],
+      "era": [],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -434,6 +571,15 @@
       "code": "C24",
       "zh": "黏土定格",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "讲道理"
@@ -459,6 +605,14 @@
       "code": "C25",
       "zh": "毛绒玩具 3D",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -485,6 +639,15 @@
       "code": "C27",
       "zh": "纸雕层叠",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "北欧"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲故事"
@@ -508,7 +671,15 @@
     {
       "code": "C28",
       "zh": "儿童蜡笔稚拙",
-      "family": "儿童与教育",
+      "family": "手绘媒材",
+      "legacyFamily": "儿童与教育",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -529,7 +700,15 @@
     {
       "code": "C29",
       "zh": "粉笔黑板",
-      "family": "儿童与教育",
+      "family": "版式图解",
+      "legacyFamily": "儿童与教育",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -553,7 +732,15 @@
     {
       "code": "C30",
       "zh": "彩铅绘本",
-      "family": "儿童与教育",
+      "family": "手绘媒材",
+      "legacyFamily": "儿童与教育",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "讲道理"
@@ -576,7 +763,15 @@
     {
       "code": "C31",
       "zh": "手绘视觉笔记",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -599,7 +794,15 @@
     {
       "code": "C32",
       "zh": "技术简报（旧纸双语）",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -620,7 +823,15 @@
     {
       "code": "C34",
       "zh": "杂志编辑信息图",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -643,7 +854,15 @@
     {
       "code": "C35",
       "zh": "Notion 知识线稿",
-      "family": "讲道理·知识图解",
+      "family": "细线速写",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -668,7 +887,15 @@
     {
       "code": "C36",
       "zh": "极简火柴人讲解",
-      "family": "讲道理·知识图解",
+      "family": "漫画卡通",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -691,7 +918,15 @@
     {
       "code": "C39",
       "zh": "工程蓝图",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -714,7 +949,15 @@
     {
       "code": "C40",
       "zh": "等距插画",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -737,7 +980,15 @@
     {
       "code": "C41",
       "zh": "复古矢量描边",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -762,7 +1013,15 @@
     {
       "code": "C42",
       "zh": "清透扁平",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -790,7 +1049,15 @@
     {
       "code": "C46",
       "zh": "复古旧纸",
-      "family": "封面与海报",
+      "family": "复古印刷",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理"
@@ -810,7 +1077,16 @@
     {
       "code": "C48",
       "zh": "日式黑白漫画",
-      "family": "漫画与分镜",
+      "family": "漫画卡通",
+      "legacyFamily": "漫画与分镜",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -831,7 +1107,16 @@
     {
       "code": "C49",
       "zh": "条漫厚涂",
-      "family": "漫画与分镜",
+      "family": "漫画卡通",
+      "legacyFamily": "漫画与分镜",
+      "region": [
+        "中国",
+        "韩国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -854,7 +1139,15 @@
     {
       "code": "C51",
       "zh": "Q 版可爱",
-      "family": "漫画与分镜",
+      "family": "漫画卡通",
+      "legacyFamily": "漫画与分镜",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -879,7 +1172,17 @@
     {
       "code": "C52",
       "zh": "怪诞古典漫画肖像",
-      "family": "个性趣味",
+      "family": "漫画卡通",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "封面"
       ],
@@ -901,7 +1204,15 @@
     {
       "code": "C53",
       "zh": "中世纪暗黑墨线",
-      "family": "个性趣味",
+      "family": "复古印刷",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "19世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲故事"
@@ -925,7 +1236,15 @@
     {
       "code": "C54",
       "zh": "复古像素",
-      "family": "个性趣味",
+      "family": "扁平几何",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理"
@@ -948,7 +1267,15 @@
     {
       "code": "C55",
       "zh": "故意画烂涂鸦",
-      "family": "个性趣味",
+      "family": "漫画卡通",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -970,7 +1297,15 @@
     {
       "code": "C56",
       "zh": "光影写实动画",
-      "family": "日式动画",
+      "family": "绘本动画",
+      "legacyFamily": "日式动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -995,7 +1330,15 @@
     {
       "code": "C57",
       "zh": "九十年代赛璐璐动画",
-      "family": "日式动画",
+      "family": "绘本动画",
+      "legacyFamily": "日式动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "封面"
@@ -1022,7 +1365,15 @@
     {
       "code": "C58",
       "zh": "日系清新校园动画",
-      "family": "日式动画",
+      "family": "绘本动画",
+      "legacyFamily": "日式动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事"
       ],
@@ -1048,7 +1399,15 @@
     {
       "code": "C59",
       "zh": "中世纪摩登几何童话",
-      "family": "绘本·封面",
+      "family": "扁平几何",
+      "legacyFamily": "绘本·封面",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理",
@@ -1073,7 +1432,15 @@
     {
       "code": "C60",
       "zh": "自然主义水彩动物绘本",
-      "family": "绘本·教材插图",
+      "family": "手绘媒材",
+      "legacyFamily": "绘本·教材插图",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "讲故事"
@@ -1097,7 +1464,15 @@
     {
       "code": "C61",
       "zh": "梦幻超现实绘本",
-      "family": "绘本·封面",
+      "family": "手绘媒材",
+      "legacyFamily": "绘本·封面",
+      "region": [
+        "大洋洲"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "讲故事"
@@ -1121,7 +1496,15 @@
     {
       "code": "C62",
       "zh": "低饱和冷面绘本",
-      "family": "绘本",
+      "family": "绘本动画",
+      "legacyFamily": "绘本",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "讲故事"
@@ -1145,7 +1528,16 @@
     {
       "code": "C63",
       "zh": "凯尔特手绘动画",
-      "family": "动画·分镜",
+      "family": "绘本动画",
+      "legacyFamily": "动画·分镜",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲故事"
@@ -1168,7 +1560,17 @@
     {
       "code": "C64",
       "zh": "空灵中国水墨幻想动画",
-      "family": "动画·分镜",
+      "family": "国风传统",
+      "legacyFamily": "动画·分镜",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "fit": [
         "封面",
         "讲道理",
@@ -1193,7 +1595,17 @@
     {
       "code": "C65",
       "zh": "文人漫画毛笔写意",
-      "family": "文章插图·封面",
+      "family": "国风传统",
+      "legacyFamily": "文章插图·封面",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "fit": [
         "封面",
         "讲道理",
@@ -1219,7 +1631,15 @@
     {
       "code": "C66",
       "zh": "安静日系低饱和社论",
-      "family": "封面·文章插图",
+      "family": "扁平几何",
+      "legacyFamily": "封面·文章插图",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理",
@@ -1249,7 +1669,15 @@
     {
       "code": "C67",
       "zh": "圆润古典漫画角色",
-      "family": "漫画",
+      "family": "漫画卡通",
+      "legacyFamily": "漫画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲故事",
         "讲道理"
@@ -1271,7 +1699,17 @@
     {
       "code": "C68",
       "zh": "中式复古连环画",
-      "family": "漫画·教材",
+      "family": "复古印刷",
+      "legacyFamily": "漫画·教材",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "fit": [
         "讲道理",
         "讲故事"
@@ -1293,7 +1731,15 @@
     {
       "code": "C69",
       "zh": "圆滚针织黏土玩偶",
-      "family": "立体材质·马卡龙",
+      "family": "立体材质",
+      "legacyFamily": "立体材质·马卡龙",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理",
@@ -1321,6 +1767,14 @@
       "code": "C70",
       "zh": "毛毡针织定格人偶",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲故事"
@@ -1344,7 +1798,15 @@
     {
       "code": "C71",
       "zh": "极致几何自然",
-      "family": "信息图·教材插图",
+      "family": "扁平几何",
+      "legacyFamily": "信息图·教材插图",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理"
@@ -1367,7 +1829,15 @@
     {
       "code": "C72",
       "zh": "俯拍物品陈列 Knolling",
-      "family": "信息图",
+      "family": "摄影写实",
+      "legacyFamily": "信息图",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "封面",
         "讲道理"
@@ -1390,7 +1860,15 @@
     {
       "code": "C73",
       "zh": "手绘教育·马卡龙色块",
-      "family": "小红书·知识卡",
+      "family": "版式图解",
+      "legacyFamily": "小红书·知识卡",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -1411,7 +1889,15 @@
     {
       "code": "C74",
       "zh": "丝网印海报",
-      "family": "封面与海报",
+      "family": "复古印刷",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1436,7 +1922,15 @@
     {
       "code": "C75",
       "zh": "暖纸克制双色",
-      "family": "封面与海报",
+      "family": "复古印刷",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1459,7 +1953,16 @@
     {
       "code": "C76",
       "zh": "杂志编辑封面",
-      "family": "封面与海报",
+      "family": "版式图解",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1482,7 +1985,15 @@
     {
       "code": "C77",
       "zh": "叁笙深空",
-      "family": "封面与海报",
+      "family": "版式图解",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1502,7 +2013,15 @@
     {
       "code": "C79",
       "zh": "弥散渐变颗粒",
-      "family": "封面与海报",
+      "family": "数码光影",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1524,7 +2043,15 @@
     {
       "code": "C80",
       "zh": "单物件静物棚拍",
-      "family": "封面与海报",
+      "family": "摄影写实",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1546,7 +2073,15 @@
     {
       "code": "C81",
       "zh": "撕纸拼贴",
-      "family": "封面与海报",
+      "family": "复古印刷",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1570,6 +2105,14 @@
       "code": "C82",
       "zh": "软质 3D 轻拟物",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1593,7 +2136,15 @@
     {
       "code": "C83",
       "zh": "大字报排印",
-      "family": "封面与海报",
+      "family": "版式图解",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1613,7 +2164,15 @@
     {
       "code": "C84",
       "zh": "电影海报几何剪影",
-      "family": "封面与海报",
+      "family": "扁平几何",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1636,7 +2195,16 @@
     {
       "code": "C85",
       "zh": "赛博霓虹",
-      "family": "个性趣味",
+      "family": "数码光影",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1661,7 +2229,17 @@
     {
       "code": "C86",
       "zh": "孟菲斯企业插画",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1685,6 +2263,14 @@
       "code": "C87",
       "zh": "折纸",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1707,6 +2293,14 @@
       "code": "C88",
       "zh": "积木拼搭",
       "family": "立体材质",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1728,7 +2322,15 @@
     {
       "code": "C89",
       "zh": "地铁线路图",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理"
       ],
@@ -1750,7 +2352,15 @@
     {
       "code": "C90",
       "zh": "深色系列封面",
-      "family": "封面与海报",
+      "family": "版式图解",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "fit": [
         "讲道理",
         "封面"
@@ -1768,6 +2378,292 @@
         "个性潮流"
       ],
       "craft": "海报版式"
+    },
+    {
+      "code": "C95",
+      "zh": "汉画像石拓片",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [
+        "汉"
+      ],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "绘本",
+        "文章插图",
+        "教材"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-10",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "拓印",
+      "recolor": "locked"
+    },
+    {
+      "code": "C96",
+      "zh": "童话钢笔水彩民俗边框",
+      "family": "手绘媒材",
+      "legacyFamily": "绘本·封面",
+      "region": [
+        "俄罗斯"
+      ],
+      "era": [
+        "19世纪",
+        "20世纪"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "教材",
+        "文章插图"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-10",
+      "status": "admitted",
+      "tone": [
+        "温暖治愈"
+      ],
+      "craft": "手绘插画",
+      "recolor": "free"
+    },
+    {
+      "code": "C98",
+      "zh": "装饰艺术几何",
+      "family": "扁平几何",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "教材"
+      ],
+      "names": [],
+      "origin": "original Art Deco technique recipe; current evidence verified 2026-10-10",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "几何装饰",
+      "recolor": "free"
+    },
+    {
+      "code": "C93",
+      "zh": "年画木版敷彩",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "绘本",
+        "文章插图",
+        "信息图",
+        "封面"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "木版敷彩",
+      "recolor": "free"
+    },
+    {
+      "code": "C91",
+      "zh": "浮世绘木版多色印",
+      "family": "复古印刷",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "绘本",
+        "文章插图",
+        "信息图",
+        "封面"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "多版套色木版印",
+      "recolor": "free"
+    },
+    {
+      "code": "C92",
+      "zh": "敦煌矿物彩壁画",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "绘本",
+        "文章插图",
+        "信息图",
+        "封面"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "矿物彩壁画",
+      "recolor": "free"
+    },
+    {
+      "code": "C94",
+      "zh": "青花蓝白装饰",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "绘本",
+        "文章插图",
+        "信息图",
+        "封面"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "青花绘饰",
+      "recolor": "locked"
+    },
+    {
+      "code": "C97",
+      "zh": "新艺术植物曲线",
+      "family": "复古印刷",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "19世纪",
+        "20世纪"
+      ],
+      "dynasty": [],
+      "fit": [
+        "讲故事"
+      ],
+      "uses": [
+        "绘本",
+        "文章插图",
+        "信息图",
+        "封面"
+      ],
+      "names": [],
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "有机曲线装饰",
+      "recolor": "free"
     }
-  ]
+  ],
+  "taxonomy": {
+    "version": 1,
+    "family": [
+      "手绘媒材",
+      "绘本动画",
+      "细线速写",
+      "国风传统",
+      "立体材质",
+      "扁平几何",
+      "漫画卡通",
+      "复古印刷",
+      "摄影写实",
+      "版式图解",
+      "数码光影"
+    ],
+    "region": [
+      "中国",
+      "日本",
+      "俄罗斯",
+      "北欧",
+      "欧洲",
+      "北美",
+      "韩国",
+      "大洋洲",
+      "跨地域"
+    ],
+    "era": [
+      "传统语汇",
+      "19世纪",
+      "20世纪",
+      "当代",
+      "未限定"
+    ],
+    "dynasty": [
+      "汉",
+      "唐",
+      "宋",
+      "元",
+      "明",
+      "清",
+      "近现代",
+      "跨朝代"
+    ],
+    "pending": [
+      "C22"
+    ]
+  }
 }

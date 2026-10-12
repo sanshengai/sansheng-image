@@ -1,4 +1,4 @@
-"""配图计划的独立复核：Claude CLI 或 Ark Agent Plan 只读原文与计划，逐张判断是否合理。
+"""配图计划的独立复核：默认 Coding Plan deepseek-v4.1-flash 只读原文与计划，逐张判断是否合理。
 
 判断口径（与 references/planning.md 一致）：这里值不值得配图；信息形状判得对不对；表达形式与结构合不合适；
 依据句站不站得住；图中文字是否忠于原文、能否让读者理解或行动；
@@ -177,7 +177,21 @@ def _review_ark(plan: dict, article: Path, model: str | None, timeout: int) -> d
 
 def review(plan: dict, article: Path, model: str | None = None, timeout: int = 600) -> dict:
     article = Path(article).resolve()
-    backend = os.environ.get("SANSHENG_IMAGE_PLAN_REVIEW_BACKEND") or os.environ.get("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
+    backend = os.environ.get("SANSHENG_IMAGE_PLAN_REVIEW_BACKEND") or os.environ.get("SANSHENG_IMAGE_QA_BACKEND", "ark_coding_plan")
+    if backend == "ark_coding_plan":
+        from .coding_plan import request
+        text = prompt(plan, article).replace("先用 Read 工具完整读原文，再逐张判断。", "根据下附完整原文逐张判断。")
+        text += "\n\n## 完整原文\n" + article.read_text(encoding="utf-8")
+        answer, response = request([{"type": "text", "text": text}], model=model,
+                                   timeout=timeout, budget=_output_budget(plan))
+        data = _extract(answer)
+        if not _complete(data, plan):
+            raise RuntimeError("Coding Plan 配图计划复核缺少完整结论；不自动重试")
+        for item in data["items"]:
+            item["reasonable"] = _item_passes(item)
+        data["_reviewer"] = f"ark_coding_plan:{response['model']}"
+        data["_response_metadata"] = response
+        return data
     if backend == "ark_agent_plan":
         return _review_ark(plan, article, model, timeout)
     if backend != "claude_cli":

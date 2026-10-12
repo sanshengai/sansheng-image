@@ -24,16 +24,40 @@ def _norm(s: str) -> str:
 def compare_text(expected: list[str], transcribed: list[str], *, strict: bool = False) -> list[str]:
     """逐字比对：每条应有文字出现一次；剩余字符均为额外文字。"""
     if strict:
-        remaining = [t.strip() for t in transcribed if t.strip()]
+        # OCR按可见行转录，overlay按文字块保存；换行不是漏字。
+        # 只归一化换行，内部空格、标点、数值、大小写和重复次数仍严格比对。
+        block = lambda s: s.strip().replace("\r\n", "\n").replace("\n", "")
+        remaining = [block(t) for t in transcribed if t.strip()]
+        positions = [i for i, t in enumerate(transcribed) if t.strip()]
         problems = []
         for e in expected:
-            want = e.strip()
+            want = block(e)
             if not want:
                 continue
             if want in remaining:
-                remaining.remove(want)
+                match = remaining.index(want)
+                del remaining[match]
+                del positions[match]
             else:
-                problems.append(f"缺字或错字：应为「{e}」")
+                found = False
+                # 仅合并相邻转录行，逐字且保序；不能从散落字词拼凑正确原文。
+                for start in range(len(remaining)):
+                    joined = ""
+                    for end in range(start, len(remaining)):
+                        if end > start and positions[end] != positions[end - 1] + 1:
+                            break
+                        joined += remaining[end]
+                        if joined == want:
+                            del remaining[start:end + 1]
+                            del positions[start:end + 1]
+                            found = True
+                            break
+                        if not want.startswith(joined):
+                            break
+                    if found:
+                        break
+                if not found:
+                    problems.append(f"缺字或错字：应为「{e}」")
         if remaining:
             problems.append(f"多写了文字：「{' / '.join(remaining)}」")
         return problems
@@ -64,6 +88,7 @@ class Verdict:
     pixel: dict = field(default_factory=dict)
     review: dict = field(default_factory=dict)
     binding: dict = field(default_factory=dict)
+    triage: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return self.__dict__
@@ -154,7 +179,22 @@ def missing_items(review: dict | None, contract: dict, text_mode: str) -> list[s
         return (len(matches) == 1 and type(matches[0].get(verdict_key)) is bool
                 and isinstance(matches[0].get("why"), str) and bool(matches[0]["why"].strip()))
 
-    missing = [x for x in must_items if not valid_answer("must_see", x, "ok")]
+    missing = []
+    for key, prefix, clauses in zip(("must_see", "must_not_see"), ("M", "B"),
+                                    (must_items, ban_items)):
+        lookup = {f"{prefix}{i}": label for i, label in enumerate(clauses, 1)}
+        seen = set()
+        rows = review.get(key)
+        for row in rows if isinstance(rows, list) else []:
+            if not isinstance(row, dict) or "id" not in row:
+                continue
+            ident = row["id"]
+            label = lookup.get(ident) if isinstance(ident, str) else None
+            if label is None or ident in seen or row.get("item") != label:
+                missing.append(f"{key}：未知、重复或冲突的条款标识 {ident!r}")
+            if isinstance(ident, str):
+                seen.add(ident)
+    missing += [x for x in must_items if not valid_answer("must_see", x, "ok")]
     missing += [x for x in ban_items if not valid_answer("must_not_see", x, "present")]
     transcribed = review.get("transcribed_text")
     if not isinstance(transcribed, list) or any(not isinstance(t, str) for t in transcribed):
@@ -177,7 +217,29 @@ def missing_items(review: dict | None, contract: dict, text_mode: str) -> list[s
         square = review.get("square_crop")
         if not isinstance(square, dict) or not isinstance(square.get("ok"), bool) or not str(square.get("why", "")).strip():
             missing.append("square_crop：实际居中方形裁切")
+    for entry in _observations(review):
+        if entry.get("observation", "confirmed") not in ("confirmed", "unverified"):
+            missing.append("observation：只能为 confirmed 或 unverified")
+    if "suggestions" in review and (not isinstance(review["suggestions"], list)
+                                   or any(not isinstance(s, str) for s in review["suggestions"])):
+        missing.append("suggestions：优化建议须为文字列表")
+    if "edit_goals" in review and (not isinstance(review["edit_goals"], list) or any(
+            not isinstance(e, dict) or not isinstance(e.get("goal"), str) or not e["goal"].strip()
+            or type(e.get("completed")) is not bool or not isinstance(e.get("why"), str)
+            or not e["why"].strip() for e in review["edit_goals"])):
+        missing.append("edit_goals：编辑目标须有目标原文、布尔完成状态和依据")
     return missing
+
+
+def _observations(review: dict):
+    """Only recognised contract/content answers carry verification state."""
+    for key in ("must_see", "must_not_see", "point_match", "panel_match"):
+        for entry in review.get(key, []) if isinstance(review.get(key), list) else []:
+            if isinstance(entry, dict):
+                yield entry
+    for key in ("content_match", "thumbnail_readable", "square_crop"):
+        if isinstance(review.get(key), dict):
+            yield review[key]
 
 
 def overlay_layout_problems(image: Path, contract: dict, manifest: dict | None) -> list[str]:
@@ -226,6 +288,7 @@ def overlay_layout_problems(image: Path, contract: dict, manifest: dict | None) 
 def judge(image: Path, contract: dict, review: dict | None, expected_text: list[str] | None = None,
           text_mode: str = "none", fmt: str | None = None, manifest: dict | None = None) -> Verdict:
     problems: list[str] = []
+    process_errors, pending_evidence = [], []
     problems.extend(overlay_layout_problems(image, contract, manifest))
     px = measure(image)
     if fmt == "sticker-single":
@@ -269,10 +332,18 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
         problems.extend("实际居中方形：" + p for p in margin_check["problems"])
     if not isinstance(review, dict):
         problems.append("缺少看图核对结论")
+        process_errors.append(problems[-1])
     else:
         gaps = missing_items(review, contract, text_mode)
         if gaps:
             problems.append("看图结论缺项或格式无效：" + "、".join(gaps))
+            process_errors.append(problems[-1])
+        for entry in _observations(review):
+            if entry.get("observation") == "unverified":
+                label = entry.get("item", entry.get("index", entry.get("panel", "内容/裁切核对")))
+                pending_evidence.append(f"{label}：{entry.get('why', '')}")
+        if pending_evidence:
+            problems.append("尚未确认，先补原尺寸或局部证据：" + "；".join(pending_evidence))
         must = {c["item"]: c for c in (review.get("must_see") or [])
                 if isinstance(c, dict) and isinstance(c.get("item"), str)}
         na: list[str] = []
@@ -336,29 +407,65 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
             problems += compare_text(expected_text or [], transcribed, strict=text_mode in ("overlay", "hybrid"))
         elif text_mode == "none" and any(len(_norm(t)) >= 2 for t in transcribed):
             problems.append(f"本图不该有字，却出现了：{transcribed}")
-    return Verdict(str(image), not problems, problems, px, review or {})
+    # passed remains strict. This routes a failed check to diagnosis/evidence,
+    # never to automatic regeneration. Advice/edit completion cannot waive a gate.
+    review_data = review if isinstance(review, dict) else {}
+    triage = {
+        "next_action": ("accept" if not problems else "complete_review" if process_errors
+                        else "collect_evidence" if pending_evidence else "diagnose_before_repair"),
+        "pending_evidence": pending_evidence,
+        "process_errors": process_errors,
+        "suggestions": review_data.get("suggestions", []),
+        "edit_goals": review_data.get("edit_goals", []),
+        "automatic_regeneration": False,
+    }
+    return Verdict(str(image), not problems, problems, px, review_data, triage=triage)
 
 
-def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: str) -> str:
+def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: str,
+                  *, clause_ids: bool = False) -> str:
     must_items, ban_items = active_items(contract, text_mode)
     lines = [
         "你是一名严格的出图验收员。只转述你在图里实际看到的东西，不猜、不补、不美化。",
+        "只用原题和正式画风合同验收；修图时临时提出的比例、坐标和抛光目标不自动成为成品硬要求。",
+        "同一次检查收齐内容、画风、文字、系列和裁切问题。逐项区分已确认与看不清："
+        "能证实的结论写 observation=confirmed；看不清或证据不足写 observation=unverified，"
+        "why写明需要哪处原尺寸证据。未确认项不能当成已证实缺陷，也不能当成已通过。",
+        "优化意见只放 suggestions，不因建议更漂亮而把合规项写成失败；接近上限但未超限不等于超限。",
+        "必须看到的正向特征要说明实际出现的形态和位置；只说某物没有喧宾夺主、没有违规或没有缺陷，"
+        "不能证明要求的特征存在。复合条款的各部分须分别核对；‘可行时’只限定它修饰的要求，"
+        "不能据此豁免其他要求，也不能把条件要求变成所有场景必需或禁止的元素。",
         "计数时按独立身份判断：同一主体的正面、侧面、背面、表情或局部辅助视图不另算一个人；"
         "不同身份的额外人物仍算第二人。无法确认是否同一身份时明确说看不清，不要猜。",
+        "流程节点按独立图形停靠点和箭头连接关系计数，不只数文字标签。无标签的图形若有独立围框、"
+        "位于流程链中且被箭头接入，也可能构成额外节点；先描述实际连接关系，再按原题判断。",
         "题目描述人物自身的左／右侧时，以人物自身为准；正面朝向观者的人物左侧在其脸部中线的观者右边。"
         "判断发夹等局部位置要相对人物的鼻子／头部中心，不能拿整张画布的中线判断。"
         "侧面或背面难以判断时明确说无法核实，不要凭画面左右替代。",
         "",
         "## 必须看到（逐条判断 ok=true/false，并用一句话写出你看到的依据；某条在本图确实不适用时——例如图里只有一个标题，谈不上标题与小节的层级——写 applicable=false 并说明，不要滥用）",
-        *[f"- {x}" for x in must_items],
+        *[f"- [M{i}] {x}" if clause_ids else f"- {x}" for i, x in enumerate(must_items, 1)],
         "",
         "## 不许看到（逐条判断 present=true/false，并写依据）",
-        *[f"- {x}" for x in ban_items],
+        *[f"- [B{i}] {x}" if clause_ids else f"- {x}" for i, x in enumerate(ban_items, 1)],
         "",
         "## 图里的文字",
-        "把图里所有能看到的文字**逐字抄录**到 transcribed_text，一行一条；看不清的字用 □ 代替，"
+        ("把图里所有能看到的文字**逐字抄录**到 transcribed_text，独立文字块一条，块内可见换行用\\n保留；"
+         if text_mode in ("overlay", "hybrid") else
+         "把图里所有能看到的文字**逐字抄录**到 transcribed_text，一行一条；") + "看不清的字用 □ 代替，"
         "不要猜测、不要改成通顺的句子。没有文字就给空数组。",
     ]
+    recipe = contract.get("recipe")
+    if isinstance(recipe, dict) and recipe:
+        lines += ["", "## 完整画法配方（验收上下文，不以只满足题材代替画法）",
+                  json.dumps(recipe, ensure_ascii=False),
+                  "上述逐条条目应结合这份配方判断；不添加合同之外的限制。",
+                  "如果配方明确限制物件只能来自 brief，这条明确限制优先于下面的一般布景豁免；"
+                  "没有此类明确限制时，仍按一般内容事实口径判断。"]
+    isolation = (contract.get("anchor") or {}).get("isolation")
+    if isinstance(isolation, str) and isolation.strip():
+        lines += ["", "## 参考图职责与隔离约束", isolation,
+                  "只根据实际提供的图片判断；未提供参考图时，不猜测其内容或来源。"]
     if text_mode in ("native", "overlay", "hybrid") and expected_text:
         lines.append("（本图应有的文字由脚本另行比对，你只需如实抄录。）")
     if any("ghost line behind the headline" in item and "no larger than the headline" in item
@@ -372,6 +479,9 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
     if expectation:
         lines += ["", "## 内容事实核对", f"计划要求：{expectation}",
                   "只根据图像判断主体、动作、数量、远近与左右关系是否符合计划；画风合格不能抵消情节或空间关系错误。",
+                  "先列出实际可辨认的独立主体、道具和背景物件，再核对题面。原题或配方明确用Only、只能、限定等"
+                  "限定物件来源或种类时，限定优先；额外的独立背景实物也须核对，不能仅因未改变主动作而豁免。"
+                  "物件自身部件和表面/边框的装饰纹样不另算独立实物。没有此类明确限定时，"
                   "同一主体的正侧背面、局部细节等辅助技术视图，以及不改变情节的布景和道具，不算内容偏题；"
                   "技术分栏按上面的画风条目另行判断。只有额外元素与计划中的主体、动作、数量或空间关系冲突时才据此判内容不符。",
                   "给 content_match={ok: bool, why: str}。看不清关键关系时 ok=false，并说出无法核实的部分。"]
@@ -389,6 +499,11 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
                   "只根据实际画面判断要求的地点、动作、物件和先后关系；无字画面不必证明精确地名或液体成分，"
                   "但可见的地域、时代与动作线索须与要求相容，明显相反的线索须拒绝。"
                   "不能拿同组的后续路线图替某一格补画缺失或相反的内容。",
+                  "连续性按题面要求的身份、物件、数量和关系判断，不自行要求相邻时点的道具锁死画面坐标。"
+                  "同一物件在不同格分别出现，是跨格复用；计数先看每一格内的独立物件，不能把跨格复用累加成额外物件。"
+                  "原题若明确要求位置不变、特定左右/远近关系、固定数量或不移动，仍须逐格核对，不能以镜头变化豁免。"
+                  "一个时点只需画要求的可见动作；原题明确的已完成动作可用其可见结果状态表达，不能额外强求互斥动作同时出现。"
+                  "状态缺失、与原题相反、单格额外物件或身份不一致仍不通过；判断倾斜、湿土等状态须实际观察，不擅自要求更夸张的程度。",
                   *[f"第 {i} 格：{item}" for i, item in enumerate(panels, 1)],
                   "给 panel_match 数组，每格一条 {panel:序号, ok:bool, why:实际观察}；看不清或缺失时 ok=false。"]
     thumb = contract.get("_thumbnail_expectation")
@@ -402,13 +517,25 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
                   "必须实际读取方形图，逐一核对标题、主体、题目要求的每个图形标记和承载信息的次要元素。",
                   "检查文字和物件是否完整、是否被边缘切断，以及关键元素与边缘是否有可见余量；不能凭横版大图推断。",
                   "给 square_crop={ok: bool, why: str}。任何关键内容被截断或贴边看不完整时 ok=false，并点名具体元素。"]
-    lines += ["", "只输出 JSON：{\"must_see\":[{\"item\":原文,\"ok\":bool,\"applicable\":bool,\"why\":str}],"
-              "\"must_not_see\":[{\"item\":原文,\"present\":bool,\"why\":str}],\"transcribed_text\":[str],"
+    edits = contract.get("_edit_goals")
+    if edits:
+        lines += ["", "## 本轮局部编辑目标（与原题成品验收分开）",
+                  json.dumps(edits, ensure_ascii=False),
+                  "给edit_goals数组，每项{goal:目标原文, completed:bool, why:实际观察}。"
+                  "编辑目标未完成本身不等于原题或画风失败；真正违规仍在对应硬条目中如实报告。"]
+    answer_key = "\"id\":原样标识" if clause_ids else "\"item\":原文"
+    if clause_ids:
+        lines += ["逐项回答用条目方括号内的固定id，例如M1/B1，不改写标识；"
+                  "不用复述item长文本。每个标识恰好回答一次，必须按它对应的完整条款判断，不能省略条款内容。"]
+    lines += ["", "只输出 JSON：{\"must_see\":[{" + answer_key + ",\"ok\":bool,\"applicable\":bool,\"why\":str}],"
+              "\"must_not_see\":[{" + answer_key + ",\"present\":bool,\"why\":str}],\"transcribed_text\":[str],"
               + ("\"content_match\":{\"ok\":bool,\"why\":str}," if expectation else "")
               + ("\"point_match\":[{\"index\":int,\"ok\":bool,\"why\":str}]," if points else "")
               + ("\"panel_match\":[{\"panel\":int,\"ok\":bool,\"why\":str}]," if panels else "")
               + ("\"thumbnail_readable\":{\"ok\":bool,\"why\":str}," if thumb else "")
-              + ("\"square_crop\":{\"ok\":bool,\"why\":str}," if square else "") + "\"notes\":str}"]
+              + ("\"square_crop\":{\"ok\":bool,\"why\":str}," if square else "")
+              + "\"suggestions\":[str],\"edit_goals\":[{\"goal\":str,\"completed\":bool,\"why\":str}],\"notes\":str}"]
+    lines.append("逐项对象可增加 observation（confirmed/unverified），上述JSON中的既有布尔字段仍须完整填写。")
     return "\n".join(lines)
 
 
@@ -446,6 +573,17 @@ def review_schema(contract: dict) -> dict:
         schema["required"].append("square_crop")
         schema["properties"]["square_crop"] = {"type": "object", "required": ["ok", "why"],
                                                "properties": {"ok": {"type": "boolean"}, "why": {"type": "string"}}}
+    observation = {"type": "string", "enum": ["confirmed", "unverified"]}
+    for key in ("must_see", "must_not_see", "point_match", "panel_match"):
+        if key in schema["properties"]:
+            schema["properties"][key]["items"]["properties"]["observation"] = observation
+    for key in ("content_match", "thumbnail_readable", "square_crop"):
+        if key in schema["properties"]:
+            schema["properties"][key]["properties"]["observation"] = observation
+    schema["properties"]["suggestions"] = {"type": "array", "items": {"type": "string"}}
+    schema["properties"]["edit_goals"] = {"type": "array", "items": {
+        "type": "object", "required": ["goal", "completed", "why"], "properties": {
+            "goal": {"type": "string"}, "completed": {"type": "boolean"}, "why": {"type": "string"}}}}
     return schema
 
 

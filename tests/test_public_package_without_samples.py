@@ -45,12 +45,45 @@ def test_every_registered_sample_has_a_matching_ratio():
     assert bad == [], bad[:5]
 
 
+def _bare_ignore(root):
+    generic = shutil.ignore_patterns(".git", "__pycache__", "logs", "samples", ".pytest_cache")
+
+    def ignore(directory, names):
+        dropped = set(generic(directory, names))
+        if Path(directory) == root / "gallery" and "build" in names:
+            dropped.add("build")
+        return dropped
+
+    return ignore
+
+
+def test_bare_copy_excludes_existing_build_media(tmp_path):
+    root = tmp_path / "source"
+    (root / "gallery" / "build" / "motion").mkdir(parents=True)
+    (root / "gallery" / "build" / "motion" / "share.mp4").write_bytes(b"old-build")
+    (root / "gallery" / "motion.js").write_text("// source")
+    (root / "styles" / "C01" / "samples").mkdir(parents=True)
+    (root / "styles" / "C01" / "samples" / "s1.png").write_bytes(b"sample")
+    (root / "styles" / "C01" / "anchor.png").write_bytes(b"anchor")
+    bare = tmp_path / "bare"
+    shutil.copytree(root, bare, ignore=_bare_ignore(root))
+    assert not (bare / "gallery" / "build").exists()
+    assert not (bare / "styles" / "C01" / "samples").exists()
+    assert (bare / "gallery" / "motion.js").read_text() == "// source"
+    assert (bare / "styles" / "C01" / "anchor.png").read_bytes() == b"anchor"
+
+
 @pytest.fixture(scope="module")
 def full_and_bare(tmp_path_factory):
     full = tmp_path_factory.mktemp("full")
-    BD.picker(full)
+    # 完整构建提供真实品牌图片；公开包只登记名称，两边清单仍必须逐字节一致。
+    from PIL import Image
+    brand = tmp_path_factory.mktemp("brand")
+    for name in BD.BRAND_IMAGES:
+        Image.new("RGB", (64, 64), "#20402c").save(brand / name, format="WEBP")
+    BD.picker(full, brand_dir=brand)
     bare_root = tmp_path_factory.mktemp("bare") / "sb"
-    shutil.copytree(ROOT, bare_root, ignore=shutil.ignore_patterns(".git", "gallery/build", "__pycache__", "logs", "samples", ".pytest_cache"))
+    shutil.copytree(ROOT, bare_root, ignore=_bare_ignore(ROOT))
     assert not list(bare_root.glob("styles/C*/samples"))
     env = {"PATH": "/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin", "SANSHENG_IMAGE_PROFILE": str(bare_root / "none"), "PYTHONDONTWRITEBYTECODE": "1"}
     r = subprocess.run([sys.executable, "scripts/sb.py", "build", "--gallery"], cwd=bare_root, env=env, capture_output=True, text=True)
@@ -66,6 +99,51 @@ def test_bare_package_rebuilds_identical_page_and_image_manifest(full_and_bare):
     bare_names = {p.name for p in (bare / "img").glob("*.webp")}
     assert bare_names < full_names, "无样图包只应有锚点缩略图"
     assert set(json.loads((full / "img-manifest.json").read_text())["images"]) == full_names
+
+
+MOTION_SOURCES = ("gallery/motion.js", "gallery/motion.css", "gallery/motion-data.json")
+
+
+def _required_entries():
+    entries = [("100644", n) for n in ("SKILL.md", "README.md", "LICENSE", "requirements.txt",
+                                       "styles/anchor-provenance.json", "registry.json")]
+    cat = json.loads((ROOT / "styles/catalog.json").read_text(encoding="utf-8"))["styles"]
+    return entries + [("100644", f"styles/{s['code']}/contract.json") for s in cat]
+
+
+def test_export_whitelist_has_motion_sources_but_never_media():
+    media = ["gallery/motion/brand/poster.png", "gallery/motion/brand/share.mp4", "gallery/motion/x/share.mp4",
+             "motion/brand/poster.png", "gallery/motion-media/a.mp4"]
+    chosen = PE.select(_required_entries() + [("100644", n) for n in (*MOTION_SOURCES, *media)])
+    for name in MOTION_SOURCES:
+        assert name in chosen and name in PE.PUBLIC_FILES
+    assert not [n for n in chosen if n in media or n.endswith(".mp4")]
+    # 没有登记的动态源码不会被带走，登记的源码若不是普通文件则拒绝
+    assert "gallery/motion.js" not in PE.select(_required_entries())
+    with pytest.raises(PE.ExportError):
+        PE.select(_required_entries() + [("120000", "gallery/motion.js")])
+
+
+def test_motion_sources_pass_the_public_text_scan():
+    for name in MOTION_SOURCES:
+        PE.scan_text(name, (ROOT / name).read_bytes())
+    with pytest.raises(PE.ExportError):          # 反例：同一份扫描确实会拒绝带个人路径的源码
+        PE.scan_text("gallery/motion.js", b"var p = '" + b"/Us" + b"ers/someone/x';")
+
+
+def test_bare_package_rebuilds_identical_motion_resources(full_and_bare):
+    full, bare = full_and_bare
+    for name in ("motion.js", "motion.css", "motion-data.json", "motion-manifest.json", "index.html"):
+        assert (bare / name).read_bytes() == (full / name).read_bytes(), name
+    for name in ("motion.js", "motion.css", "motion-data.json"):
+        assert (bare / name).read_bytes() == (ROOT / "gallery" / name).read_bytes(), name
+    manifest = json.loads((bare / "motion-manifest.json").read_text(encoding="utf-8"))
+    assert len(manifest["sources"]) == 3 and len(manifest["media"]) == 24
+    assert all(m["path"].startswith("motion/") and m["path"].endswith(("/poster.png", "/share.mp4")) for m in manifest["media"])
+    assert not (bare / "motion").exists(), "无媒体包只登记清单，不造媒体"
+    assert not list(bare.rglob("*.mp4"))
+    html = (bare / "index.html").read_text(encoding="utf-8")
+    assert 'href="/tools/image/motion.css"' in html and 'src="/tools/image/motion.js"' in html
 
 
 def test_registered_sample_without_ratio_or_file_is_rejected(tmp_path, monkeypatch):

@@ -122,6 +122,14 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "动作幅度小而缓，元素在大片留白里淡入淡出、轻轻位移，动作之间留出长停顿，纸面始终安静。",
+    "primitives": [
+      "keyframes",
+      "easing"
+    ],
+    "safety": "动作限于主体周围既有留白内，不新增元素填满留白，不触碰或裁切边缘；主体轮廓、面部与文字不形变。"
+  },
   "samples": [
     {
       "topic": "人物",

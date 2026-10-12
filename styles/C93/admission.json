@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "style": "C93",
+  "scope": "style admission; matrix examples; full scenes and publication tracked separately",
+  "review_routes": [
+    "codex_builtin_native",
+    "ark_coding_plan/deepseek-v4.1-flash"
+  ],
+  "tested_contract_sha256": "4a32a135eb93386d03e6a498a0a5ad46184a50c258bae1bd3f7822dc24eb6584",
+  "current_contract_sha256": "6c409abb983698ba30f9cf43fd7e89845f1bab9ad570fd280d231be8f85cb974",
+  "evidence_state_sha256": "59040d4c541282d80a11c4a361d7bc53d7fc2234933d3a1e2c76d7acae7c0419",
+  "evidence_bundle_sha256": "da772e82dbfa3aa13a8f15269303420b0f59c74f0151abeba6402346f8c0eac7",
+  "matrix": {
+    "T1": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "e01343faae5189729e9668b39acdf6ed42ed8a04907d5056fd15b94a3819ae0c",
+      "independent_original_overall": "pass"
+    },
+    "T2": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "fb6c478d37bffd070d2a164c688697af256412700756cee865ca0469029c472c",
+      "independent_original_overall": "pass"
+    },
+    "T3": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "61a4750b2737bba4adb77c1255c759932cf65bf97a1046bbbab3f5e014a0241d",
+      "independent_original_overall": "pass"
+    },
+    "T4": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "22ec9e95294fbff3e8778ace7b91f53d76996c1cecb2da8766019249933fe86b",
+      "independent_original_overall": "pass"
+    },
+    "T5": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "f8c7fe826f0248617d4f893d2378b030b4f07d137e0fd7f13b3b4c24b55e6d3a",
+      "independent_original_overall": "pass"
+    },
+    "T6": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "7e53dd8d4779b0ca446af00409d88487edc819abbea0ae6abf45a56281119a12",
+      "independent_original_overall": "fail"
+    },
+    "T7": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "24f35d8b24c492ad025bf3e61c00b48bcc129f00a5ba06592e5b880bb55ba6bf",
+      "independent_original_overall": "pass"
+    },
+    "T8": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "daa640417312a13db0fd05af5050443e51a8785a16b2ca1f4c58d45bf4d3e45c",
+      "independent_original_overall": "pass"
+    }
+  },
+  "stability_verified": true,
+  "neighbors_verified": true,
+  "neighbor_limitations": [
+    "仅本轮同题对已准入C95/C96的实际比较，不声称覆盖全部近邻或全部题材"
+  ],
+  "generation_prompt_and_reference_bytes_preserved": true,
+  "anchor_relocated_with_same_bytes": true,
+  "registered_sample_count": 3,
+  "full_scene_coverage_complete": false,
+  "native_text_supported": true,
+  "native_text_limit": "short information-diagram labels and cover title; long body text untested",
+  "backend_model": null,
+  "published": false
+}

@@ -1,0 +1,198 @@
+{
+  "code": "C98",
+  "revision": 1,
+  "name": {
+    "zh": "装饰艺术几何",
+    "en": "Art Deco Machine-Age Geometry"
+  },
+  "family": "扁平几何",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "水粉硬边几何装饰",
+    "density": "中等"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词，参考装饰艺术几何技法，不复制具体历史作品；当前同题C84/C59近邻可区分，局限见admission.json。未测试C97/C74，不据描述声明已验证。"
+  },
+  "essence": [
+    "几何轴向对称与阶梯线秩序",
+    "人字纹日芒扇形与锯齿母题",
+    "硬边平涂水粉形加细金线",
+    "黑深青酒红奶油的克制配色"
+  ],
+  "recipe": {
+    "positive": "Visual style (follow exactly): Art Deco machine-age decorative technique: strict geometric axial order and symmetry, stepped lines, chevron, sunburst or fan and zigzag motifs, streamlined stylised forms, crisp hard-edged flat gouache shapes with thin gold linework, layered stepped silhouettes and parallel speed lines, an elegant luxurious mood. Gold stays as thin line accents only. Figures, faces, hair, clothing and objects come only from the current brief, including modern clothing and short hair; the geometric order applies to composition and background, so no period costume is imposed on the people. Default colour tendency when no palette is requested: Black, deep teal/emerald, burgundy or navy, cream, with gold accent lines. Controlled, not rainbow. If the brief explicitly requests a recolour, retain the same limited colour roles, line contrast and material character.",
+    "hard_constraints": [
+      "Forms are geometric, straight and hard-edged, with flat colour and no photographic shading.",
+      "Gold is thin linework only and never a broad metallic surface."
+    ],
+    "text_mode": [
+      "none"
+    ]
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "几何轴向对称与阶梯线、扇形、人字纹秩序",
+      "硬边平涂水粉形加细金线，流线化造型",
+      "黑、深青或酒红、奶油的克制配色，金线点缀"
+    ],
+    "must_not_see": [
+      "有机鞭形曲线或高反差黑色电影剪影",
+      "大面积金属质感、霓虹或照片式阴影",
+      "无字任务禁止任何文字；原生文字任务仅允许题面逐字指定的准确文字，禁止缺字、错字、额外文字、假文字、签名、署名、艺术家签名、印款和窑款，不因标题、标签、边框或标题板的位置而扩大许可。"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着照画，不套用二三十年代服饰。"
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-10",
+    "tests": {
+      "T6": "pass",
+      "T1": "pass",
+      "T3": "pass",
+      "T4": "pass",
+      "T5": "pass",
+      "T7": "fail",
+      "T8": "pass",
+      "T2": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "实际matrix-evidence核验当前八题7/8、T3、T1三次完整同词同参稳定及当前C84/C59同题近邻。T7额外第四流程节点失败，双方分歧保留。text_mode仅none，T8单题原生中文字准确不扩大整款声明，chinese_text保持unknown；正式样图中文字由程序排字。video_frame仅静态远景，不证明动态视频。登记一项教材词汇卡，全37场景、换色、连续角色及正式发布另行完成；早晚阅读样图当前复核partial不登记，旧历史通过不改写。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-10",
+      "note": "配方、QA和anchor隔离文案不变；将同SHA材料板迁入可分发相对入口，登记正式准入与一项教材样图。全场景/换色及发布另记。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "anchor": {
+    "enabled": true,
+    "file": "anchor.png",
+    "sha256": "88641dd53464dd69acc6f027393b2deb92ca3ebfdf0c2d60b8ede768783e1b94",
+    "isolation": "Take only the material qualities from this original technique study: matte opaque hard-edged gouache surface, fine paper tooth inside flat planes, and thin non-reflective gold ink line quality. \"Material only\" does not mean discarding the written Art Deco recipe: the recipe still governs composition and ornament. Every finished picture must keep a clear, visible axial ornamental order, freshly drawn for the current brief: small symmetric fans or sunburst segments, stepped bands and chevron/herringbone runs that frame the view or follow the architecture or scene structure given in the brief. Do not reduce the requested scene to plain rectangles or a generic modern polygon poster, and do not let a single-vanishing-point scene replace that ornamental order. Concrete objects, people and props on the left and right need not be mirrored, and the order is not a head-count or stall-count symmetry; it lives in the framing, architectural trim, eaves, windows, borders and background. Keep the ornament proportionate so it does not overpower the factual content, with no broad metallic areas or gradients. This study is a material proof, not a layout or a source of subjects. Do not copy its diagonal corner slabs, isolated central stair stroke, ray positions, chevron crop, gold-stripe placement, polygon silhouettes, intersections, colour blocks pressed across the whole frame, or overall arrangement, and do not drift into generic Bauhaus or Memphis. Redraw every mark and composition freshly. Add no reference swatches, panels, grids, labels, stamps or writing, and add no figurative objects, characters or emblems that the brief does not request. People, animals, props and the scene, including count, age, modern clothing, expression, pose and interaction, come only from the current brief; the reference supplies none of them. If the brief explicitly requests a palette, use that palette for the colour roles instead of the reference hues, keeping the restricted roles and matte material. Add only the exact requested text when the brief asks for text."
+  },
+  "uses": [
+    "教材"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "unknown",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "教材词汇卡：three pears",
+      "file": "samples/s2.png",
+      "source_sha256": "7f985fdf10367f1ddcde4d9c20dd12761fc02f28b400bd3cb04dfbabd5bc9bc4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "配图横版：早读与晚读对比：早读与晚读对比",
+      "file": "samples/wxi-wave16.png",
+      "source_sha256": "660167d198462148bc58a4f991376b514044e5889b72d6d6221c07efbc860972",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "四格漫画：四格漫画：一名短发主人公在书店里的连续小故事。第1格（起·全景俯视）：短发主人公穿奶油色上衣、深青裤，站在书店门口内侧，右手扶着门帘向里张望",
+      "file": "samples/cm-2-wave19.png",
+      "source_sha256": "ffc0816300455e8e30a315f55674f7243c8b8a26048325629497c85199bcda8e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "漫画：一名短发主人公的无声小意外：第1格（起·全景）：同一名短发主人公穿奶油色上衣、深青裤，站在公车站牌旁低头看左手腕上的空表带，右手还握着刚脱开",
+      "file": "samples/cm-3-wave20.png",
+      "source_sha256": "8879ae4f96c0e4587956397734120e48c42e0789964e3153843128b9c177d055",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "漫画：一名短发主人公在夜晚便利店门口寻找丢失的钥匙，四格中始终穿同一件奶油色外套、深青裤，手里拿着同一只红色小钱包。",
+      "file": "samples/cm-4-wave21.png",
+      "source_sha256": "c43eb5f0c7320a74bff43d6107d8c514c133db4e2ec2447001f42a36a7609369",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：用轴测阶梯与扇形纹样归纳“先分类、再动手”的整理方法",
+      "file": "samples/wxx-2-wave22.png",
+      "source_sha256": "3d558f4792f4aaa4f77844120bdf599fa836b4f51d02d689c81ff3ddb08fb8f3",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：把杂乱台面归纳为可执行的三步整理法",
+      "file": "samples/wxx-3-wave23.png",
+      "source_sha256": "e3539de6c0f8c9b1c6be0684b1379a2d86e17fbc086aa40d00cf9feddba9db41",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "绘本故事：一名短发孩子蹲在池塘石岸边，穿奶油色上衣与深青裤，刚把一只红纸船放入近岸水面，松开的手仍悬在船旁，微笑望着纸船",
+      "file": "samples/s1-wave27.png",
+      "source_sha256": "0a231593e2dace39d0ccc6f1fa17f731aca2a537243f5d850d4bb76980bf07c2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "PPT：面向邻里的虚构社区读书空间“岸边书房”品牌介绍单页",
+      "file": "samples/bd-wave29.png",
+      "source_sha256": "6d68dd5dcbaefd08b10cbfe949616800cb14d281b67cecb9ee92da2891035944",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：打开盖子的普通几何小盒，盒中只有一颗抽象五角星",
+      "file": "samples/wxx-4-wave30.png",
+      "source_sha256": "b622337599441ba7965f2923339258edd17573e6106ce379f457f665168caeba",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "播客 / 音乐封面：一副头戴式耳机悬置于方形封面中央，耳罩朝向画面中心",
+      "file": "samples/au-wave46.png",
+      "source_sha256": "cb4a84ec990ab94653c1c3261fd738bf0129a2bec2bc4892ac75aaece292290b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    }
+  ]
+}

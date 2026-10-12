@@ -86,6 +86,15 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "整体动作轻柔，叠色笔触顺着动作方向分层跟上；纸纹与静态版面始终保留，颗粒感不流动。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "mask_reveal"
+    ],
+    "safety": "遮罩只用于未标保护的叠色层；人物、文字与产品不形变；彩铅颗粒不做成水彩流体，也不新增人物。"
+  },
   "samples": [
     {
       "topic": "人物",

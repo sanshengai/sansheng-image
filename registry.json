@@ -5,7 +5,7 @@
     {
       "code": "C01",
       "zh": "暖光手绘动画",
-      "family": "温暖手绘·绘本动画",
+      "family": "绘本动画",
       "fit": [
         "讲故事",
         "封面"
@@ -20,6 +20,15 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Warm Hand-painted Animation",
       "revision": 5,
       "essence": [
@@ -52,12 +61,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "50a518996054"
+      "recipe_sha": "50a518996054",
+      "motion_dialect": {
+        "language": "水彩色块与笔触边缘像透明颜料一样柔和过渡，动作慢入慢出、幅度轻；暖光可缓缓掠过画面，收束后回到静止的完整一帧。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "light_sweep"
+        ],
+        "safety": "文字、人脸与产品只做平移或等比缩放，不融化、不非等比挤压；光扫避让受保护节点，不遮挡主体信息。"
+      }
     },
     {
       "code": "C02",
       "zh": "情绪淡彩速写",
-      "family": "温暖手绘·绘本动画",
+      "family": "细线速写",
       "fit": [
         "讲故事",
         "封面"
@@ -72,6 +90,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Expressive Pale-Wash Sketch",
       "revision": 3,
       "essence": [
@@ -105,12 +131,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "e18287b71f90"
+      "recipe_sha": "e18287b71f90",
+      "motion_dialect": {
+        "language": "靛蓝速写线带轻微手抖、断续地延伸出来，节奏疏朗；唯一的橙色焦点最后稳稳落定，其余保持白纸留白。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "path_draw"
+        ],
+        "safety": "描线只用于未标保护的非文字线条，不穿过人脸与文字；橙色焦点不扩散、不增加第二处。"
+      }
     },
     {
       "code": "C04",
       "zh": "北欧绘本水粉",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
       "fit": [
         "讲故事"
       ],
@@ -124,6 +159,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "北欧"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Nordic Gouache Picture Book",
       "revision": 3,
       "essence": [
@@ -157,12 +200,20 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "52c5ccd799de"
+      "recipe_sha": "52c5ccd799de",
+      "motion_dialect": {
+        "language": "水粉色块像哑光平涂纸片一样整体平移、轻轻落定，节奏干净克制，近白纸面保持安静。",
+        "primitives": [
+          "keyframes",
+          "easing"
+        ],
+        "safety": "细长的身体比例、面部、文字与产品不拉伸不形变；不加光泽高光，也不以翻页转场代替内容动作。"
+      }
     },
     {
       "code": "C06",
       "zh": "松散墨线淡彩绘本",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
       "fit": [
         "讲故事"
       ],
@@ -176,6 +227,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Loose Ink-and-Wash Storybook",
       "revision": 3,
       "essence": [
@@ -196,12 +255,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "7f9a48f7c7ea"
+      "recipe_sha": "7f9a48f7c7ea",
+      "motion_dialect": {
+        "language": "蘸水笔墨线像快速速写一样抖动生长，水彩随后松散跟上，节奏跳脱诙谐；夸张靠整体位移与旋转，不靠改结构。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "path_draw"
+        ],
+        "safety": "描线只用于未标保护的非文字线条；人脸、文字与肢体结构不形变；水彩保留静态画面原有的出线松散感，动画过程中不扩张原有涂色范围。"
+      }
     },
     {
       "code": "C07",
       "zh": "透明水彩人物",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
       "fit": [
         "讲故事"
       ],
@@ -215,6 +283,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Airy Transparent Watercolour Figures",
       "revision": 3,
       "essence": [
@@ -240,7 +316,7 @@
     {
       "code": "C08",
       "zh": "空灵留白诗意绘本",
-      "family": "温暖手绘·绘本动画",
+      "family": "手绘媒材",
       "fit": [
         "讲故事",
         "封面"
@@ -255,6 +331,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Poetic White-space Picture Book",
       "revision": 4,
       "essence": [
@@ -285,12 +369,20 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "489dbd37cc36"
+      "recipe_sha": "489dbd37cc36",
+      "motion_dialect": {
+        "language": "动作幅度小而缓，元素在大片留白里淡入淡出、轻轻位移，动作之间留出长停顿，纸面始终安静。",
+        "primitives": [
+          "keyframes",
+          "easing"
+        ],
+        "safety": "动作限于主体周围既有留白内，不新增元素填满留白，不触碰或裁切边缘；主体轮廓、面部与文字不形变。"
+      }
     },
     {
       "code": "C11",
       "zh": "温暖清线漫画",
-      "family": "温暖手绘·绘本动画",
+      "family": "漫画卡通",
       "fit": [
         "讲故事"
       ],
@@ -305,6 +397,14 @@
         "清新明亮"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "温暖手绘·绘本动画",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Warm Clear-Line Comic",
       "revision": 4,
       "essence": [
@@ -330,7 +430,7 @@
     {
       "code": "C12",
       "zh": "细线都市小人",
-      "family": "细线与生活",
+      "family": "细线速写",
       "fit": [
         "讲故事",
         "封面"
@@ -345,6 +445,14 @@
         "清新明亮"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "细线与生活",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Fine-Line Urban Miniature",
       "revision": 3,
       "essence": [
@@ -370,7 +478,7 @@
     {
       "code": "C14",
       "zh": "北欧细线奇趣",
-      "family": "细线与生活",
+      "family": "细线速写",
       "fit": [
         "讲故事"
       ],
@@ -385,6 +493,14 @@
         "可爱童趣"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "细线与生活",
+      "region": [
+        "北欧"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Nordic Fine-Line Whimsy",
       "revision": 3,
       "essence": [
@@ -410,7 +526,7 @@
     {
       "code": "C16",
       "zh": "平成少女手帐",
-      "family": "细线与生活",
+      "family": "细线速写",
       "fit": [
         "讲道理",
         "封面"
@@ -425,6 +541,15 @@
         "可爱童趣"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "细线与生活",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Heisei Diary Scrapbook",
       "revision": 3,
       "essence": [
@@ -450,7 +575,7 @@
     {
       "code": "C17",
       "zh": "新国潮工笔扁平",
-      "family": "中国风",
+      "family": "国风传统",
       "fit": [
         "封面",
         "讲故事"
@@ -465,6 +590,17 @@
         "东方雅致"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [
+        "跨朝代"
+      ],
       "en": "Modern Guochao Gongbi Flat Art",
       "revision": 3,
       "essence": [
@@ -485,12 +621,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "c8f5e388a61a"
+      "recipe_sha": "c8f5e388a61a",
+      "motion_dialect": {
+        "language": "工笔平面色块按构图秩序依次落位，节奏规整、轻重分明；金色细节只做一次克制的点缀。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "mask_reveal"
+        ],
+        "safety": "遮罩只作用于未标保护的装饰色块与图案，不用于文字、人脸、产品；金色不做大面积金属闪光，不覆盖主体轮廓。"
+      }
     },
     {
       "code": "C18",
       "zh": "宋画淡彩现代化",
-      "family": "中国风",
+      "family": "国风传统",
       "fit": [
         "封面",
         "讲故事"
@@ -505,6 +650,16 @@
         "东方雅致"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [
+        "宋"
+      ],
       "en": "Modern Song-Dynasty Light Colour",
       "revision": 3,
       "essence": [
@@ -543,7 +698,7 @@
     {
       "code": "C19",
       "zh": "新中式水墨小人",
-      "family": "中国风",
+      "family": "国风传统",
       "fit": [
         "封面",
         "讲故事"
@@ -558,6 +713,16 @@
         "东方雅致"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "en": "Modern Chinese Ink Miniatures",
       "revision": 3,
       "essence": [
@@ -583,7 +748,7 @@
     {
       "code": "C20",
       "zh": "海派月份牌",
-      "family": "中国风",
+      "family": "复古印刷",
       "fit": [
         "封面"
       ],
@@ -597,6 +762,16 @@
         "东方雅致"
       ],
       "craft": "海报版式",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "en": "Shanghai Calendar-Poster Retro",
       "revision": 3,
       "essence": [
@@ -622,7 +797,7 @@
     {
       "code": "C21",
       "zh": "八九十年代课本插图",
-      "family": "中国风",
+      "family": "手绘媒材",
       "fit": [
         "讲故事",
         "讲道理"
@@ -638,6 +813,16 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "en": "Retro Chinese Textbook Illustration",
       "revision": 3,
       "essence": [
@@ -658,12 +843,20 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "03b79bcb88c8"
+      "recipe_sha": "03b79bcb88c8",
+      "motion_dialect": {
+        "language": "朴素的整体位移与分层平移，速度匀称、少花哨，像把旧课本插图的各层轻轻推开，纸面印刷感保持不变。",
+        "primitives": [
+          "keyframes",
+          "easing"
+        ],
+        "safety": "文字、人物与产品比例锁定，不新增印章、杂点、污渍，不做翻页遮挡。"
+      }
     },
     {
       "code": "C22",
       "zh": "老式木偶定格",
-      "family": "中国风",
+      "family": "立体材质",
       "fit": [
         "讲故事"
       ],
@@ -678,6 +871,10 @@
         "可爱童趣"
       ],
       "craft": "立体质感",
+      "legacyFamily": "中国风",
+      "region": [],
+      "era": [],
+      "dynasty": [],
       "en": "Vintage Wooden Puppet Stop-Motion",
       "revision": 3,
       "essence": [
@@ -718,6 +915,15 @@
         "可爱童趣"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Clay Stop-motion",
       "revision": 5,
       "essence": [
@@ -749,7 +955,16 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "e31dbe594e4f"
+      "recipe_sha": "e31dbe594e4f",
+      "motion_dialect": {
+        "language": "黏土物件以低帧率定格的节奏动作，按“准备、移动、落定”分段并有短暂停留，先后由内容因果决定；镜头可保持平滑。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "squash"
+        ],
+        "safety": "挤压回弹只用于未标保护、且不含文字的非人物黏土物件；人脸、产品与所有文字（包括黏土捏成的标题与标签）全程不形变，文字另行独立处理或保持静止。"
+      }
     },
     {
       "code": "C25",
@@ -769,6 +984,14 @@
         "可爱童趣"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Plush Toy 3D",
       "revision": 3,
       "essence": [
@@ -800,7 +1023,16 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "5cd3ee1b8de9"
+      "recipe_sha": "5cd3ee1b8de9",
+      "motion_dialect": {
+        "language": "毛绒主体沿一个整体动作轻弹起落，收尾有柔软的回弹，绒面质感始终保持蓬松，不变硬。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "spring"
+        ],
+        "safety": "弹簧只用于整体位置或等比缩放，脸、身体比例、文字与产品不压扁；不把毛绒表面改成硬折或光滑。"
+      }
     },
     {
       "code": "C27",
@@ -820,6 +1052,15 @@
         "温暖治愈"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "北欧"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Layered Paper Sculpture",
       "revision": 3,
       "essence": [
@@ -840,12 +1081,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "0025c0bf92e3"
+      "recipe_sha": "0025c0bf92e3",
+      "motion_dialect": {
+        "language": "叠纸层按各自深度错开抬升、平移再落回，投影随层间距离变化；纸面与切边保持硬挺。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "mask_reveal"
+        ],
+        "safety": "不挤压纸层，不引入黏土或布料质感；文字、人物与产品比例锁定，遮罩不用于保护节点，首末呈现完整叠纸画面。"
+      }
     },
     {
       "code": "C28",
       "zh": "儿童蜡笔稚拙",
-      "family": "儿童与教育",
+      "family": "手绘媒材",
       "fit": [
         "讲故事"
       ],
@@ -859,6 +1109,14 @@
         "可爱童趣"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "儿童与教育",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Naive Childlike Crayon",
       "revision": 3,
       "essence": [
@@ -884,7 +1142,7 @@
     {
       "code": "C29",
       "zh": "粉笔黑板",
-      "family": "儿童与教育",
+      "family": "版式图解",
       "fit": [
         "讲道理"
       ],
@@ -898,6 +1156,14 @@
         "专业克制"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "儿童与教育",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Colorful Chalkboard Drawing",
       "revision": 4,
       "essence": [
@@ -936,7 +1202,7 @@
     {
       "code": "C30",
       "zh": "彩铅绘本",
-      "family": "儿童与教育",
+      "family": "手绘媒材",
       "fit": [
         "讲故事",
         "讲道理"
@@ -952,6 +1218,14 @@
         "可爱童趣"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "儿童与教育",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Coloured Pencil Picture Book",
       "revision": 4,
       "essence": [
@@ -972,12 +1246,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "4dff0f323a94"
+      "recipe_sha": "4dff0f323a94",
+      "motion_dialect": {
+        "language": "整体动作轻柔，叠色笔触顺着动作方向分层跟上；纸纹与静态版面始终保留，颗粒感不流动。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "mask_reveal"
+        ],
+        "safety": "遮罩只用于未标保护的叠色层；人物、文字与产品不形变；彩铅颗粒不做成水彩流体，也不新增人物。"
+      }
     },
     {
       "code": "C31",
       "zh": "手绘视觉笔记",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
       "fit": [
         "讲道理"
       ],
@@ -992,6 +1275,14 @@
         "清新明亮"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Hand-drawn Sketch Notes",
       "revision": 6,
       "essence": [
@@ -1063,12 +1354,22 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "f2e38bef0c79"
+      "recipe_sha": "f2e38bef0c79",
+      "motion_dialect": {
+        "language": "非文字墨线沿原文的关系路径逐笔推进，粉彩色块随后落定指向结论，节奏像边讲边画。",
+        "primitives": [
+          "path_draw",
+          "mask_reveal",
+          "keyframes",
+          "easing"
+        ],
+        "safety": "描线只用于未标保护的非文字线条，遮罩不遮挡已有标题与说明；人物和文字不扭曲。"
+      }
     },
     {
       "code": "C32",
       "zh": "技术简报（旧纸双语）",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
       "fit": [
         "讲道理"
       ],
@@ -1082,6 +1383,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Technical Briefing on Aged Paper",
       "revision": 6,
       "essence": [
@@ -1157,7 +1466,7 @@
     {
       "code": "C34",
       "zh": "杂志编辑信息图",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
       "fit": [
         "讲道理",
         "封面"
@@ -1172,6 +1481,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Editorial Magazine Infographic",
       "revision": 4,
       "essence": [
@@ -1192,12 +1509,22 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "3a8907feef86"
+      "recipe_sha": "3a8907feef86",
+      "motion_dialect": {
+        "language": "数据与视觉隐喻按原文逻辑在各自分栏依次落位，最后聚焦结论，节奏像编辑版面逐层呈现。",
+        "primitives": [
+          "keyframes",
+          "mask_reveal",
+          "easing",
+          "number_roll"
+        ],
+        "safety": "数字滚动的终值必须等于原文真实数字；遮罩与数字滚动不作用于已标保护的标题、正文和产品。"
+      }
     },
     {
       "code": "C35",
       "zh": "Notion 知识线稿",
-      "family": "讲道理·知识图解",
+      "family": "细线速写",
       "fit": [
         "讲道理"
       ],
@@ -1212,6 +1539,14 @@
         "清新明亮"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Minimal Knowledge Doodle",
       "revision": 4,
       "essence": [
@@ -1237,7 +1572,7 @@
     {
       "code": "C36",
       "zh": "极简火柴人讲解",
-      "family": "讲道理·知识图解",
+      "family": "漫画卡通",
       "fit": [
         "讲道理"
       ],
@@ -1251,6 +1586,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Minimal Stick-Figure Explainer",
       "revision": 3,
       "essence": [
@@ -1276,7 +1619,7 @@
     {
       "code": "C39",
       "zh": "工程蓝图",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
       "fit": [
         "讲道理",
         "封面"
@@ -1291,6 +1634,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Engineering Blueprint",
       "revision": 4,
       "essence": [
@@ -1325,7 +1676,7 @@
     {
       "code": "C40",
       "zh": "等距插画",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
       "fit": [
         "讲道理"
       ],
@@ -1340,6 +1691,14 @@
         "清新明亮"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Friendly Isometric Miniature",
       "revision": 4,
       "essence": [
@@ -1360,12 +1719,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "89805cacd7fd"
+      "recipe_sha": "89805cacd7fd",
+      "motion_dialect": {
+        "language": "几何块沿三十度等距轴滑入、拼合并停稳，节奏利落整齐，视角始终不变。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "mask_reveal"
+        ],
+        "safety": "只沿三条等距轴平移，或做等比缩放，不做画面内旋转，不改变等距投影，不做透视缩放或倾斜；文字块不变形，遮罩不用于保护节点。"
+      }
     },
     {
       "code": "C41",
       "zh": "复古矢量描边",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
       "fit": [
         "讲道理",
         "封面"
@@ -1381,6 +1749,14 @@
         "个性潮流"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Retro Outlined Vector",
       "revision": 4,
       "essence": [
@@ -1406,7 +1782,7 @@
     {
       "code": "C42",
       "zh": "清透扁平",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
       "fit": [
         "讲道理",
         "封面"
@@ -1422,6 +1798,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Airy Flat Vector",
       "revision": 4,
       "essence": [
@@ -1442,12 +1826,20 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "baa2685a0957"
+      "recipe_sha": "baa2685a0957",
+      "motion_dialect": {
+        "language": "扁平主体整体平移并带动相邻色块，轻缓停稳，之后保持留白与干净轮廓。",
+        "primitives": [
+          "keyframes",
+          "easing"
+        ],
+        "safety": "不擅自改变静态布局或轮廓识别点；文字、人脸与产品不形变，只做平移、旋转与等比缩放。"
+      }
     },
     {
       "code": "C46",
       "zh": "复古旧纸",
-      "family": "封面与海报",
+      "family": "复古印刷",
       "fit": [
         "封面",
         "讲道理"
@@ -1462,6 +1854,14 @@
         "专业克制"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Nostalgic Aged Paper",
       "revision": 4,
       "essence": [
@@ -1487,7 +1887,7 @@
     {
       "code": "C48",
       "zh": "日式黑白漫画",
-      "family": "漫画与分镜",
+      "family": "漫画卡通",
       "fit": [
         "讲故事"
       ],
@@ -1501,6 +1901,15 @@
         "个性潮流"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "漫画与分镜",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Black-and-White Manga",
       "revision": 4,
       "essence": [
@@ -1526,7 +1935,7 @@
     {
       "code": "C49",
       "zh": "条漫厚涂",
-      "family": "漫画与分镜",
+      "family": "漫画卡通",
       "fit": [
         "讲故事"
       ],
@@ -1540,6 +1949,15 @@
         "清新明亮"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "漫画与分镜",
+      "region": [
+        "中国",
+        "韩国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Painterly Webtoon",
       "revision": 4,
       "essence": [
@@ -1565,7 +1983,7 @@
     {
       "code": "C51",
       "zh": "Q 版可爱",
-      "family": "漫画与分镜",
+      "family": "漫画卡通",
       "fit": [
         "讲故事",
         "封面"
@@ -1580,6 +1998,14 @@
         "可爱童趣"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "漫画与分镜",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Cute Chibi",
       "revision": 4,
       "essence": [
@@ -1605,7 +2031,7 @@
     {
       "code": "C52",
       "zh": "怪诞古典漫画肖像",
-      "family": "个性趣味",
+      "family": "漫画卡通",
       "fit": [
         "封面"
       ],
@@ -1619,6 +2045,16 @@
         "个性潮流"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Grotesque Classical Comic Portrait",
       "revision": 3,
       "essence": [
@@ -1644,7 +2080,7 @@
     {
       "code": "C53",
       "zh": "中世纪暗黑墨线",
-      "family": "个性趣味",
+      "family": "复古印刷",
       "fit": [
         "封面",
         "讲故事"
@@ -1659,6 +2095,14 @@
         "个性潮流"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "19世纪"
+      ],
+      "dynasty": [],
       "en": "Medieval Dark Ink",
       "revision": 3,
       "essence": [
@@ -1684,7 +2128,7 @@
     {
       "code": "C54",
       "zh": "复古像素",
-      "family": "个性趣味",
+      "family": "扁平几何",
       "fit": [
         "封面",
         "讲道理"
@@ -1699,6 +2143,14 @@
         "个性潮流"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Retro Pixel Art",
       "revision": 3,
       "essence": [
@@ -1724,7 +2176,7 @@
     {
       "code": "C55",
       "zh": "故意画烂涂鸦",
-      "family": "个性趣味",
+      "family": "漫画卡通",
       "fit": [
         "讲故事"
       ],
@@ -1739,6 +2191,14 @@
         "可爱童趣"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Deliberately Bad Doodle",
       "revision": 3,
       "essence": [
@@ -1764,7 +2224,7 @@
     {
       "code": "C56",
       "zh": "光影写实动画",
-      "family": "日式动画",
+      "family": "绘本动画",
       "fit": [
         "讲故事",
         "封面"
@@ -1779,6 +2239,14 @@
         "清新明亮"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "日式动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Luminous Cinematic Anime",
       "revision": 4,
       "essence": [
@@ -1845,12 +2313,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "4ae467b7ae7f"
+      "recipe_sha": "4ae467b7ae7f",
+      "motion_dialect": {
+        "language": "镜头或景深层缓慢横移，整体舒展有电影感；画面原本有云层、光束或湿润表面时，才让它们做分层视差或轻微闪烁，不为了动效新增天气、湿地面或光束。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "light_sweep"
+        ],
+        "safety": "人物、产品与文字不形变；光扫避让受保护节点，不遮挡主体信息，只调整亮度，不改变冷蓝与暖金的色相关系；首末帧完整可读。"
+      }
     },
     {
       "code": "C57",
       "zh": "九十年代赛璐璐动画",
-      "family": "日式动画",
+      "family": "绘本动画",
       "fit": [
         "讲故事",
         "封面"
@@ -1865,6 +2342,14 @@
         "清新明亮"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "日式动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "1990s Cel Animation",
       "revision": 4,
       "essence": [
@@ -1890,7 +2375,7 @@
     {
       "code": "C58",
       "zh": "日系清新校园动画",
-      "family": "日式动画",
+      "family": "绘本动画",
       "fit": [
         "讲故事"
       ],
@@ -1904,6 +2389,14 @@
         "清新明亮"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "日式动画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Fresh Japanese School Anime",
       "revision": 11,
       "essence": [
@@ -1936,12 +2429,20 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "356991be95a4"
+      "recipe_sha": "356991be95a4",
+      "motion_dialect": {
+        "language": "赛璐璐色面以少量关键姿态“按二拍”跳进，节奏利落安定，环境只做轻缓响应。",
+        "primitives": [
+          "keyframes",
+          "easing"
+        ],
+        "safety": "不新增原画面没有的人物、道具或情节；面容、文字、产品与主体比例不形变。"
+      }
     },
     {
       "code": "C59",
       "zh": "中世纪摩登几何童话",
-      "family": "绘本·封面",
+      "family": "扁平几何",
       "fit": [
         "封面",
         "讲道理",
@@ -1957,6 +2458,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "绘本·封面",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Midcentury Geometric Fairytale",
       "revision": 1,
       "essence": [
@@ -1977,12 +2486,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "282640705505"
+      "recipe_sha": "282640705505",
+      "motion_dialect": {
+        "language": "扁平色块与几何形以明快的跳跃节奏平移、旋转和等比缩放，干脆落位；只有内容本身有正反两面的图形卡才翻转。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "card_flip"
+        ],
+        "safety": "翻转只用于不含文字、人脸与产品的纯图形卡；文字、人脸与产品不翻转、不形变，画面保持扁平完整。"
+      }
     },
     {
       "code": "C60",
       "zh": "自然主义水彩动物绘本",
-      "family": "绘本·教材插图",
+      "family": "手绘媒材",
       "fit": [
         "讲道理",
         "讲故事"
@@ -1997,6 +2515,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "绘本·教材插图",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Naturalistic Watercolour Animal Storybook",
       "revision": 1,
       "essence": [
@@ -2022,7 +2548,7 @@
     {
       "code": "C61",
       "zh": "梦幻超现实绘本",
-      "family": "绘本·封面",
+      "family": "手绘媒材",
       "fit": [
         "讲道理",
         "讲故事"
@@ -2037,6 +2563,14 @@
         "温暖治愈"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "绘本·封面",
+      "region": [
+        "大洋洲"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Dreamlike Surreal Picture Book",
       "revision": 1,
       "essence": [
@@ -2062,7 +2596,7 @@
     {
       "code": "C62",
       "zh": "低饱和冷面绘本",
-      "family": "绘本",
+      "family": "绘本动画",
       "fit": [
         "讲道理",
         "讲故事"
@@ -2077,6 +2611,14 @@
         "清新明亮"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "绘本",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Deadpan Muted Picture Book",
       "revision": 1,
       "essence": [
@@ -2102,7 +2644,7 @@
     {
       "code": "C63",
       "zh": "凯尔特手绘动画",
-      "family": "动画·分镜",
+      "family": "绘本动画",
       "fit": [
         "封面",
         "讲故事"
@@ -2117,6 +2659,15 @@
         "温暖治愈"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "动画·分镜",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "传统语汇",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Celtic Hand-Drawn Animation",
       "revision": 1,
       "essence": [
@@ -2142,7 +2693,7 @@
     {
       "code": "C64",
       "zh": "空灵中国水墨幻想动画",
-      "family": "动画·分镜",
+      "family": "国风传统",
       "fit": [
         "封面",
         "讲道理",
@@ -2158,6 +2709,16 @@
         "东方雅致"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "动画·分镜",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "en": "Ethereal Chinese Ink Fantasy Animation",
       "revision": 1,
       "essence": [
@@ -2178,12 +2739,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "6d9f72b77979"
+      "recipe_sha": "6d9f72b77979",
+      "motion_dialect": {
+        "language": "浅墨与淡彩层沿动作方向缓缓显影，雾气般淡入淡出，节奏舒缓，最后回到完整宣纸画面。",
+        "primitives": [
+          "keyframes",
+          "mask_reveal",
+          "easing"
+        ],
+        "safety": "遮罩只用于未标保护的墨色与淡彩层；宣纸底不漂移，文字、人脸与产品不形变，留白不被新装饰占满。"
+      }
     },
     {
       "code": "C65",
       "zh": "文人漫画毛笔写意",
-      "family": "文章插图·封面",
+      "family": "国风传统",
       "fit": [
         "封面",
         "讲道理",
@@ -2199,6 +2769,16 @@
         "东方雅致"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "文章插图·封面",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "en": "Literati Brush Cartoon",
       "revision": 1,
       "essence": [
@@ -2224,7 +2804,7 @@
     {
       "code": "C66",
       "zh": "安静日系低饱和社论",
-      "family": "封面·文章插图",
+      "family": "扁平几何",
       "fit": [
         "封面",
         "讲道理",
@@ -2240,6 +2820,14 @@
         "专业克制"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "封面·文章插图",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Quiet Muted Japanese Editorial",
       "revision": 1,
       "essence": [
@@ -2265,7 +2853,7 @@
     {
       "code": "C67",
       "zh": "圆润古典漫画角色",
-      "family": "漫画",
+      "family": "漫画卡通",
       "fit": [
         "讲故事",
         "讲道理"
@@ -2280,6 +2868,14 @@
         "可爱童趣"
       ],
       "craft": "漫画动画",
+      "legacyFamily": "漫画",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Rounded Classic Manga Character",
       "revision": 1,
       "essence": [
@@ -2305,7 +2901,7 @@
     {
       "code": "C68",
       "zh": "中式复古连环画",
-      "family": "漫画·教材",
+      "family": "复古印刷",
       "fit": [
         "讲道理",
         "讲故事"
@@ -2320,6 +2916,16 @@
         "东方雅致"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "漫画·教材",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [
+        "近现代"
+      ],
       "en": "Chinese Retro Lianhuanhua",
       "revision": 1,
       "essence": [
@@ -2345,7 +2951,7 @@
     {
       "code": "C69",
       "zh": "圆滚针织黏土玩偶",
-      "family": "立体材质·马卡龙",
+      "family": "立体材质",
       "fit": [
         "封面",
         "讲道理",
@@ -2361,6 +2967,14 @@
         "可爱童趣"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质·马卡龙",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Round Knitted Clay Doll",
       "revision": 1,
       "essence": [
@@ -2402,6 +3016,14 @@
         "温暖治愈"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Felt and Knit Stop-Motion Puppet",
       "revision": 1,
       "essence": [
@@ -2427,7 +3049,7 @@
     {
       "code": "C71",
       "zh": "极致几何自然",
-      "family": "信息图·教材插图",
+      "family": "扁平几何",
       "fit": [
         "封面",
         "讲道理"
@@ -2442,6 +3064,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "信息图·教材插图",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Ultra-Geometric Nature",
       "revision": 1,
       "essence": [
@@ -2467,7 +3097,7 @@
     {
       "code": "C72",
       "zh": "俯拍物品陈列 Knolling",
-      "family": "信息图",
+      "family": "摄影写实",
       "fit": [
         "封面",
         "讲道理"
@@ -2482,6 +3112,14 @@
         "专业克制"
       ],
       "craft": "立体质感",
+      "legacyFamily": "信息图",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Knolling Flat Lay",
       "revision": 2,
       "essence": [
@@ -2507,7 +3145,7 @@
     {
       "code": "C73",
       "zh": "手绘教育·马卡龙色块",
-      "family": "小红书·知识卡",
+      "family": "版式图解",
       "fit": [
         "讲道理"
       ],
@@ -2522,6 +3160,14 @@
         "清新明亮"
       ],
       "craft": "手绘插画",
+      "legacyFamily": "小红书·知识卡",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Hand-Drawn Educational Macaron Blocks",
       "revision": 2,
       "essence": [
@@ -2542,12 +3188,21 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "d75afe64e17b"
+      "recipe_sha": "d75afe64e17b",
+      "motion_dialect": {
+        "language": "教学色块按讲解顺序整体贴入，带一点轻快回弹后落定，节奏明朗、像逐步讲解；文字层始终保留。",
+        "primitives": [
+          "keyframes",
+          "easing",
+          "spring"
+        ],
+        "safety": "弹簧只改变色块位置或做等比缩放；文字、人脸、产品与教学图形不挤压不变形，首末帧完整可读。"
+      }
     },
     {
       "code": "C74",
       "zh": "丝网印海报",
-      "family": "封面与海报",
+      "family": "复古印刷",
       "fit": [
         "讲道理",
         "封面"
@@ -2562,6 +3217,14 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Screen-print Poster",
       "revision": 2,
       "essence": [
@@ -2586,7 +3249,7 @@
     {
       "code": "C75",
       "zh": "暖纸克制双色",
-      "family": "封面与海报",
+      "family": "复古印刷",
       "fit": [
         "讲道理",
         "封面"
@@ -2601,6 +3264,14 @@
         "专业克制"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Warm Paper Two-Colour Editorial",
       "revision": 2,
       "essence": [
@@ -2625,7 +3296,7 @@
     {
       "code": "C76",
       "zh": "杂志编辑封面",
-      "family": "封面与海报",
+      "family": "版式图解",
       "fit": [
         "讲道理",
         "封面"
@@ -2640,6 +3311,15 @@
         "专业克制"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Editorial Magazine Cover",
       "revision": 2,
       "essence": [
@@ -2664,7 +3344,7 @@
     {
       "code": "C77",
       "zh": "叁笙深空",
-      "family": "封面与海报",
+      "family": "版式图解",
       "fit": [
         "讲道理",
         "封面"
@@ -2679,6 +3359,14 @@
         "专业克制"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Sansheng Deep Space",
       "revision": 2,
       "essence": [
@@ -2716,7 +3404,7 @@
     {
       "code": "C79",
       "zh": "弥散渐变颗粒",
-      "family": "封面与海报",
+      "family": "数码光影",
       "fit": [
         "讲道理",
         "封面"
@@ -2731,6 +3419,14 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Aura Gradient with Grain",
       "revision": 2,
       "essence": [
@@ -2755,7 +3451,7 @@
     {
       "code": "C80",
       "zh": "单物件静物棚拍",
-      "family": "封面与海报",
+      "family": "摄影写实",
       "fit": [
         "讲道理",
         "封面"
@@ -2770,6 +3466,14 @@
         "专业克制"
       ],
       "craft": "立体质感",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Studio Still Life",
       "revision": 2,
       "essence": [
@@ -2794,7 +3498,7 @@
     {
       "code": "C81",
       "zh": "撕纸拼贴",
-      "family": "封面与海报",
+      "family": "复古印刷",
       "fit": [
         "讲道理",
         "封面"
@@ -2809,6 +3513,14 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Torn-Paper Collage",
       "revision": 2,
       "essence": [
@@ -2849,6 +3561,14 @@
         "可爱童趣"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Soft 3D Clay Icons",
       "revision": 2,
       "essence": [
@@ -2873,7 +3593,7 @@
     {
       "code": "C83",
       "zh": "大字报排印",
-      "family": "封面与海报",
+      "family": "版式图解",
       "fit": [
         "讲道理",
         "封面"
@@ -2888,6 +3608,14 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Oversized Type Poster",
       "revision": 2,
       "essence": [
@@ -2912,7 +3640,7 @@
     {
       "code": "C84",
       "zh": "电影海报几何剪影",
-      "family": "封面与海报",
+      "family": "扁平几何",
       "fit": [
         "讲道理",
         "封面"
@@ -2927,6 +3655,14 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Mid-Century Film Poster Silhouette",
       "revision": 2,
       "essence": [
@@ -2951,7 +3687,7 @@
     {
       "code": "C85",
       "zh": "赛博霓虹",
-      "family": "个性趣味",
+      "family": "数码光影",
       "fit": [
         "讲道理",
         "封面"
@@ -2966,6 +3702,15 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "个性趣味",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Cyberpunk Neon",
       "revision": 2,
       "essence": [
@@ -2990,7 +3735,7 @@
     {
       "code": "C86",
       "zh": "孟菲斯企业插画",
-      "family": "讲道理·知识图解",
+      "family": "扁平几何",
       "fit": [
         "讲道理",
         "封面"
@@ -3005,6 +3750,16 @@
         "清新明亮"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "20世纪",
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Corporate Memphis",
       "revision": 2,
       "essence": [
@@ -3044,6 +3799,14 @@
         "清新明亮"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Origami",
       "revision": 2,
       "essence": [
@@ -3083,6 +3846,14 @@
         "可爱童趣"
       ],
       "craft": "立体质感",
+      "legacyFamily": "立体材质",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "未限定"
+      ],
+      "dynasty": [],
       "en": "Brick Construction",
       "revision": 2,
       "essence": [
@@ -3107,7 +3878,7 @@
     {
       "code": "C89",
       "zh": "地铁线路图",
-      "family": "讲道理·知识图解",
+      "family": "版式图解",
       "fit": [
         "讲道理"
       ],
@@ -3121,6 +3892,14 @@
         "专业克制"
       ],
       "craft": "扁平图形",
+      "legacyFamily": "讲道理·知识图解",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
       "en": "Transit Map Diagram",
       "revision": 2,
       "essence": [
@@ -3145,7 +3924,7 @@
     {
       "code": "C90",
       "zh": "深色系列封面",
-      "family": "封面与海报",
+      "family": "版式图解",
       "fit": [
         "讲道理",
         "封面"
@@ -3161,6 +3940,14 @@
         "个性潮流"
       ],
       "craft": "海报版式",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
       "en": "Dark Series Cover",
       "revision": 1,
       "essence": [
@@ -3198,6 +3985,565 @@
       "admission": "pending",
       "tests": {},
       "recipe_sha": "e88edb539cdc"
+    },
+    {
+      "code": "C95",
+      "zh": "汉画像石拓片",
+      "family": "国风传统",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-10",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "locked",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "拓印",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [
+        "汉"
+      ],
+      "en": "Stone-Relief Rubbing",
+      "revision": 1,
+      "essence": [
+        "拓印墨色加白纸的黑白两族",
+        "黑色剪影配阴刻白线",
+        "古拙简化的侧面造型与分层排布",
+        "石面颗粒小坑与细微裂纹"
+      ],
+      "colors": [
+        {
+          "name": "浓墨黑 dense ink",
+          "hex": "#141414",
+          "role": "剪影底墨"
+        },
+        {
+          "name": "淡墨灰 pale ink",
+          "hex": "#8C8C8C",
+          "role": "墨点与浓淡过渡"
+        },
+        {
+          "name": "宣纸米白 paper white",
+          "hex": "#F1ECE0",
+          "role": "阴刻白线与纸底"
+        }
+      ],
+      "text_mode": [
+        "none"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "unknown",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "石刻拓片墨拓",
+        "density": "中等"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "fail",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "pass",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "0f04242e78cc"
+    },
+    {
+      "code": "C96",
+      "zh": "童话钢笔水彩民俗边框",
+      "family": "手绘媒材",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-10",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "温暖治愈"
+      ],
+      "craft": "手绘插画",
+      "legacyFamily": "绘本·封面",
+      "region": [
+        "俄罗斯"
+      ],
+      "era": [
+        "19世纪",
+        "20世纪"
+      ],
+      "dynasty": [],
+      "en": "Fairy-Tale Pen and Watercolour with Folk Border",
+      "revision": 1,
+      "essence": [
+        "均匀自信的黑色钢笔墨线",
+        "平涂透明水彩填色",
+        "木材织物植物上的民俗装饰纹样",
+        "外围民俗纹样装饰边框"
+      ],
+      "colors": [],
+      "text_mode": [
+        "none"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "unknown",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "钢笔勾线加透明水彩",
+        "density": "细节丰富"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "fail",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "415b2f32b836"
+    },
+    {
+      "code": "C98",
+      "zh": "装饰艺术几何",
+      "family": "扁平几何",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original Art Deco technique recipe; current evidence verified 2026-10-10",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "几何装饰",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "欧洲",
+        "北美"
+      ],
+      "era": [
+        "20世纪"
+      ],
+      "dynasty": [],
+      "en": "Art Deco Machine-Age Geometry",
+      "revision": 1,
+      "essence": [
+        "几何轴向对称与阶梯线秩序",
+        "人字纹日芒扇形与锯齿母题",
+        "硬边平涂水粉形加细金线",
+        "黑深青酒红奶油的克制配色"
+      ],
+      "colors": [],
+      "text_mode": [
+        "none"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "unknown",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "水粉硬边几何装饰",
+        "density": "中等"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T6": "pass",
+        "T1": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T7": "fail",
+        "T8": "pass",
+        "T2": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "017d3d015b26"
+    },
+    {
+      "code": "C93",
+      "zh": "年画木版敷彩",
+      "family": "国风传统",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "木版敷彩",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "en": "New Year Print Woodblock Colouring",
+      "revision": 1,
+      "essence": [
+        "木版黑线轮廓加手工敷彩",
+        "桃粉朱红黄绿的喜庆高饱和色",
+        "饱满圆润的简化造型",
+        "吉祥纹样适度填充背景"
+      ],
+      "colors": [],
+      "text_mode": [
+        "none",
+        "native"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "ok",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "木版黑线加手工敷彩",
+        "density": "细节丰富"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "pass",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "aaf526349439"
+    },
+    {
+      "code": "C91",
+      "zh": "浮世绘木版多色印",
+      "family": "复古印刷",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "多版套色木版印",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "日本"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "en": "Multi-Block Woodblock Colour Print",
+      "revision": 1,
+      "essence": [
+        "均匀黑色主线加分版平涂色块",
+        "和纸纤维底与仅限边缘的渐变",
+        "压扁透视与纹样化衣料水波",
+        "极轻微的分版错位"
+      ],
+      "colors": [],
+      "text_mode": [
+        "none",
+        "native"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "ok",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "木版多色套印",
+        "density": "中等"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "pass",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "0e594210aa9c"
+    },
+    {
+      "code": "C92",
+      "zh": "敦煌矿物彩壁画",
+      "family": "国风传统",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "矿物彩壁画",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "en": "Mineral Pigment Cave-Mural Texture",
+      "revision": 1,
+      "essence": [
+        "泥灰岩壁底肌理清晰可见",
+        "石绿石青朱砂赭石的厚重矿物色块",
+        "铁线描式细长流动深色轮廓",
+        "局部轻微磨损而主体完整"
+      ],
+      "colors": [],
+      "text_mode": [
+        "none",
+        "native"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "ok",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "矿物彩泥灰壁画",
+        "density": "中等"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "pass",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "76128419ba07"
+    },
+    {
+      "code": "C94",
+      "zh": "青花蓝白装饰",
+      "family": "国风传统",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "locked",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "青花绘饰",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "传统语汇"
+      ],
+      "dynasty": [],
+      "en": "Blue-and-White Underglaze Decoration",
+      "revision": 1,
+      "essence": [
+        "仅钴蓝各深浅与瓷白两族色",
+        "分水浓淡与积料深点",
+        "纹样作为画面装饰填充",
+        "整幅是青花绘饰而非瓷器摄影"
+      ],
+      "colors": [
+        {
+          "name": "深钴蓝 deep cobalt",
+          "hex": "#17358A",
+          "role": "轮廓与积料深点"
+        },
+        {
+          "name": "中钴蓝 mid cobalt",
+          "hex": "#3F6BC4",
+          "role": "主体分水中调"
+        },
+        {
+          "name": "浅钴蓝 pale cobalt",
+          "hex": "#A9C3EA",
+          "role": "分水浅调"
+        },
+        {
+          "name": "瓷白 porcelain white",
+          "hex": "#F7F8F5",
+          "role": "底色"
+        }
+      ],
+      "text_mode": [
+        "none",
+        "native"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "ok",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "青花釉下蓝绘",
+        "density": "中等"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "pass",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "b22fb6a96078"
+    },
+    {
+      "code": "C97",
+      "zh": "新艺术植物曲线",
+      "family": "复古印刷",
+      "fit": [
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
+      "status": "admitted",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "复古典雅"
+      ],
+      "craft": "有机曲线装饰",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "欧洲"
+      ],
+      "era": [
+        "19世纪",
+        "20世纪"
+      ],
+      "dynasty": [],
+      "en": "Art Nouveau Botanical Curves",
+      "revision": 1,
+      "essence": [
+        "流动的鞭形曲线与深棕长轮廓",
+        "主体后方的装饰圆环或拱形光环",
+        "花卉蔓藤与有机植物母题",
+        "外围植物装饰边框"
+      ],
+      "colors": [],
+      "text_mode": [
+        "none",
+        "native"
+      ],
+      "abilities": {
+        "character_consistency": "ok",
+        "kids": "ok",
+        "video_frame": "ok",
+        "chinese_text": "ok",
+        "long_series": "unknown",
+        "adds_people": false
+      },
+      "facets": {
+        "medium": "新艺术装饰海报",
+        "density": "细节丰富"
+      },
+      "admission": "admitted",
+      "tests": {
+        "T1": "pass",
+        "T2": "pass",
+        "T3": "pass",
+        "T4": "pass",
+        "T5": "pass",
+        "T6": "pass",
+        "T7": "pass",
+        "T8": "pass",
+        "stability": "pass",
+        "neighbors": "pass"
+      },
+      "recipe_sha": "a35ac025030c"
     }
   ],
   "removed": [
@@ -4597,7 +5943,8 @@
       ],
       "source": "软件默认",
       "density_max": "dense",
-      "compose": "A complete 16:9 presentation slide designed as one image: a large main title, a smaller subtitle, and at most five short key-point lines with a clear visual hierarchy and 5% margins; the text is part of the slide design and must be exactly the given text."
+      "compose": "A complete 16:9 presentation slide designed as one image: a large main title, a smaller subtitle, and at most five short key-point lines with a clear visual hierarchy and 5% margins; the text is part of the slide design and must be exactly the given text.",
+      "compose_no_text": "A complete 16:9 presentation slide background with a clear visual hierarchy and 5% margins. Keep the specified title and label zones empty for later typesetting. Do not render any text, digits or pseudo-characters."
     },
     {
       "id": "courseware",
@@ -4700,7 +6047,7 @@
         1656
       ],
       "safe_zone": {
-        "note": "上下留标题与结尾区"
+        "note": "上方留标题区；准确文字清单有结语时才留底部结尾区"
       },
       "text": {
         "default": "native",
@@ -4712,7 +6059,7 @@
       ],
       "alt_ratio": "9:16",
       "density_max": "dense",
-      "compose": "A vertical infographic: a title area at the top, the content in the middle and one short closing line at the bottom."
+      "compose": "A vertical infographic: a title area at the top and the content in the middle. Include a short closing line at the bottom only when the exact text list explicitly supplies one; otherwise leave that area free of lettering. Never invent a closing sentence."
     },
     {
       "id": "article-illustration",

@@ -95,6 +95,15 @@
     "音乐封面"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "工笔平面色块按构图秩序依次落位，节奏规整、轻重分明；金色细节只做一次克制的点缀。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "mask_reveal"
+    ],
+    "safety": "遮罩只作用于未标保护的装饰色块与图案，不用于文字、人脸、产品；金色不做大面积金属闪光，不覆盖主体轮廓。"
+  },
   "samples": [
     {
       "topic": "人物",

@@ -1,0 +1,631 @@
+{
+  "code": "C93",
+  "revision": 1,
+  "name": {
+    "zh": "年画木版敷彩",
+    "en": "New Year Print Woodblock Colouring"
+  },
+  "family": "国风传统",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "木版黑线加手工敷彩",
+    "density": "细节丰富"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词；以传统木版黑线与手工敷彩为技法参考，不复制具体历史作品，也不主张传统元素版权。"
+  },
+  "essence": [
+    "木版黑线轮廓加手工敷彩",
+    "桃粉朱红黄绿的喜庆高饱和色",
+    "饱满圆润的简化造型",
+    "吉祥纹样适度填充背景"
+  ],
+  "recipe": {
+    "positive": "Chinese New Year woodblock print (nianhua) technique in the Yangliuqing / Taohuawu tradition: carved-block black outlines printed first, then hand-brushed saturated colour (rose-pink, peach, vermilion, yellow, grass green) slightly overflowing the lines with visible brush-depth variation. Figures are rounded, full-faced and festive, with plump simplified objects; carved lines on faces, hands and clothing stay sparse and summary. Dense auspicious pattern details (peony, plum blossom, cloud, coin lattice, geometric motifs) fill cloth and background in flat bold shapes but stay subordinate to the subject. Symmetrical cheerful arrangement on a cream paper ground. Palette: festive saturated hand-coloured rose/peach pink, vermilion, yellow, grass green, small touches of blue and black outline; no metallic sheen and no volume shading. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering. Keep modern clothing modern; do not turn requested characters into period-costume figures or decorative babies. Text is default none; only exact text explicitly requested by the brief may appear, with no copied reference text, signature or fake characters.",
+    "hard_constraints": [
+      "Carved-block black outlines plus hand-brushed saturated colour, with colour slightly overflowing the lines and showing brush-depth variation.",
+      "Rounded full-faced festive figures and plump simplified objects with sparse carved summary lines, not realistic proportions or fine rendering.",
+      "Auspicious pattern details (cloud, floral, geometric) fill cloth and background densely but never bury the subject.",
+      "Festive saturated palette of rose/peach pink, vermilion, yellow and grass green with small blue touches on cream paper; no metallic sheen and no volume shading.",
+      "Symmetrical cheerful arrangement; rounded simplified subjects and dense auspicious patterns support the requested scene. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering. Do not turn requested characters into period costume or decorative babies.",
+      "No modern flat guochao vector smoothness, no 3D shading, no realistic proportions.",
+      "Default text is none; only exact text explicitly requested by the brief may appear, with no copied reference text, signature or fake characters."
+    ],
+    "text_mode": [
+      "none",
+      "native"
+    ]
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "木版黑线轮廓加手工敷彩，色彩略出线或有深浅笔触",
+      "饱满圆润的简化造型，吉祥纹样填充但不淹没主体",
+      "桃粉、朱红、黄、绿的喜庆高饱和色，奶白纸底"
+    ],
+    "must_not_see": [
+      "金属光泽或立体光影",
+      "现代国潮矢量的光滑干净填色",
+      "brief 以外新增的神像、胖娃娃或古装化人物"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着与发型照画；圆润只落在线条与敷彩手法上，不改人物年龄和身份。"
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-11",
+    "tests": {
+      "T1": "pass",
+      "T2": "pass",
+      "T3": "pass",
+      "T4": "pass",
+      "T5": "pass",
+      "T6": "pass",
+      "T7": "pass",
+      "T8": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "当前八题、三次同词稳定性及同题C95/C96近邻通过。T6原始独立意见与复核分歧保留，未发现可定位的墙路断裂，未重画。原生中文只验证信息图与封面的短标题，不证明长文排字；身份一致性只验证本轮两图，静态远景不证明动态视频。登记三张矩阵示例，全场景和换色另计，尚未正式发布。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-11",
+      "note": "当前八题、三次稳定与同题近邻通过，登记能力边界及三张矩阵示例；全场景与发布另计。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "anchor": {
+    "enabled": true,
+    "file": "anchor.png",
+    "sha256": "c5b5f83e35d6a3a6b86b0ad5c9ab2bf37178443276b81d36595b60b573ca47b4",
+    "isolation": "Transfer only the thick carved black outlines, the saturated flat hand-coloured plates (peach pink, vermilion, yellow, green, blue), the plump simplified forms and the cream paper technique from this reference board. Do not reproduce its title, labels, swatches, panel grid, frames, borders, sample figures, flowers as layout or composition. Do not copy any content of the reference board: its people, animals (such as its sleeping cat), cups and vessels, books, window, reading room, furniture, decorative layout, poses or arrangement. Draw people, animals, cups, books, windows, rooms or furniture only when the current brief itself asks for them, and then compose them fresh from the brief's own wording, never from the board's scene. When the brief gives no setting, use the cream paper ground of the technique instead of adding a room or scenery from the board. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering.; reproduce no writing from the board, and add text only where the brief explicitly requests it, spelled exactly as given."
+  },
+  "uses": [
+    "绘本",
+    "文章插图",
+    "信息图",
+    "封面"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "ok",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "矩阵示例：祖孙包饺子",
+      "file": "samples/matrix-T3.png",
+      "source_sha256": "61a4750b2737bba4adb77c1255c759932cf65bf97a1046bbbab3f5e014a0241d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：番茄工作法短字信息图",
+      "file": "samples/matrix-T7.png",
+      "source_sha256": "24f35d8b24c492ad025bf3e61c00b48bcc129f00a5ba06592e5b880bb55ba6bf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：慢慢来封面",
+      "file": "samples/matrix-T8.png",
+      "source_sha256": "daa640417312a13db0fd05af5050443e51a8785a16b2ca1f4c58d45bf4d3e45c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "绘本故事页：小猫搅汤",
+      "file": "samples/s1.png",
+      "source_sha256": "f59325b7e0f1d658b568796f55a57d51d53ad7c07716e46c3b3c132a809379f5",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "漫画：雪夜橘猫进屋吃饺子",
+      "file": "samples/cm-wave16.png",
+      "source_sha256": "5c885a5f544be78d51f8a120471ac81303e6e216adea3b3652b9811bb54db59d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "文章归纳插图（竖）：公众号文章归纳插图（竖版 9:16）：标题区留空，主题“先做小的还是先做大的”，用一条自下而上的三段上升台阶表达做事的三个要点，每层台阶上各",
+      "file": "samples/wxt-wave19.png",
+      "source_sha256": "cb3adda4cf7084f6a482ef99c648a25d4e1a336f6450df735962db5c9bb8c132",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "教材单词参考图：一本摊开的现代汉语词典与一支铅笔并排放在画面中央：词典书页平整翻开成两页，铅笔斜靠在词典右侧页面上，全画面共1本词典、1支铅笔，无其他物件",
+      "file": "samples/s2-wave20.png",
+      "source_sha256": "6f4d9372b9760bbef2c0c53a9c61f4dec81f5e84f1e56462e36dd72cca3dfc86",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：一张竖版信息图，用年画木版敷彩技法讲「为什么先做小事更容易开始」：顶部标题区，当中纵向排列三个独立可读模块，底部一句结束语。",
+      "file": "samples/s3-wave21.png",
+      "source_sha256": "99de682f1f92ea3f76a29c59e00205ddbbef9c3f790357bdea6f07ac4ba56255",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：现代衣着母女在家门口协作挂一盏红纸灯笼：母亲双手托稳灯笼，女儿站在矮凳上把挂绳挂到门边挂钩，处于同一协作时刻",
+      "file": "samples/wxx-wave27.png",
+      "source_sha256": "77e7fed6033ba9b3ee5d640570b9b074a3d286bf0b2f570b8cd94f47cbc943a5",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：邻里换物活动闭环：一件闲置围巾从整理到再使用的四个环节",
+      "file": "samples/inf-wave29.png",
+      "source_sha256": "940269fa7c680a1dc0c40d494c287a0f9f450fc7e5ff9e4423959897025f846e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C93 原生画幅换色验证：ocean",
+      "file": "samples/palette-ocean-wave30.png",
+      "source_sha256": "04159fd12ddf75eedab33819d44c7b63a499de8fea7026c46b75009ce9f31b96",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：一张竖版信息图：《为什么先做小事更容易开始》",
+      "file": "samples/inf-2-wave31.png",
+      "source_sha256": "e45a26d2ffd024c7323596b25b1ad949299c422105b21acf08ad894e356ccbe4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C93 原生画幅换色验证：forest",
+      "file": "samples/palette-forest-wave31.png",
+      "source_sha256": "fa1508bb901e8c4f0d78b61089e59558c305f6091beaf61b5a0d50b0fb5b6640",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：用年画木版敷彩技法做一张竖版信息图：把家庭物品整理分成四格，分别对应留用、维修、转赠、回收",
+      "file": "samples/inf-3-wave32.png",
+      "source_sha256": "627856a3fa85f61dc2f653547e0636873d434c38d7901c72e346208cd44b0a31",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C93 原生画幅换色验证：morandi",
+      "file": "samples/palette-morandi-wave33.png",
+      "source_sha256": "1354d0d7039daf5efb6cec843f09dfcfceec28d94f90bfdc6c11e6d2760658df",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：周末手作市集的三站参观",
+      "file": "samples/ppt-wave34.png",
+      "source_sha256": "d0da31cdefd8fe223c9448f0541d5a0c26ecf3748c8e0550bb30994a17851950",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：木版年画单色墨线版加手工敷彩的三步制作流程",
+      "file": "samples/inf-4-wave35.png",
+      "source_sha256": "d0b7e5075cb0cfaf747096caf2326013946b88599ecf3fa6b5b7e3cfc3bd3752",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：饭后收拾的三步流程",
+      "file": "samples/wxi-wave36.png",
+      "source_sha256": "cdecc3b418e623d5647fa3bf0df9ae292e2cdf9e50506cd3c84198bec268a8f2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：书桌上留下什么：正在读的书、常用文具、一杯清水",
+      "file": "samples/wxi-2-wave37.png",
+      "source_sha256": "ebe7697408871da138ab9707879a71a933bd3baeb73408e49ce7faf11f8e2f8a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "漫画：同一成年男子在菜园摘番茄后提篮沿小路回家",
+      "file": "samples/cm-2-wave38.png",
+      "source_sha256": "e28b81d0eeb7c28066cf958bf6f69a9d7da2aa96fb362e930a4bec514b7c6fcf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：雨天角落中已归置好的雨具",
+      "file": "samples/xhs-2-wave40.png",
+      "source_sha256": "5ad471b20db7bfb809cb302beea701a86e788433121b9aa2e00068e028ae5588",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：共享工具柜的借还与归还检查",
+      "file": "samples/wxi-3-wave42.png",
+      "source_sha256": "d99243a93d548848e4d93288be41677c9543025e39ec2e1eea84f048d1ccdc95",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号封面：一盏书桌台灯照亮一张空白便笺和一支铅笔，无人物",
+      "file": "samples/cv-wave45-repair.png",
+      "source_sha256": "740275d47d12302ca61ee849e8ca4a2af9e967e4b78edc77e82ff278619e8a18",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 2.35
+    },
+    {
+      "topic": "C93 原生画幅换色验证：earth",
+      "file": "samples/palette-earth-wave47.png",
+      "source_sha256": "9f3b20e59a17430d107e446e3acdc66805865534f3d56a48f05c9cab7849e1f1",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 原生画幅换色验证：film",
+      "file": "samples/palette-film-wave49.png",
+      "source_sha256": "7414f161c7b330acbb896d190b75a0ac8409a66b0b95de8407dc31e379a64e9c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：窗边桌上的秋日茶席：一把茶壶、一只冒着热气的茶杯、一小碟桂花",
+      "file": "samples/wxx-2-wave50.png",
+      "source_sha256": "5e538b3255f346e4ec3ae92e86b9bd6144ceb00adf8f94fcc1f91848c6feb363",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "播客 / 音乐封面：窗边一台无标识唱片机与一只空陶杯",
+      "file": "samples/au-wave52native.png",
+      "source_sha256": "2bd183a0191d188e8dbad63bcec65c32268efc5a2e534ee1878eb2ef610b3262",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：修补工具小集合",
+      "file": "samples/ppt-2-wave53.png",
+      "source_sha256": "c8db9f5a36b50e4223c802b44f9404570adcca851d14d03947d2d7f5a25f9338",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：书桌整理清单：两本无字封面的书叠放、一只空笔筒、一个空托盘",
+      "file": "samples/xhs-wave54.png",
+      "source_sha256": "0552d70e948ec42a4e5e68bd4e223052cb9d71f5902563cecdc5a71b960e9cdf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：阳台浇水小工具：一只小喷壶、一个空托盘、一双园艺手套",
+      "file": "samples/xhs-3-wave56.png",
+      "source_sha256": "43583d40d5c78a0885188fef06a01d73a86e09e616b05249688cf04774d59636",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：手账桌面三件套：一本闭合无字封面手账本、一支铅笔、一卷纸胶带",
+      "file": "samples/xhs-4-wave56.png",
+      "source_sha256": "89e76a0ab882bb286f22e0cf08f2d05f799dab6483b8eb9a5f36bde1f42f9cb3",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：桌面分区的整理总结卡",
+      "file": "samples/wxt-2-wave57.png",
+      "source_sha256": "b87d80a304ecb16edff7d409145d325887a40c4a1b1c3a6aa2148ea97e5d8c0a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "公众号文章配图：一只小花盆中一株两片叶子的幼苗，旁边放一把小园艺铲",
+      "file": "samples/wxx-3-wave58.png",
+      "source_sha256": "0866c901877c97e888b343e1a4cd22c064c5b6cc8fe41b087cbc45d404db9a15",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：一张简洁桌面：左侧一本闭合无字书，右侧一只装两支铅笔的笔筒，桌面中间明显空着",
+      "file": "samples/wxx-4-wave59.png",
+      "source_sha256": "ebd3686082ca6c01d308c1ace86005df7f19f3ba7b4d0f42bff2333dd64356fb",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：桌面物品按书写工具与阅读材料分成左右两类",
+      "file": "samples/inf-5-wave61.png",
+      "source_sha256": "f29b6daa67b7ea6eeccb725d573f458b23ddb82fe12ce3482f204b3b858c2502",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：读书会上现代男女读者的两种交流方式：左侧短发男成人持打开的书分享，右侧长发女成人空手举手提问",
+      "file": "samples/ppt-3-wave62.png",
+      "source_sha256": "827844a354041e43bd2fe73543a50c8b4c4835a027c12a5106c8cc9fd136d9cf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "漫画：一名现代成人（红上衣、短发）修理一把松动椅脚的木椅",
+      "file": "samples/cm-3-wave62.png",
+      "source_sha256": "fe23110f58ecdb8029359cc9452ad2525a31905b82ffa8a5b9db0e2ea3417d09",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：书桌收纳三层竖版知识卡",
+      "file": "samples/xhs-5-wave65.png",
+      "source_sha256": "ef344de21ef136e5193041179530d1be21885a69fca80f505d948ec449a7123b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C93 原生画幅换色验证：qinglv",
+      "file": "samples/palette-qinglv-wave74.png",
+      "source_sha256": "f2f38df033d86566b8a01bdb1af214d8099339053da78f923be626c6a8eacf4d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 原生画幅换色验证：zhusha",
+      "file": "samples/palette-zhusha-wave76.png",
+      "source_sha256": "af35b89777b81405427d98275f45e3f86c72ce5b74b13a076d0843efff8bdcd8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 原生画幅换色验证：mono",
+      "file": "samples/palette-mono-wave77.png",
+      "source_sha256": "983363cc5f7bda299afb43aeb7fc18c33de1edacd69c84366ffc9688ae50c191",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：花园里的浇水工具",
+      "file": "samples/ppt-4-wave78.png",
+      "source_sha256": "f050536fb994bc62ef74d40c4fe53cd403e19f5cadfaf43fc187563258d4439d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：手作桌上的两样材料：左侧一团圆形毛线，右侧一个闭合针线盒",
+      "file": "samples/ppt-5-wave80.png",
+      "source_sha256": "5161462a203fc84b9ab1783ddaa14e7b2c462795b1508f25ab4dbe3a9c9b6b73",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C93 原生画幅换色验证：neon",
+      "file": "samples/palette-neon-wave79.png",
+      "source_sha256": "470a901f649068ed6da09c48ef90585077ed0dc949cc9903329861c60cc2826a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 原生画幅换色验证：sunset",
+      "file": "samples/palette-sunset-wave83.png",
+      "source_sha256": "27ebb131c0515f006dbbc63d67c2e17dd41ce2e9d4e519fad449e7151d03b253",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：书桌上的三件小物：一支无字铅笔、一本闭合无字笔记本、一块无字橡皮",
+      "file": "samples/ppt-7-wave84.png",
+      "source_sha256": "864096a6dcb58e58224e46d9cf27daab4b2fb3446eff72a4849de878dcc8f683",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C93 原生画幅换色验证：creamcoffee",
+      "file": "samples/palette-creamcoffee-wave86.png",
+      "source_sha256": "fc12540230ee1ffdb1fe2f6a21d5c1a79833dddfa6d984ebf706e75ac31d27bc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：16:9整页PPT静物说明页，左侧独立长条书签，右侧翻开的书，中缝夹同款书签并露出上端",
+      "file": "samples/ppt-6-wave87.png",
+      "source_sha256": "b9188531d7945677d3b2958fdafc3db18bd7a313c106942b9484422831c68ca7",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C93 原生画幅换色验证：macaron",
+      "file": "samples/palette-macaron-wave89.png",
+      "source_sha256": "8d189b5a2aa3a5940d1382006670a39d8a286c80f0c0ba56cd45446b7cc6fbfe",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 原生画幅换色验证：amber",
+      "file": "samples/palette-amber-wave91.png",
+      "source_sha256": "019603154d9fb9a0fbf56d341de61c9b84cc60daf344fe150a2743486cb95d38",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：冬季补给核验的结论页展示",
+      "file": "samples/ppt-12-wave95.png",
+      "source_sha256": "6ef0a06dacef37ba399a10530fe756e9ccc07b46bfc5a5d26514cd8dd4dd7a06",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "漫画：清晨出门前发现伞坏，改穿雨衣顺利到校的四格小事",
+      "file": "samples/cm-4-wave98.png",
+      "source_sha256": "b2b6efeefe49daa6aca98e4368ba531d1b1705f11211417ce65278cac639fa9f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 换色验证：indigo",
+      "file": "samples/palette-indigo-continuous.png",
+      "source_sha256": "4fb9842f32081850519dd75a5941ef88baf980754a07b6d000f8e283ca363017",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 换色验证：lilac",
+      "file": "samples/palette-lilac-continuous.png",
+      "source_sha256": "cbe2a8765d071ea9798ad8f2310322570e3df7a252a52d543636ad9b05c7bbb8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 换色验证：mintsoda",
+      "file": "samples/palette-mintsoda-continuous.png",
+      "source_sha256": "bca24e89aea8923fcf257f513eaa38891b770288bbcae2aaf7ec6f306d4b06c4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 换色验证：mistblue",
+      "file": "samples/palette-mistblue-continuous.png",
+      "source_sha256": "305927cf45d060c645f0b3909f68002c7fcff06504c744688d0b0c70c52fc3de",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C93 换色验证：sakura",
+      "file": "samples/palette-sakura-continuous.png",
+      "source_sha256": "b57a46f78e3e56172974862c4c73dd124fe7666c19c9fdee9802ba9743027d36",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "年画木版敷彩技法的一页图示：刻版黑线先印，手工敷彩后上，色料略出线",
+      "file": "samples/xhs-6-continuous.png",
+      "source_sha256": "ca872a7bd30530733e95c0302a506324cf23a87031a6979d0a49b47d090d0927",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "一个厨房台面上的早餐备餐动线复盘",
+      "file": "samples/ppt-9-continuous.png",
+      "source_sha256": "ef51932bfb2f4d345ef72f5a2004a6f9f86db503682479858792d8c5e6d7a061",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "灶台边清点腊月糖瓜的婆婆与孙女",
+      "file": "samples/sb-continuous.png",
+      "source_sha256": "2d1f3b79c949d2fa4ab2ff812c5b473c7b949fea6353928e27d7d9b336a3ba56",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "腊月年集摊位上核对年货清单的三位摊主与顾客",
+      "file": "samples/ppt-11-continuous.png",
+      "source_sha256": "c01c045ab4bf6bbe0a9f496e8b0e42b513f65970680747ff6fe4b59121d30db5",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "三口之家按“先付清高息债、再建应急金、后做定投”排布的月度闲钱分配方案",
+      "file": "samples/ppt-10-continuous.png",
+      "source_sha256": "c896b6b8813cc25cad80c5046ec3ea7952ce172b28a1fb9c4f7691d57d606b52",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "年画木版敷彩的四道手工工序",
+      "file": "samples/bd-continuous.png",
+      "source_sha256": "0377e31888548c8f2f46e96b75cb82ade0cb28abe6b9c4156ec1e2f5a4bbdcb9",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "木石结构哨站内的冬季补给核验现场",
+      "file": "samples/ppt-8-continuous.png",
+      "source_sha256": "638dff5254afa42a19e565e9ce2adc9459aef724cbe835b15e39cca71c2c5102",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    }
+  ]
+}

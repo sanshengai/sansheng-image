@@ -103,6 +103,14 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "扁平主体整体平移并带动相邻色块，轻缓停稳，之后保持留白与干净轮廓。",
+    "primitives": [
+      "keyframes",
+      "easing"
+    ],
+    "safety": "不擅自改变静态布局或轮廓识别点；文字、人脸与产品不形变，只做平移、旋转与等比缩放。"
+  },
   "samples": [
     {
       "topic": "人物",

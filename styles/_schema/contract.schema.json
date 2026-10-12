@@ -592,6 +592,52 @@
       ],
       "description": "首选出图后端"
     },
+    "motion_dialect": {
+      "type": "object",
+      "required": [
+        "language",
+        "primitives",
+        "safety"
+      ],
+      "additionalProperties": false,
+      "description": "动态导演建议：画风的运动材质与节奏。不影响静态出图提示词，也不证明自动成片或静态准入",
+      "properties": {
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "一两句运动材质与节奏描述，不绑定固定样图的人物、剧情或动作"
+        },
+        "primitives": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "keyframes",
+              "easing",
+              "spring",
+              "squash",
+              "particles",
+              "light_sweep",
+              "mask_reveal",
+              "card_flip",
+              "char_text",
+              "number_roll",
+              "path_draw",
+              "loop"
+            ]
+          },
+          "description": "建议的动作类别（对应 references/motion-primitives.md 的十二类），不是自动调用的函数名"
+        },
+        "safety": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "文字、人脸、产品等受保护内容的运动边界"
+        }
+      }
+    },
     "samples": {
       "type": "array",
       "items": {

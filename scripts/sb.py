@@ -32,6 +32,10 @@
   sticker-check <目录> [--count 9]          检查逐张导出的透明表情包
   character sheet <角色.json> --style X   生成角色设定网格（之后每张图拿它当身份参考）
   character check <角色.json> <设定图> <图>... --style X   一致性对照网格 + 逐条核对辨识特征
+  layers   <brief.json> -o 新目录 --prepare | --import-results <json> --prepared <json>   分件式图层（不代调出图）
+  animate  <doctor|plan|render|qa> ...   四场景动态版（本机渲染与验收）
+  animate  assets --out 新目录          导出原创动作库
+  animate  dialect --style 画风码       读取该画风的动作语言建议
 """
 from __future__ import annotations
 
@@ -189,8 +193,12 @@ def cmd_qa(a) -> int:
     if a.review_json:
         rv = json.loads(Path(a.review_json).read_text(encoding="utf-8"))
     else:
-        from stylebook.qa.reviewer import review
-        rv = review(Path(a.image), c, expected, mode)
+        from stylebook.qa.reviewer import review, ReviewerIncompleteResult
+        try:
+            rv = review(Path(a.image), c, expected, mode)
+        except ReviewerIncompleteResult as exc:
+            # judge 仍拒绝漏答；保留原回答与绑定，转为补审核而非重生。
+            rv = exc.review
     v = judge(Path(a.image), c, rv, expected, mode, fmt, manifest)
     verify(binding, kind="image", files=binding_files, values=binding_values)
     v.binding = binding
@@ -337,6 +345,15 @@ def cmd_matrix(a) -> int:
                       "matrix_line": st.get("admission", {}).get("matrix_verdict"),
                       "abilities": st["abilities"], "est_usd_total": st["est_usd_total"],
                       "spent_this_run": st["spent_this_run"]}, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_matrix_evidence(a) -> int:
+    from stylebook.matrix_evidence import import_evidence
+    state = import_evidence(a.bundle, a.contract, a.out)
+    print(json.dumps({"style": state["style"], "admission": state["admission"],
+                      "new_generations": 0, "new_model_calls": 0,
+                      "output": str(Path(a.out).resolve())}, ensure_ascii=False, indent=2))
     return 0
 
 
@@ -599,6 +616,31 @@ def cmd_make(a) -> int:
     return 1 if report["status"] == "failed" else 0
 
 
+def cmd_layers(a) -> int:
+    from stylebook import layers as LY
+    try:
+        brief = LY.load_json(a.brief)
+        base = Path(a.brief).resolve().parent
+        if a.import_results:
+            if not a.prepared or a.prepare:
+                raise LY.LayersError("导回须同时提供 --prepared，不能与 --prepare 同用")
+            report = LY.import_results(brief, Path(a.prepared), Path(a.import_results), Path(a.out), base_path=base)
+        else:
+            if a.prepared or not a.prepare:
+                raise LY.LayersError("只支持 --prepare 或 --import-results <json> --prepared <json>；Codex 内置生图不能由命令行代调")
+            report = LY.prepare_run(brief, Path(a.out), base_path=base)
+    except (LY.LayersError, FileExistsError) as exc:
+        print(f"分件出图停止：{exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_animate(a) -> int:
+    from stylebook import animate_adapter as AA
+    return AA.main(a.rest)
+
+
 def cmd_raw_generate(a) -> int:
     """按已编译好的提示词直接出一张原图（供写作 Skill 等上游调用；不编译、不验收、不导出）。"""
     from stylebook import backends as B
@@ -663,7 +705,9 @@ def cmd_pptx(a) -> int:
 
 
 def main(argv=None) -> int:
-    if FR.ensure_dependencies(sys.argv[1:] if argv is None else argv):
+    actual_argv = sys.argv[1:] if argv is None else argv
+    # 动态与分件入口只检查现有环境，绝不沿用静态入口的自动 pip 安装。
+    if (not actual_argv or actual_argv[0] not in {"animate", "layers"}) and FR.ensure_dependencies(actual_argv):
         return 2
     ap = argparse.ArgumentParser(prog="sb", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -738,6 +782,11 @@ def main(argv=None) -> int:
     p.add_argument("--no-review", action="store_true"); p.add_argument("--regen", action="store_true", help="忽略旧图全部重出")
     p.add_argument("--reviews", type=int, default=1, help="每题独立看图几次（准入用 2；不一致记为分歧交人复核）")
     p.set_defaults(fn=cmd_matrix)
+    p = sub.add_parser("matrix-evidence", help="核验现有内置原图、Coding Plan意见与Codex裁决；不生图、不调用模型、不正式登记")
+    p.add_argument("bundle", help="完整外部证据包JSON")
+    p.add_argument("--contract", required=True, help="当前实际候选合同JSON")
+    p.add_argument("-o", "--out", required=True, help="必须不存在的输出目录")
+    p.set_defaults(fn=cmd_matrix_evidence)
     p = sub.add_parser("build"); p.add_argument("--private", action="store_true", help="叠加私有 profile（只写到 gallery/build/）")
     p.add_argument("--gallery", action="store_true"); p.add_argument("--advanced", action="store_true", help="生成旧的完整画廊（内嵌全部样图、含偏好页）"); p.add_argument("--samples", nargs="*", help="样图目录（<码>-T3.png 或 <码>-q1.png）")
     p.add_argument("--legacy-prompts", help="兼容旧命令；选择器已停用独立提示词模板，此参数不再生效")
@@ -771,6 +820,11 @@ def main(argv=None) -> int:
     p.add_argument("--jobs", type=int, default=4); p.add_argument("--prepare", action="store_true")
     p.add_argument("--import-results"); p.add_argument("--prepared")
     p.set_defaults(fn=cmd_make)
+    p = sub.add_parser("layers"); p.add_argument("brief"); p.add_argument("-o", "--out", required=True)
+    p.add_argument("--prepare", action="store_true"); p.add_argument("--import-results"); p.add_argument("--prepared")
+    p.set_defaults(fn=cmd_layers)
+    p = sub.add_parser("animate"); p.add_argument("rest", nargs=argparse.REMAINDER, help="doctor|plan|render|qa|assets|dialect 及其参数")
+    p.set_defaults(fn=cmd_animate)
     p = sub.add_parser("batch"); p.add_argument("plan"); p.add_argument("-o", "--out", required=True)
     p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality"); p.add_argument("--retries", type=int, default=2)
     p.add_argument("--jobs", type=int, default=3); p.add_argument("--no-review", action="store_true"); p.set_defaults(fn=cmd_batch)

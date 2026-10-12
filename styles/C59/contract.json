@@ -74,6 +74,15 @@
     "音乐封面"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "扁平色块与几何形以明快的跳跃节奏平移、旋转和等比缩放，干脆落位；只有内容本身有正反两面的图形卡才翻转。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "card_flip"
+    ],
+    "safety": "翻转只用于不含文字、人脸与产品的纯图形卡；文字、人脸与产品不翻转、不形变，画面保持扁平完整。"
+  },
   "samples": [
     {
       "topic": "人物",

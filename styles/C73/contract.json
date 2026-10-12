@@ -74,6 +74,15 @@
     "PPT"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "教学色块按讲解顺序整体贴入，带一点轻快回弹后落定，节奏明朗、像逐步讲解；文字层始终保留。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "spring"
+    ],
+    "safety": "弹簧只改变色块位置或做等比缩放；文字、人脸、产品与教学图形不挤压不变形，首末帧完整可读。"
+  },
   "samples": [
     {
       "topic": "人物",

@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "style": "C97",
+  "scope": "style admission; matrix examples; full scenes and publication tracked separately",
+  "review_routes": [
+    "codex_builtin_native",
+    "ark_coding_plan/deepseek-v4.1-flash"
+  ],
+  "tested_contract_sha256": "7bdd0b8a80cd061e6402b21839569a1dcff42dad27428f1b030089a2ef3354bb",
+  "current_contract_sha256": "4e3653848f98514e0a93d485245fecfaec4a090f4d46fe69334adccbe8fbef8f",
+  "evidence_state_sha256": "0d3b0698a4a9cb3ca96a15aa083f009db334ad4d7adfe08b5638a8d31bd887b0",
+  "evidence_bundle_sha256": "c6083891f2e731091ebe5ad8cf23feca1a1670e103640f8c806b35d3733fc070",
+  "matrix": {
+    "T1": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "ae75899af896d8d373fa67c4910932a6aa321b233951f5b1f77f70b426c5fffc",
+      "independent_original_overall": "pass"
+    },
+    "T2": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "5c4ecba3a6b37fb0e77697c7b507104567c49cde2b420c593d7b40f5770d84a1",
+      "independent_original_overall": "pass"
+    },
+    "T3": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "1463e3c0ab5a6ad97a5069c43afa24900c931bb57539f4408c34f2c6ebe59440",
+      "independent_original_overall": "pass"
+    },
+    "T4": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "c91d88ae917962cb370cd25bf7cb63adedc76a79fa79ce8c655cee4003daef2c",
+      "independent_original_overall": "pass"
+    },
+    "T5": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "bf08e49af01a41dbeed04cd09bb5af892004274b354ac68c5b8df6d09018dd6c",
+      "independent_original_overall": "pass"
+    },
+    "T6": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "059c743458e4f591fab84dbb3427057f1bd564faea152aaf1736e8d63fdde579",
+      "independent_original_overall": "pass"
+    },
+    "T7": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "8c7bd48851400a2fb839b190c6cad52f5840212b699b4b2704b0a84442edfe05",
+      "independent_original_overall": "pass"
+    },
+    "T8": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "ca5b90811171f119e6ff533cc40b1c8b1b0fcb9b59e88ecdbdaed3a1c84640fe",
+      "independent_original_overall": "pass"
+    }
+  },
+  "stability_verified": true,
+  "neighbors_verified": true,
+  "neighbor_limitations": [
+    "仅两项当前同题实际比较，不证明所有近邻与全部用途；独立意见中偏概括的材质描述保留，Root按实际图判断。"
+  ],
+  "generation_prompt_and_reference_bytes_preserved": true,
+  "anchor_relocated_with_same_bytes": false,
+  "registered_sample_count": 3,
+  "full_scene_coverage_complete": false,
+  "native_text_supported": true,
+  "native_text_limit": "short information-diagram labels and cover title; long body text untested",
+  "backend_model": null,
+  "published": false,
+  "matrix_final": {
+    "T1": {
+      "result": "pass"
+    },
+    "T2": {
+      "result": "pass"
+    },
+    "T3": {
+      "result": "pass"
+    },
+    "T4": {
+      "result": "pass"
+    },
+    "T5": {
+      "result": "pass"
+    },
+    "T6": {
+      "result": "pass"
+    },
+    "T7": {
+      "result": "pass"
+    },
+    "T8": {
+      "result": "pass"
+    }
+  },
+  "neighbor_codes": [
+    "C96",
+    "C98"
+  ]
+}

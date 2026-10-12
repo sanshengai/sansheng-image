@@ -26,6 +26,52 @@ def _rv(ms=True, bad=False, text=()):
             "transcribed_text": list(text)}
 
 
+def test_edit_goal_and_advice_do_not_add_or_waive_hard_gates(tmp_path):
+    image = _img(tmp_path, (240, 240, 235))
+    review = _rv()
+    review["edit_goals"] = [{"goal": "微小金点改为青色", "completed": False, "why": "仍是微小金点"}]
+    review["suggestions"] = ["人物接近上限但未超限，可以缩小一点"]
+    verdict = judge(image, K, review)
+    assert verdict.passed and verdict.triage["next_action"] == "accept"
+    assert verdict.triage["edit_goals"][0]["completed"] is False
+    # Mutation along the actual judge path: advice/overall cannot waive a true ban.
+    review["overall"] = "pass"
+    review["must_not_see"][0]["present"] = True
+    verdict = judge(image, K, review)
+    assert not verdict.passed
+    assert verdict.triage["next_action"] == "diagnose_before_repair"
+    assert verdict.triage["automatic_regeneration"] is False
+
+
+@pytest.mark.parametrize("ok", [True, False])
+def test_unverified_is_pending_evidence_not_accepted_or_automatic_regeneration(tmp_path, ok):
+    review = _rv()
+    review["must_see"][0].update(ok=ok, observation="unverified", why="原尺寸局部才能确认")
+    verdict = judge(_img(tmp_path, (240, 240, 235)), K, review)
+    assert not verdict.passed
+    assert verdict.triage["next_action"] == "collect_evidence"
+    assert verdict.triage["pending_evidence"]
+    assert verdict.triage["automatic_regeneration"] is False
+    # Only confirmed evidence can make the same answer pass.
+    review["must_see"][0].update(ok=True, observation="confirmed", why="原尺寸明确可见")
+    assert judge(_img(tmp_path, (240, 240, 235)), K, review).passed
+
+
+@pytest.mark.parametrize("review", [None, {}, []])
+def test_empty_review_is_process_error_not_image_defect(tmp_path, review):
+    verdict = judge(_img(tmp_path, (240, 240, 235)), K, review)
+    assert not verdict.passed
+    assert verdict.triage["next_action"] == "complete_review"
+    assert verdict.triage["process_errors"]
+
+
+def test_invalid_observation_cannot_silently_pass(tmp_path):
+    review = _rv()
+    review["must_see"][0]["observation"] = "probably"
+    assert not judge(_img(tmp_path, (240, 240, 235)), K, review).passed
+    assert "observation" in " ".join(missing_items(review, K, "none"))
+
+
 def test_overlay_layout_gate_rejects_small_title_multiline_subtitle_and_empty_manifest(tmp_path, monkeypatch):
     image = _img(tmp_path, (240, 240, 235))
     contract = {**K, "qa": {**K["qa"], "overlay_layout": {
@@ -437,6 +483,7 @@ print(json.dumps({{"structured_output": a[min(n, len(a) - 1)]}}))
 
 
 def test_reviewer_reasks_when_items_missing(tmp_path, monkeypatch):
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
     from stylebook.qa import reviewer
     full = _rv()
     part = {**full, "must_not_see": full["must_not_see"][:1]}
@@ -450,6 +497,7 @@ def test_reviewer_reasks_when_items_missing(tmp_path, monkeypatch):
 
 
 def test_reviewer_still_missing_is_judged_fail(tmp_path, monkeypatch):
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
     from stylebook.qa import reviewer
     full = _rv()
     part = {**full, "must_not_see": full["must_not_see"][:1]}
@@ -577,6 +625,7 @@ def test_agent_plan_reviewer_stops_on_network_error_without_retry(tmp_path, monk
 
 
 def test_reviewer_stops_on_quota(tmp_path, monkeypatch):
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
     import stat
     from stylebook.qa import reviewer
     exe = tmp_path / "claude"
@@ -588,6 +637,7 @@ def test_reviewer_stops_on_quota(tmp_path, monkeypatch):
 
 
 def test_reviewer_stops_on_missing_login_without_retry(tmp_path, monkeypatch):
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
     import stat
     from stylebook.qa import reviewer
     exe = tmp_path / "claude"
@@ -599,6 +649,7 @@ def test_reviewer_stops_on_missing_login_without_retry(tmp_path, monkeypatch):
 
 
 def test_reviewer_stops_on_disabled_subscription_without_retry(tmp_path, monkeypatch):
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_BACKEND", "claude_cli")
     import stat
     from stylebook.qa import reviewer
     exe = tmp_path / "claude"

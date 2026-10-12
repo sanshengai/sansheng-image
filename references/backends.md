@@ -2,7 +2,7 @@
 
 后端适配层：`scripts/stylebook/backends/`。默认首选 **Codex 内置生图**，走 ChatGPT / Codex 订阅额度，不按张付费，不需要 API Key。
 
-## Codex 内置生图（默认）
+## Codex CLI 适配（当前会话没有内置生图工具时）
 
 - 条件：本机装了 `codex` 命令且已用 ChatGPT 账号登录（`codex login status`）。`sb.py make`、`generate`、`batch` 在没有指定服务时自动使用它。
 - 做法：适配层无人值守地调用 `codex exec`，把编译好的完整提示词原样交给 Codex 的内置生图工具，参考图用 `-i` 传入（必须放在提示词之后），并明确要求目标画幅（16:9、2.35:1、3:4 等都实测可用，像素大小是近似值，导出时再裁切缩放）。
@@ -14,9 +14,9 @@
 
 默认**不会**自动改用按张付费的服务。想允许，在 `~/.config/sansheng-image/config.json` 写 `"allow_paid_fallback": true`，并可用 `"paid_fallback_cap_usd"` 设当天估算花费上限（默认 5 美元）；达到上限后不再退。自动退到付费服务时，日志里会有一条 `fallback_to` 记录。用户明确指定了 `--provider` 时不做自动备用。
 
-## 手动接力（Agent 有内置生图工具的会话）
+## 当前会话直接生图（有内置生图工具时优先）
 
-`sb.py make brief.json -o 目录 --prepare` 只编译并输出 `prepared.json`，由当前会话的内置工具出图，再用 `--import-results` 导回；格式见 [quick.md](quick.md)。这一条只在没有 `codex` 命令时才需要。
+`sb.py make brief.json -o 目录 --prepare` 只编译并输出 `prepared.json`，由当前会话直接调用内置生图工具，再用 `--import-results` 导回；格式见 [quick.md](quick.md)。即使本机有 `codex` 命令，也使用当前会话的工具，不再启动另一个 Codex。上述 CLI 登录、子进程参数及日志说明仅适用于 CLI 适配路径；直接生图以实际工具返回为准，未知模型、费用和耗时保持未知。
 
 ## 外部服务
 

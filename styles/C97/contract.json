@@ -1,0 +1,624 @@
+{
+  "code": "C97",
+  "revision": 1,
+  "name": {
+    "zh": "新艺术植物曲线",
+    "en": "Art Nouveau Botanical Curves"
+  },
+  "family": "复古印刷",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "新艺术装饰海报",
+    "density": "细节丰富"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词，按本款技法要点创作；不复制具体历史作品，不主张传统元素版权。实际近邻与能力范围见准入记录。"
+  },
+  "essence": [
+    "流动的鞭形曲线与深棕长轮廓",
+    "主体后方的装饰圆环或拱形光环",
+    "花卉蔓藤与有机植物母题",
+    "外围植物装饰边框"
+  ],
+  "recipe": {
+    "positive": "Art Nouveau decorative-poster technique (Alphonse Mucha tradition): sinuous whiplash curves, long flowing contour lines in dark brown, flat soft colour plates with delicate gradient accents as decorative drawn colour rather than photographic shading, an ornamental circular halo or arch behind the main subject, floral arabesque and organic plant motifs woven through the scene, and a decorative botanical border frame around the image, with no letters. Technique reference only; no copy of any specific poster. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering. Apply the organic floral style around and behind the requested subjects. Muted earthy pastels: sage green, dusty rose, warm cream, ochre, soft teal, dark brown line, small gold accents. If the brief explicitly requests a recolour, retain the same limited colour roles, organic line character and decorative material feel.",
+    "hard_constraints": [
+      "Keep the style decorative and poster-like: flat soft colour, delicate gradient accents, and drawn ornament rather than photographic shading or realistic lighting.",
+      "Use sinuous, organic curves and floral or plant arabesque motifs; avoid geometric Deco stepped forms, harsh metallic gold, neon, and copying a known poster.",
+      "Include an ornamental circular halo or arch behind the main subject and a decorative botanical border frame around the image.",
+      "No lettering or title panels by default; if the current brief explicitly requires exact words, only those exact words may appear.",
+      "Use dark brown contour lines and the muted earthy pastel palette with gold only as small accents.",
+      "Do not add subjects, deities, identities, or themes beyond the current brief."
+    ],
+    "text_mode": [
+      "none",
+      "native"
+    ]
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "流动的鞭形曲线勾边与有机花叶纹样",
+      "主体后方的装饰圆环或拱形光环，外围有植物装饰边框",
+      "柔和的土系粉彩平涂，深棕线，金色仅作点缀"
+    ],
+    "must_not_see": [
+      "几何 Deco 阶梯形、霓虹或大面积金属金",
+      "照片式阴影或写实光影",
+      "无字任务禁止任何文字；原生文字任务仅允许题面逐字指定的准确文字，禁止缺字、错字、额外文字、假文字、签名、署名、艺术家签名、印款和窑款，不因标题、标签、边框或标题板的位置而扩大许可。"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着照画，曲线与花叶只作背景和边框，不改成长袍造型。"
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-11",
+    "tests": {
+      "T1": "pass",
+      "T2": "pass",
+      "T3": "pass",
+      "T4": "pass",
+      "T5": "pass",
+      "T6": "pass",
+      "T7": "pass",
+      "T8": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "八题最终证据、三次同词稳定性及两项同题近邻均通过；C94原始T8纹样漏项失败保留，最终T8采用有实际编辑链及完整QA的返修图，不伪装原始生成通过。原生中文只验证本轮短标题/标签，不证明长文排字；身份一致性只验证两图，静态远景不证明动态视频。登记三张矩阵示例，全场景和换色另计，尚未正式发布。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-11",
+      "note": "当前标准题最终证据、三次稳定与两项同题近邻通过；保留原失败/误报及编辑链，登记三张矩阵示例；全场景与发布另计。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "uses": [
+    "绘本",
+    "文章插图",
+    "信息图",
+    "封面"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "ok",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "矩阵示例：祖孙包饺子",
+      "file": "samples/matrix-T3.png",
+      "source_sha256": "1463e3c0ab5a6ad97a5069c43afa24900c931bb57539f4408c34f2c6ebe59440",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：番茄工作法短字信息图",
+      "file": "samples/matrix-T7.png",
+      "source_sha256": "8c7bd48851400a2fb839b190c6cad52f5840212b699b4b2704b0a84442edfe05",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "矩阵示例：慢慢来封面",
+      "file": "samples/matrix-T8.png",
+      "source_sha256": "ca5b90811171f119e6ff533cc40b1c8b1b0fcb9b59e88ecdbdaed3a1c84640fe",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "四格漫画：一部两格宽两格高的四格漫画，讲述一只橘猫想偷吃桌上小鱼干的故事：主角始终是同一只橘猫，穿同一只红色小项圈，道具始终是同一只蓝边陶碗里的小鱼干",
+      "file": "samples/cm-wave19.png",
+      "source_sha256": "2a5bd7fe71b06af4f70c49605db08319901bd5aca8dcd9e2ce3f50b72b7e375a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "绘本故事：一位扎低马尾、穿深绿针织开衫的年轻母亲，蹲在洒满晨光的窗台边，双手扶着一只浅蓝边白瓷小喷壶给一盆幼苗浇水，身旁一个短发小女孩踮脚伸手指向刚冒",
+      "file": "samples/s1-wave20.png",
+      "source_sha256": "1bbcc39b50698e7344554cb29f5f6c21a1ef5af41e72229a4b50e0ad6cd3a091",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "公众号文章配图：一张纵向文章归纳插图：顶部一句判断式标题，下方三个独立可读模块沿竖直路径从上到下排列，分别讲清“先停下来”“只做最小一步”“允许自己不完美”",
+      "file": "samples/wxt-wave21.png",
+      "source_sha256": "3ff70a51b57dba12ebb97fd7b7d4e21536b4166e105e3d25fd81e00f3b4ccdaa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "公众号封面：一枚纵向生长的幼苗在圆形光环中舒展两片新叶，根系缠绕成鞭形曲线",
+      "file": "samples/cv-wave22.png",
+      "source_sha256": "5ff558f423bf6b6ae3ab6bd98ead610db5924c8b2865896455ea8a82d3a98948",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 2.35
+    },
+    {
+      "topic": "公众号文章配图：睡前放下手机的三步安抚流程",
+      "file": "samples/wxt-2-wave23.png",
+      "source_sha256": "d64107ce99ec14c1ad24dfd8d43cf4ebce4f14ee612128e89c2889e870861d67",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "公众号文章配图：一张关于'把待办分成三类再动手'的公众号文章归纳插图",
+      "file": "samples/wxi-wave24.png",
+      "source_sha256": "22b022f33ff39f0f87d15e4c1d5ae83a463492febbe2cc375d7bde84b56d0daa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：同一张书桌的收纳前后对比，左右两栏并置",
+      "file": "samples/ppt-wave26.png",
+      "source_sha256": "2e4a1fa0a4b4c6dca590f0e9ce1ceef925665eeb5d969dbcdc892f72ec6cae06",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：一位现代成年人在夜晚的桌前，把合拢的无字封面纸质笔记本放进敞口布袋，准备明天的随身物品",
+      "file": "samples/wxx-wave28.png",
+      "source_sha256": "c028974fa102fa33edd6e57f12d0be18efb868b5b8b70ad2803748b867cad08d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C97 原生画幅换色验证：ocean",
+      "file": "samples/palette-ocean-wave30.png",
+      "source_sha256": "7b68da0bdf1bf8eaf6e9bfe5c09146b919ec5a1f56c7e0063712147b213d7d53",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "视频分镜首帧：现代都市夜晚的旧公寓楼道口：一位穿深色连帽外套的年轻女性背着单肩布袋，正要推开半掩的楼道铁门回家",
+      "file": "samples/sb-wave31.png",
+      "source_sha256": "727c3a2790b73001650ffa7db7f989630edccc28eecc11926d78d0e6297890e4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C97 原生画幅换色验证：forest",
+      "file": "samples/palette-forest-wave31.png",
+      "source_sha256": "200004ad3c3dd13c25658617f489df2d27418eade6709c74af444a665c0ab784",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：一张用于读书笔记首图的封面：一本翻开的纸质笔记本平放在浅木质桌面中央，页面上放一支旧钢笔，旁边一杯冒热气的茶",
+      "file": "samples/xhs-wave32.png",
+      "source_sha256": "f18af3e44e013b8db944cf535ee5ed1aee6e79deb675eb043496a5e56f1b8c64",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C97 原生画幅换色验证：morandi",
+      "file": "samples/palette-morandi-wave33.png",
+      "source_sha256": "1e7812d30f6f45c0b7d6774effb1ad4911be07915d0954b91b3a0e00a7e53a24",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：在同一张浅色无字贺卡上完成拼贴纸花的三个阶段",
+      "file": "samples/inf-wave34.png",
+      "source_sha256": "108943634863456a4ce8f6e7f4aebd8784178f735e1352385c2563aa9c7b5705",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "漫画：一名手作陶艺学徒在工作室里找回落灰的旧刻纹工具并完成一只杯子",
+      "file": "samples/cm-2-wave35.png",
+      "source_sha256": "095700ef4a30fb7a7373bf0be9b7abd5505d7903964add48cd3887fdb075ae22",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：寄出礼物前的三个准备步骤",
+      "file": "samples/s3-wave36.png",
+      "source_sha256": "7d624f5e4314446b281c11b4d99f3ad3bc3d0f581e8b473c5d135743f2b74f19",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "教材单词参考图：一组园艺工具与容器：一只浇水壶、一把铲子、一副手套、一个花盆",
+      "file": "samples/s2-wave37.png",
+      "source_sha256": "2e4d57a77c88e2e68353f8da3e9813ed38f804020e1cbfecf71b67fc78cca2ce",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：为花瓶挑选桌面上三个合适位置的信息图",
+      "file": "samples/inf-2-wave38.png",
+      "source_sha256": "86e180f3991e801bd486ad665613371e1edb61478241fe2ecbc01ac594397385",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：留住散步带回的小发现",
+      "file": "samples/wxi-2-wave39.png",
+      "source_sha256": "f5f3ecdc1658fcba79ddff648ca81aed2f7628780640eafcc2b33cb6dfafb8be",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：一篇关于“把复杂任务拆成最小可执行步骤”的公众号文章配图",
+      "file": "samples/wxx-2-wave40.png",
+      "source_sha256": "7b6a5b86034dc767d5bc15a2baa7e4e0de693211b7401f784fa6081c8c60aad0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：桌面清洁工具的静态三分区",
+      "file": "samples/wxi-3-wave46.png",
+      "source_sha256": "8afbf6a7788b07b07a36b750c43e5566314238f3ecde3d960d7084926b4a379c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C97 原生画幅换色验证：earth",
+      "file": "samples/palette-earth-wave47.png",
+      "source_sha256": "660dc650c1ac4313c81cfd9f423bd31c2a4fc1670a5cda682da706315d0b29fe",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：窗边阅读角（书本、照明、靠垫三模块）",
+      "file": "samples/xhs-2-wave48.png",
+      "source_sha256": "d4a4548f940ba4aad14b0af1ed32eeb2f0436b702508e81f929d053867c46423",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：桌面绿植角：一盆带绿叶的植株花盆、一把喷壶、一个空托盘三件物品横向并置",
+      "file": "samples/ppt-2-wave51.png",
+      "source_sha256": "c83e7747ee6ae32bfbc961f0ea2c69a87f0d8d0b8d788fdf6fa90c3801492a1d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "播客 / 音乐封面：音乐单曲封面《鸢尾夜曲》：中央三枝鸢尾花与长叶组成的优雅竖向图案，上方一弯残月，下方轻微水纹，无人物",
+      "file": "samples/au-wave55.png",
+      "source_sha256": "9df46ecffa54049627587be61119b83e600fe87ee51b2e1ff7bd41c668970171",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：窗边插花准备：一只空花瓶、一把合拢的园艺剪刀、两枝不带花朵的长叶植物",
+      "file": "samples/xhs-3-wave56.png",
+      "source_sha256": "7baea130d0ffec35d776606ec629c280442e2d5e1a75c4d22314baca86ee36b4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：园艺换盆准备：一只空陶土花盆、一把短柄园艺铲、一双园艺手套，横排陈列",
+      "file": "samples/xhs-4-wave57.png",
+      "source_sha256": "bce20c9de985f7189f8649ab0673f8447875ecdc266ce5ca6e370b5bb4ad955f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：一把空椅子，椅面上放着一本合拢的无字书，旁边是一盏立式落地灯",
+      "file": "samples/wxx-3-wave58.png",
+      "source_sha256": "a6c5dc92a45ea3b8d874d967b77550fa5d5dc101fd01105f4042840d20be1989",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：读书会今日安排的三列静态栏目",
+      "file": "samples/ppt-3-wave58.png",
+      "source_sha256": "cba1e549a8265eb6ac818b27e3414c00046f4d784b2591f163edb7089f032a38",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：出门前的检查信息图",
+      "file": "samples/inf-3-wave60.png",
+      "source_sha256": "fce59bf6a5b6e52b84608d0d9e541e5c7ef06c56d75b3ba9e96e10e324ead61e",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "信息图：任务按时间跨度分成三类的整理面板",
+      "file": "samples/inf-4-wave61.png",
+      "source_sha256": "3421cc424548cdb0ba9ae64293ff8683ae98066f3b9e5734b725bdcaad665f70",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：出门携带物品三栏平级展示",
+      "file": "samples/ppt-5-wave62.png",
+      "source_sha256": "9d6e6791c3cba11c76e8d0e03d37f1cbd0ba9b006dce65003c93741375d3621d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：写信的三个步骤：写下、装入、封好",
+      "file": "samples/ppt-6-wave63.png",
+      "source_sha256": "2eafc4732694512753e6811081946e01ec260aa86a7cfcc6cb69aee1d196902a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号文章配图：一只透明玻璃瓶，瓶中仅有三支不同高度的百合花茎，无人物",
+      "file": "samples/wxx-4-wave67.png",
+      "source_sha256": "4072d9479c6c83a7644140d18dd1c31f38fe2cec72d52ad6a0992e5ead86e1dd",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "漫画：同一短发绿衣现代成年人在室内与一只黑白小猫从门外相遇到信任靠近的四格故事",
+      "file": "samples/cm-3-wave68.png",
+      "source_sha256": "079e86c5acefe69a5ac32aafa4dbaef1d190374e06bb9032b12e41c04af28585",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：沙漏与双铃圆形指针闹钟的并置对照",
+      "file": "samples/ppt-7-wave70.png",
+      "source_sha256": "e7dd8faf6b525dcd1d85ed8a50268d83aa14361529043623b41ca622f1577364",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：午后的休息用品：一个完整方形靠垫与一条整齐叠好的毯子",
+      "file": "samples/ppt-8-wave73.png",
+      "source_sha256": "ff2d10c5a9e0e10c9abd822a2b3c2eab3f0551d952d4fef40aeb3cfc67a35692",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：无字封面笔记本与无字信封并置的桌面静物",
+      "file": "samples/ppt-9-wave75.png",
+      "source_sha256": "81ce1a05c15bd5cf89a314ac3ffdf4a60ba60fa26dc4b426506a9f777c13dbdf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：桌上并列的一盏台灯与一支短手电筒",
+      "file": "samples/ppt-10-wave80.png",
+      "source_sha256": "294926b7aee6192b04767c38213668904cf5f460f789986b088af20192acb1ba",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：一封信的旅程信息图",
+      "file": "samples/inf-5-wave81.png",
+      "source_sha256": "3267626715251a9d5af40370812c2fda609650ad2b2c75ab2083de8417f95633",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：同一把直柄雨伞在收起与撑开两种状态下的并列对比",
+      "file": "samples/ppt-11-wave84.png",
+      "source_sha256": "d8f2cbb1b4b10746e9ec2440263c616f20a47ddcf38b4dc7d4b1d1bd905ec2e1",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：两盆小植物并置展示：左为圆叶植物，右为细长叶植物",
+      "file": "samples/ppt-12-wave85.png",
+      "source_sha256": "0fd77c3241505c9748cb949d81e00a0768fe20e338e26b3027f58b16c1ff8b03",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：三分钟晨间手冲咖啡流程",
+      "file": "samples/ppt-4-wave87.png",
+      "source_sha256": "f1ca4c1baeec62f552b9773b57469d521665fc8a53958fde48c8f63373a7b8fc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C97 原生画幅换色验证：creamcoffee",
+      "file": "samples/palette-creamcoffee-wave88.png",
+      "source_sha256": "e3c5ed9393014fa7ed91cea1e5256cf04893d3a90a6a71908d60ab655c19db89",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 原生画幅换色验证：macaron",
+      "file": "samples/palette-macaron-wave90.png",
+      "source_sha256": "6681f08e46ca7463ae1e1744f1c7fbe9b9c65ded4f165b7e4b59db8020740c3f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 原生画幅换色验证：amber",
+      "file": "samples/palette-amber-wave92.png",
+      "source_sha256": "eac8cdb248d87cee5cf030a831389e4041171e85584a1b72ba01f68d6331fdef",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：小红书知识卡：如何用一条曲线判断画风归属",
+      "file": "samples/xhs-6-wave96.png",
+      "source_sha256": "aef8eab3620f4eda3114a73ed6238d15065f0c5b50f3c378d0c83db656c539de",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C97 原生画幅换色验证：lilac",
+      "file": "samples/palette-lilac-wave97.png",
+      "source_sha256": "2a7c3e7fc30addd5f7187eeabe9d558c426e82099048a118375c6edcc191e2c3",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：film",
+      "file": "samples/palette-film-continuous.png",
+      "source_sha256": "f5feca5a8ed7f5148f6d2d96fb8aa927aaace1795b173339b093c77466e846d4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：qinglv",
+      "file": "samples/palette-qinglv-continuous.png",
+      "source_sha256": "dc520230387a57d1d156ccd1d0d16859b69376f3847c5b8fb8c8945146557ecc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：zhusha",
+      "file": "samples/palette-zhusha-continuous.png",
+      "source_sha256": "37548e7688ba6b5c1e63be6bc7bae84849d40755481aa0882125fcaf3744ae8a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：mono",
+      "file": "samples/palette-mono-continuous.png",
+      "source_sha256": "d150bfe391919a371c1244d9dba50dd838a8d74241ff1cfe229ae2bb082dfec2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：neon",
+      "file": "samples/palette-neon-continuous.png",
+      "source_sha256": "cb028789636a4611d49b73fca429da7dc0e87773e71aa190bf468af98d5f0e75",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：sunset",
+      "file": "samples/palette-sunset-continuous.png",
+      "source_sha256": "e9d95204c86421ae821e40337ecb9d2160964f7140d98c860bc6d62642ff056c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：mintsoda",
+      "file": "samples/palette-mintsoda-continuous.png",
+      "source_sha256": "db8a69fb1a5ab17c153dfcdd77c4e7d6f588abaf94d081dcd870d7740db975da",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：mistblue",
+      "file": "samples/palette-mistblue-continuous.png",
+      "source_sha256": "43f9cdc690d52291ac7e1b613f6d52303b0d333dec99ced9f7216bfc61673d67",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C97 换色验证：sakura",
+      "file": "samples/palette-sakura-continuous.png",
+      "source_sha256": "10b886cea8bce89c3ca58af540ac88c70d3c3ba21c2107f43c373d58cdad4866",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "城市屋顶雨水花园的夏季降温记录",
+      "file": "samples/bd-continuous.png",
+      "source_sha256": "422a811e12759fef9634f8070ae7a40500022e6cafc2088700b1fee6df1ff2cb",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C97 换色验证：indigo",
+      "file": "samples/palette-indigo-continuous.png",
+      "source_sha256": "d6eeef2982ae44d837cdb9e1e5ebdd27cc8c4a6af14ae75769341c908f619c88",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "以一株蔓生玫瑰为主体的新艺术风格植物笔记卡组内页，用于讲解压枝繁殖的三个观察要点",
+      "file": "samples/xhs-5-continuous.png",
+      "source_sha256": "7c23d9757bd8b9fdefc4c22bbdb79495aa7ce9f3321dbd1d449e589fa933310a",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "四格漫画：文具店结账台前的找零核对",
+      "file": "samples/cm-4-continuous.png",
+      "source_sha256": "14321b7c65b8a07d1ee7c8eecc83ca908d35bf44e78be61b04bc0eb7423cb03a",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    }
+  ]
+}

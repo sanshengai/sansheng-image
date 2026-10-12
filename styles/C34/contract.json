@@ -87,6 +87,16 @@
     "PPT"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "数据与视觉隐喻按原文逻辑在各自分栏依次落位，最后聚焦结论，节奏像编辑版面逐层呈现。",
+    "primitives": [
+      "keyframes",
+      "mask_reveal",
+      "easing",
+      "number_roll"
+    ],
+    "safety": "数字滚动的终值必须等于原文真实数字；遮罩与数字滚动不作用于已标保护的标题、正文和产品。"
+  },
   "samples": [
     {
       "topic": "人物",

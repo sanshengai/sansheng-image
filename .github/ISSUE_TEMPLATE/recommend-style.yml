@@ -1,0 +1,30 @@
+name: 推荐画风
+description: 提交画风推荐；请说明技法与区别，并提供可选参考链接。网页署名须另行授权；建议不等于自动准入。
+title: '[推荐画风] '
+labels:
+  - feedback:style
+body:
+  - type: textarea
+    id: technique-difference
+    attributes:
+      label: 技法/区别说明
+      description: 请说明技法、与现有画风的区别、适用场景等。网页署名须另行授权；建议不等于自动准入。
+      placeholder: 例如：线条、色彩、构图、笔触、光影、材质等技法，以及与已有画风的区别。
+    validations:
+      required: true
+  - type: input
+    id: reference-link
+    attributes:
+      label: 参考链接
+      description: 可选。参考图仅作灵感、不会被照搬。网页署名须另行授权；建议不等于自动准入。
+      placeholder: https://
+    validations:
+      required: false
+  - type: checkboxes
+    id: image-share-rights
+    attributes:
+      label: 权利与授权确认
+      description: 网页署名须另行授权；建议不等于自动准入。
+      options:
+        - label: 我有权分享我提交的参考图 / 作品 / 链接，并理解参考图仅作灵感、不会被照搬。 <!-- image-share-rights-v1 -->
+          required: true

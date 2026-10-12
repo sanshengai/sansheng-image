@@ -140,3 +140,13 @@ def test_pptx_editable_text(tmp_path):
     assert sb.main(["pptx", str(tmp_path / "plan.json"), "--images", str(tmp_path / "img"), "-o", str(tmp_path / "d.pptx")]) == 0
     xml = zipfile.ZipFile(tmp_path / "d.pptx").read("ppt/slides/slide1.xml").decode("utf-8")
     assert "标题一" in xml and "要点一" in xml
+
+
+def test_motion_commands_do_not_run_automatic_dependency_installer(monkeypatch):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("动态入口不得自动安装依赖")
+    monkeypatch.setattr(sb.FR, "ensure_dependencies", forbidden)
+    monkeypatch.setattr(sb, "cmd_animate", lambda args: 0)
+    monkeypatch.setattr(sb, "cmd_layers", lambda args: 0)
+    assert sb.main(["animate", "doctor"]) == 0
+    assert sb.main(["layers", "brief.json", "-o", "new-output", "--prepare"]) == 0

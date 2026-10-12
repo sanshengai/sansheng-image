@@ -1,6 +1,22 @@
 # 测试矩阵与准入（维护者）
 
-矩阵 `state.json` 的每次 `reviews[]` 和 `report.md` 逐题记录看图来源：默认独立 CLI 为 `claude_cli`；设 `SANSHENG_IMAGE_QA_BACKEND=ark_agent_plan` 时使用现有 Agent Plan 套餐的豆包视觉，来源为 `ark_agent_plan`。两者各自的无历史上下文请求可计入独立双评；由调用者提供的结论须标明来源，未标明记作 `provided_unspecified`，旧缓存无来源记作 `legacy_unknown`，这些不能顶替独立双评。续跑沿用旧看图结论时不改写其来源；已有维护者自检也不能挡住补看独立结论。`admission.matrix_verdict` 只表示八题数量和指定题的自动判据；`admission.verdict` 是正式准入状态。即使前者为 `pass`，同词三次稳定及跨样式可区分仍须另附证据，后者保持 `pending`，不能凭八题数量把合同标为正式准入。来源标签不能代替检查原始看图记录。
+矩阵 `state.json` 的每次 `reviews[]` 和 `report.md` 逐题记录看图来源。默认为 `ark_coding_plan`：固定 Coding Plan 套餐和 `deepseek-v4.1-flash`，发送实际图片，核对返回型号及完整意见；配置、鉴权、限流或响应失败均停止，不自动回退。`claude_cli` 与 `ark_agent_plan` 仅保留显式兼容及历史记录，本项目不调用。
+
+各自无历史上下文的有效模型请求可计入现有脚本的独立双评；由调用者提供的结论须标明来源，未标明记作 `provided_unspecified`，旧缓存无来源记作 `legacy_unknown`，这些不能顶替独立双评。续跑沿用旧看图结论时不改写其来源。当前项目采用 Coding Plan 独立意见加当前 Codex 原生逐项裁决，争议保留双方原文及实际图证据。已有证据经下面的 `matrix-evidence` 专用入口核验，不向旧来源集合加入一个 Root 标签来制造双评通过。
+
+## 当前 Codex 已有证据复用
+
+```bash
+python3 scripts/sb.py matrix-evidence <证据包.json> --contract <当前候选合同.json> -o <新输出目录>
+```
+
+该入口不调用模型、不生图、不修改合同或注册表。它核对八道当前标准题、完整编译与实际生成参数、原图与原尺寸看图编码摘要、Coding Plan 请求及实际完整响应、Codex 逐项裁决、三次同词独立原图和同题近邻盲审。意见分歧和失败题保留；错图、旧题、缺证据或不一致的解析意见拒绝导入，输出目录已存在也拒绝覆盖。
+
+三次稳定测试的收据可用 `question` 指定当前标准题编号；未指定沿用 T3。三张必须使用该题完整相同参数、各有对应题面 QA 的通过裁决，并包含本轮该题原图，不能拼凑不同题或重复文件。八题准入中的 T3 必过及声明原生文字时 T8 必过独立判断，不随稳定测试题改变。
+
+输出 `matrix-evidence-state.json`、`matrix.png`、`report.md` 和角色一致性并图；不写可触发生图续跑的 `state.json`。`evidence_verdict` 表示证据核验后的质量判据，`admission.verdict` 仍为 `pending`、`formal_admission=false`，必须另完成场景能力边界、正式登记和派生/样图一致性。此入口只验证绑定的记录，不能证明任意外部收据的作者身份，维护者须保留真实原图复审依据。
+
+`admission.matrix_verdict` 只表示八题数量和指定题的自动判据；`admission.verdict` 是正式准入状态。即使前者为 `pass`，同词三次稳定及跨样式可区分仍须另附证据，后者保持 `pending`，不能凭八题数量把合同标为正式准入。来源标签不能代替检查原始看图记录。
 
 ## 8 道标准题
 

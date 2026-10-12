@@ -1,0 +1,8 @@
+{
+  "file": "cutlib.py",
+  "origin": "2026-10-07 自有原创颜色键实现",
+  "license": "原创自有代码，随 sansheng-image 同一许可；未引入第三方代码（依赖 numpy / Pillow 为运行时依赖，不随包）",
+  "copy_method": "逐字复制，未改一字节；本候选不调用其中 vision()、trim()",
+  "sha256": "e37acab57143b58923db047e67bbadbdd1e923e0b22ea51b4e36c7b28f10b5bc",
+  "sha256_note": "根实际逐字比对并钉住冲刺原件SHA；非null，不一致拒绝运行"
+}

@@ -86,6 +86,15 @@
     "PPT"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "几何块沿三十度等距轴滑入、拼合并停稳，节奏利落整齐，视角始终不变。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "mask_reveal"
+    ],
+    "safety": "只沿三条等距轴平移，或做等比缩放，不做画面内旋转，不改变等距投影，不做透视缩放或倾斜；文字块不变形，遮罩不用于保护节点。"
+  },
   "samples": [
     {
       "topic": "人物",

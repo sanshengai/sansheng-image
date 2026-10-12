@@ -11,6 +11,33 @@ from stylebook.overlay import render, validate  # noqa: E402
 from stylebook.qa import compare_text  # noqa: E402
 
 
+def test_strict_transcription_accepts_visual_lines_without_losing_characters():
+    expected = ["两周，从一颗种子\n开始", "第1周", "第2周"]
+    assert compare_text(expected, ["两周，从一颗种子", "开始", "第1周", "第2周"], strict=True) == []
+    assert compare_text(expected, ["两周，从一颗种子开始", "第1周", "第2周"], strict=True) == []
+    assert compare_text(["油灯暖光与窗外冷色\n形成对比"], ["油灯暖光与窗外冷色形成对比"], strict=True) == []
+
+
+def test_strict_transcription_rejects_real_mutations_and_empty_input():
+    expected = ["两周，从一颗种子\n开始", "第1周", "第2周"]
+    for observed in [
+        [],
+        ["两周，从一颗种子", "开始", "第1周"],
+        ["两周，从一颗种子", "开使", "第1周", "第2周"],
+        ["两周从一颗种子", "开始", "第1周", "第2周"],
+        ["两周，从一颗种子", "开始", "第1周", "第3周"],
+        ["两周，从一颗种子", "开始", "第1周", "第2周", "第2周"],
+        ["开始", "两周，从一颗种子", "第1周", "第2周"],
+        ["两周，从一颗种子", "无关文字", "开始", "第1周", "第2周"],
+    ]:
+        assert compare_text(expected, observed, strict=True)
+    assert compare_text(["uv tool install cli"], ["uvtool install cli"], strict=True)
+    assert compare_text(["ABC"], ["abc"], strict=True)
+    assert compare_text(["第一块", "第二块"], ["第一块第二块"], strict=True)
+    assert compare_text(["无关文字", "两周，从一颗种子\n开始"],
+                        ["两周，从一颗种子", "无关文字", "开始"], strict=True)
+
+
 def spec():
     return {"mode": "overlay", "items": [
         {"text": "NotebookLM 接入四步", "box": [0.1, 0.08, 0.8, 0.08], "font_px": 60, "min_px": 50, "weight": "bold"},

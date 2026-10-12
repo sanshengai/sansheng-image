@@ -55,3 +55,28 @@ python3 scripts/sb.py export 底图.png --format infographic --overlay 叠字.js
 ```
 
 PPT / 课件如需可编辑文字，继续用 `text.mode = overlay` 和 `reserve`，不填 `box`，之后运行 `sb.py pptx --mode illustration`；批量导出的中间插画仍按无字图验收。
+
+
+## 深色或指定色平底的精确文字预检（`blank_background`）
+
+`require_blank: true` 单独使用时，仍是原来的浅底检查：文字盒缩小后，亮度低于 170 的像素超过 2% 就拒绝。这条分支没有改动，纯深底仍会被它拒绝。
+
+要在深色底，或任何已知颜色的平底上排字，在同一条文字上显式加入 `blank_background`：
+
+```json
+{"role":"code","text":"uv tool install notebooklm-mcp-cli","box":[0.07,0.37,0.86,0.09],
+ "font_px":50,"min_px":50,"require_blank":true,"blank_background":"#0E0E10","color":"#FFFFFF"}
+```
+
+规则：
+
+- `blank_background` 只接受 `#RRGGBB` 六位十六进制，不接受 alpha、简写、颜色名、空值或带空白的写法。
+- 必须同时写 `require_blank: true`。缺省或 `false` 会被拒绝，不会因此退回无检查。
+- 字色必须显式写出：普通条目写 `color`，带 `spans` 的条目每一段都写 `color`，都要是 `#RRGGBB`。
+- 字色与声明底色的亮度差至少 80（0.2126R + 0.7152G + 0.0722B）。它只保证基本明暗区分，不代表 WCAG 对比度。
+- 不能与 `pill` 同用，因为胶囊会改变字下面实际的底色。
+- 检查直接在原尺寸的文字盒 crop 上做，不缩小。只要有任一 RGB 通道与声明色的绝对差大于 32，该像素就算异物。异物像素占文字盒面积超过 2% 即拒绝。深底上的白物件、更深的物件，以及明显偏离声明色的渐变或底色，都会被拒绝。
+- 工具不会自动猜背景色，也不会取最常见色。阈值固定，没有配置项，也没有关闭开关。
+- 文字盒为空时拒绝，包括空画布和取整后宽或高为 0 的盒子。
+
+限制：这只是像素预检。微弱纹理，或与声明底色相差不超过 32 的同色物件，不保证能被识别。通过预检不代表风格或内容合格，原图和成品仍要人工逐张复审，包括文字清晰度、内容和事实。

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "style": "C96",
+  "scope": "style admission; full samples and publication tracked separately",
+  "review_routes": [
+    "codex_builtin_native",
+    "ark_coding_plan/deepseek-v4.1-flash"
+  ],
+  "tested_contract_sha256": "95743a3cf3a46bc34cfc470c0446bd7055f640bba6863a75b80563eab78e4d41",
+  "evidence_state_sha256": "ca4ab550c95e8fb7b71d02d7c4953f8d0a5347adb0f209a4f2f3c3a1516c52eb",
+  "evidence_bundle_sha256": "7dc5df044a27d111aa9e8b509cad6d2478e1dc41a72f10c3ca0bb6afedf27b4f",
+  "current_contract_sha256": "3f602f523ec6b74fae2f0142314a527850d06f168837441e3bed743c72522ac8",
+  "matrix": {
+    "T1": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "a024e0bb1dd5da5a0bcee785b73464334cc999b6d2d391cfb9283c12672e0e0e"
+    },
+    "T2": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "0616c3f1a0d0749a2a913dfc695c8471236de6a2dadbad029e52c6850aec0c06"
+    },
+    "T3": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "7743ccd8986c2bb4f2fed203b238c4b398032f4cfbb6149a66c6d25ace74c619"
+    },
+    "T4": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "ccf1d974a70f090ac181babec18fbfd7d896013729177167cb14ac4519df6845"
+    },
+    "T5": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "d53fb19ef99f23bb39eeffa11702e81041439dffe37543b5f4fdb8f41441553b"
+    },
+    "T6": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "f9f820d46f4771223caa535a4268bd867134337c440dca2d2764d9990c4afb68"
+    },
+    "T7": {
+      "result": "fail",
+      "root_result": "fail",
+      "original_sha256": "c860ed4069851fdc95aa0ee3095d0112072f0d5412569f0acb98ebfc836cdabf"
+    },
+    "T8": {
+      "result": "pass",
+      "root_result": "pass",
+      "original_sha256": "47fea87f98ee16812146b022e4ac84ba3f604b0999ad713c93b4f2d5341b6d91"
+    }
+  },
+  "stability_verified": true,
+  "neighbors_verified": true,
+  "neighbor_limitations": [
+    "原有带锚图C63控图的语义污染partial仍保留，不被本次替换。",
+    "C63无锚图单变量仍出城堡，只能说明同类地景不证明锚图因果；不声称所有锚图无语义污染。",
+    "C06/C63比较合同为脱名候选，C63 r2还仅关闭anchor；不冒充原合同完整输入。"
+  ],
+  "generation_input_preserved": true,
+  "registered_sample_count": 2,
+  "full_scene_coverage_complete": false,
+  "native_text_supported": false,
+  "backend_model": null
+}

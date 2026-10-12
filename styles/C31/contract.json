@@ -168,6 +168,16 @@
     "PPT"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "非文字墨线沿原文的关系路径逐笔推进，粉彩色块随后落定指向结论，节奏像边讲边画。",
+    "primitives": [
+      "path_draw",
+      "mask_reveal",
+      "keyframes",
+      "easing"
+    ],
+    "safety": "描线只用于未标保护的非文字线条，遮罩不遮挡已有标题与说明；人物和文字不扭曲。"
+  },
   "samples": [
     {
       "topic": "人物",

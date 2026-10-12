@@ -19,7 +19,7 @@ from . import data as D
 from .comic import validate_content as validate_comic_content
 from .textspec import MODES, native_items, validate_hybrid
 from . import palette as PL
-from .sizes import gen_size
+from .sizes import gen_size, parse_ratio
 
 MODEL_FAMILY = {
     "gpt-image-2": "gpt-image", "gpt-image-2-c": "gpt-image", "gpt-image-2.5": "gpt-image", "gpt-image-1.5": "gpt-image",
@@ -198,6 +198,13 @@ def _text_section(manifest: dict, fmt: dict | None, family: str, text_style: str
                            + ". Keep every rectangle free of outlines, arrows, icons, letters and dark marks;"
                            " a uniform material-matched background is allowed. These coordinates come from the"
                            " actual final lettering specification; place all non-text objects outside them.")
+            backgrounds = [{"box": item["box"], "color": item["blank_background"]}
+                           for item in t["items"] if "blank_background" in item]
+            if backgrounds:
+                prompt += (" Explicit reserved background colors: "
+                           + json.dumps(backgrounds, separators=(",", ":"))
+                           + ". These rectangles retain their declared flat background color, including dark"
+                           " colors; do not add pale panels, objects, marks or gradients inside them.")
         return prompt
     return "No text, letters or captions anywhere in the image."
 
@@ -322,10 +329,33 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     compose = ("A complete 1:1 square master with safe side margins; keep all high-contrast marks at "
                "least 15% in from each edge. The later landscape wings contain background only. "
                "The final image must stay flat-vector, without photographic collage." if stage == "center_square_master"
-               else (fmt or {}).get("compose"))
+               else ((fmt or {}).get("compose_no_text", (fmt or {}).get("compose"))
+                     if text_mode in ("none", "overlay") else (fmt or {}).get("compose")))
     background = ("Keep the background fully opaque across the whole canvas, including every corner; "
                   "no transparency, alpha fade, or cutout edge. " if not (fmt or {}).get("transparent") else "")
-    sec.append(("format", (f"{compose} " if compose else "") + background + f"Aspect ratio {aspect}."))
+    crop_safety = ""
+    if stage != "center_square_master" and ((fmt or {}).get("safe_zone") or {}).get("center_square") is True:
+        # Match the centered format crop followed by the real square preview.
+        # An explicit generation aspect can differ from the final format.
+        source_ratio = parse_ratio(aspect)
+        final_ratio = parse_ratio(fmt["ratio"])
+        square_side = min(source_ratio, final_ratio, 1.0, source_ratio / final_ratio)
+        inset_x = (1.0 - square_side / source_ratio) * 50
+        inset_y = (1.0 - square_side) * 50
+        crop_safety = (
+            f"The actual centered square preview preserves x={inset_x:.2f}% to {100-inset_x:.2f}% "
+            f"and y={inset_y:.2f}% to {100-inset_y:.2f}% of the full generated canvas "
+            "(origin at its top-left corner). These are crop boundaries, not visible lines. "
+            "Keep all key subjects, their required relationships, and every requested title, label and footer "
+            "completely inside the centered square crop with comfortable margins from its edges. "
+            "Any reserved text areas must also fit inside that square. Outside the square, use only "
+            "background or decoration, with no essential information. This is a safe region within "
+            "the requested aspect ratio, not a change to the canvas shape. "
+            "Interpret top, bottom, left and right positions for essential content relative to this "
+            "inner square; leave visible breathing room inside its edges rather than placing glyphs "
+            "or objects directly on the crop boundary. "
+        )
+    sec.append(("format", (f"{compose} " if compose else "") + crop_safety + background + f"Aspect ratio {aspect}."))
     fixes = manifest.get("fixes") or []
     if fixes:  # 返修：上一张没做到的地方，写成正面要求
         sec.append(("fixes", "Correct these points from the previous attempt: " + " ".join(f.strip().rstrip(".") + "." for f in fixes)))

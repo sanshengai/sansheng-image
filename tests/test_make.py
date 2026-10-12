@@ -30,6 +30,56 @@ def fake_generate(prompt, out, *, size, **kwargs):
     return Result(b"", "test", "test-image", 1, 0.1, None)
 
 
+def test_prepare_exposes_exact_execution_card_without_changing_prepared(tmp_path):
+    brief = copy.deepcopy(BRIEF)
+    prepared = MK.prepare(brief, base_path=tmp_path)
+    report = MK.run(brief, tmp_path / "out", base_path=tmp_path, prepare_only=True)
+    assert report["status"] == "pending_host" and report["accepted"] is False
+    saved = json.loads((tmp_path / "out/prepared.json").read_text())
+    assert saved == prepared
+    task = prepared["tasks"][0]
+    card = json.loads((tmp_path / "out/01-execution-card.json").read_text())
+    assert card["tool_arguments"]["prompt"] == task["compiled"]["prompt"]
+    assert card["prompt_sha256"] == task["prompt_sha256"]
+    assert card["text"] == task["manifest"]["text"]
+    assert card["references"] == task["references"]
+    assert card["requirements"]["must_see"] and card["accepted"] is False
+
+
+def test_required_points_and_comic_panels_survive_make_to_qa(tmp_path):
+    brief = copy.deepcopy(BRIEF)
+    brief["items"][0].update(points=["只出现两张卡", "左卡在右卡之前"],
+                            panels=["第一格把左卡交给朋友", "第二格朋友接过左卡"])
+    task = MK.prepare(brief, base_path=tmp_path)["tasks"][0]
+    card = MK.execution_card(task)
+    assert "Panel 1: 第一格把左卡交给朋友" in task["compiled"]["prompt"]
+    assert "只出现两张卡" in task["compiled"]["prompt"]
+    from stylebook.qa import missing_items
+    contract = {"qa": {"must_see": [], "must_not_see": []}, **card["content_expectations"]}
+    # Actual QA consumer refuses an old total-theme-only review of these facts.
+    gaps = missing_items({"must_see": [], "must_not_see": [], "transcribed_text": [],
+                          "content_match": {"ok": True, "why": "总主题相符"}}, contract, "none")
+    assert any("point_match" in gap for gap in gaps)
+    assert any("panel_match" in gap for gap in gaps)
+    brief["items"][0]["panels"] = []
+    with pytest.raises(MK.BriefError, match="panels"):
+        MK.prepare(brief, base_path=tmp_path)
+
+
+def test_actual_comic_make_preserves_continuity_and_rejects_missing_relation(tmp_path):
+    brief = copy.deepcopy(BRIEF)
+    brief.update(scene="comic4", format="comic-4panel")
+    item = brief["items"][0]
+    item.update(panels=["同一男孩在厨房烧水", "同一男孩下入面条", "同一男孩加入青菜", "同一男孩在餐桌吃面"])
+    from stylebook.compile import CompileError
+    with pytest.raises(CompileError, match="relations"):
+        MK.prepare(brief, base_path=tmp_path)
+    item['relations'] = "The same boy, same hair and clothing across all four panels; actions follow chronological reading order."
+    task = MK.prepare(brief, base_path=tmp_path)["tasks"][0]
+    assert task["manifest"]["content"]["relations"] == item["relations"]
+    assert "same hair and clothing" in task["compiled"]["prompt"]
+
+
 @pytest.mark.parametrize("change", [lambda b: b.update(items=[]),
                                   lambda b: b["items"][0].update(id="../escape"),
                                   lambda b: b["items"][0].update(visual=""),

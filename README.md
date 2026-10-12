@@ -2,7 +2,7 @@
 
 **选一个画风，让一组静态图沿用同一套画法。** 适用于文章封面和插图，也提供课件、知识卡、信息图、故事、漫画、AI 短剧分镜首帧、音频封面与表情包的试用流程。它是给 Agent 使用的 Skill，不是独立生图模型；实际出图需要当前 Agent 的生图能力、你配置的图像服务，或把编译好的提示词交给其他工具。
 
-> 当前为公开 beta。73 种公开画风都有可调用合同，每种在合同里标注原作灵感来源（画家、工作室、作品）并在官网提供同题样图（安装包不含样图）；2026-09-30 画风库重建后全部按新修订待正式准入（其中 5 种曾在旧修订通过测试矩阵，需复测）。样式准入也不等于某种用途的整组验收。公众号文章是首要用途；跨格式与长期个人偏好仍在实际使用中验证。进展以 [能力边界](#能力边界)为准。 [English](./README_EN.md)
+> 当前为公开 beta。本机维护版本有 81 种公开画风合同；C91 浮世绘木版多色印、C92 敦煌矿物彩壁画、C93 年画木版敷彩、C94 青花蓝白装饰、C95 汉画像石拓片、C96 童话钢笔水彩民俗边框、C97 新艺术植物曲线、C98 装饰艺术几何共 8 款已通过当前准入，场景覆盖 344 项、配色覆盖 108 项已完成，保留原始失败题、编辑链与能力限制；其余 73 种按重建后的修订待准入，尚未重测。新版尚未公开发布；官网当前已发布库仍为 73 种。安装包不含画廊样图；样式准入不等于每个实际用途都已验收。进展以 [能力边界](#能力边界)为准。 [English](./README_EN.md)
 
 ## 先看产出
 
@@ -15,7 +15,7 @@
 
 需要短剧或视频的分镜时，官网「AI 短剧分镜」用途下有 10 个画风，每个画风各 4 张样图：一张角色三视图（正、侧、背加三种表情），两张竖屏 9:16 镜头（中景与特写），一张横屏 16:9 电影感远景。分镜只出每个镜头的静态首帧，人物靠三视图跨镜头固定，运动交给视频模型。做法见 [references/scenes/storyboard.md](./references/scenes/storyboard.md)。
 
-旧版动图入口已下架；旧命令与 [motion.md](./references/motion.md) 保留供旧任务查阅，动态版将另行提供。
+旧版动图入口已下架；旧命令与 [motion.md](./references/motion.md) 保留供旧任务查阅。新的动态版见 [动态场景](./references/motion-scenes.md)：覆盖公众号配图、信息图、小红书，品牌仅作原创动态示范；只在你明确要动态版时才用，静态版仍是默认。
 
 ## 它怎样决定一张图
 
@@ -91,7 +91,7 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 
 | 功能 | 当前状态 |
 |---|---|
-| 73 种公开画风合同、色调规则、内容结构编译 | 可调用；全部待按新修订准入，实际用途须另验 |
+| 81 种公开画风合同、色调规则、内容结构编译 | 本机可调用；C95/C96/C98/C93/C91/C92/C94/C97当前准入，其余73款待准入；新款未发版，实际用途须另验 |
 | 文章内容规划、单张和批量出图、局部返修、质量记录 | 本地可用；配套写作 Skill 已接管出图与排版 |
 | 本地画廊与选择 JSON 往返、可撤销的本地偏好 | 已实现；真实长期学习效果仍需连续使用验证 |
 | PPT、小红书、信息图、漫画、绘本、音频封面、表情包 | 有实现和旧样例；完整实际消费者验收按格式逐项推进，PPT 中文渲染尚需在目标软件核对 |
@@ -99,12 +99,35 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 | AI 短剧分镜 | 出每个镜头的静态首帧（可选尾帧）和一张角色三视图，不出视频；运动只写成一行文字交给视频模型。人物跨镜头一致与画面无字仍须看图验收 |
 | Codex 订阅额度出图（默认）、按张付费服务（显式备用） | 可用；Codex 单张约 45–100 秒，比中转服务慢，但不额外花钱 |
 | 成长飞轮（自动记录选择 / 采用 / 返修，同向 3 个任务问一次） | 已实现；长期效果仍需连续使用验证 |
+| 动态版（公众号配图、信息图、小红书；品牌仅作原创动态示范） | 正式入口已验环境检查和四场景计划；底座真实渲染与 QA 已验，四场景完整媒体为候选阶段证据；手机端试发尚未做，不承诺任何平台上传兼容或可直接发布。PPT 与音乐封面的动态另定第二批，`animate` 仍会拒绝，已有示范片可展示 |
 | 跨设备记忆同步、视频、Logo | 当前未提供 |
 
 两种私有画风及其默认值不在公开包中。个人记忆默认留在 `~/.config/sansheng-image/profile/`，可用 `SANSHENG_IMAGE_PROFILE` 指向自己的私有目录；显式指定的目录若不存在，本次不读取默认私有目录。图像服务适配的实测范围见 [后端说明](./references/backends.md)；未实测的适配器不会写成已验收。
+
+## 动态版：依赖与命令边界
+
+- 只在你明确要动态版时使用，且必须先有同一内容的静态版。流程与正反例见 [动态场景](./references/motion-scenes.md)。
+- 额外依赖（静态出图不需要）：Python 侧 `python3 -m pip install -r requirements-motion.txt`（只有 numpy，Pillow 已是基线依赖）；其余由你自行安装：Node.js 22 或更新、HyperFrames 0.8.140、ffmpeg 与 ffprobe、本机 Chrome 或 chrome-headless-shell。缺哪一项 `python3 scripts/sb.py animate doctor --hyperframes-cli <hyperframes.mjs 的绝对路径>` 会逐条指出，封装不会自动下载。
+- 命令：`python3 scripts/sb.py animate doctor|plan|render|qa ...`。`doctor` 不读输入；`plan` 只读预演，不创建文件；`render` 与 `qa` 需要 manifest；`render` 的输出目录必须尚不存在，`qa` 使用该次已渲染的现有输出目录。均不覆盖已有文件，也不写进输入工程。
+- 只接受 `brand`（原创品牌动态示范）/ `article` / `infographic` / `xiaohongshu` 四种 scene；其他 scene 与 PPT、音乐封面格式一律拒绝。
+- 渲染在本机完成，不联网、不调用付费出图服务；静态图与分件图仍按原有方式出图，有内置生图工具时先 `--prepare`、用当前会话的内置工具出图、再 `--import-results`。分件抠图只用项目自带的颜色键代码，不调用系统自带的 Vision 工具，也没有自动 Vision 回退。
+- 许可：HyperFrames 为 Apache 2.0 的外部运行依赖，不随本仓分发；颜色键模块 `cutlib` 是本项目原创的 MIT 代码。详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
+- 本地测试：`python3 -I -m unittest discover -s tests -v`。真实渲染的可选测试读取环境变量 `HYPERFRAMES_CLI`（或项目自装的 `node_modules`），缺工具会明确跳过。真实动画测试还需本地 GSAP，可用 `GSAP_JS_PATH` 指定 `gsap.min.js`；不会从 CDN 下载。
+
+## 参与贡献
+
+详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+
+- 推荐画风：使用仓库的「推荐画风」Issue 模板。
+- 报问题：使用「报问题」Issue 模板。
+- 代码或文档改进：提交 Pull Request。
+
+网站投稿入口随共建功能上线，目前尚待上线；当前请使用 GitHub Issue 或 PR。
 
 ## 更新、致谢与许可
 
 变更见 [CHANGELOG.md](./CHANGELOG.md)。风格描述、排版思路和工作流参考过 [threerocks/hand-drawn-styles](https://github.com/threerocks/hand-drawn-styles)、[JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) 与 [yang0/handraw-style](https://github.com/yang0/handraw-style)；具体改写范围和许可原文见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。感谢这些作者公开方法与代码。
 
 本仓采用 [MIT License](./LICENSE)。维护者：叁笙（sansheng）。
+
+维护者构建首页时，可用 `SANSHENG_IMAGE_BRAND_DIR=<品牌图片目录> python3 scripts/sb.py build --gallery` 提供 `logo.webp` 与 `logo-poster.webp`。两张图必须是可解码的 WebP；不指定目录时只登记图片清单，品牌图与画风样图都需由网站部署方提供。

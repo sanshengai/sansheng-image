@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "community-works",
+  "description": "社区投稿作品记录。仅先定义数据结构，不对外展示。不内嵌 base64、不存图片公开 URL、不含邮箱或密钥；不触发自动下载或自动发布。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "works"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "description": "结构版本，固定为 1。"
+    },
+    "works": {
+      "type": "array",
+      "description": "作品条目数组；空数组合法。",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/work"
+      }
+    }
+  },
+  "$defs": {
+    "work": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "style_code",
+        "submitted_at",
+        "source",
+        "rights_review",
+        "publication_state",
+        "attribution",
+        "image_ref"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "style_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^C[0-9]{2,3}$"
+        },
+        "submitted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$",
+          "description": "ISO 8601 UTC 时间，以 Z 结尾。"
+        },
+        "source": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sourceFeedback"
+            },
+            {
+              "$ref": "#/$defs/sourceGithub"
+            }
+          ]
+        },
+        "rights_review": {
+          "enum": [
+            "needs_review",
+            "confirmed"
+          ]
+        },
+        "publication_state": {
+          "enum": [
+            "pending",
+            "approved"
+          ],
+          "default": "pending"
+        },
+        "attribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "display_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "description": "默认不署名；display_name 仅在 enabled 为 true 且投稿人同意时填写。",
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "display_name"
+                ]
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "display_name"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "image_ref": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "receipt_id",
+            "digest"
+          ],
+          "properties": {
+            "receipt_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "description": "私密引用：仅记录回执号与摘要，不内嵌图片、不存公开 URL、不自动下载。"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "publication_state": {
+                "const": "approved"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rights_review": {
+                "const": "confirmed"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "sourceFeedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "receipt_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "feedback"
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "sourceGithub": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "repo",
+        "number",
+        "url"
+      ],
+      "properties": {
+        "kind": {
+          "const": "github"
+        },
+        "repo": {
+          "const": "sanshengai/sansheng-image"
+        },
+        "number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://github[.]com/sanshengai/sansheng-image/(issues|pull)/[1-9][0-9]*$"
+        }
+      }
+    }
+  }
+}

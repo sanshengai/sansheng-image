@@ -1,0 +1,593 @@
+{
+  "code": "C96",
+  "revision": 1,
+  "name": {
+    "zh": "童话钢笔水彩民俗边框",
+    "en": "Fairy-Tale Pen and Watercolour with Folk Border"
+  },
+  "family": "手绘媒材",
+  "fit": [
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "钢笔勾线加透明水彩",
+    "density": "细节丰富"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "original",
+    "license": "original",
+    "notes": "原创提示词，参考传统技法，不复制具体作品或声明传统元素版权。C06/C63当前同题候选对照可区分，旧带锚图C63语义污染疑点保留。"
+  },
+  "essence": [
+    "均匀自信的黑色钢笔墨线",
+    "平涂透明水彩填色",
+    "木材织物植物上的民俗装饰纹样",
+    "外围民俗纹样装饰边框"
+  ],
+  "recipe": {
+    "positive": "Visual style (follow exactly): fairy-tale book illustration technique inspired by early-20th-century folk-tale picture books: uniform confident black pen and ink outlines, flat transparent watercolour fills, rich folk ornament on wood, textiles and plants, stylised decorative foliage, flattened storybook depth, and a decorative folk-pattern border frame around the image whose pattern area contains no letters. Technique reference only. Figures, faces, hair, clothing and objects come only from the current brief, including modern clothing; the folk ornament decorates surfaces and the border and is never imposed as period costume on the people. Default colour tendency when no palette is requested: Warm earth and folk colours: deep red, forest green, ochre, indigo, cream paper, black ink line. If the brief explicitly requests a recolour, retain the same limited colour roles, line contrast and material character.",
+    "hard_constraints": [
+      "Pen lines keep an even weight and shading comes from flat watercolour fields rather than hatching.",
+      "The border frame holds only folk pattern and leaves the subject's information area clear."
+    ],
+    "text_mode": [
+      "none"
+    ]
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "均匀黑钢笔线加平涂透明水彩",
+      "画面外围有民俗纹样装饰边框",
+      "木材、织物、植物上有装饰纹理，具书本插画的叙事感"
+    ],
+    "must_not_see": [
+      "迪士尼或 CGI 质感、柔和喷枪或照片式阴影",
+      "重交叉排线的明暗",
+      "无字任务禁止任何文字；原生文字任务仅允许题面逐字指定的准确文字，禁止缺字、错字、额外文字、假文字、签名、署名、艺术家签名、印款和窑款，不因标题、标签、边框或标题板的位置而扩大许可。"
+    ]
+  },
+  "translation_rules": {
+    "people": "人物的脸、发型和衣着只来自内容 brief，现代衣着照画，民俗纹样只加在边框与物件表面。"
+  },
+  "evidence": {
+    "admission": "admitted",
+    "model": "Codex built-in (backend model unknown); independent review deepseek-v4.1-flash",
+    "date": "2026-10-10",
+    "tests": {
+      "T1": "pass",
+      "T2": "pass",
+      "T3": "pass",
+      "T4": "pass",
+      "T5": "pass",
+      "T6": "pass",
+      "T7": "fail",
+      "T8": "pass",
+      "stability": "pass",
+      "neighbors": "pass"
+    },
+    "notes": "实际matrix-evidence核验当前八题7/8、T3、三次同词稳定及当前同题近邻。未通过题：T7；失败及双方分歧保留。text_mode为none，中文由代码排字，chinese_text保持unknown。video_frame仅为静态远景，不证明动态视频。长篇连续角色未测。仅登记两项采用样图，全场景与换色另行完成；正式发布与线上可用另记。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-08",
+      "note": "阶段 3.2 完整合同候选：由配方补齐，未验证，未准入"
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-10",
+      "note": "配方与QA不变，登记实际准入、能力边界和两项采用样图；全场景与发布另记。"
+    }
+  ],
+  "inspiration": {
+    "names": [],
+    "prompt": ""
+  },
+  "renderer": "codex",
+  "uses": [
+    "教材",
+    "文章插图"
+  ],
+  "abilities": {
+    "character_consistency": "ok",
+    "kids": "ok",
+    "video_frame": "ok",
+    "chinese_text": "unknown",
+    "long_series": "unknown",
+    "adds_people": false
+  },
+  "samples": [
+    {
+      "topic": "教材词汇卡：three pears",
+      "file": "samples/s2.png",
+      "source_sha256": "6ccde99a8835a520cf8ab2c0f39b3392d32d76b273ed301c7561e002e26285e6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号配图：修补风筝",
+      "file": "samples/wxi.png",
+      "source_sha256": "47aa7567816b82b80bcb78a8548dc454077e6703bad1942c632e745bd551c0e5",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "X过程图：种子到开花",
+      "file": "samples/wxx-4.png",
+      "source_sha256": "f4e2865a6d1e3b8349be98d423892f99c4240ccc166d6c868295cb0a3a7c481d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "四格漫画：煮一碗面",
+      "file": "samples/cm-3.png",
+      "source_sha256": "994d2e6e12685888420be63519b14f67c7796af9d71d91eea42fa7d9d292b484",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "四格漫画：修补旧书",
+      "file": "samples/cm-4.png",
+      "source_sha256": "fbb21034fa78ff9495730a43d82674b60816610a021251929ea364979c15a385",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "X对比：雨中赶路与晴天慢读",
+      "file": "samples/wxx-2.png",
+      "source_sha256": "315590844b83ff682dc8f3170a7b55f405e3ed3c4a81e699884207f5c84dc53f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "四格漫画：买苗、种苗与风后扶正",
+      "file": "samples/cm-2.png",
+      "source_sha256": "43a2db071ab563331ff73be67b5e6f7a92c6be29185458d6d0e8c9993e85fd45",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.0
+    },
+    {
+      "topic": "X教学图：一位教师向三名学生讲叶脉",
+      "file": "samples/wxx-3.png",
+      "source_sha256": "101df42f056f94b427196c92b62bc561dfc3ed50743bfeb69b3dbc9f4c3402e2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号配图：修理自行车前轮",
+      "file": "samples/wxi-2.png",
+      "source_sha256": "9fb1090b287a10a345c647bbd8ca887f546d56ec757315713ba93370a24cba54",
+      "renderer": "codex-builtin",
+      "date": "2026-10-10",
+      "ratio": 1.778
+    },
+    {
+      "topic": "公众号配图：给三盆植物浇水",
+      "file": "samples/wxi-3.png",
+      "source_sha256": "5067aff59094b159360e672a5bc93d75c4e39bc64a5784e9c1d6dc7d27e39331",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT结论页：翻开童话书，油灯照亮森林与飞鸟",
+      "file": "samples/ppt.png",
+      "source_sha256": "db8ff9c787ac9439659da7a820f1f373320cd59d1d37406fd8e28b29ab7aad27",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "绘本故事页：孩子给小狗读书",
+      "file": "samples/s1.png",
+      "source_sha256": "f9edaefaa02edd78a53940fcf87fc772f1702b6435fa5322acb3f903c6042e20",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "信息图：从种子到开花",
+      "file": "samples/inf-wave16.png",
+      "source_sha256": "8b617c0e2b1738aad56e7c2ab75b8802fe90ce37256e721dca5abf6aadc25e0f",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "四格漫画：四格漫画，钢笔墨水勾线与透明水彩平涂，外围民俗纹样边框留空不写字；主角为一名短发女孩，穿同一件靛蓝外套、背同一只赭红布包，一只黄毛小狗全程跟",
+      "file": "samples/cm-wave19.png",
+      "source_sha256": "e2a577c71e5e0d42a48394bcefa1bb02314c877f66c92a19d844044e29e3cbc5",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "公众号文章配图：一位穿现代靛蓝外套的短发读者坐在木桌前，面前摊开一本画有森林与飞鸟的童话书，手中钢笔在页边画下三枚连续的小图案：汤匙、面碗、空碗；桌旁窗台上",
+      "file": "samples/wxt-wave20.png",
+      "source_sha256": "1acac1fa8d98ed7a7e936d04e40653d06aae8396a4d6dc7a39869389980cae69",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "信息图：一张纵向信息图，主题为“童话钢笔水彩的叙事流程”，主体是四个自上而下纵向排列的独立可读模块，每个模块用一个大而清晰的民俗纹样图标配一句短语：",
+      "file": "samples/s3-wave21.png",
+      "source_sha256": "1b2972543eb83f11f9e14e7c4fa3a977320049adf2a0d031ec55a641feb6184a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：一张PPT结论页，主题为“翻开童话书，油灯照亮森林与飞鸟”：一位短发读者坐在木质书桌前，双手扶着刚合拢读完的旧书；前景摊开一本童话书，书页边",
+      "file": "samples/bd-wave22.png",
+      "source_sha256": "dec8a270baa75249e5af55c7e2a0182bdb6045bac9ef737b90825877c3affb90",
+      "renderer": "codex-builtin+program-overlay",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：童话钢笔水彩风格四步知识卡：一张完整可收藏的“怎样把民俗纹样用在自己的故事插画里”要点图",
+      "file": "samples/xhs-2-wave23.png",
+      "source_sha256": "83be79873b49f11b71209c66b5d3fcdad1a4e053c08c6c8d97aaab826376942c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号封面：一位穿现代靛蓝外套的短发读者坐在木桌前，双手刚合拢一本读完的旧童话书",
+      "file": "samples/cv-wave24.png",
+      "source_sha256": "d24bcc1dd67ccc2bb6c2b718d92c29ff15b04523d43a07af337e31ae1574a59d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 2.35
+    },
+    {
+      "topic": "小红书知识卡：一位穿现代靛蓝外套的短发读者在木桌前修补一本打开的旧书",
+      "file": "samples/xhs-wave28.png",
+      "source_sha256": "5f80fc9f1cb206157caaa734600cb74917ef99cb592c339008afc47a046ec18c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：现代成年人独自在公园弯曲步道上散步",
+      "file": "samples/wxx-wave29.png",
+      "source_sha256": "ac68c2445395d9673478c32a976549f57221b2b5bdfcbe611c58516f9f80533b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C96 原生画幅换色验证：forest",
+      "file": "samples/palette-forest-wave30.png",
+      "source_sha256": "dc48ed1074840d2885210c36463acb989feec866829e102b23ecd2b4fbb517f9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "视频分镜首帧：傍晚木屋门廊下，一位穿现代灰色工装的修表匠弯腰放下工具箱，门内学徒端灯迎出",
+      "file": "samples/sb-wave31.png",
+      "source_sha256": "ddef3213c7f78ffa35aa0a1b2a8ec97fabc6dfb0da309075619979a022dec93d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C96 原生画幅换色验证：ocean",
+      "file": "samples/palette-ocean-wave31.png",
+      "source_sha256": "4b80d0c615b6ada1e0e25a24e07549519c48fe0752f8cf3c3fadfd067c21f54c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.333
+    },
+    {
+      "topic": "信息图：钢笔淡彩民俗童话插画的分层绘制示例",
+      "file": "samples/inf-2-wave32.png",
+      "source_sha256": "3f740b5454a63a216fb163b677d77d5b5ddd395143f7af46b181c0ca322a80af",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C96 原生画幅换色验证：morandi",
+      "file": "samples/palette-morandi-wave33.png",
+      "source_sha256": "817befc41ba3278c70f30394e0e30a96a325ce9c6353c2e584661f48615ecbcf",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C96 原生画幅换色验证：earth",
+      "file": "samples/palette-earth-wave34.png",
+      "source_sha256": "8d112b7f5489f1cb5540248fac27dcde034c95ec3357fb3e422b6079d8bf5097",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "小红书知识卡：花园集市学徒在摊位前挑选木匣",
+      "file": "samples/xhs-3-wave35.png",
+      "source_sha256": "f0bdf2837002a1b20657a934b8ab5fd31139ad63af1c81e7565efc355d89b222",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "公众号文章配图：周末整理书架的三步方法：清空一层、分类分组、常读放顺手处",
+      "file": "samples/wxt-2-wave36.png",
+      "source_sha256": "e2a8a6796a78949c01fa2be4ca94e31585862cccabe25896298ca7379a7d22ed",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.562
+    },
+    {
+      "topic": "信息图：给礼物配一张卡的三步书写信息图",
+      "file": "samples/inf-3-wave37.png",
+      "source_sha256": "a95219a507d65815a352595e33290191fec69c0d09c888dfc3b3ce87dbf7aa0b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "小红书知识卡：一个安静的室内阅读小角落",
+      "file": "samples/xhs-4-wave40.png",
+      "source_sha256": "6f48ae93d985ed3afc2c68dec86a0389c3b9449f438f9a205d35cddfae647a6f",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "播客 / 音乐封面：屋檐下听雨的窗台静景，一扇旧木窗，窗台上放一只无字收音机",
+      "file": "samples/au-wave45-native.png",
+      "source_sha256": "5364444bda7d78cdd3fa2f82877d0d6900e6c19511f134f4fb6614a1b99df8f4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "信息图：阳台工具归位分类信息图",
+      "file": "samples/inf-4-wave48.png",
+      "source_sha256": "9ac472e4540cdbfa68cf892ed9b5002e8befa25bce5e25a0aa3fc1b35864f189",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C96 原生画幅换色验证：film",
+      "file": "samples/palette-film-wave49.png",
+      "source_sha256": "ff93ae47ea144fb286705352d851780a18123b2c1130b4daf9ca86e676c889f2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：露营炊具清单：水壶、杯子与带盖小锅",
+      "file": "samples/ppt-2-wave51.png",
+      "source_sha256": "409cacec9a0b893bb9df10cadf04d529e9ca7e2257fcf54752d6daff282af5fb",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：冬日出门准备用品展示：一条折叠围巾、一双手套、一顶针织帽",
+      "file": "samples/ppt-3-wave53.png",
+      "source_sha256": "04c4cba0264911d7f6fc6999c09374c9d6e8c99481a58764f8e7c8782959cc38",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "小红书知识卡：冬日保暖清单的实物陈列页",
+      "file": "samples/xhs-5-wave56.png",
+      "source_sha256": "4180e471a7705cb4dc4c6bba07476257c247c10fceec8fb5d8043dd4d6566b25",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：烘焙开始前的三件工具：一只空搅拌碗、一支金属环线打蛋器、一只透明有把手的空量杯",
+      "file": "samples/ppt-4-wave57.png",
+      "source_sha256": "d37a3d23d7fabbb41e6e1c060c85a98bf4b23f8ae465bfb29ed4dac60cb034c6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：洗衣后处理流程的三步状态对照",
+      "file": "samples/ppt-5-wave58.png",
+      "source_sha256": "958a8c4c37a978c2f373a6e76cfd912ff16b7b40487994533ae16a6aad9a37ed",
+      "renderer": "codex-builtin",
+      "date": "2026-10-11",
+      "ratio": 1.778
+    },
+    {
+      "topic": "信息图：信息图单页：阅读记录的两种方式对照",
+      "file": "samples/inf-5-wave60.png",
+      "source_sha256": "3ce44c437a6ba3bd942cba98300126aa060f76d0a999a2d40d2892be0d6141e9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "PPT：读书会的三种角色",
+      "file": "samples/ppt-6-wave61.png",
+      "source_sha256": "facb289d266ff3d8e13d225a0379df5f1c09426b2c421e07445b796e908f1e97",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：一张桌面被分成专注区与收纳区两个平级区域的示意",
+      "file": "samples/ppt-7-wave64.png",
+      "source_sha256": "cec041c9545791cb68e8c70f6ce4dbacf8d83ce97b6becb52534b9c439484f00",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：两块毛巾的两种整理方式对比",
+      "file": "samples/ppt-8-wave67.png",
+      "source_sha256": "40fb07a920e3262e2566a10d9831a3eb44120be0b79383be349503ab3dd1aefa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：桌面平放的两件文具：左侧一把无刻字无数字的直尺，右侧一把闭合剪刀",
+      "file": "samples/ppt-9-wave69.png",
+      "source_sha256": "5d5a8b23f558c271e58e2dda33f7e316dd7c6c452c3974e300833c3d468af0c2",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "PPT：出门前的随身物品清点：左侧一把完整钥匙，右侧一个完整合拢的钱包",
+      "file": "samples/ppt-10-wave70.png",
+      "source_sha256": "0d77abd5c9978a787aa6c9e5fe88243024c4521ca188252aa618e6bdbc3ce0f3",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C96 原生画幅换色验证：qinglv",
+      "file": "samples/palette-qinglv-wave72.png",
+      "source_sha256": "fd1d0cdf8d90029a774759d3933085c83bedb59456bc3c7a03a47dc882be0633",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：缝纫桌上的工具静物",
+      "file": "samples/ppt-11-wave73.png",
+      "source_sha256": "d5ecc4f5da5d16f248cf9dd8ef0ab49efd90d7751b239df953cc400f8b58d5c6",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C96 原生画幅换色验证：zhusha",
+      "file": "samples/palette-zhusha-wave74.png",
+      "source_sha256": "722efaf1fcca72d4921f961a0093e4d01a13fed2ff3b162967e27f7703755427",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "PPT：出门前的穿戴用品：一条盘成松圈的围巾与一副并排的连指手套",
+      "file": "samples/ppt-12-wave75.png",
+      "source_sha256": "5c05d5ac80a4da8de026735a2f5df14212ea72ce98f10ef9b91570271d80ba56",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.778
+    },
+    {
+      "topic": "C96 原生画幅换色验证：mono",
+      "file": "samples/palette-mono-wave76.png",
+      "source_sha256": "5579f3b061e3f5935692bfcbcf268dc665176876df18519e911adfd1bd3949f8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C96 原生画幅换色验证：neon",
+      "file": "samples/palette-neon-wave77.png",
+      "source_sha256": "e43b4e1cb91eee36b3c9867f5679c4cfbf4c4d6b24b59cb3e1b1c5da2e7b4b2c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C96 原生画幅换色验证：sunset",
+      "file": "samples/palette-sunset-wave79.png",
+      "source_sha256": "7ce2685230b1bb77b7d22b76581109ddb7515d088dc14ecc61f7869075ad1d19",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.0
+    },
+    {
+      "topic": "C96 原生画幅换色验证：creamcoffee",
+      "file": "samples/palette-creamcoffee-wave89.png",
+      "source_sha256": "9424d019aaf51c9d833cdb7104211beaab06348e5e1abb5f68cabd483a42fccc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "C96 原生画幅换色验证：macaron",
+      "file": "samples/palette-macaron-wave91.png",
+      "source_sha256": "a52b6da75158e0af723e974594fc6b8a24987395d9a5b3e902425537d3ae8e3c",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "C96 原生画幅换色验证：amber",
+      "file": "samples/palette-amber-wave92.png",
+      "source_sha256": "bf6dd49b219c504e1f2d1549d2212f5231ee086ef8c2edf7d54cb7cb2fcc2ad0",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "C96 原生画幅换色验证：lilac",
+      "file": "samples/palette-lilac-wave92.png",
+      "source_sha256": "66b1dcd1a911902fae408c343f948dbdccf67773689eec288fc09b39e0215dcd",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "C96 原生画幅换色验证：mistblue",
+      "file": "samples/palette-mistblue-wave95.png",
+      "source_sha256": "878e2a38ccfe033c33c753aa2d17c3262282b2704a2a51c346a5aab37af51f42",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "小红书知识卡：用三栏对照讲清一则社区旧物交换活动的参与方式",
+      "file": "samples/xhs-6-wave97.png",
+      "source_sha256": "ed2f17517d0867e598566f74e24107f4448e2756b7b5e8b230fd3cf157c09338",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 0.75
+    },
+    {
+      "topic": "C96 换色验证：mintsoda",
+      "file": "samples/palette-mintsoda-continuous.png",
+      "source_sha256": "88e921208cb4324e430c2e3f443127a664e9482e342a234a46682aa027d651de",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "C96 换色验证：sakura",
+      "file": "samples/palette-sakura-continuous.png",
+      "source_sha256": "a627d0ecb48284f461aecd7fe06c306ac13f1eb8fce5696d2fb642623bb3739a",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    },
+    {
+      "topic": "C96 换色验证：indigo",
+      "file": "samples/palette-indigo-continuous.png",
+      "source_sha256": "97d2b3982f1fcad5dd07fa7ba890895bb3be22f5f93e784b07db828b73e3bf7b",
+      "renderer": "codex-builtin",
+      "date": "2026-10-12",
+      "ratio": 1.333
+    }
+  ]
+}

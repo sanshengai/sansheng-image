@@ -126,9 +126,7 @@ python3 scripts/sb.py plan-review plan.json --article 原文.md  # 独立复核�
 
 文章组在出图前执行 `plan-review`。若复核指出遗漏或错误，保留首版计划及复核报告，按原文修订后再复核；不能靠减少拟配图数量提高通过率。独立复核暂不可用时可继续试出图，但须标记“内容规划待复核”，不得把它称为已验收的文章完整组。`plan` 的结构检查通过只说明数据能编译，不等于选图位置和图意已合格。
 
-`plan-review` 默认调用独立 Claude CLI 进程；有 Ark Agent Plan 套餐时可设
-`SANSHENG_IMAGE_PLAN_REVIEW_BACKEND=ark_agent_plan`，它把原文全文作为只读输入送入套餐端点，
-不使用按量方舟接口。结果中的 `_reviewer` 记录实际返回模型。复核失败或服务不可用时不能把计划校验通过当作独立复核通过。
+`plan-review` 默认通过 Coding Plan 的 `deepseek-v4.1-flash` 独立请求，把实际原文全文送入固定套餐端点。需要 `ARK_CODING_PLAN_BASE_URL` / `ARK_CODING_PLAN_API_KEY`，不切按量或其它模型。结果中的 `_reviewer` 和 `_response_metadata` 保留实际返回型号与响应。复核失败或服务不可用时停止，不能把结构校验通过当作独立复核通过。
 
 ## 第 6 步：确认一次，一口气做完
 

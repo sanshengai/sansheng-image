@@ -17,7 +17,7 @@ def test_counts():
     single = D.formats()["sticker-single"]
     assert single["transparent"] and single["export_px"] == [512, 512] and single["text"]["default"] == "none"
     assert D.scenes()["sticker"]["formats"] == ["sticker-grid", "sticker-single"]
-    assert len(json.loads((ROOT / "styles/catalog.json").read_text())["styles"]) == 73
+    assert len(json.loads((ROOT / "styles/catalog.json").read_text())["styles"]) == 81
     for s in json.loads((ROOT / "styles/catalog.json").read_text())["styles"]:
         assert s["uses"], s["code"]
 

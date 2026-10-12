@@ -112,6 +112,15 @@
     "音乐封面"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "毛绒主体沿一个整体动作轻弹起落，收尾有柔软的回弹，绒面质感始终保持蓬松，不变硬。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "spring"
+    ],
+    "safety": "弹簧只用于整体位置或等比缩放，脸、身体比例、文字与产品不压扁；不把毛绒表面改成硬折或光滑。"
+  },
   "samples": [
     {
       "topic": "人物",

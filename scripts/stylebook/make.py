@@ -80,7 +80,7 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
     references = [{"role": r["role"], "path": str((base_path / r["path"]).resolve())} for r in references]
     default_format = brief.get("format") or D.scenes()[scene]["formats"][0]
     for index, item in enumerate(items, 1):
-        if not isinstance(item, dict) or set(item) - {"id", "position", "message", "visual", "text", "format"}:
+        if not isinstance(item, dict) or set(item) - {"id", "position", "message", "visual", "text", "format", "points", "panels", "relations", "final_relations"}:
             raise BriefError(f"第 {index} 张字段不合格")
         for field in ("position", "message", "visual"):
             if not isinstance(item.get(field), str) or not item[field].strip():
@@ -125,6 +125,18 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
         manifest = {"style": chosen["code"], "format": fmt, "model": model, "palette": palette,
                     "references": references, **({"use_anchor": False} if any(r["role"] == "style" for r in references) else {}),
                     "content": {"subject": item["visual"], "purpose": purpose}, "text": text_spec}
+        for field in ("points", "panels"):
+            if field in item:
+                values = item[field]
+                if not isinstance(values, list) or not values or any(
+                        not isinstance(value, str) or not value.strip() for value in values):
+                    raise BriefError(f"第 {index} 张 {field} 必须是非空文字列表")
+                manifest["content"][field] = list(values)
+        for field in ("relations", "final_relations"):
+            if field in item:
+                if not isinstance(item[field], str) or not item[field].strip():
+                    raise BriefError(f"第 {index} 张 {field} 必须是非空文字")
+                manifest["content"][field] = item[field]
         for field in ("structure", "density"):
             if expression.get(field, "auto") != "auto":
                 manifest[field] = expression[field]
@@ -141,6 +153,31 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
                       "manifest": manifest, "compiled": compiled.to_dict(), "references": refs, "overlay_assets": overlay_assets})
     return {"version": 1, "scene": scene, "selection": chosen, "palette": palette,
             "reason": reason, "source": source, "tasks": tasks}
+
+
+def execution_card(task: dict, source: dict | None = None) -> dict:
+    """Expose existing compiled inputs; never rewrite the prompt or old prepared hashes."""
+    from . import contract as CT
+    from .qa import active_items, content_expectations
+    manifest, compiled = task["manifest"], task["compiled"]
+    contract = CT.load(manifest["style"])
+    mode = manifest["text"]["mode"]
+    must, bans = active_items(contract, mode)
+    return {
+        "version": 1, "id": task["id"], "position": task["position"], "source": source,
+        "message": task["message"], "style": manifest["style"], "format": manifest["format"],
+        "content": manifest["content"], "content_expectations": content_expectations(manifest["content"]),
+        "text": manifest["text"], "palette": manifest["palette"], "references": task["references"],
+        "reference_isolation": (contract.get("anchor") or {}).get("isolation"),
+        "requirements": {"must_see": must, "must_not_see": bans},
+        "tool_arguments": {"prompt": compiled["prompt"],
+                           "referenced_image_paths": [r["path"] for r in task["references"]],
+                           "transparent_background": bool(D.formats()[manifest["format"]].get("transparent"))},
+        "prompt_sha256": task["prompt_sha256"], "generation_size": compiled["size"],
+        "export_px": D.formats()[manifest["format"]]["export_px"],
+        "human_preflight": "核对原题遗漏、身份与材质参考职责、保留项与修改项冲突；此卡不证明已完成检查。",
+        "visual_review": "not_run", "accepted": False,
+    }
 
 
 def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
@@ -164,6 +201,7 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
     for task in prepared["tasks"]:
         _write(out / f"{task['id']}-manifest.json", task["manifest"])
         _write(out / f"{task['id']}-compiled.json", task["compiled"])
+        _write(out / f"{task['id']}-execution-card.json", execution_card(task, prepared["source"]))
     if prepare_only:
         report = {"status": "pending_host", "selection": prepared["selection"],
                   "prepared": str(out / "prepared.json"), "visual_review": "not_run", "accepted": False}

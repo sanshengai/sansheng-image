@@ -168,6 +168,14 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "赛璐璐色面以少量关键姿态“按二拍”跳进，节奏利落安定，环境只做轻缓响应。",
+    "primitives": [
+      "keyframes",
+      "easing"
+    ],
+    "safety": "不新增原画面没有的人物、道具或情节；面容、文字、产品与主体比例不形变。"
+  },
   "samples": [
     {
       "topic": "人物",

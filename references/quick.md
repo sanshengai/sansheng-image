@@ -29,7 +29,7 @@
 
 可传 `sb2:` 或旧 `sb1:` 码到 `code`；码优先于明说画风和配色。sb2 自带用途，brief 可以省略 scene；两处都有用途时必须一致。品牌色如 `sb2:info/C42-hex.1F6F8B.F4F1E8`。教材用途现有 tb-vocab / tb-grammar；自动返修和飞轮捕获仍在接入。官网选择器复制的就是 sb2 码加一句说明。
 
-## 一条命令执行
+## 一条命令执行（当前会话没有内置生图工具时）
 
 ```sh
 python3 scripts/sb.py make brief.json -o 新目录
@@ -41,7 +41,9 @@ python3 scripts/sb.py make brief.json -o 新目录
 
 Agent 看总览并按需打开原图：字是否准确、主体与关系有无错画、裁切有无损失。源码绑定变化或像素失败的候选不能采用。报告中 `pending_visual_review` 只说明像素预检通过，未证明内容或吸引力；当前首版没有自动回写看图采用或单张返修，应保留宿主看图结论，并另开候选目录修图。
 
-## Codex 内置生图
+## 当前会话直接使用 Codex 内置生图
+
+当前会话有内置生图工具时，优先使用以下流程，即使本机已经安装并登录 Codex CLI。由当前会话直接出图，不通过 `codex exec` 或其他助手再启动另一个 Codex。
 
 ```sh
 python3 scripts/sb.py make brief.json -o 新目录 --prepare

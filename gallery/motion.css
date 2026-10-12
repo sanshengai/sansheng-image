@@ -1,0 +1,78 @@
+/* 首页「让图动起来」：变量与字号沿用 picker.html 内联样式。标签与按钮一律不透明底，避免背景浮图透过来影响文字 */
+
+.motion-sec { padding-bottom: 8px; }
+.motion-body { min-width: 0; }
+
+.motion-tabs { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+.motion-tabs .chip { max-width: 100%; white-space: normal; text-align: left; overflow-wrap: anywhere; background: var(--bg); }
+
+.motion-meta { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.motion-scene { font-size: 13px; color: var(--green); }
+.motion-title-text { font: 700 20px/1.4 var(--serif); color: var(--strong); }
+
+.motion-compare {
+  margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.motion-fig { margin: 0; min-width: 0; }
+.motion-frame {
+  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  background: #070B11; border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+}
+.motion-frame img, .motion-frame video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.motion-frame img.broken { visibility: hidden; }
+.motion-tag {
+  position: absolute; left: 0; top: 0; z-index: 2;
+  padding: 4px 10px; font: 600 13px/1.4 var(--sans); color: var(--strong);
+  background: var(--bg); border-bottom-right-radius: 5px; pointer-events: none;
+}
+.motion-cap { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--mut); min-height: 40px; display: flex; align-items: center; }
+.motion-play { min-width: 112px; background: var(--bg); }
+
+.motion-note, .motion-hint, .motion-status { margin-top: 8px; font-size: 14px; line-height: 1.65; color: var(--mut); }
+.motion-status:empty { display: none; }
+.motion-status { color: var(--strong); }
+.motion-hint { font-size: 13px; }
+
+/* 场景墙标记：纯展示，不接收指针事件，点击仍落在场景按钮上 */
+.scene-card .thumb { position: relative; }
+.motion-badge {
+  position: absolute; right: 8px; top: 8px; z-index: 1; pointer-events: none;
+  padding: 2px 8px; font: 600 12px/1.5 var(--sans); color: var(--strong);
+  background: var(--bg); border: 1px solid var(--green); border-radius: 5px;
+}
+
+/* 详情页动态缩略图 */
+.motion-dlg { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); min-width: 0; }
+.motion-dlg-title { margin-bottom: 8px; font-size: 13px; color: var(--mut); }
+.motion-dlg .motion-frame { max-width: 320px; }
+.motion-dlg .motion-cap { min-height: 0; }
+
+/* 场景墙可动卡：播放控制是 li 内与场景按钮并列的兄弟按钮，不嵌进 button；
+   标记在 thumb 左下，避免与左上的播放控制重叠 */
+.motion-wall-item { position: relative; }
+.scene-card .thumb .motion-wall-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;
+}
+.scene-card .thumb .motion-badge { right: auto; top: auto; left: 8px; bottom: 8px; }
+.motion-wall-play {
+  position: absolute; left: 8px; top: 8px; z-index: 3; min-width: 0; padding: 4px 12px;
+  background: var(--bg);
+}
+.motion-wall-status { margin-top: 6px; font-size: 13px; }
+
+@media (max-width: 640px) {
+  .motion-compare { gap: 8px; }
+  .motion-title-text { font-size: 17px; }
+  .motion-play { width: 100%; min-width: 0; padding: 6px 8px; }
+  .motion-cap { font-size: 13px; }
+  .motion-dlg .motion-frame { max-width: 100%; }
+  .motion-wall-play { left: 6px; top: 6px; padding: 4px 10px; font-size: 13px; }
+  .scene-card .thumb .motion-badge { left: 6px; bottom: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-play { transition: none; }
+}

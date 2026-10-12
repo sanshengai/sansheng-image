@@ -96,6 +96,14 @@
     "教材"
   ],
   "renderer": "codex",
+  "motion_dialect": {
+    "language": "朴素的整体位移与分层平移，速度匀称、少花哨，像把旧课本插图的各层轻轻推开，纸面印刷感保持不变。",
+    "primitives": [
+      "keyframes",
+      "easing"
+    ],
+    "safety": "文字、人物与产品比例锁定，不新增印章、杂点、污渍，不做翻页遮挡。"
+  },
   "samples": [
     {
       "topic": "人物",

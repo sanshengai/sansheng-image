@@ -279,7 +279,8 @@
       ],
       "source": "软件默认",
       "density_max": "dense",
-      "compose": "A complete 16:9 presentation slide designed as one image: a large main title, a smaller subtitle, and at most five short key-point lines with a clear visual hierarchy and 5% margins; the text is part of the slide design and must be exactly the given text."
+      "compose": "A complete 16:9 presentation slide designed as one image: a large main title, a smaller subtitle, and at most five short key-point lines with a clear visual hierarchy and 5% margins; the text is part of the slide design and must be exactly the given text.",
+      "compose_no_text": "A complete 16:9 presentation slide background with a clear visual hierarchy and 5% margins. Keep the specified title and label zones empty for later typesetting. Do not render any text, digits or pseudo-characters."
     },
     {
       "id": "courseware",
@@ -382,7 +383,7 @@
         1656
       ],
       "safe_zone": {
-        "note": "上下留标题与结尾区"
+        "note": "上方留标题区；准确文字清单有结语时才留底部结尾区"
       },
       "text": {
         "default": "native",
@@ -394,7 +395,7 @@
       ],
       "alt_ratio": "9:16",
       "density_max": "dense",
-      "compose": "A vertical infographic: a title area at the top, the content in the middle and one short closing line at the bottom."
+      "compose": "A vertical infographic: a title area at the top and the content in the middle. Include a short closing line at the bottom only when the exact text list explicitly supplies one; otherwise leave that area free of lettering. Never invent a closing sentence."
     },
     {
       "id": "article-illustration",
