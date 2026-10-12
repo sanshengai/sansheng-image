@@ -200,7 +200,8 @@ def test_row_sits_in_the_sticky_bar_and_options_follow_the_data(browser, built):
         page.evaluate("window.scrollTo({top: document.getElementById('library').getBoundingClientRect().top + scrollY + 600, behavior: 'instant'})")
         page.wait_for_timeout(200)
         top = page.eval_on_selector("#lib-bar", "b=>b.getBoundingClientRect().top")
-        assert abs(top) < 1.5, top      # 吸顶
+        nav = page.eval_on_selector("#topnav", "n=>n.getBoundingClientRect().bottom")
+        assert nav > 0 and abs(top - nav) < 1.5, (top, nav)      # 吸顶，紧贴在站点顶栏下方
         assert page.is_visible("#lib-region")
 
 

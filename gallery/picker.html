@@ -8,17 +8,22 @@
 <meta name="theme-color" content="#05080D">
 <style>
 :root {
-  --bg: #05080D;
-  --fg: #CBD4E0;
-  --strong: #E8EEF6;
-  --mut: #8E9AAB;
-  --line: rgba(203, 212, 224, .16);
-  --line-2: rgba(203, 212, 224, .30);
-  --green: #34D399;
-  --panel: #0A1017;
+  /* 墨绿黑底 + 纸白 + 品牌翠绿（只用于选中、代码与焦点） */
+  --bg: #0F1513;
+  --fg: #B9C2BC;
+  --strong: #EEE8DC;
+  --mut: #808D86;
+  --line: rgba(238, 232, 220, .10);
+  --line-2: rgba(238, 232, 220, .22);
+  --green: #34C795;
+  --panel: #151D1A;
+  --panel-2: #1A2420;
+  --paper: #EEE8DC;
   --serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+  --latin: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --nav-h: 64px;
 }
 
 * { box-sizing: border-box; }
@@ -52,8 +57,9 @@ h1, h2, h3, p, dl, dd { margin: 0; }
 .skip:focus { top: 12px; }
 
 /* 背景层 */
-#sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-#floaters { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+#sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+#floaters { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+#floaters, #sky { mask-image: linear-gradient(to bottom, transparent 0, #000 160px, #000 72%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 160px, #000 72%, transparent); }
 #floaters .float {
   position: absolute; left: 0; top: 0; object-fit: cover;
   border-radius: 6px; opacity: 0; will-change: transform, opacity;
@@ -77,69 +83,6 @@ h1, h2, h3, p, dl, dd { margin: 0; }
 .btn-main:hover { background: #46e0a0; }
 .btn-small { min-height: 40px; padding: 6px 14px; font-size: 14px; }
 .star { color: var(--green); font-variant-numeric: tabular-nums; }
-
-/* 首屏 */
-.hero { padding: 56px 0 72px; }
-.hero-grid { display: grid; grid-template-columns: 52fr 48fr; gap: 56px; align-items: center; }
-.hero-left, .hero-right { min-width: 0; }
-.hero-title {
-  font: 700 76px/1.1 var(--serif); color: var(--strong); letter-spacing: .02em;
-  display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
-}
-.skill-tag {
-  font: 600 14px/1 var(--sans); letter-spacing: .08em; color: var(--green);
-  border: 1px solid var(--green); border-radius: 5px; padding: 5px 9px;
-  transform: translateY(-10px);
-}
-.hero-sub { margin-top: 18px; font: 400 22px/1.6 var(--serif); color: var(--fg); }
-
-.metrics {
-  margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-}
-.metrics > div { padding: 14px 0 12px 16px; border-left: 1px solid var(--line); min-width: 0; }
-.metrics > div:first-child { border-left: 0; padding-left: 0; }
-.metrics dd { font: 700 34px/1.2 var(--serif); color: var(--strong); font-variant-numeric: tabular-nums; order: 1; }
-.metrics dt { font-size: 14px; color: var(--mut); order: 2; }
-.metrics > div { display: flex; flex-direction: column; }
-
-.actions { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
-.install-panel { margin-top: 14px; border: 1px solid var(--line); border-radius: 5px; padding: 14px 16px; background: rgba(10, 16, 23, .88); }
-.install-hint { font-size: 14px; color: var(--mut); margin-bottom: 8px; }
-.install-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.cmd { flex: 1 1 260px; min-width: 0; font: 14px/1.6 var(--mono); color: var(--strong); white-space: pre-wrap; word-break: break-all; }
-
-.steps { margin-top: 28px; border-top: 1px solid var(--line); }
-.steps li { border-bottom: 1px solid var(--line); }
-.steps summary {
-  display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 8px 0;
-  cursor: pointer; color: var(--strong); list-style: none;
-}
-.steps summary::-webkit-details-marker { display: none; }
-.steps summary::after { content: "展开"; margin-left: auto; font-size: 13px; color: var(--mut); }
-.steps details[open] summary::after { content: "收起"; }
-.step-no { font: 700 20px/1 var(--serif); color: var(--green); width: 20px; }
-.steps p { padding: 0 0 14px 34px; font-size: 14px; color: var(--fg); }
-
-/* 展台 */
-.stage-frame {
-  position: relative; aspect-ratio: 1 / 1; width: 100%;
-  background: #070B11; border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
-}
-.slide {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transition: opacity .5s ease;
-}
-.slide.is-active { opacity: 1; }
-#stage-logo { object-fit: contain; }
-.stage-name {
-  position: absolute; left: 0; top: 0; z-index: 2;
-  padding: 6px 12px; font: 600 14px/1.4 var(--sans); color: var(--strong);
-  background: rgba(5, 8, 13, .86); border-bottom-right-radius: 5px;
-}
-.stage-bar { margin-top: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.stage-count { margin-left: auto; font-size: 14px; color: var(--mut); font-variant-numeric: tabular-nums; }
-.stage-cap { margin-top: 8px; font-size: 14px; color: var(--mut); }
 
 /* 版块 */
 .sec { padding: 72px 0 24px; }
@@ -279,15 +222,6 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   html { scroll-behavior: auto; }
   .slide, .thumb img, .btn, .scene-card .thumb { transition: none; }
 }
-
-/* 三步是一条使用路径，只在点击后展开各步说明 */
-.steps {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
-.steps li {border-bottom:0;min-width:0}
-.steps summary {gap:6px;padding:6px 0;font-size:14px;flex-wrap:nowrap}
-.steps summary::after {content:"+";font-size:14px}
-.steps details[open] summary::after {content:"−"}
-.steps p {padding:10px 0 0;font-size:13px;line-height:1.7}
-@media(max-width:640px){.steps{gap:10px}.steps summary{font-size:13px}.step-no{font-size:17px;width:12px}.steps summary::after{display:none}}
 
 .dlg-media {min-width:0}
 .dlg-text {overflow-wrap:anywhere}
@@ -449,35 +383,264 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   .lib-tax .btn-small { position: sticky; right: 0; background: var(--bg); }
   .quiz-in { padding: 16px; }
 }
+
+/* ==================== 2026-10 改版：顶栏 / 首屏 / 三步 / 共建 / 页脚 ==================== */
+html { scroll-padding-top: calc(var(--nav-h) + 12px); }
+body { font-size: 15px; line-height: 1.75; }
+body::before {                     /* 极淡的纸纹网格，只给底色一点质感 */
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(238,232,220,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(238,232,220,.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, #000, transparent 70vh);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 70vh);
+}
+.wrap { width: min(1200px, calc(100% - 48px)); }
+
+.btn { border-radius: 999px; padding: 8px 20px; min-height: 42px; font-size: 14px; letter-spacing: .02em; transition: border-color .2s, background-color .2s, color .2s; }
+.btn-small { min-height: 34px; padding: 4px 14px; font-size: 13px; }
+.btn-paper, .btn-main { background: var(--paper); border-color: var(--paper); color: #15201C; font-weight: 600; }
+.btn-paper:hover, .btn-main:hover { background: #FFFFFF; border-color: #FFFFFF; }
+.btn-ghost { border-color: var(--line-2); }
+
+/* 顶栏 */
+.topnav {
+  position: sticky; top: 0; z-index: 30; height: var(--nav-h);
+  background: rgba(15, 21, 19, .72); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid transparent; transition: border-color .25s, background-color .25s;
+}
+.topnav.is-stuck { border-bottom-color: var(--line); background: rgba(15, 21, 19, .88); }
+.topnav-in { height: 100%; display: flex; align-items: center; gap: 18px; }
+.brand { display: inline-flex; align-items: center; text-decoration: none; flex: none; }
+.brand-logo { height: 36px; width: auto; }
+.brand-text { font: 700 16px/1 var(--sans); color: var(--strong); letter-spacing: .02em; white-space: nowrap; }
+.nav-sep { width: 1px; height: 22px; background: var(--line-2); flex: none; }
+.product { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; flex: none; }
+.product-zh { font: 700 17px/1 var(--serif); color: var(--strong); letter-spacing: .04em; }
+.product-en { font: italic 14px/1 var(--latin); color: var(--mut); }
+.nav-links { margin-left: auto; display: flex; gap: 4px; }
+.nav-links a { padding: 6px 12px; font-size: 14px; color: var(--fg); text-decoration: none; border-radius: 999px; }
+.nav-links a:hover { color: var(--strong); background: rgba(238,232,220,.06); }
+.nav-act { display: flex; align-items: center; gap: 10px; flex: none; }
+.nav-act .btn { min-height: 36px; padding: 4px 14px; font-size: 13px; }
+.gh { width: 15px; height: 15px; }
+.star { color: var(--strong); font-variant-numeric: tabular-nums; opacity: .8; }
+
+/* 首屏 */
+.hero { position: relative; overflow: hidden; padding: 72px 0 64px; }
+.hero::after {                     /* 背景层在首屏底部淡出，不与下文抢 */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0; pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+}
+.hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 54fr) minmax(0, 46fr); gap: 64px; align-items: center; }
+.hero-left, .hero-right { min-width: 0; }
+.hero-kicker { font-size: 13px; color: var(--green); letter-spacing: .04em; }
+.hero-title { margin-top: 18px; font: 700 clamp(44px, 5.6vw, 76px)/1.14 var(--serif); color: var(--strong); letter-spacing: .01em; }
+.hero-sub { margin-top: 22px; max-width: 30em; font: 400 18px/1.8 var(--sans); color: var(--fg); }
+.hero-en { margin-top: 8px; max-width: 34em; font: italic 16px/1.6 var(--latin); color: var(--mut); }
+
+.cmdbar {
+  margin-top: 32px; display: flex; align-items: center; gap: 12px; max-width: 520px;
+  padding: 6px 6px 6px 18px; background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px;
+}
+.cmdbar-p { font: 14px/1 var(--mono); color: var(--green); }
+.cmdbar-c { flex: 1; min-width: 0; font: 14px/1.4 var(--mono); color: var(--strong); white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+.cmdbar-c::-webkit-scrollbar { display: none; }
+.btn-copy { flex: none; }
+.actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+.install-panel { margin-top: 16px; max-width: 560px; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: rgba(21, 29, 26, .92); }
+.install-hint { font-size: 13px; color: var(--mut); margin-bottom: 8px; }
+.install-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cmd { flex: 1 1 260px; min-width: 0; font: 13px/1.6 var(--mono); color: var(--strong); white-space: pre-wrap; word-break: break-all; }
+
+.metrics { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 8px 36px; }
+.metrics > div { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.metrics dd { font: 700 28px/1.1 var(--serif); color: var(--strong); font-variant-numeric: tabular-nums; }
+.metrics dt { font-size: 13px; color: var(--mut); }
+
+/* 展台 */
+.stage { padding: 14px; background: rgba(21, 29, 26, .7); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+.stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 2px 4px 12px; }
+.stage-title { font: 600 14px/1.4 var(--sans); color: var(--strong); }
+.stage-cap { font: italic 13px/1.4 var(--latin); color: var(--mut); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.stage-frame { position: relative; aspect-ratio: 1 / 1; width: 100%; background: #040A0E; border-radius: 12px; overflow: hidden; }
+.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s ease; }
+.slide.is-active { opacity: 1; }
+#stage-logo { object-fit: contain; }
+.stage-name {
+  position: absolute; left: 12px; bottom: 12px; z-index: 2;
+  padding: 5px 12px; font: 600 13px/1.4 var(--sans); color: var(--strong);
+  background: rgba(15, 21, 19, .78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 999px;
+}
+.stage-strip { margin-top: 10px; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.stage-strip:empty { display: none; }
+.strip-btn { padding: 0; aspect-ratio: 1; border: 0; border-radius: 7px; overflow: hidden; background: #0B100E; cursor: pointer; opacity: .5; outline: 2px solid transparent; outline-offset: 1px; transition: opacity .2s, outline-color .2s; }
+.strip-btn img { width: 100%; height: 100%; object-fit: cover; }
+.strip-btn:hover { opacity: .85; }
+.strip-btn[aria-pressed="true"] { opacity: 1; outline-color: var(--green); }
+.stage-bar { margin-top: 10px; display: flex; gap: 6px; align-items: center; }
+.btn-icon { min-height: 32px; padding: 2px 12px; font-size: 12px; }
+.stage-count { margin-left: auto; font-size: 13px; color: var(--mut); font-variant-numeric: tabular-nums; }
+
+/* 三步 */
+.howto { position: relative; z-index: 1; padding: 8px 0 8px; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.steps li { display: flex; gap: 16px; padding: 26px 28px 26px 0; min-width: 0; }
+.steps li + li { padding-left: 28px; border-left: 1px solid var(--line); }
+.step-no { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 600 14px/1 var(--sans); color: var(--green); border: 1px solid rgba(52,199,149,.45); }
+.step-h { font: 700 17px/1.5 var(--serif); color: var(--strong); }
+.step-p { margin-top: 4px; font-size: 13.5px; line-height: 1.75; color: var(--mut); }
+
+/* 版块 */
+.sec { position: relative; z-index: 1; padding: 88px 0 16px; }
+.sec-title { font: 700 clamp(26px, 3vw, 36px)/1.3 var(--serif); color: var(--strong); letter-spacing: .01em; }
+.sec-sub { margin-top: 10px; color: var(--mut); font-size: 14px; }
+.sec-en { display: block; margin-top: 2px; font: italic 15px/1.5 var(--latin); color: var(--mut); opacity: .85; }
+.thumb { border-radius: 12px; background: var(--panel); }
+.scene-grid { gap: 36px 24px; }
+.scene-card .thumb { aspect-ratio: 4 / 3; outline: 1px solid var(--line); outline-offset: 0; transition: outline-color .2s; }
+.scene-card .thumb img { transition: opacity .35s, transform .6s cubic-bezier(.2,.7,.2,1); }
+.scene-card:hover .thumb img { transform: scale(1.03); }
+.scene-card:hover .thumb { outline-color: var(--line-2); }
+.scene-card[aria-pressed="true"] .thumb { outline: 2px solid var(--green); outline-offset: 3px; }
+.scene-name { margin-top: 14px; font-size: 19px; }
+.scene-meta { margin-top: 2px; color: var(--green); }
+.feat-grid { gap: 40px 24px; }
+.style-card .thumb { outline: 1px solid var(--line); }
+.style-card:hover .thumb { outline-color: var(--line-2); }
+.sc-id { color: var(--green); }
+.sc-name { margin-top: 12px; }
+
+/* 画风库吸顶栏在顶栏下方 */
+.lib-bar { top: var(--nav-h); background: rgba(15, 21, 19, .94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.chip { border-radius: 999px; min-height: 34px; padding: 4px 14px; font-size: 13px; }
+.chip[aria-pressed="true"] { background: rgba(52,199,149,.10); }
+.sw i:first-child { border-radius: 3px 0 0 3px; } .sw i:last-child { border-radius: 0 3px 3px 0; }
+.lib-q, .lib-sel, .hex, .dlg-pal select { border-radius: 999px; background: var(--panel); }
+.lib-sel { padding: 4px 14px; }
+.tag { border-radius: 999px; background: rgba(15,21,19,.82); }
+.tag-mine { background: var(--green); color: #0B1A14; }
+.badge { background: var(--green); color: #0B1A14; }
+.lib-grid { gap: 32px 20px; }
+
+/* 弹窗 */
+dialog { background: var(--panel); border-radius: 18px; border-color: var(--line-2); }
+dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.dlg-main, .cmp-stage, .tray-item, .pal-card { border-radius: 12px; }
+.dlg-main { background: #0B100E; }
+.copy-line { border-radius: 12px; background: #0B100E; }
+.dlg-h { letter-spacing: .02em; }
+.pal-card { background: var(--panel); }
+
+/* 共建 */
+.cobuild { position: relative; z-index: 1; padding: 96px 0 72px; }
+.cobuild-in { display: grid; grid-template-columns: minmax(0, 1.4fr) auto; gap: 32px; align-items: center; padding: 40px 44px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; }
+.cobuild-title { font: 700 28px/1.35 var(--serif); color: var(--strong); }
+.cobuild-sub { margin-top: 10px; max-width: 36em; font-size: 14px; color: var(--fg); }
+.cobuild-act { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* 页脚 */
+.foot { position: relative; z-index: 1; padding: 36px 0 56px; background: transparent; }
+.foot-in { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+.foot-brand .brand-logo { height: 26px; opacity: .9; }
+.foot-links { font-size: 14px; gap: 4px 22px; }
+.foot-links a { color: var(--fg); text-decoration: none; }
+.foot-links a:hover { color: var(--strong); }
+.foot-text { display: inline-flex; min-height: 36px; align-items: center; color: var(--mut); }
+.foot-note { margin-top: 14px; }
+
+@media (max-width: 1080px) {
+  .nav-links { display: none; }
+  .nav-act { margin-left: auto; }
+}
+@media (max-width: 900px) {
+  .hero { padding: 40px 0 40px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .steps li, .steps li + li { padding: 18px 0; border-left: 0; }
+  .steps li + li { border-top: 1px solid var(--line); }
+  .cobuild-in { grid-template-columns: minmax(0, 1fr); padding: 28px 24px; }
+  .cobuild-act { justify-content: flex-start; }
+}
+@media (max-width: 640px) {
+  :root { --nav-h: 56px; }
+  .wrap { width: calc(100% - 32px); }
+  .topnav-in { gap: 10px; }
+  .brand-logo { height: 28px; }
+  .product-en, #github-btn .star { display: none; }
+  .nav-act .btn { padding: 4px 10px; }
+  .nav-sep { height: 18px; }
+  .product-zh { font-size: 15px; }
+  .hero-title { font-size: 42px; }
+  .hero-sub { font-size: 16px; }
+  .hero-en { font-size: 14px; }
+  .cmdbar { padding-left: 14px; }
+  .cmdbar-c { font-size: 12.5px; }
+  .metrics { gap: 6px 16px; }
+  .metrics dd { font-size: 20px; }
+  .metrics dt { font-size: 12px; }
+  .stage { padding: 10px; border-radius: 16px; }
+  .stage-cap { display: none; }
+  .stage-strip { gap: 4px; }
+  .sec { padding-top: 60px; }
+  .cobuild { padding-top: 64px; }
+  .cobuild-title { font-size: 22px; }
+}
+@media (max-width: 380px) {
+  .nav-sep, .product { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide, .thumb img, .btn, .scene-card .thumb, .scene-card .thumb img, .strip-btn, .topnav { transition: none; }
+  .scene-card:hover .thumb img { transform: none; }
+}
 </style>
 <link rel="stylesheet" href="/tools/image/motion.css">
 </head>
 <body data-asset-root="img/">
 <a class="skip" href="#library">跳到画风库</a>
 
-<canvas id="sky" aria-hidden="true"></canvas>
-<div id="floaters" aria-hidden="true"></div>
-
 <div class="page">
 
-<header class="hero">
+<nav class="topnav" id="topnav" aria-label="站点导航">
+  <div class="wrap topnav-in">
+    <a class="brand" href="https://sanshengai.top/" aria-label="叁笙早安 AI 首页">
+      <img class="brand-logo" alt="叁笙早安 AI" width="98" height="35" decoding="async" hidden>
+      <span class="brand-text">叁笙早安 AI</span>
+    </a>
+    <span class="nav-sep" aria-hidden="true"></span>
+    <a class="product" href="#top"><span class="product-zh">叁笙生图</span><span class="product-en">Sansheng Image</span></a>
+    <div class="nav-links">
+      <a href="#scenes">场景</a>
+      <a href="#library">画风库</a>
+      <a href="#palettes" id="nav-pal">色系</a>
+      <a href="/tools/image/feedback/">反馈</a>
+    </div>
+    <div class="nav-act">
+      <a class="btn btn-ghost" id="github-btn" href="https://github.com/sanshengai/sansheng-image" target="_blank" rel="noopener"><svg class="gh" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.19c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub <span class="star"><span aria-hidden="true">★</span> <span id="star-count">…</span></span></a>
+      <a class="btn btn-paper btn-nav" href="#install" id="nav-install">安装</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div id="floaters" aria-hidden="true"></div>
   <div class="wrap hero-grid">
-    <div class="hero-left">
+    <div class="hero-left" id="hero-left">
       <div id="title-block" class="title-block">
-        <h1 class="hero-title">叁笙生图<span class="skill-tag">Skill</span></h1>
-        <p class="hero-sub">一句话，让你的 AI 按挑好的画风出整组图</p>
+        <p class="hero-kicker">开源生图 Skill，适用于 Claude Code、Codex 等 AI 助手</p>
+        <h1 class="hero-title">挑一个画风，<br>整组图都像它。</h1>
+        <p class="hero-sub">读懂你的文章，挑出值得画的观点，按同一个画风出封面、配图、小红书、PPT 与信息图。</p>
+        <p class="hero-en">One style, one coherent set of images. Pick it here, hand the code to your agent.</p>
       </div>
 
-      <dl class="metrics" id="metrics">
-        <div><dt>画风</dt><dd data-metric="styles">—</dd></div>
-        <div><dt>场景</dt><dd data-metric="scenes">—</dd></div>
-        <div><dt>色系</dt><dd data-metric="palettes">—</dd></div>
-        <div><dt>样图</dt><dd data-metric="samples">—</dd></div>
-      </dl>
-
+      <div class="cmdbar" id="install">
+        <span class="cmdbar-p" aria-hidden="true">$</span>
+        <code class="cmdbar-c" id="hero-cmd">npx skills add sanshengai/sansheng-image -g</code>
+        <button class="btn btn-small btn-copy" type="button" data-copy-target="hero-cmd">复制</button>
+      </div>
       <div class="actions">
-        <a class="btn" id="github-btn" href="https://github.com/sanshengai/sansheng-image" target="_blank" rel="noopener">GitHub <span class="star"><span aria-hidden="true">★</span> <span id="star-count">…</span></span></a>
-        <button class="btn btn-main" id="install-btn" type="button" aria-expanded="false" aria-controls="install-panel">安装</button>
+        <a class="btn btn-paper" href="#library">浏览画风库</a>
+        <button class="btn" id="install-btn" type="button" aria-expanded="false" aria-controls="install-panel">其他安装方式</button>
       </div>
       <div class="install-panel" id="install-panel" hidden>
         <p class="install-hint">在终端里运行这一行（需要 Node.js），装完重开你的 AI 助手：</p>
@@ -497,7 +660,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
           <a class="btn btn-small" href="/tools/github/repo/sanshengai/sansheng-image/">本站宝藏页（zip 镜像）</a>
         </details>
         <details class="install-alt">
-          <summary>其他装法</summary>
+          <summary>Claude Code 插件市场 / 手动下载</summary>
           <p>Claude Code，在对话里依次输入：</p>
           <div class="install-row"><code class="cmd" id="install-mp1">/plugin marketplace add sanshengai/sansheng-image</code><button class="btn btn-small" type="button" data-copy-target="install-mp1">复制</button></div>
           <div class="install-row"><code class="cmd" id="install-mp2">/plugin install sansheng-image@sansheng-image-marketplace</code><button class="btn btn-small" type="button" data-copy-target="install-mp2">复制</button></div>
@@ -506,52 +669,53 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
         </details>
       </div>
 
-      <ol class="steps" id="steps">
-        <li>
-          <details>
-            <summary><span class="step-no">1</span>装一次</summary>
-            <p>点击安装，把叁笙生图装进你使用的 AI；装一次，以后每次都能调用。</p>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary><span class="step-no">2</span>挑画风</summary>
-            <p>在下面的画风库里挑场景与画风，点开详情，复制那句话。</p>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary><span class="step-no">3</span>发给 AI</summary>
-            <p>把这句话发给装好叁笙生图的 AI，整组图会按挑好的画风画出来。</p>
-          </details>
-        </li>
-      </ol>
+      <dl class="metrics" id="metrics">
+        <div><dd data-metric="styles">—</dd><dt>种画风</dt></div>
+        <div><dd data-metric="scenes">—</dd><dt>类场景</dt></div>
+        <div><dd data-metric="palettes">—</dd><dt>套色系</dt></div>
+        <div><dd data-metric="samples">—</dd><dt>张样图</dt></div>
+      </dl>
     </div>
 
-    <div class="hero-right">
+    <div class="hero-right" id="hero-right">
       <section class="stage" id="stage" aria-roledescription="轮播" aria-label="同一个题目的不同画风">
+        <div class="stage-head">
+          <p class="stage-title">同一个题目，换一种画风</p>
+          <p class="stage-cap" id="stage-cap">同一个题目，换不同画风</p>
+        </div>
         <div class="stage-frame" id="stage-frame">
           <img class="slide is-active" id="stage-logo" alt="叁笙 Logo 动态展示" decoding="async">
           <noscript><p class="load-fail">需要开启 JavaScript 才能浏览画风库。</p></noscript>
           <p class="stage-name" id="stage-name">叁笙生图</p>
         </div>
+        <div class="stage-strip" id="stage-strip" role="group" aria-label="选择画风"></div>
         <div class="stage-bar">
-          <button class="btn btn-small" id="stage-prev" type="button" aria-label="上一张">上一张</button>
-          <button class="btn btn-small" id="stage-toggle" type="button" aria-label="暂停自动切换">暂停</button>
-          <button class="btn btn-small" id="stage-next" type="button" aria-label="下一张">下一张</button>
+          <button class="btn btn-icon" id="stage-prev" type="button" aria-label="上一张">上一张</button>
+          <button class="btn btn-icon" id="stage-toggle" type="button" aria-label="暂停自动切换">暂停</button>
+          <button class="btn btn-icon" id="stage-next" type="button" aria-label="下一张">下一张</button>
           <span class="stage-count" id="stage-count" aria-hidden="true"></span>
         </div>
-        <p class="stage-cap" id="stage-cap">同一个题目，换不同画风</p>
       </section>
     </div>
   </div>
 </header>
 
+<section class="howto" aria-labelledby="howto-title">
+  <div class="wrap">
+    <h2 class="sr-only" id="howto-title">怎么用</h2>
+    <ol class="steps" id="steps">
+      <li><span class="step-no">1</span><div><p class="step-h">装一次</p><p class="step-p">复制上面的命令，或把安装那句话发给你的 AI 助手。装好以后每次都能调用。</p></div></li>
+      <li><span class="step-no">2</span><div><p class="step-h">挑场景和画风</p><p class="step-p">在下面按用途筛选，点开画风看整组样图，选好色系，复制那一句话。</p></div></li>
+      <li><span class="step-no">3</span><div><p class="step-h">连同内容发给 AI</p><p class="step-p">把那句话和你的文章一起发过去。AI 先列出每张图画什么、写什么字，再按同一画风出整组图。</p></div></li>
+    </ol>
+  </div>
+</section>
+
 <main>
   <section class="sec" id="scenes" aria-labelledby="scenes-title">
     <div class="wrap">
       <h2 class="sec-title" id="scenes-title">挑个场景，从合适的画风里选</h2>
-      <p class="sec-sub">点一个场景，下面的画风库只留下适合它的画风。</p>
+      <p class="sec-sub">点一个场景，下面的画风库只留下适合它的画风。<span class="sec-en">Start from what you are making.</span></p>
       <ul class="scene-grid" id="scene-grid"></ul>
     </div>
   </section>
@@ -559,7 +723,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   <section class="sec" id="featured" aria-labelledby="featured-title">
     <div class="wrap">
       <h2 class="sec-title" id="featured-title">先从这十二个看起</h2>
-      <p class="sec-sub">风格差别大、也好上手的一批，点开可以看更多样图。</p>
+      <p class="sec-sub">风格差别大、也好上手的一批，点开可以看更多样图。<span class="sec-en">Twelve to begin with.</span></p>
       <ul class="feat-grid" id="feat-grid"></ul>
     </div>
   </section>
@@ -619,18 +783,36 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   </section>
 </main>
 
+<section class="cobuild" id="feedback" aria-labelledby="cobuild-title">
+  <div class="wrap cobuild-in">
+    <div>
+      <h2 class="cobuild-title" id="cobuild-title">缺一个你想要的画风？</h2>
+      <p class="cobuild-sub">推荐画风、晒你用它画的作品、建议新场景，或者告诉我们哪里没画好。每一条都由人看过，采纳的画风会重新出图，经你同意署名共建。</p>
+    </div>
+    <div class="cobuild-act">
+      <a class="btn btn-paper" href="/tools/image/feedback/">推荐画风或反馈问题</a>
+      <a class="btn" href="https://github.com/sanshengai/sansheng-image/issues" target="_blank" rel="noopener">在 GitHub 提 Issue</a>
+    </div>
+  </div>
+</section>
+
 <footer class="foot">
-  <div class="wrap">
+  <div class="wrap foot-in">
+    <a class="brand foot-brand" href="https://sanshengai.top/" aria-label="叁笙早安 AI 首页">
+      <img class="brand-logo" alt="叁笙早安 AI" width="98" height="35" loading="lazy" decoding="async" hidden>
+      <span class="brand-text">叁笙早安 AI</span>
+    </a>
     <nav class="foot-links" aria-label="页脚链接">
       <a href="https://github.com/sanshengai/sansheng-image" target="_blank" rel="noopener">GitHub</a>
       <a id="releases-link" href="https://github.com/sanshengai/sansheng-image/releases" target="_blank" rel="noopener">更新日志</a>
       <a href="/tools/github/repo/sanshengai/sansheng-image/">宝藏页（国内下载镜像）</a>
+      <a href="/tools/image/feedback/">反馈与共建</a>
       <a href="/">叁笙早安 AI</a>
       <span class="foot-text">许可证 MIT</span>
       <span class="foot-text">画风参考，不代表与创作者有关</span>
     </nav>
-    <p class="foot-note">画风里的「参考」仅用来说明风格的来源，不代表与相关创作者有任何关系。</p>
   </div>
+  <div class="wrap"><p class="foot-note">画风里的「参考」仅用来说明风格的来源，不代表与相关创作者有任何关系。</p></div>
 </footer>
 
 </div>
@@ -951,6 +1133,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   function context2d(canvas) { try { return canvas.getContext('2d'); } catch (e) { return null; } }
   var sky = $('#sky'), sctx = context2d(sky);
   var floatLayer = $('#floaters');
+  var heroEl = $('#top');
   var CW = 0, CH = 0, DPR = 1, VW = 0, VH = 0;
   var stars = [], shoot = null, nextShoot = 0;
   var clock = 0, lastNow = 0, loopOn = false, rafId = 0, frameNo = 0, staticQueued = false;
@@ -1012,7 +1195,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
     if (!still) {
       var ph = (t + 24) % 30;                       // 30 秒一轮，其中 11 秒出现，首次约在第 6 秒
       env = ph < 11 ? Math.pow(Math.sin(Math.PI * ph / 11), 2) : 0;
-      if (env > .003) drawAurora(env, t);
+      env = 0;                                      // 2026-10 改版：去掉极光，只留星点与偶发流星
     }
     for (i = 0; i < stars.length; i++) {
       var s = stars[i];
@@ -1067,15 +1250,19 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   /* 浮图 */
   var floats = [], floatLoadStarted = false, floatGen = 0, titleBox = null;
   var LAYERS = {
-    far: { w: [72, 131], a: .15, b: 2.6, v: 6, k: .10 },
-    mid: { w: [109, 192], a: .20, b: 1.1, v: 11, k: .22 },
-    near: { w: [155, 267], a: .21, b: 0, v: 18, k: .38 }
+    far: { w: [64, 112], a: .10, b: 3, v: 5, k: .06 },
+    mid: { w: [96, 160], a: .13, b: 1.4, v: 9, k: .12 },
+    near: { w: [132, 210], a: .16, b: .4, v: 14, k: .2 }
   };
+  /* 浮图只在首屏里飘，并避开左栏文字与右侧展台（坐标相对首屏） */
   function measureTitle() {
-    var el = $('#title-block');
-    if (!el) return;
-    var r = el.getBoundingClientRect();
-    titleBox = { l: r.left + window.scrollX, t: r.top + window.scrollY, r: r.right + window.scrollX, b: r.bottom + window.scrollY };
+    var hr = heroEl.getBoundingClientRect();
+    titleBox = ['#hero-left', '#stage'].map(function (sel) {
+      var el = $(sel);
+      if (!el) return null;
+      var r = el.getBoundingClientRect();
+      return { l: r.left - hr.left, t: r.top - hr.top, r: r.right - hr.left, b: r.bottom - hr.top };
+    }).filter(Boolean);
   }
   function buildFloats() {
     floats.forEach(function (f) { if (f.el.parentNode) f.el.parentNode.removeChild(f.el); });
@@ -1125,7 +1312,6 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   function updateFloats(t, dt, auroraEnv, still) {
     if (!floats.length) return;
     var sy = still ? 0 : window.scrollY;
-    var vy = window.scrollY;
     var tb = titleBox;
     for (var i = 0; i < floats.length; i++) {
       var f = floats[i];
@@ -1137,11 +1323,11 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
       var x = f.x0 + sw * f.amp;
       f.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + (sw * f.tilt).toFixed(2) + 'deg)';
       var prot = 1;
-      if (tb) {
-        var L = tb.l, T = tb.t - vy, R = tb.r, B = tb.b - vy;
-        var dx = Math.max(L - (x + f.w), x - R, 0), dy = Math.max(T - (y + f.w), y - B, 0);
-        prot = clamp(Math.sqrt(dx * dx + dy * dy) / 90, 0, 1);
-        prot = prot * prot * (3 - 2 * prot);
+      if (tb) for (var q = 0; q < tb.length; q++) {
+        var bx = tb[q];
+        var dx = Math.max(bx.l - (x + f.w), x - bx.r, 0), dy = Math.max(bx.t - (y + f.w), y - bx.b, 0);
+        var pq = clamp(Math.sqrt(dx * dx + dy * dy) / 60, 0, 1);
+        prot = Math.min(prot, pq * pq * (3 - 2 * pq));
       }
       var op = Math.min(1, f.base * (1 + 1.6 * auroraEnv)) * prot * f.vis;
       if (Math.abs(op - f.lastOp) > .004) { f.el.style.opacity = op.toFixed(3); f.lastOp = op; }
@@ -1149,7 +1335,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   }
 
   function onResize() {
-    VW = window.innerWidth; VH = window.innerHeight;
+    VW = heroEl.clientWidth || window.innerWidth; VH = heroEl.clientHeight || window.innerHeight;
     DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     CW = sky.width = Math.round(VW * DPR); CH = sky.height = Math.round(VH * DPR);
     acv.width = Math.max(2, Math.ceil(VW / 4)); acv.height = Math.max(2, Math.ceil(VH / 4));
@@ -1179,6 +1365,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   var nameEl = $('#stage-name'), countEl = $('#stage-count'), capEl = $('#stage-cap');
   var btnPrev = $('#stage-prev'), btnNext = $('#stage-next'), btnToggle = $('#stage-toggle');
   var slides = [{ el: logoImg, kind: 'logo', label: '叁笙生图' }];
+  var stripEl = $('#stage-strip'), stripBtns = [];
   var cur = 0, userPaused = false, stageReady = false, inView = true, timer = 0, pre = 0, heroReady = false;
 
   function canAuto() {
@@ -1207,6 +1394,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
     });
     ensure(cur);
     nameEl.textContent = slides[cur].label;
+    stripBtns.forEach(function (b, j) { b.setAttribute('aria-pressed', j + 1 === cur ? 'true' : 'false'); });
     capEl.textContent = cur === 0 ? '叁笙早安标志动态版' : '同一个题目「' + TOPIC + '」，换 ' + (slides.length - 1) + ' 种画风';
     countEl.textContent = (cur + 1) + ' / ' + slides.length;
     if (user) announce('第 ' + (cur + 1) + ' 张，' + slides[cur].label);
@@ -1271,6 +1459,10 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
       });
       frameEl.insertBefore(im, nameEl);
       slides.push({ el: im, kind: 'img', src: src, label: st.id + ' ' + st.name });
+      var idx = slides.length - 1;
+      var sb = h('button', { class: 'strip-btn', type: 'button', 'aria-pressed': 'false', 'aria-label': st.id + ' ' + st.name, title: st.id + ' ' + st.name }, [lazyImg(src, '')]);
+      sb.addEventListener('click', function () { show(idx, true); });
+      stripEl.appendChild(sb); stripBtns.push(sb);
     });
     capEl.textContent = '叁笙早安标志动态版';
     countEl.textContent = '1 / ' + slides.length;
@@ -1994,6 +2186,17 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
     mine = {}; saveMine(); renderMineUI();
   });
   $('#pal-jump').addEventListener('click', function () { scrollToPalettes(true); });
+  $('#nav-pal').addEventListener('click', function (e) { e.preventDefault(); scrollToPalettes(true); });
+  var navEl = $('#topnav');
+  /* 品牌 Logo 用主站自己的图：只在 sanshengai.top 上加载，其他地方（本地预览、公开包）显示文字字标，不发外部请求 */
+  if (/(^|\.)sanshengai\.top$/.test(location.hostname)) {
+    document.querySelectorAll('.brand').forEach(function (a) {
+      var im = a.querySelector('.brand-logo'), tx = a.querySelector('.brand-text');
+      im.addEventListener('load', function () { im.hidden = false; if (tx) tx.hidden = true; });
+      im.src = '/logo.webp';
+    });
+  }
+  window.addEventListener('scroll', function () { navEl.classList.toggle('is-stuck', window.scrollY > 8); }, { passive: true });
 
   /* ---------- 搜索（和场景筛选取交集；搜索词不写进网址） ---------- */
   $('#lib-q').addEventListener('input', function () { libState.q = this.value; applyFilter(); });

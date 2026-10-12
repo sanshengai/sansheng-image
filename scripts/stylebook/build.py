@@ -403,7 +403,7 @@ def _github_stars():
     """发布时保存的公开星数快照；无有效值时只显示 GitHub。"""
     try:
         value = json.loads((CT.ROOT / "gallery/github-meta.json").read_text(encoding="utf-8")).get("stars")
-        return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else ""
+        return value if isinstance(value, int) and not isinstance(value, bool) and value > 0 else ""  # 0 星不展示，只显示 GitHub
     except (OSError, ValueError, AttributeError):
         return ""
 

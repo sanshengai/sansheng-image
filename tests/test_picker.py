@@ -389,7 +389,7 @@ def test_embedded_data_matches_registry_and_manifest(built):
 
     assert meta["first"] == "wxcover" and meta["kinds"] == BD.SITE_KINDS and meta["labels"] == BD.KIND_LABELS
     stars = json.loads((BD.CT.ROOT / "gallery" / "github-meta.json").read_text(encoding="utf-8")).get("stars")
-    assert meta["githubStars"] == (stars if isinstance(stars, int) and not isinstance(stars, bool) and stars >= 0 else "")
+    assert meta["githubStars"] == (stars if isinstance(stars, int) and not isinstance(stars, bool) and stars > 0 else "")  # 0 星不展示
     assert meta["metrics"] == {"styles": len(cands), "scenes": len(want_scenes), "palettes": len(named), "samples": sum(n not in BD.BRAND_IMAGES and not n.endswith("-anchor.webp") for n in names)}
 
     # 首页精选 12 与首屏轮播沿用固定名单（只剔除缺 s2 同题图的，不自动替补）
