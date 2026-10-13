@@ -277,8 +277,16 @@ BRAND_DIR_ENV = "SANSHENG_IMAGE_BRAND_DIR"
 RELEASES_URL = "https://github.com/sanshengai/sansheng-image/releases"
 # 首页精选 12 种（顺序即展示顺序）；缺同题物件图 s2 的会被过滤，页面标题随实际数量变
 HOME_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
-# 首屏展台轮播（Logo 之后依次出现）；同样要求有 s2
-HOME_CAROUSEL = ["C01", "C02", "C04", "C17", "C24", "C25", "C31", "C59"]
+# 首屏展台轮播（Logo 之后依次出现）：每种画风只上一张，从各场景的真实样图里人工挑出最能代表它、也最好看的那张；
+# ("motion", id) 是动态版，只收动作真实、首尾帧都好看的几支。冷暖与场景交错排列。
+HOME_CAROUSEL = [("C56", "cv"), ("C17", "au"), ("motion", "moving"), ("C59", "cv"), ("C34", "ppt"), ("C70", "cv"),
+                 ("C57", "au"), ("C20", "cv"), ("C46", "inf-7"), ("C74", "cv"), ("motion", "travel"), ("C64", "cv"),
+                 ("C16", "xhs"), ("C85", "cv"), ("C27", "cv"), ("C83", "ppt"), ("C01", "cv"), ("C93", "wxi"),
+                 ("C53", "cv"), ("motion", "beach"), ("C07", "au"), ("C52", "cv"), ("C54", "cv"), ("C97", "wxi-2")]
+HERO_SCENE = {"cv": "公众号封面", "au": "播客封面", "ppt": "PPT", "inf": "信息图", "xhs": "小红书", "wxi": "公众号配图",
+              "wxt": "公众号配图", "wxx": "推特配图", "cm": "漫画"}
+HERO_MOTION = [m for k, m in HOME_CAROUSEL if k == "motion"]  # 首屏背景近景浮图也只播这几支
+HERO_PX, HERO_Q = 1200, 80  # 展台图比画风库缩略图清楚：长边 1200
 # 与页面里 GROUP_KINDS 同口径：一个用途的样图种类属于哪一组
 IMG_GROUP_KINDS = {"cv": ["cv"], "au": ["au"], "xhs": ["xhs"], "wxi": ["wxi", "wxt", "wxx"], "inf": ["inf"], "ppt": ["ppt"],
                    "comic": ["cm", "cx", "ce"], "sb": ["sb"], "bd": ["bd"], "same": ["s1", "s2", "s3"], "anchor": ["anchor"]}
@@ -434,6 +442,8 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     pal_shots: dict[str, list[dict]] = {}
     pal_compare: dict[str, dict] = {}  # 码 -> {"ratio": 原色示例比例, "pals": [有换色图的色系]}
     expected_imgs: list[str] = []  # 页面会引用的全部缩略图文件名（含公开包里没有文件的样图）
+    hero_imgs: dict[tuple[str, str], Path | None] = {}
+    ratios_by_kind: dict[tuple[str, str], float] = {}
     from PIL import Image
     for s in reg["styles"]:
         code = s["code"]
@@ -448,6 +458,8 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
         for kind, entry in files.items():
             src, registered = entry if isinstance(entry, tuple) else (entry, None)
             base_kind = kind.split("-")[0]
+            if (code, kind) in HOME_CAROUSEL:  # 展台单独出一档清晰图；公开包没有样图时只登记名字
+                hero_imgs[(code, kind)] = (src if src.is_file() else None)
             if src.is_file():
                 thumb_jobs.append((f"{code}-{kind}.webp", src))
                 with Image.open(src) as im:
@@ -473,6 +485,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
                 continue
             have.setdefault(code, []).append(kind)
             ratios.setdefault(base_kind, ratio)
+            ratios_by_kind[(code, kind)] = round(ratio, 3)
     inspiration = {}
     for s in reg["styles"]:
         cp = contract_paths.get(s["code"])
@@ -500,18 +513,32 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     MG.check_scenes(motion_plan.doc, scenes)  # 动态示范挂到场景上的，画风必须在该场景的静态画风池里；不满足就整体失败，不写任何输出
     pals = [{"id": p["id"], "name": p["name"], "en": p.get("en", ""), "group": p.get("group", ""), "story": p.get("story", ""),
              "colors": p.get("colors", [])} for p in reg["palettes"]["palettes"]]
-    carousel = [{"id": c, "name": next(x["name"] for x in cands if x["id"] == c), "image": f"{c}-s2.webp"}
-                for c in HOME_CAROUSEL if "s2" in have.get(c, [])]
+    names = {x["id"]: x["name"] for x in cands}
+    motion_by_id = {m["id"]: m for m in motion_plan.doc.get("items", [])}
+    carousel, hero_names = [], []  # 展台图在样图计数之后再登记，不算进「张样图」
+    for code, kind in HOME_CAROUSEL:
+        if code == "motion":
+            m = motion_by_id.get(kind)
+            if m and m.get("style_code") in names:
+                carousel.append({"id": m["style_code"], "name": names[m["style_code"]], "motion": kind,
+                                 "scene": m.get("scene_label") if m.get("homepage_scene") else "动态版", "ratio": round(m["width"] / m["height"], 3),
+                                 "dur": m.get("duration") or 6})
+        elif kind in have.get(code, []):
+            name = f"hero-{code}-{kind}.webp"
+            hero_names.append(name)
+            carousel.append({"id": code, "name": names[code], "kind": kind, "scene": HERO_SCENE.get(kind.split("-")[0], ""),
+                             "image": name, "ratio": ratios_by_kind.get((code, kind), ratios.get(kind.split("-")[0], 1))})
     featured = [c for c in HOME_FEATURED if "s2" in have.get(c, [])]
     metrics = {"styles": len(cands), "scenes": len(scenes), "palettes": sum(1 for p in pals if p["colors"]),
                "samples": sum(not name.endswith("-anchor.webp") for name in expected_imgs)}  # 实测样图不含公版原作参考图；品牌图尚未加入
+    expected_imgs.extend(hero_names)
     expected_imgs.extend(BRAND_IMAGES)  # 品牌图也是页面引用的图：官网投影检查据 manifest 核对图片目录
     meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
             "metrics": metrics, "featured": featured, "carousel": carousel,
             "heroMotion": [{"id": m["id"], "ratio": round(m["width"] / m["height"], 3)}  # 首屏近景浮图直接播放的动态版
-                           for m in motion_plan.doc.get("items", []) if m.get("scene") != "brand" and m.get("width") and m.get("height")],
+                           for m in motion_plan.doc.get("items", []) if m["id"] in HERO_MOTION and m.get("width") and m.get("height")],
             **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),
             "site": {"pkgVersion": _package_version(), "releases": RELEASES_URL}}
     template = PICKER.read_text(encoding="utf-8")
@@ -525,6 +552,9 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
         (img_dir / name).write_bytes(_thumb_bytes(src))
     for name, raw in brand_bytes.items():
         (img_dir / name).write_bytes(raw)
+    for (code, kind), src in hero_imgs.items():
+        if src is not None and any(c.get("image") == f"hero-{code}-{kind}.webp" for c in carousel):
+            (img_dir / f"hero-{code}-{kind}.webp").write_bytes(_thumb_bytes(src, HERO_PX, HERO_Q))
     MG.write(motion_plan, out_dir)  # motion.js / motion.css / motion-data.json / motion-manifest.json，给了外置目录再加 motion/ 媒体
     out = out_dir / ("index.private.html" if private else "index.html")
     out.write_text(html, encoding="utf-8")

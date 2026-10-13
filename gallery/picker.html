@@ -444,6 +444,7 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .scroll-hint i { display: block; width: 1px; height: 34px; background: linear-gradient(to bottom, var(--mut), transparent); transform-origin: top; animation: hint 2.4s ease-in-out infinite; }
 @keyframes hint { 0% { transform: scaleY(0); opacity: 0; } 30% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1) translateY(14px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .scroll-hint i { animation: none; } }
+@media (max-width: 900px) { .scroll-hint { display: none; } .hero { min-height: 0; padding-bottom: 56px; } }   /* 窄屏首屏本来就超过一屏，不需要提示 */
 .hero::after {                     /* 背景层在首屏底部淡出，不与下文抢 */
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0; pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--bg));
@@ -479,21 +480,33 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 2px 4px 12px; }
 .stage-title { font: 600 14px/1.4 var(--sans); color: var(--strong); }
 .stage-cap { font: italic 13px/1.4 var(--latin); color: var(--mut); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.stage-frame { position: relative; aspect-ratio: 1 / 1; width: 100%; background: #040A0E; border-radius: 12px; overflow: hidden; }
-.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s ease; }
+.stage-frame { position: relative; aspect-ratio: 3 / 2; width: 100%; background: #070C0A; border-radius: 12px; overflow: hidden; isolation: isolate; }
+.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
 .slide.is-active { opacity: 1; }
 #stage-logo { object-fit: contain; }
-.stage-name {
-  position: absolute; left: 12px; bottom: 12px; z-index: 2;
-  padding: 5px 12px; font: 600 13px/1.4 var(--sans); color: var(--strong);
-  background: rgba(15, 21, 19, .78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 999px;
+/* 每张作品按原比例挂在画框里，背后是它自己放大虚化后的暗色光晕，宽图、方图、竖图放在一起都成立 */
+.slide .amb { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; filter: blur(30px) saturate(1.4) brightness(.62); }
+.slide .art {
+  position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%);
+  max-width: 94%; max-height: 80%; width: auto; height: auto; aspect-ratio: var(--r, 1.5);
+  border-radius: 6px; box-shadow: 0 24px 50px -18px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.06);
 }
-.stage-strip { margin-top: 10px; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.slide .art.wide { width: 94%; }
+.slide .art.tall { height: 80%; }
+.stage-name {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; margin: 0;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 26px 16px 12px; font: 600 13px/1.4 var(--sans); color: var(--strong);
+  background: linear-gradient(to top, rgba(7,12,10,.82), transparent);
+}
+.stage-name small { font: 400 12px/1.4 var(--sans); color: var(--mut); white-space: nowrap; }
+.stage-strip { margin-top: 12px; display: flex; gap: 4px; }
 .stage-strip:empty { display: none; }
-.strip-btn { padding: 0; aspect-ratio: 1; border: 0; border-radius: 7px; overflow: hidden; background: #0B100E; cursor: pointer; opacity: .5; outline: 2px solid transparent; outline-offset: 1px; transition: opacity .2s, outline-color .2s; }
-.strip-btn img { width: 100%; height: 100%; object-fit: cover; }
-.strip-btn:hover { opacity: .85; }
-.strip-btn[aria-pressed="true"] { opacity: 1; outline-color: var(--green); }
+.strip-btn { flex: 1 1 0; min-width: 0; height: 18px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+.strip-btn::before { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 2px; border-radius: 2px; background: rgba(238,232,220,.18); transition: background .2s, height .2s, top .2s; }
+.strip-btn:hover::before { background: rgba(238,232,220,.5); }
+.strip-btn[aria-pressed="true"]::before { background: var(--green); height: 3px; top: 7px; }
+.strip-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; border-radius: 3px; }
 .stage-bar { margin-top: 10px; display: flex; gap: 6px; align-items: center; }
 .btn-icon { min-height: 32px; padding: 2px 12px; font-size: 12px; }
 .stage-count { margin-left: auto; font-size: 13px; color: var(--mut); font-variant-numeric: tabular-nums; }
@@ -695,15 +708,15 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     </div>
 
     <div class="hero-right" id="hero-right">
-      <section class="stage" id="stage" aria-roledescription="轮播" aria-label="同一个题目的不同画风">
+      <section class="stage" id="stage" aria-roledescription="轮播" aria-label="各画风代表作">
         <div class="stage-head">
-          <p class="stage-title">同一个题目，换一种画风</p>
-          <p class="stage-cap" id="stage-cap">同一个题目，换不同画风</p>
+          <p class="stage-title">每种画风，挑一张它最好的</p>
+          <p class="stage-cap" id="stage-cap">真实场景样图</p>
         </div>
         <div class="stage-frame" id="stage-frame">
           <img class="slide is-active" id="stage-logo" alt="叁笙 Logo 动态展示" decoding="async">
           <noscript><p class="load-fail">需要开启 JavaScript 才能浏览画风库。</p></noscript>
-          <p class="stage-name" id="stage-name">叁笙生图</p>
+          <p class="stage-name" id="stage-name"><span id="stage-label">叁笙生图</span><small id="stage-scene"></small></p>
         </div>
         <div class="stage-strip" id="stage-strip" role="group" aria-label="选择画风"></div>
         <div class="stage-bar">
@@ -948,8 +961,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   var LOGO_SRC = assetUrl('logo.webp');
   var POSTER_SRC = assetUrl('logo-poster.webp');
   var LOGO_MS = 6000;
-  var SLIDE_MS = 2500;
-  var TOPIC = '灯下扶手椅上的猫';
+  var SLIDE_MS = 4200;
   /* 首页精选 12 种；生成器会在数据里给出 featured（已剔除缺图项），没有时用这份 */
   var FEATURED_DEFAULT = ['C01', 'C04', 'C08', 'C17', 'C21', 'C24', 'C25', 'C31', 'C40', 'C59', 'C73', 'C56'];
   var FALLBACK_KEYS = ['cv', 's1', 'wxi', 'xhs', 'au', 'inf', 'ppt', 'bd', 's3'];
@@ -1419,13 +1431,13 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     }, 120);
   });
   window.addEventListener('scroll', function () { if (!loopOn) redrawStill(); }, { passive: true });
-  document.addEventListener('visibilitychange', function () { syncLoop(); stageSched(); });
-  function onReduceChange() { syncLoop(); applyReduceToStage(); }
+  document.addEventListener('visibilitychange', function () { syncLoop(); stageSched(); syncVideos(); });
+  function onReduceChange() { syncLoop(); applyReduceToStage(); syncVideos(); }
   if (mqReduce.addEventListener) mqReduce.addEventListener('change', onReduceChange); else mqReduce.addListener(onReduceChange);
 
   /* ================== 展台：Logo → 同题轮播 ================== */
   var logoImg = $('#stage-logo'), frameEl = $('#stage-frame');
-  var nameEl = $('#stage-name'), countEl = $('#stage-count'), capEl = $('#stage-cap');
+  var nameEl = $('#stage-name'), labelEl = $('#stage-label'), sceneEl = $('#stage-scene'), countEl = $('#stage-count'), capEl = $('#stage-cap');
   var btnPrev = $('#stage-prev'), btnNext = $('#stage-next'), btnToggle = $('#stage-toggle');
   var slides = [{ el: logoImg, kind: 'logo', label: '叁笙生图' }];
   var stripEl = $('#stage-strip'), stripBtns = [];
@@ -1437,15 +1449,26 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   function ensure(i) {
     var s = slides[i];
     if (!s || s.kind === 'logo' || s.requested) return;
-    s.requested = true; s.el.src = s.src;
+    s.requested = true;
+    s.amb.src = s.ambSrc;
+    if (s.kind === 'motion') { if (!mqReduce.matches) { s.art.preload = 'auto'; s.art.src = s.src; } }   // 减少动效：只显示海报帧
+    else s.art.src = s.src;
+  }
+  function syncVideos() {
+    slides.forEach(function (s, j) {
+      if (s.kind !== 'motion') return;
+      if (j === cur && !mqReduce.matches && !document.hidden) { if (s.art.getAttribute('src')) { try { s.art.currentTime = 0; } catch (e) {} var pr = s.art.play(); if (pr && pr.catch) pr.catch(function () {}); } }
+      else if (!s.art.paused) s.art.pause();
+    });
   }
   function whenReady(s, cb) {
-    if (s.kind === 'logo' || (s.el.complete && s.el.naturalWidth)) { cb(); return; }
+    if (s.kind === 'logo' || (s.kind === 'img' && s.art.complete && s.art.naturalWidth) || (s.kind === 'motion' && (mqReduce.matches || s.art.readyState >= 2))) { cb(); return; }
     ensure(slides.indexOf(s));
     var fired = false;
     function fin() { if (fired) return; fired = true; cb(); }
-    s.el.addEventListener('load', fin, { once: true });
-    s.el.addEventListener('error', fin, { once: true });
+    var ev = s.kind === 'motion' ? 'loadeddata' : 'load';
+    s.art.addEventListener(ev, fin, { once: true });
+    s.art.addEventListener('error', fin, { once: true });
     setTimeout(fin, 3000);
   }
   function autoNext(i) { return i >= slides.length - 1 ? 1 : i + 1; }
@@ -1456,9 +1479,11 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       s.el.setAttribute('aria-hidden', j === cur ? 'false' : 'true');
     });
     ensure(cur);
-    nameEl.textContent = slides[cur].label;
+    labelEl.textContent = slides[cur].label;
+    sceneEl.textContent = slides[cur].scene || '';
     stripBtns.forEach(function (b, j) { b.setAttribute('aria-pressed', j + 1 === cur ? 'true' : 'false'); });
-    capEl.textContent = cur === 0 ? '叁笙早安标志动态版' : '同一个题目「' + TOPIC + '」，换 ' + (slides.length - 1) + ' 种画风';
+    capEl.textContent = cur === 0 ? '叁笙早安标志动态版' : (slides[cur].kind === 'motion' ? '动态版' : '真实场景样图') + ' · ' + (slides.length - 1) + ' 种画风';
+    syncVideos();
     countEl.textContent = (cur + 1) + ' / ' + slides.length;
     if (user) announce('第 ' + (cur + 1) + ' 张，' + slides[cur].label);
     stageSched();
@@ -1466,7 +1491,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   function stageSched() {
     clearTimeout(timer); clearTimeout(pre);
     if (!canAuto()) return;
-    var d = cur === 0 ? LOGO_MS : SLIDE_MS, n = autoNext(cur), at = cur;
+    var d = cur === 0 ? LOGO_MS : (slides[cur].dur ? Math.max(SLIDE_MS, slides[cur].dur * 1000 + 600) : SLIDE_MS), n = autoNext(cur), at = cur;
     pre = setTimeout(function () { ensure(n); }, Math.max(0, d - 1300));
     timer = setTimeout(function () {
       whenReady(slides[n], function () { if (cur === at && canAuto()) show(n, false); });
@@ -1511,19 +1536,28 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   if (stageIO) stageIO.observe(frameEl);
 
   function initCarousel(list) {
+    var boxR = .94 * 1.5 / .8;                          // 作品可占的区域（画框 3:2 的 94% × 80%）的宽高比
     list.forEach(function (c) {
       var st = styleById[c.id];
       if (!st) return;                                  // 数据里有、画风库里没有的项直接跳过，不出空白幻灯片
-      var src = c.image ? assetUrl(c.image) : (hasImg(st, 's2') ? imgPath(st, 's2') : '');
+      var isMotion = !!c.motion && /^[A-Za-z0-9_-]{1,32}$/.test(c.motion);
+      var src = isMotion ? BASE + 'motion/' + c.motion + '/share' + '.mp4' : (c.image ? assetUrl(c.image) : '');
       if (!src) return;
-      var im = h('img', {
-        class: 'slide', decoding: 'async', 'aria-hidden': 'true',
-        alt: '同一个题目「' + TOPIC + '」的' + st.name + '画风（' + st.id + '）'
-      });
-      frameEl.insertBefore(im, nameEl);
-      slides.push({ el: im, kind: 'img', src: src, label: st.id + ' ' + st.name });
+      var ambSrc = isMotion ? BASE + 'motion/' + c.motion + '/poster' + '.png' : src;
+      var r = +c.ratio || 1.5;
+      var label = st.id + ' ' + st.name;
+      var art = isMotion
+        ? h('video', { class: 'art', muted: true, loop: true, playsinline: true, preload: 'none', 'aria-label': label + '（动态版）' })
+        : h('img', { class: 'art', decoding: 'async', alt: label + (c.scene ? '画风的' + c.scene + '样图' : '画风样图') });
+      if (isMotion) { art.muted = true; art.poster = ambSrc; }
+      art.classList.add(r >= boxR ? 'wide' : 'tall');
+      art.style.setProperty('--r', r);
+      var amb = h('img', { class: 'amb', alt: '', decoding: 'async' });
+      var el = h('div', { class: 'slide', 'aria-hidden': 'true' }, [amb, art]);
+      frameEl.insertBefore(el, nameEl);
+      slides.push({ el: el, art: art, amb: amb, kind: isMotion ? 'motion' : 'img', src: src, ambSrc: ambSrc, label: label, scene: c.scene || '', dur: isMotion ? +c.dur || 6 : 0 });
       var idx = slides.length - 1;
-      var sb = h('button', { class: 'strip-btn', type: 'button', 'aria-pressed': 'false', 'aria-label': st.id + ' ' + st.name, title: st.id + ' ' + st.name }, [lazyImg(src, '')]);
+      var sb = h('button', { class: 'strip-btn', type: 'button', 'aria-pressed': 'false', 'aria-label': label, title: label });
       sb.addEventListener('click', function () { show(idx, true); });
       stripEl.appendChild(sb); stripBtns.push(sb);
     });

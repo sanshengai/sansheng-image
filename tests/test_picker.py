@@ -37,7 +37,10 @@ BROWSER_BOUNDARY = ("需要 playwright + Chromium：浏览器行为（渲染、�
 
 # 首页精选 12 与首屏轮播的固定名单（只剔除缺 s2 同题图的，不自动替补）
 PINNED_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
-PINNED_CAROUSEL = ["C01", "C02", "C04", "C17", "C24", "C25", "C31", "C59"]
+PINNED_CAROUSEL = [("C56", "cv"), ("C17", "au"), ("motion", "moving"), ("C59", "cv"), ("C34", "ppt"), ("C70", "cv"),
+                   ("C57", "au"), ("C20", "cv"), ("C46", "inf-7"), ("C74", "cv"), ("motion", "travel"), ("C64", "cv"),
+                   ("C16", "xhs"), ("C85", "cv"), ("C27", "cv"), ("C83", "ppt"), ("C01", "cv"), ("C93", "wxi"),
+                   ("C53", "cv"), ("motion", "beach"), ("C07", "au"), ("C52", "cv"), ("C54", "cv"), ("C97", "wxi-2")]
 
 _webp_buffer = io.BytesIO()
 Image.new("RGB", (2, 2), "white").save(_webp_buffer, "WEBP", lossless=True)
@@ -390,12 +393,25 @@ def test_embedded_data_matches_registry_and_manifest(built):
     assert meta["first"] == "wxcover" and meta["kinds"] == BD.SITE_KINDS and meta["labels"] == BD.KIND_LABELS
     stars = json.loads((BD.CT.ROOT / "gallery" / "github-meta.json").read_text(encoding="utf-8")).get("stars")
     assert meta["githubStars"] == (stars if isinstance(stars, int) and not isinstance(stars, bool) and stars > 0 else "")  # 0 星不展示
-    assert meta["metrics"] == {"styles": len(cands), "scenes": len(want_scenes), "palettes": len(named), "samples": sum(n not in BD.BRAND_IMAGES and not n.endswith("-anchor.webp") for n in names)}
+    assert meta["metrics"] == {"styles": len(cands), "scenes": len(want_scenes), "palettes": len(named), "samples": sum(n not in BD.BRAND_IMAGES and not n.endswith("-anchor.webp") and not n.startswith("hero-") for n in names)}
 
-    # 首页精选 12 与首屏轮播沿用固定名单（只剔除缺 s2 同题图的，不自动替补）
+    # 首页精选 12 沿用固定名单（只剔除缺 s2 同题图的，不自动替补）
     assert meta["featured"] == [c for c in PINNED_FEATURED if "s2" in cands.get(c, {}).get("imgs", [])]
-    assert [c["id"] for c in meta["carousel"]] == [c for c in PINNED_CAROUSEL if "s2" in cands.get(c, {}).get("imgs", [])]
-    assert all(c["image"] == f"{c['id']}-s2.webp" and c["image"] in names and c["name"] == cands[c["id"]]["name"] for c in meta["carousel"])
+    # 首屏展台：人工挑的「每种画风一张代表作」，静态图有单独的清晰图并登记进 manifest；一种画风只出现一次
+    assert BD.HOME_CAROUSEL == PINNED_CAROUSEL
+    motion = {m["id"]: m for m in json.loads((BD.CT.ROOT / "gallery" / "motion-data.json").read_text(encoding="utf-8"))["items"]}
+    want = [(motion[k]["style_code"], k) if c == "motion" else (c, k) for c, k in PINNED_CAROUSEL
+            if (c == "motion" and motion.get(k, {}).get("style_code") in cands) or (c != "motion" and k in cands.get(c, {}).get("imgs", []))]
+    assert [(c["id"], c.get("motion") or c.get("kind")) for c in meta["carousel"]] == want
+    ids = [c["id"] for c in meta["carousel"]]
+    assert len(ids) == len(set(ids)), "展台里同一种画风只放一张"
+    for c in meta["carousel"]:
+        assert c["name"] == cands[c["id"]]["name"] and c["scene"] and c["ratio"] > 0
+        if "motion" in c:
+            assert "image" not in c and c["dur"] > 0
+        else:
+            assert c["image"] == f"hero-{c['id']}-{c['kind']}.webp" and c["image"] in names
+    assert {m["id"] for m in meta["heroMotion"]} == {k for c, k in PINNED_CAROUSEL if c == "motion"} & set(motion)
 
     plugin = json.loads((BD.CT.ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
     assert meta["site"] == {"pkgVersion": plugin["version"], "releases": SITE_URL + "/releases"}
