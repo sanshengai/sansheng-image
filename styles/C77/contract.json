@@ -1,6 +1,6 @@
 {
   "code": "C77",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "叁笙深空",
     "en": "Sansheng Deep Space"
@@ -26,13 +26,13 @@
     "右侧一个认得出的主体物件加 2 到 3 个小徽章"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): Sansheng deep-space dark cover: a deep charcoal canvas (#0E0E10), two zones side by side: a calm text zone on the left kept as dark negative space, and on the right one clearly recognisable hero object plus two or three small evidence badges in a tidy collage; a restrained brand-green accent (#0E9F6E), low-contrast abstract lines; cinematic, calm and premium; no neon clutter, no glow spam, no gradient starfields.",
+    "positive": "Visual style (follow exactly): Sansheng deep-space dark cover: a deep charcoal canvas (#0E0E10), two zones: a calm text zone kept as dark negative space, and a hero zone with one clearly recognisable hero object plus two or three small evidence badges in a tidy collage (where each zone sits is given by the layout line); a restrained brand-green accent (#0E9F6E), low-contrast abstract lines; cinematic, calm and premium; no neon clutter, no glow spam, no gradient starfields.",
     "required_text_roles": [
       "title",
       "ghost"
     ],
     "role_styles": {
-      "title": "The headline is large, bold and white, and fills the left text zone.",
+      "title": "The headline is large, bold and white, and fills the text zone.",
       "ghost": "The ghost line is a faint, low-contrast all-caps English line set directly behind the headline, clearly subordinate to it, made of exactly the characters given for it."
     },
     "layout": {
@@ -63,10 +63,10 @@
   },
   "qa": {
     "must_see": [
-      "深炭底、左侧留出大块安静的暗区",
-      "左侧大标题加半隐英文影字",
+      "深炭底、文字区留出大块安静的暗区",
+      "大标题加半隐英文影字",
       "品牌绿作唯一点缀",
-      "右侧一个认得出的主体物件加 2 到 3 个小徽章"
+      "主体区一个认得出的主体物件加 2 到 3 个小徽章"
     ],
     "must_not_see": [
       "霓虹光效堆砌",
@@ -74,7 +74,7 @@
       "未请求的文字或水印"
     ],
     "when_text": [
-      "左侧大标题加半隐英文影字"
+      "大标题加半隐英文影字"
     ]
   },
   "evidence": {
@@ -98,6 +98,11 @@
       "revision": 3,
       "date": "2026-10-13",
       "note": "文字与版式声明化：标题与影字改为 required_text_roles（清单缺角色编译即报错，有则进入逐字文字清单），版式用 layout 声明左文右图且在居中方形内分区；配方正文不再自带文字；无字档（音乐封面）的标题影字验收项只在有字时检查。"
+    },
+    {
+      "revision": 4,
+      "date": "2026-10-13",
+      "note": "版式只由 recipe.layout 声明（正文与验收条目不再写死左右），清单可用 layout 字段覆盖文字区/主体区位置。"
     }
   ],
   "inspiration": {

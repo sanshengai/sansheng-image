@@ -3368,7 +3368,7 @@
       ],
       "dynasty": [],
       "en": "Sansheng Deep Space",
-      "revision": 3,
+      "revision": 4,
       "essence": [
         "深炭底、左侧大标题加半隐英文影字",
         "品牌绿作唯一点缀",
@@ -3399,7 +3399,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "85e8eede9e80"
+      "recipe_sha": "ceaa15be33bd"
     },
     {
       "code": "C79",
@@ -3949,7 +3949,7 @@
       ],
       "dynasty": [],
       "en": "Dark Series Cover",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "深色底，左侧自上而下：品牌名一行小字、系列标签（圆角色块）、超大粗衬线主标题",
         "右侧一个认得出的主体（可多件叠放）加一轮暖色圆日与剪影",
@@ -3984,7 +3984,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "11cd2970d529"
+      "recipe_sha": "70bdb215906b"
     },
     {
       "code": "C95",

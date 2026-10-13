@@ -187,6 +187,26 @@ def text_mode_problem(contract: dict, text: dict | None, fmt: dict | None) -> st
             f"在清单 text.mode 里改用其中之一")
 
 
+LAYOUT_OPPOSITE = {"left": "right", "right": "left", "top": "bottom", "bottom": "top"}
+
+
+def resolve_layout(contract: dict, manifest: dict) -> dict:
+    """合同 recipe.layout 为默认，清单 layout 可覆盖文字区/主体区位置（只认这两个键，且必须互为对边）。"""
+    layout = dict((contract.get("recipe") or {}).get("layout") or {})
+    override = manifest.get("layout")
+    if override is not None:
+        if not isinstance(override, dict) or not override or set(override) - {"text_zone", "hero_zone"}:
+            raise CompileError("清单 layout 只接受 text_zone / hero_zone 两个键，例如 {\"text_zone\": \"top\", \"hero_zone\": \"bottom\"}")
+        if not layout.get("text_zone"):
+            raise CompileError(f"{contract['code']} 的合同没有声明文字区/主体区，清单 layout 无从覆盖")
+        layout.update(override)
+    tz, hz = layout.get("text_zone"), layout.get("hero_zone")
+    if tz or hz:
+        if tz not in LAYOUT_OPPOSITE or LAYOUT_OPPOSITE[tz] != hz:
+            raise CompileError(f"版式分区须是一对对边（left/right 或 top/bottom），实际 text_zone={tz!r}、hero_zone={hz!r}")
+    return layout
+
+
 def _check_text_roles(contract: dict, manifest: dict, fmt: dict | None) -> None:
     """合同要求画面出现的文字角色，必须在 text.items 里有对应条目；有就算作已请求文字。"""
     rec = contract["recipe"]
@@ -316,7 +336,7 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     if problem:
         raise CompileError(problem)
     _check_text_roles(contract, manifest, fmt)
-    layout = (contract.get("recipe") or {}).get("layout") or {}
+    layout = resolve_layout(contract, manifest)
     square_format = ((fmt or {}).get("safe_zone") or {}).get("center_square") is True
     if layout.get("wide_canvas_only") and (square_format or stage == "center_square_master"):
         raise CompileError(
@@ -431,7 +451,11 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
                 f"{layout['text_zone']} part of the square and its hero zone the {layout['hero_zone']} part of the "
                 "square, not of the full canvas. Neither zone extends into the areas outside the square. "
             )
-    sec.append(("format", (f"{compose} " if compose else "") + crop_safety + background + f"Aspect ratio {aspect}."))
+    zones = ""
+    if layout.get("text_zone") and not crop_safety.count("layout zones both sit inside"):
+        zones = (f"Layout: the text zone is on the {layout['text_zone']} and the hero zone on the "
+                 f"{layout['hero_zone']} of the picture. ")
+    sec.append(("format", (f"{compose} " if compose else "") + crop_safety + zones + background + f"Aspect ratio {aspect}."))
     fixes = manifest.get("fixes") or []
     if fixes:  # 返修：上一张没做到的地方，写成正面要求
         sec.append(("fixes", "Correct these points from the previous attempt: " + " ".join(f.strip().rstrip(".") + "." for f in fixes)))

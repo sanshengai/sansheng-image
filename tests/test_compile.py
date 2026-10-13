@@ -692,3 +692,32 @@ def test_hybrid_is_allowed_when_native_and_overlay_are_both_supported():
     k["recipe"]["text_mode"] = ["native"]
     with pytest.raises(CP.CompileError, match="文字档位只支持"):
         CP.compile_manifest(m, k)
+
+
+C77_TEXT = [{"role": "title", "text": "旧相机"}, {"role": "ghost", "text": "OLD CAMERA"}]
+
+
+def test_c77_prose_no_longer_hardcodes_left_and_right():
+    prompt = CP.compile_manifest(_real("C77", "x-image", C77_TEXT)).prompt
+    style = prompt.split("Visual style (follow exactly):")[1].split("\n")[0]
+    assert "on the left" not in style and "on the right" not in style and "side by side" not in style
+    assert "Layout: the text zone is on the left and the hero zone on the right" in prompt
+
+
+def test_manifest_layout_overrides_contract_zones_inside_the_square():
+    m = {**_real("C77", "wechat-cover-head", C77_TEXT), "layout": {"text_zone": "top", "hero_zone": "bottom"}}
+    prompt = CP.compile_manifest(m).prompt
+    assert "text zone is the top part of the square and its hero zone the bottom part" in prompt
+    assert "left part of the square" not in prompt
+
+
+@pytest.mark.parametrize("layout", [{"text_zone": "top", "hero_zone": "right"}, {"text_zone": "middle", "hero_zone": "top"},
+                                    {"text_zone": "top", "hero_zone": "bottom", "gap": 1}, {}, "top"])
+def test_bad_manifest_layout_is_rejected(layout):
+    with pytest.raises(CP.CompileError, match="layout|版式分区"):
+        CP.compile_manifest({**_real("C77", "x-image", C77_TEXT), "layout": layout})
+
+
+def test_layout_override_needs_a_contract_that_declares_zones():
+    with pytest.raises(CP.CompileError, match="没有声明文字区"):
+        CP.compile_manifest({**_real("C95", "article-illustration"), "layout": {"text_zone": "top", "hero_zone": "bottom"}})
