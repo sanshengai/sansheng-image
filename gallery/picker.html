@@ -637,7 +637,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     <span class="nav-sep" aria-hidden="true"></span>
     <a class="product" href="#top"><span class="product-zh">叁笙生图</span><span class="product-en">Sansheng Image</span></a>
     <div class="nav-links">
-      <a href="#scenes">场景</a>
+      <a href="#library">场景</a>
       <a href="#library">画风库</a>
       <a href="#palettes" id="nav-pal">色系</a>
       <a href="/tools/image/feedback/">反馈</a>
@@ -736,22 +736,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 </section>
 
 <main>
-  <section class="sec" id="scenes" aria-labelledby="scenes-title">
-    <div class="wrap">
-      <h2 class="sec-title" id="scenes-title">挑个场景，从合适的画风里选</h2>
-      <p class="sec-sub">点一个场景，下面的画风库只留下适合它的画风。<span class="sec-en">Start from what you are making.</span></p>
-      <ul class="scene-grid" id="scene-grid"></ul>
-    </div>
-  </section>
-
-  <section class="sec" id="featured" aria-labelledby="featured-title">
-    <div class="wrap">
-      <h2 class="sec-title" id="featured-title">先从这十二个看起</h2>
-      <p class="sec-sub">风格差别大、也好上手的一批，点开可以看更多样图。<span class="sec-en">Twelve to begin with.</span></p>
-      <ul class="feat-grid" id="feat-grid"></ul>
-    </div>
-  </section>
-
   <section class="sec lib" id="library" aria-labelledby="lib-title">
     <div class="wrap lib-head">
       <h2 class="sec-title" id="lib-title" tabindex="-1">画风库</h2>
@@ -955,8 +939,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   var POSTER_SRC = assetUrl('logo-poster.webp');
   var LOGO_MS = 6000;
   var SLIDE_MS = 4200;
-  /* 首页精选 12 种；生成器会在数据里给出 featured（已剔除缺图项），没有时用这份 */
-  var FEATURED_DEFAULT = ['C01', 'C04', 'C08', 'C17', 'C21', 'C24', 'C25', 'C31', 'C40', 'C59', 'C73', 'C56'];
   var FALLBACK_KEYS = ['cv', 's1', 'wxi', 'xhs', 'au', 'inf', 'ppt', 'bd', 's3'];
   var MINE_KEY = 'sb-mine';                                 // 与现役 picker 同名，已有「我的默认」继续可用
   var GROUP_ORDER = ['甜美', '自然', '东方', '都市', '怀旧'];
@@ -989,7 +971,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     : function (cb) { return setTimeout(function () { cb({ timeRemaining: function () { return 0; }, didTimeout: true }); }, 200); };
 
   var DATA = null, styles = [], styleById = {}, sceneList = [], sceneById = {}, palettes = [], paletteById = {};
-  var kinds = KINDS_DEFAULT, kindLabels = LABELS_DEFAULT, palCompare = {}, palShots = {}, ratios = {}, firstScene = '', featuredIds = FEATURED_DEFAULT;
+  var kinds = KINDS_DEFAULT, kindLabels = LABELS_DEFAULT, palCompare = {}, palShots = {}, ratios = {}, firstScene = '';
   var libState = { scene: 'all', palette: 'orig', light: 0, sat: 0, hex: [], q: '', region: '', era: '', dynasty: '', family: '' };
   /* 地域 / 时代 / 朝代 / 风格分类：选项只取页面数据 taxonomy 词表里确有画风的值；空值＝全部，各维度取交集 */
   var TAX_DIMS = [['region', '地域', '全部地域'], ['era', '时代', '全部时代'], ['dynasty', '朝代', '全部朝代'], ['family', '风格分类', '全部分类']];
@@ -1567,35 +1549,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     btn.addEventListener('click', function () { openDetail(st, btn); });
     btn._def = defTag; btn._mine = mineTag;
     return btn;
-  }
-
-  function renderScenes(d) {
-    var grid = $('#scene-grid');
-    sceneList.forEach(function (sc) {
-      var rep = styleById[sc.representative] || styleById[sc.default];
-      var src = sc.image ? assetUrl(sc.image) : (rep ? imgPath(rep, sampleKindFor(rep.id, sc.id)) : '');   // 数据没给配图时用代表画风的同类样图
-      var kids = [];
-      if (src) kids.push(lazyImg(src, sc.name + '样图' + (rep ? '，示例画风「' + rep.name + '」' : '')));
-      var btn = h('button', { class: 'scene-card', type: 'button', 'data-scene': sc.id, 'aria-pressed': 'false' }, [
-        h('span', { class: 'thumb' }, kids),
-        h('span', { class: 'scene-name', text: sc.name }),
-        h('span', { class: 'scene-meta', text: sc.pool.length + ' 种画风' }),
-        h('span', { class: 'scene-note', text: sc.note })
-      ]);
-      btn.addEventListener('click', function () { selectScene(sc.id, true); });
-      grid.appendChild(h('li', null, [btn]));
-    });
-    $('#scenes-title').textContent = '挑个场景，从' + sceneList.length + '类用途里选画风';
-  }
-
-  function renderFeatured() {
-    var grid = $('#feat-grid');
-    var picks = featuredIds.map(function (id) { return styleById[id]; }).filter(function (s) { return s && hasImg(s, 's2'); });
-    if (picks.length !== featuredIds.length && window.console) console.warn('首页精选缺图或缺画风：' + featuredIds.filter(function (id) { var s = styleById[id]; return !(s && hasImg(s, 's2')); }).join('、'));
-    var cn = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五'];
-    $('#featured-title').textContent = '先从这' + (cn[picks.length] || picks.length) + '个看起';
-    if (!picks.length) $('#featured').hidden = true;
-    picks.forEach(function (st) { grid.appendChild(h('li', null, [styleCard(st, { essence: true })])); });
   }
 
   function renderLibrary(d) {
@@ -2374,7 +2327,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     palCompare = d.palCompare || {};
     palShots = d.palShots || {};
     ratios = d.ratios || {};
-    featuredIds = d.featured || FEATURED_DEFAULT;
 
     var sel = $('#dlg-palette');
     palettes.forEach(function (p) { sel.appendChild(h('option', { value: p.id, text: p.id === 'orig' ? '样式原色' : p.name })); });
@@ -2385,8 +2337,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     fillHero(d);
     fillSite(d);
     initCarousel(d.carousel || []);
-    renderScenes(d);
-    renderFeatured();
     renderLibrary(d);
     renderPalettes();
     renderMineUI();

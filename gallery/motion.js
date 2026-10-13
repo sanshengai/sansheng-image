@@ -237,21 +237,21 @@
     return '鼠标移上去或用键盘聚焦会播放，移开就停；也可以点按钮。';
   }
 
-  /* ---------- 「让图动起来」区块 ---------- */
+  /* ---------- 「动态版」区块（画风库之后） ---------- */
   var secEl = null;
   function insertSection(bodyKids) {
-    var feat = $('#featured');
-    if (!feat || !feat.parentNode) return null;
+    var lib = $('#library');   // 动态版入口放在画风库之后、色系图鉴之前
+    if (!lib || !lib.parentNode) return null;
     var old = document.getElementById('motion-showcase');
     if (old && old.parentNode) old.parentNode.removeChild(old);
     var body = h('div', { class: 'motion-body' }, bodyKids);
     var sec = h('section', { class: 'sec motion-sec', id: 'motion-showcase', 'aria-labelledby': 'motion-title' }, [
       h('div', { class: 'wrap' }, [
-        h('h2', { class: 'sec-title', id: 'motion-title', text: '让图动起来' }),
+        h('h2', { class: 'sec-title', id: 'motion-title', text: '动态版' }),
         body
       ])
     ]);
-    feat.parentNode.insertBefore(sec, feat);
+    lib.parentNode.insertBefore(sec, lib.nextSibling);
     return sec;
   }
 

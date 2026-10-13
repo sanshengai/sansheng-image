@@ -36,7 +36,6 @@ BROWSER_BOUNDARY = ("需要 playwright + Chromium：浏览器行为（渲染、�
                     "在这里没有被验证，只验证了构建产物；请在装有 Chromium 的环境补跑")
 
 # 首页精选 12 与首屏轮播的固定名单（只剔除缺 s2 同题图的，不自动替补）
-PINNED_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
 PINNED_CAROUSEL = [(c, "cv") for c in ["C01", "C17", "C74", "C70", "C20", "C64", "C27", "C46", "C63", "C18", "C30", "C22",
                                         "C96", "C19", "C24", "C49", "C08", "C69", "C76", "C66", "C77", "C92"]]
 PINNED_HERO_MOTION = ["moving", "travel", "beach"]
@@ -394,8 +393,7 @@ def test_embedded_data_matches_registry_and_manifest(built):
     assert meta["githubStars"] == (stars if isinstance(stars, int) and not isinstance(stars, bool) and stars > 0 else "")  # 0 星不展示
     assert meta["metrics"] == {"styles": len(cands), "scenes": len(want_scenes), "palettes": len(named), "samples": sum(n not in BD.BRAND_IMAGES and not n.endswith("-anchor.webp") and not n.startswith("hero-") for n in names)}
 
-    # 首页精选 12 沿用固定名单（只剔除缺 s2 同题图的，不自动替补）
-    assert meta["featured"] == [c for c in PINNED_FEATURED if "s2" in cands.get(c, {}).get("imgs", [])]
+    assert "featured" not in meta  # 精选 12 区已删，首屏下面直接是画风库
     # 首屏展台：人工挑的「每种画风一张代表作」，静态图有单独的清晰图并登记进 manifest；一种画风只出现一次
     assert BD.HOME_CAROUSEL == PINNED_CAROUSEL
     motion = {m["id"]: m for m in json.loads((BD.CT.ROOT / "gallery" / "motion-data.json").read_text(encoding="utf-8"))["items"]}
@@ -701,9 +699,8 @@ def test_page_renders_all_blocks_without_overflow_and_only_requests_manifest_ima
             page.wait_for_timeout(60)
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
         assert page.locator("#lib-grid > li").count() == len(meta["cands"])
-        assert page.locator("#scene-grid > li").count() == len(meta["scenes"])
-        assert page.locator("#feat-grid > li").count() == len(meta["featured"])
-        assert page.eval_on_selector_all("main > section", "e=>e.map(s=>s.id)") == ["scenes", "motion-showcase", "featured", "library", "palettes"]
+        assert page.locator("#scene-grid, #feat-grid, .scene-card").count() == 0  # 场景卡区、精选区已删
+        assert page.eval_on_selector_all("main > section", "e=>e.map(s=>s.id)") == ["library", "motion-showcase", "palettes"]
         assert page.inner_text("[data-metric=styles]").replace(",", "") == str(meta["metrics"]["styles"])
         m = meta["metrics"]  # 数字行：「每种平均 N 张真实样图」= 样图数 ÷ 画风数，四舍五入（与页面 Math.round 同口径）
         assert page.inner_text("[data-metric=perStyle]") == str(int(m["samples"] / m["styles"] + 0.5))
@@ -716,12 +713,12 @@ def test_page_renders_all_blocks_without_overflow_and_only_requests_manifest_ima
             assert [b for b in bad if b.rsplit('/', 1)[1] in on_disk] == []
 
 
-CARD_IMGS = "[...document.querySelectorAll('#scene-grid img, #feat-grid img, #lib-grid > li:not([hidden]) img')]"
+CARD_IMGS = "[...document.querySelectorAll('#lib-grid > li:not([hidden]) img')]"
 
 
 @pytest.mark.parametrize("slash", ["", "/"], ids=["no-trailing-slash", "trailing-slash"])
 def test_images_load_for_every_card_with_and_without_trailing_slash(browser, built, slash):
-    """每个用途下全部卡片（场景、精选、画风库）的图都要能加载，不能有裂图；两种网址写法结果一致。"""
+    """每个用途下画风库全部卡片的图都要能加载，不能有裂图；两种网址写法结果一致。"""
     d, html = built
     meta = _data(html)
     scene_ids = {s["id"] for s in meta["scenes"]}
@@ -1237,8 +1234,6 @@ def test_missing_optional_data_has_explicit_fallbacks(browser, tmp_path, monkeyp
     assert all(s["image"] == "" and s["representative"] == "" for s in meta["scenes"])
     with open_page(browser, tmp_path) as page:
         _open(page)
-        assert page.locator(".scene-card").count() == len(meta["scenes"])
-        assert page.locator(".scene-card .thumb img").count() == len(meta["scenes"])  # 无代表图时用默认画风的同类样图
         assert page.locator("#github-btn .star").is_hidden()                          # 没有星数快照就只显示 GitHub
         assert page.locator("#pkg-ver-wrap").is_hidden()                              # 读不到版本就不写版本
         assert page.get_attribute("#releases-link", "href") == SITE_URL + "/releases"
@@ -1288,7 +1283,7 @@ CSS_PROBE = """() => {
   const cs = (e) => getComputedStyle(e);
   return {
     slide: cs(document.getElementById('stage-logo')).transitionDuration,
-    thumb: cs(document.querySelector('#scene-grid .thumb img')).transitionDuration,
+    thumb: cs(document.querySelector('#lib-grid .thumb img')).transitionDuration,
     btn: cs(document.getElementById('install-btn')).transitionDuration,
     scroll: cs(document.documentElement).scrollBehavior,
     reduce: matchMedia('(prefers-reduced-motion: reduce)').matches

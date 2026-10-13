@@ -275,8 +275,6 @@ PAL_SHOT_KEY = {"人物场景": "p", "物件静物": "o", "简易信息图": "i"
 BRAND_IMAGES = ("logo.webp", "logo-poster.webp")
 BRAND_DIR_ENV = "SANSHENG_IMAGE_BRAND_DIR"
 RELEASES_URL = "https://github.com/sanshengai/sansheng-image/releases"
-# 首页精选 12 种（顺序即展示顺序）；缺同题物件图 s2 的会被过滤，页面标题随实际数量变
-HOME_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
 # 首屏展台轮播：宽屏 2.35:1，只放静态封面。每种画风一张，从公众号封面样图里人工挑出最能代表它的；冷暖交错排列。
 # 合同里登记了同名高清版（samples/cv-hd.*，Codex 依原图高清重绘）就用它，没有就退回原图。
 HOME_CAROUSEL = [("C01", "cv"), ("C17", "cv"), ("C74", "cv"), ("C70", "cv"), ("C20", "cv"), ("C64", "cv"),
@@ -531,7 +529,6 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
             hero_names.append(name)
             carousel.append({"id": code, "name": names[code], "kind": kind, "scene": HERO_SCENE.get(kind.split("-")[0], ""),
                              "image": name, "ratio": ratios_by_kind.get((code, kind), ratios.get(kind.split("-")[0], 1))})
-    featured = [c for c in HOME_FEATURED if "s2" in have.get(c, [])]
     metrics = {"styles": len(cands), "scenes": len(scenes), "palettes": sum(1 for p in pals if p["colors"]),
                "samples": sum(not name.endswith("-anchor.webp") for name in expected_imgs)}  # 实测样图不含公版原作参考图；品牌图尚未加入
     expected_imgs.extend(hero_names)
@@ -539,7 +536,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
-            "metrics": metrics, "featured": featured, "carousel": carousel,
+            "metrics": metrics, "carousel": carousel,
             "heroMotion": [{"id": m["id"], "ratio": round(m["width"] / m["height"], 3)}  # 首屏近景浮图直接播放的动态版
                            for m in motion_plan.doc.get("items", []) if m["id"] in HERO_MOTION and m.get("width") and m.get("height")],
             **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),
