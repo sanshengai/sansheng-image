@@ -59,11 +59,15 @@ h1, h2, h3, p, dl, dd { margin: 0; }
 /* 背景层 */
 #sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 #floaters { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-#floaters, #sky { mask-image: linear-gradient(to bottom, transparent 0, #000 160px, #000 72%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 160px, #000 72%, transparent); }
+#floaters, #sky { mask-image: linear-gradient(to bottom, transparent 0, #000 56px, #000 86%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 56px, #000 86%, transparent); }
 #floaters .float {
-  position: absolute; left: 0; top: 0; object-fit: cover;
-  border-radius: 6px; opacity: 0; will-change: transform, opacity;
+  position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity;
+  padding: 5px 5px 14px; background: #ECE6DA; border-radius: 2px;      /* 相纸白边，下沿略宽 */
+  box-shadow: 0 18px 40px -12px rgba(0,0,0,.65), 0 2px 6px rgba(0,0,0,.35);
 }
+#floaters .float.film { padding: 9px 4px; background: #17130F; border-radius: 1px; }   /* 三成用胶片暗边 */
+#floaters .float-far { padding: 3px 3px 9px; }
+#floaters .float img, #floaters .float video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .page { position: relative; z-index: 1; }
 .wrap { width: min(1216px, calc(100% - 48px)); margin: 0 auto; }
 
@@ -426,7 +430,20 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .star { color: var(--strong); font-variant-numeric: tabular-nums; opacity: .8; }
 
 /* 首屏 */
-.hero { position: relative; overflow: hidden; padding: 72px 0 64px; }
+.hero {                           /* 背景铺满首屏，三步条是分界 */
+  position: relative; overflow: hidden; padding: 72px 0 112px;
+  min-height: calc(100vh - var(--nav-h)); min-height: calc(100svh - var(--nav-h));
+  display: flex; flex-direction: column; justify-content: center;
+}
+.scroll-hint {
+  position: absolute; left: 50%; bottom: 26px; z-index: 2; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--mut); text-decoration: none; letter-spacing: .08em;
+}
+.scroll-hint:hover { color: var(--strong); }
+.scroll-hint i { display: block; width: 1px; height: 34px; background: linear-gradient(to bottom, var(--mut), transparent); transform-origin: top; animation: hint 2.4s ease-in-out infinite; }
+@keyframes hint { 0% { transform: scaleY(0); opacity: 0; } 30% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1) translateY(14px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .scroll-hint i { animation: none; } }
 .hero::after {                     /* 背景层在首屏底部淡出，不与下文抢 */
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0; pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--bg));
@@ -698,6 +715,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       </section>
     </div>
   </div>
+  <a class="scroll-hint" href="#howto-title"><span>往下看画风库</span><i aria-hidden="true"></i></a>
 </header>
 
 <section class="howto" aria-labelledby="howto-title">
@@ -1157,18 +1175,24 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     { base: .26, a1: .06, f1: 4, s1: .13, p1: 3.3, a2: .02, f2: 9, s2: .18, p2: 2.8, h: .30, f3: 6, s3: .22, p3: 1.2, f4: 11, s4: .25, p4: 1.5, al: .10 }
   ];
 
+  /* 首屏点缀：流星（meteor）或极光（aurora）二选一；预览期用 ?fx= 切换，定稿后只留一种 */
+  var FX = (function () { try { return new URLSearchParams(location.search).get('fx') === 'aurora' ? 'aurora' : 'meteor'; } catch (e) { return 'meteor'; } })();
+  var shoots = [];
   function initStars() {
-    var n = Math.round((VW * VH) / 38000);
+    var n = Math.round((VW * VH) / 26000);
     stars = [];
     for (var i = 0; i < n; i++) {
       var d = Math.random();
       stars.push({
-        x: Math.random() * CW, y: Math.random() * CH * .62, r: (.4 + d) * DPR,
-        a: .10 + d * .22, ph: Math.random() * 6.28, sp: .25 + Math.random() * .9, g: Math.random() < .03
+        x: Math.random() * CW, y: Math.random() * CH * .85, r: (.4 + d * 1.1) * DPR,
+        a: .12 + d * .3, ph: Math.random() * 6.28, sp: .25 + Math.random() * .9, g: Math.random() < .04
       });
     }
   }
-  function scheduleShoot() { nextShoot = clock + rand(20, 40); }
+  function scheduleShoot() { nextShoot = clock + rand(5, 10); }
+  function spawnShoot() {
+    shoots.push({ x: rand(.05, .75) * CW, y: rand(0, .35) * CH, len: 0, max: rand(240, 460) * DPR, sp: rand(14, 24) * DPR, w: rand(1.6, 2.8) });
+  }
 
   function drawAurora(env, ts) {
     if (!sctx || !actx) return;
@@ -1180,7 +1204,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         var u = x / aw;
         var cy = ah * (b.base + b.a1 * Math.sin(u * b.f1 + ts * b.s1 + b.p1) + b.a2 * Math.sin(u * b.f2 - ts * b.s2 + b.p2));
         var len = ah * b.h * (.72 + .28 * Math.sin(u * b.f3 + ts * b.s3 + b.p3));
-        actx.globalAlpha = env * b.al * (.45 + .55 * (.5 + .5 * Math.sin(u * b.f4 - ts * b.s4 + b.p4)));
+        actx.globalAlpha = env * b.al * 2.3 * (.45 + .55 * (.5 + .5 * Math.sin(u * b.f4 - ts * b.s4 + b.p4)));
         actx.drawImage(aspr, 0, 0, 4, 160, x, cy - len, 2, len);
       }
     }
@@ -1192,35 +1216,39 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     if (!sctx) { updateFloats(t, dt, 0, still); return; }
     sctx.clearRect(0, 0, CW, CH);
     var env = 0, i;
-    if (!still) {
-      var ph = (t + 24) % 30;                       // 30 秒一轮，其中 11 秒出现，首次约在第 6 秒
-      env = ph < 11 ? Math.pow(Math.sin(Math.PI * ph / 11), 2) : 0;
-      env = 0;                                      // 2026-10 改版：去掉极光，只留星点与偶发流星
+    if (!still && FX === 'aurora') {
+      var ph = (t + 14) % 20;                       // 20 秒一轮，其中 13 秒出现，首次约在第 6 秒
+      env = ph < 13 ? Math.pow(Math.sin(Math.PI * ph / 13), 2) : 0;
+      if (env > .003) drawAurora(env, t);
     }
     for (i = 0; i < stars.length; i++) {
       var s = stars[i];
       var f = still ? .5 : .5 + .5 * Math.sin(s.ph + t * s.sp);
       sctx.globalAlpha = s.a * (.35 + .55 * f);
-      sctx.fillStyle = s.g ? '#46e0a0' : '#dfe9f5';
+      sctx.fillStyle = s.g ? '#46e0a0' : '#e8eef6';
       sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, 6.2832); sctx.fill();
     }
     sctx.globalAlpha = 1;
-    if (!still) {
-      if (!shoot && t >= nextShoot) {
-        shoot = { x: Math.random() * CW * .7, y: Math.random() * CH * .28, len: 0, max: rand(130, 290) * DPR, sp: rand(11, 19) * DPR };
+    if (!still && FX === 'meteor') {
+      if (t >= nextShoot) {                         // 5–10 秒一颗，约四分之一概率紧跟一颗成对划过
+        spawnShoot();
+        if (Math.random() < .25) setTimeout(spawnShoot, rand(250, 700));
         scheduleShoot();
       }
-      if (shoot) {
-        var a = Math.PI / 5.2, ca = Math.cos(a), sa = Math.sin(a), tail = 96 * DPR;
-        var x2 = shoot.x + ca * shoot.len, y2 = shoot.y + sa * shoot.len;
-        var tx = shoot.x + ca * Math.max(shoot.len - tail, 0), ty = shoot.y + sa * Math.max(shoot.len - tail, 0);
+      var a = Math.PI / 5.2, ca = Math.cos(a), sa = Math.sin(a), tail = 190 * DPR;
+      shoots = shoots.filter(function (sh) {
+        var x2 = sh.x + ca * sh.len, y2 = sh.y + sa * sh.len;
+        var tx = sh.x + ca * Math.max(sh.len - tail, 0), ty = sh.y + sa * Math.max(sh.len - tail, 0);
+        var fade = sh.len > sh.max ? Math.max(0, 1 - (sh.len - sh.max) / (200 * DPR)) : 1;
         var g = sctx.createLinearGradient(tx, ty, x2, y2);
-        g.addColorStop(0, 'rgba(198,248,222,0)'); g.addColorStop(1, 'rgba(198,248,222,.9)');
-        sctx.strokeStyle = g; sctx.lineWidth = 1.6 * DPR;
+        g.addColorStop(0, 'rgba(210,250,232,0)'); g.addColorStop(1, 'rgba(232,255,244,' + (.95 * fade).toFixed(3) + ')');
+        sctx.strokeStyle = g; sctx.lineWidth = sh.w * DPR;
         sctx.beginPath(); sctx.moveTo(tx, ty); sctx.lineTo(x2, y2); sctx.stroke();
-        shoot.len += shoot.sp * dt * 60;
-        if (shoot.len > shoot.max + 260 * DPR) shoot = null;
-      }
+        sctx.fillStyle = 'rgba(240,255,248,' + (.9 * fade).toFixed(3) + ')';
+        sctx.beginPath(); sctx.arc(x2, y2, sh.w * 1.1 * DPR, 0, 6.2832); sctx.fill();
+        sh.len += sh.sp * dt * 60;
+        return fade > 0;
+      });
     }
     updateFloats(t, dt, env, still);
   }
@@ -1245,55 +1273,88 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     if (want && !loopOn) { loopOn = true; lastNow = 0; rafId = raf(frame); }
     else if (!want && loopOn) { loopOn = false; if (rafId) { caf(rafId); rafId = 0; } }
     if (!loopOn) redrawStill();
+    floats.forEach(function (f) { if (f.video) { if (loopOn) { var pr = f.video.play(); if (pr && pr.catch) pr.catch(function () {}); } else f.video.pause(); } });
   }
 
-  /* 浮图 */
-  var floats = [], floatLoadStarted = false, floatGen = 0, titleBox = null;
+  /* 浮图：铺满首屏的三层景深。用各画风真实的场景样图（封面、小红书、配图……），带相纸白边；
+     每张的大小、速度、横摆、周期、倾角都随机，不成队列；近景挑两三张直接播放动态版。经过文字与展台时压暗，不完全消失。 */
+  var floats = [], floatLoadStarted = false, floatGen = 0, titleBox = null, motionItems = [];
   var LAYERS = {
-    far: { w: [64, 112], a: .10, b: 3, v: 5, k: .06 },
-    mid: { w: [96, 160], a: .13, b: 1.4, v: 9, k: .12 },
-    near: { w: [132, 210], a: .16, b: .4, v: 14, k: .2 }
+    far: { w: [78, 120], a: .30, fl: .55, b: 2.4, v: [5, 9], k: .08, sat: .62, br: .78 },
+    mid: { w: [120, 176], a: .46, fl: .22, b: .9, v: [9, 15], k: .16, sat: .74, br: .84 },
+    near: { w: [176, 248], a: .66, fl: .13, b: 0, v: [15, 23], k: .28, sat: .86, br: .9 }
   };
-  /* 浮图只在首屏里飘，并避开左栏文字与右侧展台（坐标相对首屏） */
+  var FLOAT_KEYS = ['cv', 'xhs', 'wxi', 'ppt', 'inf', 'au', 's1', 'cm'];
   function measureTitle() {
     var hr = heroEl.getBoundingClientRect();
-    titleBox = ['#hero-left', '#stage'].map(function (sel) {
+    titleBox = ['#title-block', '#install', '#stage'].map(function (sel) {
       var el = $(sel);
       if (!el) return null;
       var r = el.getBoundingClientRect();
       return { l: r.left - hr.left, t: r.top - hr.top, r: r.right - hr.left, b: r.bottom - hr.top };
     }).filter(Boolean);
   }
+  function floatPool() {
+    var out = [];
+    styles.forEach(function (st) {
+      var keys = FLOAT_KEYS.filter(function (k) { return hasImg(st, k); });
+      if (keys.length) out.push({ st: st, key: keys[Math.floor(Math.random() * keys.length)] });
+    });
+    return shuffle(out);
+  }
   function buildFloats() {
     floats.forEach(function (f) { if (f.el.parentNode) f.el.parentNode.removeChild(f.el); });
     floats = []; floatGen++;
-    var pool = shuffle(styles.filter(function (s) { return hasImg(s, 's2'); }));
+    var pool = floatPool();
     if (!pool.length) return;
-    var mobile = mqMobile.matches, sc = mobile ? .6 : 1;
-    var plan = mobile ? { far: 3, mid: 2, near: 1 } : { far: 4, mid: 4, near: 2 };
+    var mobile = mqMobile.matches, sc = mobile ? .62 : 1;
+    var plan = mobile ? { far: 5, mid: 4, near: 3 } : { far: 8, mid: 7, near: 5 };
+    var videosLeft = (mqReduce.matches || mobile) ? (mobile && !mqReduce.matches ? 1 : 0) : 2;
+    var vids = shuffle(motionItems.slice());
     var idx = 0;
     ['far', 'mid', 'near'].forEach(function (layer) {
       var L = LAYERS[layer];
       for (var n = 0; n < plan[layer]; n++) {
-        var st = pool[idx++ % pool.length];
-        var w = Math.round(rand(L.w[0], L.w[1]) * sc);
-        var el = h('img', { class: 'float', alt: '', decoding: 'async' });
-        el.style.width = w + 'px'; el.style.height = w + 'px';
-        if (L.b) el.style.filter = 'blur(' + L.b + 'px)';
-        el.dataset.src = imgPath(st, 's2');
-        let item = {
-          el: el, w: w, base: L.a, v: L.v, k: L.k, loaded: false, vis: 0,
-          x0: rand(0, Math.max(VW - w, 1)), y0: rand(0, VH),
-          tilt: rand(2, 5) * (Math.random() < .5 ? -1 : 1), amp: rand(10, 28) * sc,
-          period: rand(34, 64), phase: rand(0, 6.28), lastOp: -1
+        var pick = pool[idx++ % pool.length];
+        var useVid = layer === 'near' && videosLeft > 0 && vids.length;
+        var ratio = useVid ? (vids[0].ratio || 1) : (ratios[pick.key] || 1);
+        var w = Math.round(rand(L.w[0], L.w[1]) * sc * (ratio > 1.6 ? 1.25 : ratio < .8 ? .85 : 1));
+        var hgt = Math.round(w / ratio);
+        var el = h('div', { class: 'float float-' + layer + (Math.random() < .3 ? ' film' : '') });
+        el.style.width = w + 'px'; el.style.height = hgt + 'px';
+        el.style.filter = (L.b ? 'blur(' + L.b + 'px) ' : '') + 'saturate(' + L.sat + ') brightness(' + L.br + ')';
+        var media, item;
+        if (useVid) {
+          var mv = vids.shift(); videosLeft--;
+          media = h('video', { muted: true, loop: true, playsinline: true, preload: 'none', 'aria-hidden': 'true' });
+          media.muted = true;
+          media.dataset.src = BASE + 'motion/' + mv.id + '/share' + '.mp4';
+          media.poster = BASE + 'motion/' + mv.id + '/poster' + '.png';
+        } else {
+          media = h('img', { alt: '', decoding: 'async' });
+          media.dataset.src = imgPath(pick.st, pick.key);
+        }
+        el.appendChild(media);
+        var v = rand(L.v[0], L.v[1]);
+        item = {
+          el: el, media: media, video: useVid ? media : null, w: w, hgt: hgt, base: L.a * rand(.8, 1.15), v: v, k: L.k * rand(.8, 1.2), loaded: false, vis: 0, fl: L.fl,
+          x0: rand(-w * .3, Math.max(VW - w * .7, 1)), y0: rand(0, VH + hgt),
+          tilt: rand(1.5, 5.5) * (Math.random() < .5 ? -1 : 1), tilt0: rand(-4, 4), amp: rand(8, 34) * sc,
+          period: rand(28, 70), phase: rand(0, 6.28), lastOp: -1
         };
-        el.addEventListener('load', function () { item.loaded = true; redrawStill(); });
-        el.addEventListener('error', function () { item.loaded = false; item.dead = true; });
+        (function (it) {
+          media.addEventListener(it.video ? 'loadeddata' : 'load', function () { it.loaded = true; if (it.video && loopOn) { var pr = it.video.play(); if (pr && pr.catch) pr.catch(function () {}); } redrawStill(); });
+          media.addEventListener('error', function () { it.loaded = false; it.dead = true; });
+        })(item);
         floatLayer.appendChild(el);
         floats.push(item);
       }
     });
     floatLoadStarted = false;
+  }
+  function loadMotionList(cb) {                       // 清单由构建写进页面数据，模板本身不发请求
+    motionItems = ((DATA && DATA.heroMotion) || []).filter(function (x) { return x && /^[A-Za-z0-9_-]{1,32}$/.test(x.id || ''); });
+    cb();
   }
   function startFloatLoading() {
     if (floatLoadStarted || !floats.length) return;
@@ -1304,9 +1365,12 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       idle(function () {
         if (gen !== floatGen) return;
         var f = floats[i++];
-        if (f) f.el.src = f.el.dataset.src;
-        setTimeout(step, 300);
-      }, { timeout: 4000 });
+        if (f) {
+          if (f.video) { f.video.preload = 'auto'; f.video.src = f.video.dataset.src; if (loopOn) { var pr = f.video.play(); if (pr && pr.catch) pr.catch(function () {}); } }
+          else f.media.src = f.media.dataset.src;
+        }
+        setTimeout(step, 120);
+      }, { timeout: 2000 });
     })();
   }
   function updateFloats(t, dt, auroraEnv, still) {
@@ -1315,21 +1379,20 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     var tb = titleBox;
     for (var i = 0; i < floats.length; i++) {
       var f = floats[i];
-      if (!f.loaded) continue;
-      if (still) f.vis = 1; else f.vis = Math.min(1, f.vis + dt * .7);
-      var span = VH + 2 * f.w;
-      var y = (((f.y0 - f.v * t - sy * f.k) % span) + span) % span - f.w;
+      if (still) f.vis = 1; else if (f.loaded) f.vis = Math.min(1, f.vis + dt * .6);
+      var span = VH + 2 * f.hgt + 40;
+      var y = (((f.y0 - f.v * t - sy * f.k) % span) + span) % span - f.hgt - 20;
       var sw = Math.sin(f.phase + t * 6.2832 / f.period);
       var x = f.x0 + sw * f.amp;
-      f.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + (sw * f.tilt).toFixed(2) + 'deg)';
+      f.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + (f.tilt0 + sw * f.tilt).toFixed(2) + 'deg)';
       var prot = 1;
       if (tb) for (var q = 0; q < tb.length; q++) {
         var bx = tb[q];
-        var dx = Math.max(bx.l - (x + f.w), x - bx.r, 0), dy = Math.max(bx.t - (y + f.w), y - bx.b, 0);
-        var pq = clamp(Math.sqrt(dx * dx + dy * dy) / 60, 0, 1);
+        var dx = Math.max(bx.l - (x + f.w), x - bx.r, 0), dy = Math.max(bx.t - (y + f.hgt), y - bx.b, 0);
+        var pq = clamp(Math.sqrt(dx * dx + dy * dy) / 80, 0, 1);
         prot = Math.min(prot, pq * pq * (3 - 2 * pq));
       }
-      var op = Math.min(1, f.base * (1 + 1.6 * auroraEnv)) * prot * f.vis;
+      var op = f.loaded ? Math.min(1, f.base * (1 + .5 * auroraEnv)) * (f.fl + (1 - f.fl) * prot) * f.vis : 0;
       if (Math.abs(op - f.lastOp) > .004) { f.el.style.opacity = op.toFixed(3); f.lastOp = op; }
     }
   }
@@ -2344,9 +2407,8 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     renderLibrary(d);
     renderPalettes();
     renderMineUI();
-    buildFloats();
-    maybeStartFloats();
     measureTitle();
+    loadMotionList(function () { buildFloats(); maybeStartFloats(); syncLoop(); });
     syncLoop();
     applyHash();
     window.addEventListener('hashchange', applyHash);

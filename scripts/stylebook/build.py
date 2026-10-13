@@ -510,6 +510,8 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
             "metrics": metrics, "featured": featured, "carousel": carousel,
+            "heroMotion": [{"id": m["id"], "ratio": round(m["width"] / m["height"], 3)}  # 首屏近景浮图直接播放的动态版
+                           for m in motion_plan.doc.get("items", []) if m.get("scene") != "brand" and m.get("width") and m.get("height")],
             **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),
             "site": {"pkgVersion": _package_version(), "releases": RELEASES_URL}}
     template = PICKER.read_text(encoding="utf-8")
