@@ -16,7 +16,7 @@ from threading import Event
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from . import compile as CP, data as D, export as EX, plan as PL
+from . import compile as CP, data as D, export as EX, plan as PL, plan_card as PC
 from . import selection as SEL
 from .qa.sheet import matrix_sheet
 
@@ -37,7 +37,7 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
     if not isinstance(brief, dict) or brief.get("version") != 1:
         raise BriefError("brief.version 必须是 1")
     allowed = {"version", "scene", "style", "palette", "reason", "code", "source", "items", "format", "references",
-               "chosen_by", "task_id"}
+               "chosen_by", "task_id", "confirmed"}
     if set(brief) - allowed:
         raise BriefError(f"brief 未知字段：{sorted(set(brief) - allowed)}")
     selected = SEL.normalize(brief["code"], scene=brief.get("scene")) if brief.get("code") else None
@@ -50,6 +50,8 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
     items = brief.get("items")
     if not isinstance(items, list) or not items:
         raise BriefError("brief.items 不得为空")
+    if brief.get("confirmed") not in (None, "user", "skipped"):
+        raise BriefError("confirmed 只能是 user（用户看过计划卡并确认）或 skipped（用户说直接出、或由自动流程调用）")
     if brief.get("chosen_by", "agent") not in {"agent", "user"}:
         raise BriefError("chosen_by 只能是 agent 或 user（用户亲自挑的画风 / 色系才记为偏好证据）")
     chosen = PL.resolve_style(scene, explicit=brief.get("style"), include_inferred=False)
@@ -118,6 +120,9 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
             else:
                 text_spec = {"mode": "native" if text else "none", "items": [
                     {"role": "title" if n == 0 else "label", "text": t} for n, t in enumerate(text)]}
+        text_errs = PC.check_items(text_spec, source_text, f"第 {index} 张")
+        if text_errs:
+            raise BriefError("图上文字来源不合格：" + "；".join(text_errs))
         purpose = item["message"]
         constraints = D.scenes()[scene].get("constraints", [])
         if constraints:
@@ -198,6 +203,7 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
     out.mkdir(parents=True, exist_ok=False)
     _write(out / "brief.json", brief)
     _write(out / "prepared.json", prepared)
+    PC.write(out, PC.brief_table(prepared), confirmed=brief.get("confirmed"))
     for task in prepared["tasks"]:
         _write(out / f"{task['id']}-manifest.json", task["manifest"])
         _write(out / f"{task['id']}-compiled.json", task["compiled"])
