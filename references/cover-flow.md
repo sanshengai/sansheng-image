@@ -1,5 +1,7 @@
 # S02 公众号头条封面：方形优先流程
 
+主旨卡、封面简报卡（主副标题各 2 个候选）和三项验收（360 px 可读、遮图、遮字）与普通封面相同，见 [scenes/wxcover.md](scenes/wxcover.md)；本页只讲 S02 的出图步骤。
+
 适用范围：`style: S02@r3`、`format: wechat-cover-head`、`text.mode: native`。此流程把 **1:1 方形母版**作为构图原件，再只向左右扩成 2.35:1 横图。S02 仍为待准入样式；流程能复现出图步骤，不保证首图一次合格。
 
 1. 写一份包含 `content.subject` 和逐字 `text.items` 的普通清单。内容关系、证据徽章的数量和含义必须写进 `content.subject` / `content.relations`，不能让模型补事实。运行 `python3 scripts/sb.py cover-flow 清单.json > flow.json`。输出带原清单指纹、方形编译提示词、扩图编辑提示词和精确文字。
