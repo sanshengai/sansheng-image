@@ -96,3 +96,13 @@ def test_sample_kind_strips_only_trailing_wave():
     assert BD._sample_kind("ppt-3-wave8-repaired") == "ppt-3"
     assert BD._sample_kind("ppt-3") == "ppt-3"
     assert BD._sample_kind("wave-3") == "wave-3"
+
+
+def test_sample_kind_strips_trailing_continuous():
+    """持续出图通道产出的 *-continuous 样图（39 张）曾因键不被认出而在官网缺席。"""
+    assert BD._sample_kind("ppt-8-continuous") == "ppt-8"
+    assert BD._sample_kind("xhs-6-continuous") == "xhs-6"
+    assert BD._sample_kind("palette-indigo-continuous") == "pl-indigo"
+    assert BD._sample_kind("bd-continuous") == "bd"
+    assert BD._sample_kind("continuous") == "continuous"
+    assert BD._sample_kind("cv-hd") == "cv-hd"

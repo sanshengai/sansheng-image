@@ -368,11 +368,11 @@ def _pc_kind(stem: str) -> str | None:
 
 
 def _sample_kind(stem: str) -> str:
-    """样图文件名的种类键：去掉波次编号 及其 native/repair/repaired 后缀。
+    """样图文件名的种类键：去掉波次编号 及其 native/repair/repaired 后缀，或持续出图通道的 -continuous 后缀。
 
-    合同登记里同一品种的 wave 变体不应产生不同键。
+    合同登记里同一品种的 wave / continuous 变体不应产生不同键。
     """
-    kind = re.sub(r"-wave\d+(?:-?(?:native|repair|repaired))?$", "", stem)
+    kind = re.sub(r"-(?:wave\d+(?:-?(?:native|repair|repaired))?|continuous)$", "", stem)
     return "pl-" + kind[len("palette-"):] if kind.startswith("palette-") else kind
 
 def _sample_files(code: str, cp: Path | None) -> dict[str, tuple[Path, float | None]]:
