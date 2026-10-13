@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """样图维护：样图只在本机（styles/*/samples/）和官网，不进 Git 仓库的任何分支。
 
-  status                  工作区样图数；与合同登记对比（登记了但缺文件、文件在但没登记）
+  status [--strict]       工作区样图数；与合同登记对比（登记了但缺文件、文件在但没登记）；
+                          样图与合同修订是否对得上（当前 / 待重出 / 历史样图）。--strict：已准入的画风
+                          有「待重出」样图就返回 1
   backup --dest <目录>    把 styles/*/samples 原样同步到仓库外的备份目录（只增不删，内容变了的覆盖备份）
   restore --src <目录>    从备份目录还原到工作区（默认不覆盖已存在且内容不同的文件，--overwrite 才覆盖）
 
@@ -17,6 +19,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from stylebook.contract import sample_state  # noqa: E402
 
 
 class SyncError(RuntimeError):
@@ -46,12 +50,35 @@ def registered(base: Path) -> set[str]:
     return out
 
 
+def revisions(base: Path) -> dict:
+    """样图与合同修订的对应：各状态计数，以及待重出的清单（已准入画风的单列）。"""
+    counts = {"current": 0, "stale": 0, "historical": 0}
+    stale, stale_admitted = [], []
+    for cj in sorted((base / "styles").glob("*/contract.json")):
+        c = json.loads(cj.read_text(encoding="utf-8"))
+        admitted = (c.get("evidence") or {}).get("admission") == "admitted"
+        for s in c.get("samples", []):
+            state = sample_state(c, s)
+            counts[state] += 1
+            if state == "stale":
+                row = f"{cj.parent.name}/{s['file']}（r{s['generation']['revision']} 生成，合同已到 r{c.get('revision')}）"
+                stale.append(row)
+                if admitted:
+                    stale_admitted.append(row)
+    return {**counts, "stale_list": stale, "stale_admitted": stale_admitted}
+
+
 def status(base: Path = ROOT) -> dict:
     have, reg = set(sample_files(base)), registered(base)
     res = {"files": len(have), "registered": len(reg),
-           "missing": sorted(reg - have), "unregistered": sorted(have - reg)}
+           "missing": sorted(reg - have), "unregistered": sorted(have - reg), "revisions": revisions(base)}
     print(f"工作区样图 {res['files']} 个；合同登记 {res['registered']} 个；"
           f"登记了但缺文件 {len(res['missing'])}、文件在但没登记 {len(res['unregistered'])}")
+    rv = res["revisions"]
+    print(f"按合同修订：当前修订生成 {rv['current']}、待重出 {rv['stale']}（其中已准入画风 {len(rv['stale_admitted'])}）、"
+          f"历史样图（无生成记录）{rv['historical']}")
+    for n in rv["stale_list"][:10]:
+        print(f"  待重出：{n}")
     for label, key in (("缺文件", "missing"), ("没登记", "unregistered")):
         for n in res[key][:10]:
             print(f"  {label}：{n}")
@@ -107,7 +134,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--repo", type=Path, default=ROOT, help="仓库目录（默认本脚本所在仓库）")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("status", help="工作区样图与合同登记对比")
+    st = sub.add_parser("status", help="工作区样图与合同登记对比")
+    st.add_argument("--strict", action="store_true", help="已准入画风有待重出样图时返回 1")
     b = sub.add_parser("backup", help="工作区样图 -> 仓库外备份目录")
     b.add_argument("--dest", type=Path, required=True)
     r = sub.add_parser("restore", help="备份目录 -> 工作区")
@@ -116,7 +144,10 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
     try:
         if a.cmd == "status":
-            status(a.repo)
+            res = status(a.repo)
+            if a.strict and res["revisions"]["stale_admitted"]:
+                print("错误：已准入的画风有待重出的样图，先按当前修订重出", file=sys.stderr)
+                return 1
         elif a.cmd == "backup":
             backup(a.dest, a.repo)
         else:

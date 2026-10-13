@@ -45,7 +45,7 @@ python3 scripts/sb.py matrix C31 --no-review             # 只出图（或只按
 `styles/*/samples/` 不进 Git 仓库（已写入 `.gitignore`），只在本机和官网。入库脚本（`ingest*.py` 等）照旧把文件写进工作区的 `styles/<码>/samples/`，写完后：
 
 ```bash
-python3 scripts/samples_sync.py status                    # 与合同登记对比：登记了但缺文件、文件在但没登记
+python3 scripts/samples_sync.py status [--strict]         # 与合同登记对比：登记了但缺文件、文件在但没登记；样图修订是否对得上（--strict：已准入画风有待重出样图就失败）
 python3 scripts/samples_sync.py backup --dest <仓库外目录>   # 只增不删的备份，输出新增数
 python3 scripts/samples_sync.py restore --src <备份目录>     # 换机器或误删后还原（不覆盖内容不同的文件，--overwrite 才覆盖）
 ```

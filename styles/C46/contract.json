@@ -129,7 +129,14 @@
       "source_sha256": "320ec2b99cbf4e0ca823757cec3ef59d6a7af5565194ca432e1124fbc2f247a4",
       "renderer": "codex-builtin",
       "date": "2026-10-13",
-      "ratio": 2.351
+      "ratio": 2.351,
+      "generation": {
+        "revision": 4,
+        "prompt_sha256": "7ee12e5d1602ad31ef449b06fcb7183a6a192355ed0a3d0459a1111e7023e1b8",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     },
     {
       "topic": "信息图 第 1 张",

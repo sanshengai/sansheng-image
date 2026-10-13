@@ -141,7 +141,14 @@
       "source_sha256": "037cbf2df32f8b3b059462e61895eb3bb1a2c56d42780bab8e7bcabb9ab3b0de",
       "renderer": "codex-builtin",
       "date": "2026-10-13",
-      "ratio": 2.354
+      "ratio": 2.354,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "fc40e1e90b0c2d59fc50336d9454ee0bdf60e7d3cddea328a7513df19c1e5d36",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     },
     {
       "topic": "音乐封面",

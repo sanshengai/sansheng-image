@@ -695,6 +695,19 @@
             "type": "number",
             "minimum": 0.1,
             "description": "样图宽高比（宽/高，保留三位）。公开下载包不带样图文件，选择器据此无图重建"
+          },
+          "generation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["revision", "prompt_sha256", "attempts", "picked_from"],
+            "description": "样图生成记录。2026-10-13 起登记的样图必须带；没有的是「历史样图」（未记录挑选）",
+            "properties": {
+              "revision": {"type": "integer", "minimum": 1, "description": "出图时该画风合同的修订号；小于当前修订即「待重出」"},
+              "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "生图提示词正文（不含调用工具的包装指令）的 sha256，UTF-8"},
+              "attempts": {"type": "integer", "minimum": 1, "description": "第几次出图得到这张（含失败重试）"},
+              "picked_from": {"type": "integer", "minimum": 1, "description": "从几张合格图里挑出这张；1 即单次出图、未挑选"},
+              "edited": {"type": "boolean", "description": "是否经过后期编辑（裁切、修字、局部重绘）"}
+            }
           }
         }
       },

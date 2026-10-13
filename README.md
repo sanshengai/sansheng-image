@@ -54,7 +54,7 @@ python3 scripts/sb.py doctor
 
 参与修改时运行 `git config core.hooksPath .githooks` 启用提交前脱敏检查。PPTX 组装另需 `python3 -m pip install -r requirements-ppt.txt`。
 
-**维护者：样图不进仓库。** 只给人在官网选择器里看的样图（`styles/*/samples/`）只放在本机和官网，已写入 `.gitignore`；合同里登记的文件名与宽高比保留，选择器没有样图文件时按登记重建。新样图入库后运行 `python3 scripts/samples_sync.py status`（对比合同登记）和 `python3 scripts/samples_sync.py backup --dest <仓库外目录>`（只增不删的备份）；换机器用 `restore --src <备份目录>` 还原。锚点图（`styles/<码>/anchor.*`）和出图用的范例图不在 `samples/` 下，仍随仓库。
+**维护者：样图不进仓库。** 只给人在官网选择器里看的样图（`styles/*/samples/`）只放在本机和官网，已写入 `.gitignore`；合同里登记的文件名与宽高比保留，选择器没有样图文件时按登记重建。新样图入库后运行 `python3 scripts/samples_sync.py status`（对比合同登记，并报告哪些样图是用旧修订生成、待重出的）和 `python3 scripts/samples_sync.py backup --dest <仓库外目录>`（只增不删的备份）；换机器用 `restore --src <备份目录>` 还原。2026-10-13 起登记的样图必须在合同里带 `generation` 生成记录（出图时的合同修订、提示词指纹、第几次出图、从几张中挑、是否后期编辑），选择器据此标注；更早的样图标为「历史样图」。锚点图（`styles/<码>/anchor.*`）和出图用的范例图不在 `samples/` 下，仍随仓库。
 
 ## 日常轻量入口（仓库未发布改进）
 

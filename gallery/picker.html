@@ -275,6 +275,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .dlg-also:empty { display: none; }
 .dlg-also .chip { min-height: 32px; padding: 2px 10px; font-size: 13px; }
 .dlg-cap { margin-top: 8px; font-size: 13px; color: var(--fg); }
+.dlg-prov { margin-left: .8em; color: var(--mut); }
 .dlg-vhint { margin-top: 4px; font-size: 13px; color: var(--mut); }
 .sw-lg i { width: 10px; height: 20px; }
 .tune { margin-top: 10px; display: grid; gap: 6px; }
@@ -999,7 +1000,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     : function (cb) { return setTimeout(function () { cb({ timeRemaining: function () { return 0; }, didTimeout: true }); }, 200); };
 
   var DATA = null, styles = [], styleById = {}, sceneList = [], sceneById = {}, palettes = [], paletteById = {};
-  var kinds = KINDS_DEFAULT, kindLabels = LABELS_DEFAULT, palCompare = {}, palShots = {}, ratios = {}, firstScene = '';
+  var kinds = KINDS_DEFAULT, kindLabels = LABELS_DEFAULT, palCompare = {}, palShots = {}, ratios = {}, prov = {}, firstScene = '';
   var libState = { scene: 'all', palette: 'orig', light: 0, sat: 0, hex: [], q: '', region: '', era: '', dynasty: '', family: '' };
   /* 地域 / 时代 / 朝代 / 风格分类：选项只取页面数据 taxonomy 词表里确有画风的值；空值＝全部，各维度取交集 */
   var TAX_DIMS = [['region', '地域', '全部地域'], ['era', '时代', '全部时代'], ['dynasty', '朝代', '全部朝代'], ['family', '风格分类', '全部分类']];
@@ -2001,13 +2002,21 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     else if (e.pal !== 'orig') txt = '大图是这个画风的原色，不会随色系变化；换色在出图时生效。' + (palCompare[st.id] ? '换色效果看色系下面的对比卡。' : '');
     $('#dlg-vhint').textContent = txt;
   }
+  // 样图怎么来的：用哪一版画风生成、是不是挑出来的。没有生成记录的是早期样图
+  function provText(g) {
+    if (!g) return '历史样图，未记录挑选';
+    if (g.now) return '用画风第 ' + g.r + ' 版生成，画风已更新到第 ' + g.now + ' 版，待重出';
+    return '用画风第 ' + g.r + ' 版生成，' + (g.n > 1 ? '从 ' + g.n + ' 张中挑选' : '单次出图') + (g.e ? '，含后期编辑' : '');
+  }
   function setDialogMain(st, key) {
     var im = $('#dlg-img');
     if (!key) { im.removeAttribute('src'); im.alt = ''; $('#dlg-cap').textContent = ''; return; }
     var label = stemLabel(key);
     im.src = imgPath(st, key);
     im.alt = st.name + '（' + st.id + '）的样图，' + label;
-    $('#dlg-cap').textContent = label;
+    var cap = $('#dlg-cap');
+    cap.textContent = label;
+    if (key !== 'anchor') cap.appendChild(h('span', { class: 'dlg-prov', text: provText((prov[st.id] || {})[key]) }));
     $('#dlg-thumbs').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.key === key ? 'true' : 'false'); });
   }
   function updateImages() {
@@ -2430,6 +2439,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     palCompare = d.palCompare || {};
     palShots = d.palShots || {};
     ratios = d.ratios || {};
+    prov = d.prov || {};
 
     var sel = $('#dlg-palette');
     palettes.forEach(function (p) { sel.appendChild(h('option', { value: p.id, text: p.id === 'orig' ? '样式原色' : p.name })); });

@@ -117,7 +117,14 @@
       "source_sha256": "d643cbd35029072e76b7d3cb388ee740dcf2c1235b2cbaa2d817f33e0bbb2bce",
       "renderer": "codex-builtin",
       "date": "2026-10-13",
-      "ratio": 2.354
+      "ratio": 2.354,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "74d1765aab76048b28fe14038db52d9d862dd3fd826e3e513c403e9daf191925",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     },
     {
       "topic": "AI 短剧分镜·角色三视图",

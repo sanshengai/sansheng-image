@@ -396,6 +396,17 @@ def _sample_files(code: str, cp: Path | None) -> dict[str, tuple[Path, float | N
     return out
 
 
+def prov_entry(contract: dict, sample: dict) -> dict:
+    """选择器图注用的生成记录摘要：r 生成时修订、n 从几张挑、e 含后期编辑、now 待重出时合同的当前修订。"""
+    gen = sample["generation"]
+    out = {"r": gen["revision"], "n": gen["picked_from"]}
+    if gen.get("edited"):
+        out["e"] = 1
+    if CT.sample_state(contract, sample) == "stale":
+        out["now"] = contract["revision"]
+    return out
+
+
 def _hero_hd(code: str, cp: Path, kind: str) -> Path | None:
     """合同登记的展台高清版 samples/<种类>-hd.*（不属于任何画风库样图种类，只给展台用）；文件存在才返回。"""
     for sample in CT.load(code).get("samples", []):
@@ -451,6 +462,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     expected_imgs: list[str] = []  # 页面会引用的全部缩略图文件名（含公开包里没有文件的样图）
     hero_imgs: dict[tuple[str, str], Path | None] = {}
     ratios_by_kind: dict[tuple[str, str], float] = {}
+    prov: dict[str, dict[str, dict]] = {}  # 码 -> 样图种类 -> 生成记录摘要（修订、从几张挑、是否编辑、待重出时的当前修订）
     from PIL import Image
     for s in reg["styles"]:
         code = s["code"]
@@ -492,6 +504,9 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
                     pc["pals"].append(_pc_kind(kind))
                 continue
             have.setdefault(code, []).append(kind)
+            sample = next((x for x in contract.get("samples", []) if _sample_kind(Path(x["file"]).stem) == kind), None)
+            if sample and sample.get("generation"):  # 没有记录的是历史样图，前端按缺省处理
+                prov.setdefault(code, {})[kind] = prov_entry(contract, sample)
             ratios.setdefault(base_kind, ratio)
             ratios_by_kind[(code, kind)] = round(ratio, 3)
     inspiration = {}
@@ -536,7 +551,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
-            "metrics": metrics, "carousel": carousel,
+            "metrics": metrics, "carousel": carousel, "prov": prov,
             "heroMotion": [{"id": m["id"], "ratio": round(m["width"] / m["height"], 3)}  # 首屏近景浮图直接播放的动态版
                            for m in motion_plan.doc.get("items", []) if m["id"] in HERO_MOTION and m.get("width") and m.get("height")],
             **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),

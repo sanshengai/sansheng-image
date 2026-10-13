@@ -166,6 +166,15 @@ def validate(contract: dict, *, where: Path | None = None) -> list[str]:
             for item in when_text if isinstance(when_text, list) else []:
                 if isinstance(item, str) and item not in override_listed:
                     problems.append(f"mode_overrides.{mode}.when_text 条目不在该模式的必须 / 禁止清单中：{item[:40]}")
+    rev = contract.get("revision")
+    for i, sample in enumerate(contract.get("samples") or []):
+        if not isinstance(sample, dict):
+            continue
+        gen = sample.get("generation")
+        if isinstance(gen, dict) and isinstance(gen.get("revision"), int) and isinstance(rev, int) and gen["revision"] > rev:
+            problems.append(f"samples[{i}] 生成记录的修订 r{gen['revision']} 比合同当前修订 r{rev} 还新，记录写错了")
+        if gen is None and str(sample.get("date", "")) >= GEN_REQUIRED_FROM:
+            problems.append(f"samples[{i}]（{sample.get('file')}）是 {GEN_REQUIRED_FROM} 起登记的新样图，必须带 generation 生成记录")
     log = contract.get("changelog") or []
     if log and max(e.get("revision", 0) for e in log) != contract.get("revision"):
         problems.append("changelog 最高修订号与 revision 不一致")
@@ -177,6 +186,17 @@ def validate(contract: dict, *, where: Path | None = None) -> list[str]:
     except ImportError:
         pass
     return problems
+
+
+GEN_REQUIRED_FROM = "2026-10-13"   # 这天起登记的样图必须带生成记录；更早的是「历史样图」
+
+
+def sample_state(contract: dict, sample: dict) -> str:
+    """样图与合同的对应关系：current（用当前修订生成）/ stale（合同已更新，待重出）/ historical（没有生成记录）。"""
+    gen = sample.get("generation")
+    if not isinstance(gen, dict):
+        return "historical"
+    return "current" if gen.get("revision") == contract.get("revision") else "stale"
 
 
 def contract_paths() -> list[Path]:

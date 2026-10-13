@@ -619,6 +619,96 @@
       "renderer": "codex-builtin+program-overlay",
       "date": "2026-10-12",
       "ratio": 1.0
+    },
+    {
+      "topic": "信息图：出门前四样别忘（版式：网格）",
+      "file": "samples/inf-6-wave1013.webp",
+      "source_sha256": "14dc570a151a76ebc0e8638d4275c014f7a7c7c014cb89a539ed3cd595d5e9a5",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "c21cc8adb6d1e37a146aeeece9e3a9e114482b1daf75e8f2285cfe10d92460e4",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "信息图：绿萝为什么长得好（版式：冰山）",
+      "file": "samples/inf-7-wave1013.webp",
+      "source_sha256": "76a2eb5a26c39917b0fdf3a8330172dbb95d8a28fd0fec0d2ac822e792796913",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "9435b931ec146f392477f29866ab226df2313c5e897e1173a5d6aaccaaa48b35",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "信息图：读书习惯的小循环（版式：循环）",
+      "file": "samples/inf-8-wave1013.webp",
+      "source_sha256": "e7ca1143b48530b23fdd7f041f59b53e02c01b08b8fbdbbd739e26ea4d58c264",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "816b18708ca4946eec6064ffd59c2ed76ea6c0df9558d252bc6229bbbd7e8252",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "信息图：周末去野餐（版式：思维导图）",
+      "file": "samples/inf-9-wave1013.webp",
+      "source_sha256": "8b2824d3829a33e5bae94e25bd79856ac9113146199a35866311a13d9439bdfa",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "f672801bfa92238dd23257011308529e58af3b930131bb23aea1d4675fca6168",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "信息图：从一堆照片到一本相册（版式：漏斗）",
+      "file": "samples/inf-10-wave1013.webp",
+      "source_sha256": "f64fd6e1fbcc253624883d17fde7ea973afadd973bec129f985427dcfcd381d4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "8ea9cc3d5a13ffb580495464f9301320feba70d07e9f8a30b03572834b7dc506",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "信息图：四种早餐怎么选（版式：四象限）",
+      "file": "samples/inf-11-wave1013.webp",
+      "source_sha256": "91bf7a67ce877280994fc32130e8ec82feb781d3fccfd7f4283465c0252870ac",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "0c5c1564822986d7e78baa961213de3acb86f27e199405fdccae1653cca568de",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ]
 }

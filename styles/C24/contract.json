@@ -189,7 +189,14 @@
       "source_sha256": "e0c64c5f4a16aa9f9e361bc95bcd45116b8ad5b36754ac4a3f60b0ca13621418",
       "renderer": "codex-builtin",
       "date": "2026-10-13",
-      "ratio": 2.354
+      "ratio": 2.354,
+      "generation": {
+        "revision": 5,
+        "prompt_sha256": "ced76c8690952b7c618d654d79964ce5de24f8e3706b4623f7a38a7e0eeb329e",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     },
     {
       "topic": "横版插图 第 1 张",

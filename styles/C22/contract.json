@@ -140,7 +140,14 @@
       "source_sha256": "fca7f78a10c32dc599097ba5638265098f10d89e6bdd0a3bbe1e69ad54b842c6",
       "renderer": "codex-builtin",
       "date": "2026-10-13",
-      "ratio": 2.354
+      "ratio": 2.354,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "139354a6a12d725fc1a8aeca0c1889746d82e68eeb32d60d0f8710c76bac5403",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     },
     {
       "topic": "小红书 第 1 张",
