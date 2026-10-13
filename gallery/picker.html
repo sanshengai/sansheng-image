@@ -380,7 +380,12 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .lib-row-top .lib-search { flex: 0 1 260px; }
 .lib-more { flex: none; min-height: 34px; }
 .lib-more.on { border-color: var(--green); color: var(--strong); }
-.chips-wrap { flex-wrap: wrap; overflow: hidden; max-height: calc(2 * 34px + 8px + 8px); row-gap: 8px; }
+.chip-entry { border-style: dashed; color: var(--green); }
+.chip-entry:hover { color: var(--strong); }
+.chips-wrap { flex-wrap: wrap; row-gap: 8px; column-gap: 6px; }
+.chips-wrap.is-folded { max-height: calc(2 * 34px + 8px + 6px); overflow: hidden; }
+.pal-side { flex: none; display: flex; flex-direction: column; gap: 8px; align-self: flex-start; padding-top: 2px; }
+.chips-wrap .chip { padding: 4px 11px; gap: 6px; }   /* 宽屏两行排下；更窄时宁可多一行，也不把色系藏起来 */
 .lib-bar.is-stuck { box-shadow: 0 18px 40px -18px rgba(0,0,0,.75); border-bottom-color: var(--line-2); }
 #quiz { width: min(760px, calc(100vw - 24px)); }
 .quiz-in { position: relative; padding: 28px; }
@@ -394,7 +399,8 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   .lib-row-top { flex-wrap: wrap; row-gap: 8px; }
   .lib-row-top .chips { flex-basis: calc(100% - 2em - 12px); }
   .lib-row-top .lib-search { flex: 1 1 auto; margin-left: calc(2em + 12px); max-width: none; }
-  .chips-wrap { flex-wrap: nowrap; overflow-x: auto; max-height: none; }
+  .chips-wrap, .chips-wrap.is-folded { flex-wrap: nowrap; overflow-x: auto; max-height: none; }
+  .pal-side { flex-direction: row; }
 }
 @media (max-width: 640px) {
   .lib-bar-in { padding: 6px 0 4px; gap: 2px; }          /* 四行全开时也不超过屏高四分之一 */
@@ -761,7 +767,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       <h2 class="sec-title" id="lib-title" tabindex="-1">画风库</h2>
       <div class="lib-tools">
         <button class="btn btn-small" id="quiz-btn" type="button" aria-haspopup="dialog">帮我挑</button>
-        <button class="btn btn-small" id="pal-jump" type="button">色系真图</button>
+        <button class="btn btn-small" id="pal-jump" type="button">色系图鉴</button>
         <button class="btn btn-small" id="tray-btn" type="button" aria-haspopup="dialog">我的默认 <span class="badge" id="tray-n">0</span></button>
       </div>
     </div>
@@ -778,7 +784,11 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         </div>
         <div class="lib-row lib-row-pal">
           <span class="lib-label" id="lib-palette-label">色系</span>
-          <div class="chips chips-wrap" id="lib-palettes" role="group" aria-labelledby="lib-palette-label"></div>
+          <div class="chips chips-wrap is-folded" id="lib-palettes" role="group" aria-labelledby="lib-palette-label"></div>
+          <div class="pal-side">
+            <button class="chip chip-entry" id="pal-more" type="button" aria-expanded="false" aria-controls="lib-palettes" hidden>展开全部</button>
+            <button class="chip chip-entry" id="pal-entry" type="button" aria-label="看色系图鉴">色系图鉴</button>
+          </div>
         </div>
         <div class="lib-row" id="lib-tax-row" hidden>
           <span class="lib-label" id="lib-tax-label">分类</span>
@@ -802,7 +812,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
   <section class="sec" id="palettes" aria-labelledby="palettes-title" hidden>
     <div class="wrap">
-      <h2 class="sec-title" id="palettes-title" tabindex="-1">色系，看真实画出来的样子</h2>
+      <h2 class="sec-title" id="palettes-title" tabindex="-1">色系图鉴</h2>
       <p class="sec-sub">每个色系都有名字和故事。下面是用它真实画出的人物、静物、信息图，点图可以看对应画风；点「用这个色系」，上面的画风库和详情里就默认用它。</p>
       <div class="pal-groups" id="pal-groups"></div>
     </div>
@@ -1557,6 +1567,20 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     return imgKey(st);
   }
   function cardRatio(key) { return Number(ratios[baseKind(key)] || ratios[key]) || 1; }
+  /* 色系默认折成两行；放不下时给「展开全部」，选中的色系落在折叠区里就自动展开，不让任何色系点不到 */
+  var palExpanded = false;
+  function syncPalFold() {
+    var box = $('#lib-palettes'), more = $('#pal-more');
+    if (!box || !more) return;
+    box.classList.add('is-folded');
+    var overflow = box.scrollHeight > box.clientHeight + 2;
+    var on = box.querySelector('.chip[aria-pressed="true"]');
+    if (overflow && on && on.getBoundingClientRect().bottom > box.getBoundingClientRect().bottom + 2) palExpanded = true;
+    box.classList.toggle('is-folded', !palExpanded);
+    more.hidden = !overflow && !palExpanded;
+    more.textContent = palExpanded ? '收起' : '展开全部';
+    more.setAttribute('aria-expanded', palExpanded ? 'true' : 'false');
+  }
   var MASONRY_ROW = 4;
   function layoutMasonry() {
     var grid = $('#lib-grid');
@@ -1627,6 +1651,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       b.addEventListener('click', function () { selectPalette(p.id); });
       palBox.appendChild(b);
     });
+    $('#pal-entry').addEventListener('click', function () { scrollToPalettes(true); });   // 色系行末尾：去看每个色系的故事与真图
+    $('#pal-more').addEventListener('click', function () { palExpanded = !palExpanded; syncPalFold(); });
+    window.addEventListener('resize', syncPalFold);
+    syncPalFold();
 
     styles.forEach(function (st) {
       var card = styleCard(st, { tags: true, lib: true });
@@ -1801,7 +1829,8 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     layoutMasonry();
     document.querySelectorAll('#lib-scenes .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scene === libState.scene ? 'true' : 'false'); });
     document.querySelectorAll('.scene-card').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scene === libState.scene ? 'true' : 'false'); });
-    document.querySelectorAll('#lib-palettes .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.pal === libState.palette ? 'true' : 'false'); });
+    document.querySelectorAll('#lib-palettes .chip[data-pal]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.pal === libState.palette ? 'true' : 'false'); });
+    syncPalFold();
     document.querySelectorAll('[data-usepal]').forEach(function (b) {
       var on = b.dataset.usepal === libState.palette;
       b.setAttribute('aria-pressed', on ? 'true' : 'false');

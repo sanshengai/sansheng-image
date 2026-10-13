@@ -878,7 +878,35 @@ def test_palette_real_shots_page_is_consumed(browser, built):
         assert page.get_attribute(f'[data-usepal="{pid}"]', "aria-pressed") == "true"
         assert page.get_attribute(f'#lib-palettes .chip[data-pal="{pid}"]', "aria-pressed") == "true"
         page.click("#pal-jump")  # 画风库标题行里的入口
+        assert page.inner_text("#palettes-title") == "色系图鉴" and page.inner_text("#pal-jump") == "色系图鉴"
+        page.evaluate("window.scrollTo(0, document.getElementById('library').offsetTop)")
+        page.click("#pal-entry")  # 吸顶栏色系行末尾的入口
+        page.wait_for_function("Math.abs(document.getElementById('palettes').getBoundingClientRect().top) < innerHeight / 2", timeout=5000)
 
+
+
+_HIDDEN_PALS = """(() => { const box = document.getElementById('lib-palettes'), bb = box.getBoundingClientRect();
+  return [...box.querySelectorAll('.chip[data-pal]')].filter(c => { const r = c.getBoundingClientRect();
+    return r.bottom > bb.bottom + 1 || r.right > bb.right + 1 || r.left < bb.left - 1; }).map(c => c.dataset.pal); })()"""
+
+
+@pytest.mark.parametrize("width", [1440, 1000])
+def test_every_palette_chip_is_reachable_when_folded(browser, built, width):
+    """色系折叠成两行时必须给出「展开全部」，展开后每个色系都看得见、点得到（A3 曾把末尾两种藏掉）。"""
+    d, _ = built
+    with open_page(browser, d, width=width) as page:
+        _open(page, "")
+        hidden = page.evaluate(_HIDDEN_PALS)
+        more = page.locator("#pal-more")
+        if hidden:
+            assert more.is_visible() and more.get_attribute("aria-expanded") == "false", hidden
+            more.click()
+            assert more.get_attribute("aria-expanded") == "true"
+        assert page.evaluate(_HIDDEN_PALS) == []
+        pals = page.eval_on_selector_all("#lib-palettes .chip[data-pal]", "cs => cs.map(c => c.dataset.pal)")
+        last = pals[-1]
+        page.click(f'#lib-palettes .chip[data-pal="{last}"]')
+        assert page.get_attribute(f'#lib-palettes .chip[data-pal="{last}"]', "aria-pressed") == "true"
 
 # ---------------- GitHub 入口、安装命令与来源措辞 ----------------
 
