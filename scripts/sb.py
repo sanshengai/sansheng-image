@@ -20,7 +20,8 @@
   sheet  <定妆图> <图>... -o 输出.png    一致性对照网格（--thumbs 看缩略图可辨认）
   matrix <风格码> [--only T1,T2]        8 道标准题测试矩阵（断点续跑、成本记账）
   build  [--private] [--gallery]        由风格合同生成 registry.json；--gallery 生成选择器（index.html + img/）；--advanced 生成旧完整画廊
-  plan   <计划.json> [--manifests 目录]  检查配图计划、打印确认表、生成每张图的编译清单
+  plan   <计划.json> [--manifests 目录]  检查配图计划、打印确认表并存成 <计划名>.plan-card.md、生成每张图的编译清单
+  board  <镜头表.json> -o 目录 [--locations]  分镜：先出地点设定图与定调图，再一次出整场竖屏与横屏首帧
   batch  <计划.json> -o 目录             一口气做完：出图 → 导出 → 验收 → 单张返修 → 报告（可续跑）
   pptx   <计划.json> --images 目录 -o 文件.pptx [--mode illustration|full]   组装 PPT（插画 + 可编辑文字 / 整页图）
   style-for <场景> [--explicit C31]      按「本次指定 > 项目锁定 > 偏好 > 作者档案 > 出厂默认」定样式
@@ -387,6 +388,11 @@ def cmd_plan(a) -> int:
     print(PL.table(plan))
     for w in warns:
         print(f"提醒：{w}")
+    from stylebook import plan_card as PC
+    plan_path = Path(a.plan).resolve()
+    card = PC.write(plan_path.parent, PL.table(plan), warns=warns, confirmed=plan.get("confirmed"),
+                    name=f"{plan_path.stem}.plan-card.md")
+    print(f"计划卡：{card}")
     if a.manifests:
         d = Path(a.manifests)
         d.mkdir(parents=True, exist_ok=True)
@@ -395,6 +401,13 @@ def cmd_plan(a) -> int:
             (d / f"{m['_id']}.json").write_text(json.dumps(m, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"编译清单：{d}")
     return 0
+
+
+def cmd_board(a) -> int:
+    from stylebook import board as BD
+    argv = [a.board] + (["-o", a.out] if a.out else []) + (["--locations"] if a.locations else []) + \
+        (["--provider", a.provider] if a.provider else []) + (["--model", a.model] if a.model else []) + (["--force"] if a.force else [])
+    return BD.main(argv)
 
 
 def cmd_style_for(a) -> int:
@@ -829,6 +842,9 @@ def main(argv=None) -> int:
     p.add_argument("--legacy-prompts", help="兼容旧命令；选择器已停用独立提示词模板，此参数不再生效")
     p.add_argument("--check", action="store_true", help="只检查 registry.json 是否与合同一致，不写文件"); p.set_defaults(fn=cmd_build)
     p = sub.add_parser("plan"); p.add_argument("plan"); p.add_argument("--manifests"); p.add_argument("--model"); p.set_defaults(fn=cmd_plan)
+    p = sub.add_parser("board", help="按镜头表一次出整场竖屏与横屏首帧（--locations 先出地点设定图与定调图）")
+    p.add_argument("board"); p.add_argument("-o", "--out"); p.add_argument("--locations", action="store_true")
+    p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--force", action="store_true"); p.set_defaults(fn=cmd_board)
     p = sub.add_parser("style-for"); p.add_argument("scene"); p.add_argument("--explicit"); p.add_argument("--project"); p.set_defaults(fn=cmd_style_for)
     p = sub.add_parser("selection"); p.add_argument("action", choices=["recommend", "normalize", "apply", "impact"])
     p.add_argument("--scene"); p.add_argument("--shapes"); p.add_argument("--explicit"); p.add_argument("--project")

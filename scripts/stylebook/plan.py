@@ -17,6 +17,7 @@ from pathlib import Path
 
 from . import contract as CT
 from . import data as D
+from . import plan_card as PC
 from .comic import validate_content as validate_comic_content
 from .textspec import MODES, native_items, validate_hybrid
 
@@ -257,6 +258,7 @@ def check(plan: dict, *, base_path: Path | None = None) -> tuple[list[str], list
                 if not re.fullmatch(rf"{re.escape(local_code.split('@')[0])}@r{current}", local_code):
                     errs.append(f"{tag} 样式修订 {local_code} 与当前合同 r{current} 不一致")
         t = it.get("text") or {}
+        errs.extend(PC.check_items(t, source_text, f"{tag} "))   # 图上数字、引语、专名要在原文里；不写引导语
         mode = t.get("mode")
         if mode is not None and mode not in MODES:
             errs.append(f"{tag} 未知文字档位 {mode!r}")

@@ -114,10 +114,31 @@ def _gen(prompt, out, *, size, aspect, refs, provider, model, quality, tag):
 
 def test_batch_rejects_fabricated_quote_and_writes_plan_card(tmp_path):
     bad = _v2_plan(tmp_path, "「先找最慢的一步」")
-    with pytest.raises(ValueError, match="图上文字来源"):
+    with pytest.raises(ValueError, match="原文里找不到"):
         BT.run(bad, tmp_path / "bad", gen_fn=_gen, do_review=False, base_path=tmp_path, log=lambda *a: None)
     assert not (tmp_path / "bad").exists()   # 拦在任何落盘之前
     good = _v2_plan(tmp_path, "从 21 天到 9 天")
     BT.run(good, tmp_path / "good", gen_fn=_gen, do_review=False, base_path=tmp_path, log=lambda *a: None)
     card = (tmp_path / "good" / PC.CARD_NAME).read_text(encoding="utf-8")
     assert card.startswith("# 计划卡") and "提速三步" in card
+
+
+def test_plan_check_itself_rejects_fabricated_text(tmp_path):
+    from stylebook import plan as PL
+    errs, _ = PL.check(_v2_plan(tmp_path, "交付缩短了 57%"), base_path=tmp_path)
+    assert any("57" in e and "原文里找不到" in e for e in errs)
+    errs, _ = PL.check(_v2_plan(tmp_path, "从 21 天到 9 天"), base_path=tmp_path)
+    assert errs == []
+
+
+def test_sb_plan_writes_plan_card_beside_the_plan(tmp_path):
+    import json
+    import subprocess
+    plan = _v2_plan(tmp_path, "从 21 天到 9 天")
+    plan["source"]["path"] = str(tmp_path / "article.md")
+    (tmp_path / "drucker.json").write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+    r = subprocess.run([sys.executable, str(ROOT / "scripts/sb.py"), "plan", str(tmp_path / "drucker.json")],
+                       capture_output=True, text=True, env={**__import__("os").environ, "SANSHENG_IMAGE_PROFILE": str(tmp_path / "none")})
+    assert r.returncode == 0, r.stderr
+    card = (tmp_path / "drucker.plan-card.md").read_text(encoding="utf-8")
+    assert card.startswith("# 计划卡") and "未记录" in card

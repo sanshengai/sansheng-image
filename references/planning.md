@@ -1,6 +1,6 @@
 # 配图计划（自动模式）
 
-用户给一篇文章（或课件、讲稿）要配图时，即使只指定其中一张，也按本文对照完整原文做 `plan.json`（单张可只含一项），用 `sb.py plan` 检查。新文章计划使用 v3，逐项保存全文核心内容的画／不画决定；旧 v1/v2 仍可读取。已有明确授权或位置指定时直接执行；需要用户决定的高影响内容选择才确认。
+用户给一篇文章（或课件、讲稿）要配图时，即使只指定其中一张，也按本文对照完整原文做 `plan.json`（单张可只含一项），用 `sb.py plan` 检查。新文章计划使用 v3，逐项保存全文核心内容的画／不画决定；旧 v1/v2 仍可读取。确认规则与 [SKILL.md](../SKILL.md) 第 2 步一致：默认把计划卡发给用户确认一次；用户说「直接出」或由自动流程调用时跳过，计划里写 `confirmed: skipped`。两种情况 `sb.py plan` 都会把计划卡存成 `<计划名>.plan-card.md`。
 
 改写自 baoyu-skills baoyu-article-illustrator 的位置判定与大纲要求（MIT），改掉了它的四点：推荐时连风格一起换、关键词表粗糙、每次强制确认、没有作者记忆。
 
@@ -119,7 +119,7 @@ python3 scripts/sb.py style-for <场景> [--explicit C31] [--project 项目锁�
 - 精确叠字图若在 `subject` 或 `relations` 指定无字底图，可另填 `final_subject` / `final_relations` 描述排字后的成品；生成仍使用底图描述，成品 QA 使用最终描述，并继续检查原文 `points` 与逐字文字。两项不填时沿用原描述。
 
 ```bash
-python3 scripts/sb.py plan plan.json                     # 检查 + 打印确认表
+python3 scripts/sb.py plan plan.json                     # 检查 + 打印确认表，并存成 plan.plan-card.md
 python3 scripts/sb.py plan plan.json --manifests 清单目录  # 通过后生成每张图的编译清单（已预编译一遍）
 python3 scripts/sb.py plan-review plan.json --article 原文.md  # 独立复核；必配漏项计入有效合理率
 ```
@@ -130,7 +130,7 @@ python3 scripts/sb.py plan-review plan.json --article 原文.md  # 独立复核�
 
 ## 第 6 步：确认一次，一口气做完
 
-把确认表发给用户，一次确认。确认后逐张 `generate` → `qa` 验收 → 不合格单张返修（最多 2 次）。由其他工具全自动调用时（如写作技能的自动流程），可以先出图、事后给表。
+把确认表发给用户，一次确认，确认后在计划里写 `confirmed: user`。确认后逐张 `generate` → `qa` 验收 → 不合格单张返修（最多 2 次）。用户说「直接出」或由其他工具全自动调用时（如写作技能的自动流程），写 `confirmed: skipped` 直接出图，计划卡照样落盘、事后给表。`plan` 检查会拦下原文里找不到的数字、引语、英文专名，以及「一张图看懂」这类引导语。
 
 ## 记住用户的改动
 

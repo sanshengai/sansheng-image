@@ -82,20 +82,6 @@ def fixes_from(problems: list[str]) -> list[str]:
     return list(dict.fromkeys(out))
 
 
-def _source_text(plan: dict, base_path: Path | None) -> str | None:
-    """v2/v3 计划的原文（PL.check 已核过 sha256）；没有原文返回 None。"""
-    src = plan.get("source") if isinstance(plan.get("source"), dict) else None
-    if not src or not src.get("path"):
-        return None
-    path = Path(src["path"])
-    if not path.is_absolute():
-        path = (base_path or Path.cwd()) / path
-    try:
-        return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return None
-
-
 def _fp(m: dict) -> str:
     return hashlib.sha256(json.dumps(m, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:16]
 
@@ -124,10 +110,6 @@ def run(plan: dict, out_dir: Path, *, provider: str | None = None, model: str | 
         raise ValueError("计划不合格：" + "；".join(errs))
     if not plan["items"]:
         raise ValueError("本篇计划不需要新增图片，无需运行 batch")
-    text_errs = [e for i, it in enumerate(plan["items"], 1)
-                 for e in PC.check_items(it.get("text") or {}, _source_text(plan, base_path), f"第 {i} 张（{it.get('id', '?')}）")]
-    if text_errs:
-        raise ValueError("图上文字来源不合格：" + "；".join(text_errs))
     if gen_fn is None:
         gen_fn = B.generate
         provider, model = B.choose(provider, model, need_refs=True)

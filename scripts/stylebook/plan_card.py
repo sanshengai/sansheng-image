@@ -84,7 +84,8 @@ CONFIRMED = {"pending": "待确认", "user": "用户已确认", "skipped": "已�
              None: "未记录（计划里没写 confirmed）"}
 
 
-def write(dest_dir: Path, body: str, *, warns: list[str] | None = None, confirmed: str | None = "pending") -> Path:
+def write(dest_dir: Path, body: str, *, warns: list[str] | None = None, confirmed: str | None = "pending",
+          name: str = CARD_NAME) -> Path:
     """计划卡落盘。confirmed：pending（等用户确认）/ user（用户确认过）/ skipped（用户说直接出或自动流程调用）。"""
     zh = CONFIRMED
     if confirmed not in zh:
@@ -92,7 +93,7 @@ def write(dest_dir: Path, body: str, *, warns: list[str] | None = None, confirme
     lines = ["# 计划卡", "", f"确认状态：{zh[confirmed]}", "", body.rstrip()]
     if warns:
         lines += ["", "## 提醒", ""] + [f"- {w}" for w in warns]
-    path = Path(dest_dir) / CARD_NAME
+    path = Path(dest_dir) / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
