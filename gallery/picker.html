@@ -144,6 +144,11 @@ h1, h2, h3, p, dl, dd { margin: 0; }
 .lib-status { margin-top: 18px; font-size: 14px; color: var(--mut); min-height: 1.75em; }
 .lib-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 20px; }
 .lib-grid .style-card .sc-name { font-size: 16px; margin-top: 8px; }
+/* 瀑布流：网格按 4px 细行排，每张卡片按自身高度跨若干行（脚本算），阅读顺序仍从左到右；样图保持原比例 */
+.lib-grid { grid-auto-rows: 4px; row-gap: 0 !important; align-items: start; }
+.lib-grid > li[hidden] { display: none; }
+.lib-grid .style-card { width: 100%; }
+.lib-grid .style-card .thumb { aspect-ratio: var(--r, 1); }
 .load-fail { margin-top: 24px; color: var(--strong); }
 
 /* 页脚 */
@@ -1543,8 +1548,42 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     if (typeof site.releases === 'string' && /^https:\/\/github\.com\//.test(site.releases)) $('#releases-link').href = site.releases;
   }
 
+  /* 画风库卡片用真实场景样图：「全部」时相邻卡片轮换不同用途，选了场景就换成该场景的样图；同题沙发猫只作最后兜底 */
+  var CARD_ROTATE = ['xhs', 'wxi', 'au', 'cv', 'inf', 'ppt', 'cm', 'sb', 'wxt', 'cx'];
+  function cardKey(st, sceneId) {
+    if (sceneId && sceneById[sceneId]) return sampleKindFor(st.id, sceneId);
+    var n = styles.indexOf(st), m = CARD_ROTATE.length;
+    for (var i = 0; i < m; i++) { var k = CARD_ROTATE[(n + i) % m]; if (hasImg(st, k)) return k; }
+    return imgKey(st);
+  }
+  function cardRatio(key) { return Number(ratios[baseKind(key)] || ratios[key]) || 1; }
+  var MASONRY_ROW = 4;
+  function layoutMasonry() {
+    var grid = $('#lib-grid');
+    if (!grid) return;
+    var gap = window.innerWidth <= 640 ? 22 : 32;    // 卡片之间的竖向间距，与横向网格节奏一致
+    grid.querySelectorAll(':scope > li:not([hidden])').forEach(function (li) {
+      var hgt = li.firstElementChild ? li.firstElementChild.getBoundingClientRect().height : 0;
+      li.style.gridRowEnd = 'span ' + Math.max(1, Math.ceil((hgt + gap) / MASONRY_ROW));
+    });
+  }
+  var masonryRaf = 0;
+  function scheduleMasonry() {
+    if (masonryRaf) return;
+    masonryRaf = raf(function () { masonryRaf = 0; layoutMasonry(); }) || 1;
+  }
+  window.addEventListener('resize', scheduleMasonry);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleMasonry);
+  function setCardImage(card, st, sceneId) {
+    var key = cardKey(st, sceneId), im = card._img;
+    if (card._key === key) return;
+    card._key = key;
+    card._thumb.style.setProperty('--r', cardRatio(key));
+    var src = imgPath(st, key);
+    if (im.getAttribute('src')) { im.classList.remove('is-in', 'broken'); im.src = src; } else im.dataset.src = src;
+  }
   function styleCard(st, opts) {
-    var key = imgKey(st);
+    var key = opts && opts.lib ? cardKey(st, '') : imgKey(st);
     var thumbKids = [lazyImg(imgPath(st, key), st.name + '（' + st.id + '）的样图')];
     var defTag = null, mineTag = null;
     if (opts && opts.tags) {
@@ -1553,6 +1592,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       thumbKids.push(defTag, mineTag);
     }
     var thumb = h('span', { class: 'thumb' }, thumbKids);
+    if (opts && opts.lib) thumb.style.setProperty('--r', cardRatio(key));
     var text = h('span', { class: 'sc-text' }, [
       h('span', { class: 'sc-id', text: st.id }),
       h('span', { class: 'sc-name', text: st.name })
@@ -1561,6 +1601,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     var btn = h('button', { class: 'style-card', type: 'button', 'aria-haspopup': 'dialog' }, [thumb, text]);
     btn.addEventListener('click', function () { openDetail(st, btn); });
     btn._def = defTag; btn._mine = mineTag;
+    btn._img = thumbKids[0]; btn._thumb = thumb; btn._key = key;
     return btn;
   }
 
@@ -1588,7 +1629,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     });
 
     styles.forEach(function (st) {
-      var card = styleCard(st, { tags: true });
+      var card = styleCard(st, { tags: true, lib: true });
       cardsById[st.id] = card;
       grid.appendChild(h('li', { 'data-style': st.id }, [card]));
     });
@@ -1746,14 +1787,18 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       sc.pool.forEach(function (id, i) { order[id] = i + 1; });
       if (order[sc.default] != null) order[sc.default] = 0;
     }
-    var shown = 0;
-    document.querySelectorAll('#lib-grid > li').forEach(function (li, i) {
-      var id = li.dataset.style;
-      var vis = (!sc || order[id] != null) && matchQuery(styleById[id]) && matchTax(styleById[id]);
+    var shown = 0, gridEl = $('#lib-grid');
+    var lis = styles.map(function (st) { return gridEl.querySelector('li[data-style="' + st.id + '"]'); }).filter(Boolean);
+    if (sc) lis = lis.map(function (li, i) { return [li, order[li.dataset.style] != null ? order[li.dataset.style] : 999, i]; })
+      .sort(function (a, b) { return a[1] - b[1] || a[2] - b[2]; }).map(function (x) { return x[0]; });
+    lis.forEach(function (li) {
+      var id = li.dataset.style, st = styleById[id];
+      var vis = (!sc || order[id] != null) && matchQuery(st) && matchTax(st);
       li.hidden = !vis;
-      li.style.order = sc ? (order[id] != null ? order[id] : 999) : i;
-      if (vis) shown++;
+      if (vis) { shown++; if (cardsById[id]) setCardImage(cardsById[id], st, sc ? sc.id : ''); }
+      if (gridEl.lastElementChild !== li) gridEl.appendChild(li);
     });
+    layoutMasonry();
     document.querySelectorAll('#lib-scenes .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scene === libState.scene ? 'true' : 'false'); });
     document.querySelectorAll('.scene-card').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scene === libState.scene ? 'true' : 'false'); });
     document.querySelectorAll('#lib-palettes .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.pal === libState.palette ? 'true' : 'false'); });

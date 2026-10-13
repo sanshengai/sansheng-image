@@ -1423,3 +1423,47 @@ def test_hero_prefers_registered_hd_and_hd_stays_out_of_library(tmp_path, monkey
     assert BD._hero_hd("C99", cp, "cv") == cp.parent / "samples" / "cv-hd.webp"
     assert BD._hero_hd("C99", cp, "au") is None, "只认同种类的高清版"
     assert set(BD._sample_files("C99", cp)) == {"cv"}, "cv-hd 不能成为画风库样图种类"
+
+
+CARD_STATE = """() => [...document.querySelectorAll('#lib-grid > li:not([hidden])')].map(li => {
+  const im = li.querySelector('.thumb img'), r = li.getBoundingClientRect();
+  return {id: li.dataset.style, src: (im.getAttribute('src') || im.dataset.src || ''), l: r.left, t: r.top, rgt: r.right, b: r.bottom};
+})"""
+
+
+def _card_kind(src: str, sid: str) -> str:
+    return src.rsplit("/", 1)[1].split("?")[0][len(sid) + 1:-len(".webp")]
+
+
+@pytest.mark.parametrize("size", [(1440, 900), (390, 844)], ids=["desktop", "phone"])
+def test_library_cards_use_real_scene_images_in_a_masonry(browser, built, size):
+    """画风库卡片：全部视图用真实场景样图（不拿同题沙发猫当默认图），选了场景就换成该场景的样图；瀑布流不重叠、从左到右读。"""
+    d, html = built
+    meta = _data(html)
+    cands = {c["id"]: c for c in meta["cands"]}
+    same = {"s1", "s2", "s3"}
+    with open_page(browser, d, *size) as page:
+        _open(page)
+        cards = page.evaluate(CARD_STATE)
+        assert len(cards) == len(cands)
+        for c in cards:
+            k = _card_kind(c["src"], c["id"])
+            assert k in cands[c["id"]]["imgs"], c
+            assert k not in same or not (set(cands[c["id"]]["imgs"]) - same - {"anchor", "bd"}), ("用了同题图作默认", c)
+        kinds = [_card_kind(c["src"], c["id"]) for c in cards]
+        assert len(set(kinds)) >= 4, "全部视图里相邻卡片应轮换不同用途"
+        # 瀑布流：互不重叠；第一行从左到右就是前几种画风
+        for i, a in enumerate(cards):
+            for b in cards[i + 1:]:
+                assert not (a["l"] < b["rgt"] - 1 and b["l"] < a["rgt"] - 1 and a["t"] < b["b"] - 1 and b["t"] < a["b"] - 1), (a["id"], b["id"])
+        cols = 4 if size[0] > 900 else 2
+        first_row = sorted(cards[:cols], key=lambda c: c["l"])
+        assert [c["id"] for c in first_row] == [c["id"] for c in cards[:cols]] and len({round(c["t"]) for c in first_row}) == 1
+        for scene in meta["scenes"]:
+            page.click(f'#lib-scenes .chip[data-scene="{scene["id"]}"]')
+            group = scene["sample"].split("-")[0]
+            for c in page.evaluate(CARD_STATE):
+                k = _card_kind(c["src"], c["id"])
+                assert k in cands[c["id"]]["imgs"], (scene["id"], c)
+                if any(i.split("-")[0] == group for i in cands[c["id"]]["imgs"]):
+                    assert k.split("-")[0] == group, (scene["id"], c["id"], k)
