@@ -1167,28 +1167,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   var CW = 0, CH = 0, DPR = 1, VW = 0, VH = 0;
   var stars = [], shoot = null, nextShoot = 0;
   var clock = 0, lastNow = 0, loopOn = false, rafId = 0, frameNo = 0, staticQueued = false;
-  var acv = document.createElement('canvas'), actx = context2d(acv);
-  var aspr = document.createElement('canvas');
-  aspr.width = 4; aspr.height = 160;
-  (function () {
-    var g = context2d(aspr);
-    if (!g) return;
-    var gr = g.createLinearGradient(0, 160, 0, 0);
-    gr.addColorStop(0, 'rgba(70,224,160,0)');
-    gr.addColorStop(.1, 'rgba(70,224,160,.5)');
-    gr.addColorStop(.42, 'rgba(84,214,206,.26)');
-    gr.addColorStop(.75, 'rgba(142,150,235,.1)');
-    gr.addColorStop(1, 'rgba(168,132,230,0)');
-    g.fillStyle = gr; g.fillRect(0, 0, 4, 160);
-  })();
-  var bands = [
-    { base: .30, a1: .05, f1: 5, s1: .21, p1: .4, a2: .025, f2: 11, s2: .15, p2: 1.7, h: .34, f3: 7, s3: .30, p3: 2.0, f4: 9, s4: .20, p4: .8, al: .16 },
-    { base: .36, a1: .04, f1: 7, s1: -.17, p1: 2.1, a2: .03, f2: 13, s2: .12, p2: .3, h: .28, f3: 9, s3: .26, p3: .6, f4: 6, s4: .15, p4: 2.4, al: .12 },
-    { base: .26, a1: .06, f1: 4, s1: .13, p1: 3.3, a2: .02, f2: 9, s2: .18, p2: 2.8, h: .30, f3: 6, s3: .22, p3: 1.2, f4: 11, s4: .25, p4: 1.5, al: .10 }
-  ];
-
-  /* 首屏点缀：流星（meteor）或极光（aurora）二选一；预览期用 ?fx= 切换，定稿后只留一种 */
-  var FX = (function () { try { return new URLSearchParams(location.search).get('fx') === 'aurora' ? 'aurora' : 'meteor'; } catch (e) { return 'meteor'; } })();
+  /* 首屏点缀：星点 + 流星（2026-10-13 定稿流星，极光已删） */
   var shoots = [];
   function initStars() {
     var n = Math.round((VW * VH) / 26000);
@@ -1206,33 +1185,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     shoots.push({ x: rand(.05, .75) * CW, y: rand(0, .35) * CH, len: 0, max: rand(240, 460) * DPR, sp: rand(14, 24) * DPR, w: rand(1.6, 2.8) });
   }
 
-  function drawAurora(env, ts) {
-    if (!sctx || !actx) return;
-    var aw = acv.width, ah = acv.height;
-    actx.clearRect(0, 0, aw, ah);
-    for (var k = 0; k < bands.length; k++) {
-      var b = bands[k];
-      for (var x = 0; x < aw; x += 2) {
-        var u = x / aw;
-        var cy = ah * (b.base + b.a1 * Math.sin(u * b.f1 + ts * b.s1 + b.p1) + b.a2 * Math.sin(u * b.f2 - ts * b.s2 + b.p2));
-        var len = ah * b.h * (.72 + .28 * Math.sin(u * b.f3 + ts * b.s3 + b.p3));
-        actx.globalAlpha = env * b.al * 2.3 * (.45 + .55 * (.5 + .5 * Math.sin(u * b.f4 - ts * b.s4 + b.p4)));
-        actx.drawImage(aspr, 0, 0, 4, 160, x, cy - len, 2, len);
-      }
-    }
-    actx.globalAlpha = 1;
-    sctx.drawImage(acv, 0, 0, CW, CH);
-  }
-
   function render(t, dt, still) {
-    if (!sctx) { updateFloats(t, dt, 0, still); return; }
+    if (!sctx) { updateFloats(t, dt, still); return; }
     sctx.clearRect(0, 0, CW, CH);
-    var env = 0, i;
-    if (!still && FX === 'aurora') {
-      var ph = (t + 14) % 20;                       // 20 秒一轮，其中 13 秒出现，首次约在第 6 秒
-      env = ph < 13 ? Math.pow(Math.sin(Math.PI * ph / 13), 2) : 0;
-      if (env > .003) drawAurora(env, t);
-    }
+    var i;
     for (i = 0; i < stars.length; i++) {
       var s = stars[i];
       var f = still ? .5 : .5 + .5 * Math.sin(s.ph + t * s.sp);
@@ -1241,7 +1197,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, 6.2832); sctx.fill();
     }
     sctx.globalAlpha = 1;
-    if (!still && FX === 'meteor') {
+    if (!still) {
       if (t >= nextShoot) {                         // 5–10 秒一颗，约四分之一概率紧跟一颗成对划过
         spawnShoot();
         if (Math.random() < .25) setTimeout(spawnShoot, rand(250, 700));
@@ -1262,7 +1218,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         return fade > 0;
       });
     }
-    updateFloats(t, dt, env, still);
+    updateFloats(t, dt, still);
   }
 
   function frame(now) {
@@ -1385,7 +1341,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       }, { timeout: 2000 });
     })();
   }
-  function updateFloats(t, dt, auroraEnv, still) {
+  function updateFloats(t, dt, still) {
     if (!floats.length) return;
     var sy = still ? 0 : window.scrollY;
     var tb = titleBox;
@@ -1404,7 +1360,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         var pq = clamp(Math.sqrt(dx * dx + dy * dy) / 80, 0, 1);
         prot = Math.min(prot, pq * pq * (3 - 2 * pq));
       }
-      var op = f.loaded ? Math.min(1, f.base * (1 + .5 * auroraEnv)) * (f.fl + (1 - f.fl) * prot) * f.vis : 0;
+      var op = f.loaded ? f.base * (f.fl + (1 - f.fl) * prot) * f.vis : 0;
       if (Math.abs(op - f.lastOp) > .004) { f.el.style.opacity = op.toFixed(3); f.lastOp = op; }
     }
   }
@@ -1413,7 +1369,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     VW = heroEl.clientWidth || window.innerWidth; VH = heroEl.clientHeight || window.innerHeight;
     DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     CW = sky.width = Math.round(VW * DPR); CH = sky.height = Math.round(VH * DPR);
-    acv.width = Math.max(2, Math.ceil(VW / 4)); acv.height = Math.max(2, Math.ceil(VH / 4));
     initStars(); shoot = null;
     measureTitle();
     redrawStill();
