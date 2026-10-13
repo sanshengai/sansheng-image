@@ -131,3 +131,36 @@ def test_anchor_enabled_requires_boolean():
     assert C.validate(k) == []
     k["anchor"]["enabled"] = "false"
     assert C.validate(k)
+
+
+def test_text_role_and_layout_declarations_are_cross_checked():
+    k = copy.deepcopy(GOOD)
+    k["recipe"].update(required_text_roles=["title", "ghost"], optional_text_roles=["tag"],
+                       role_styles={"ghost": "A faint all-caps English line behind the headline."},
+                       layout={"text_zone": "left", "hero_zone": "right"}, text_mode=["native", "none"])
+    assert C.validate(k) == []
+    bad = copy.deepcopy(k)
+    bad["recipe"]["optional_text_roles"] = ["ghost"]
+    assert any("不能同时是必需和可选" in p for p in C.validate(bad))
+    bad = copy.deepcopy(k)
+    bad["recipe"]["role_styles"]["nothing"] = "A style for a role nobody declared at all."
+    assert any("没有在 required_text_roles" in p for p in C.validate(bad))
+    bad = copy.deepcopy(k)
+    bad["recipe"]["text_mode"] = ["none"]
+    assert any("required_text_roles 需要" in p for p in C.validate(bad))
+    bad = copy.deepcopy(k)
+    bad["recipe"]["layout"]["hero_zone"] = "left"
+    assert any("不能在同一侧" in p for p in C.validate(bad))
+    bad = copy.deepcopy(k)
+    bad["recipe"]["layout"]["unknown"] = True
+    assert C.validate(bad)  # 未声明的版式字段被 Schema 拒绝
+
+
+def test_shipped_text_bearing_contracts_declare_their_text_roles():
+    """合同要求画面里出现的文字必须声明成角色，配方正文不得自带只有 text.items 才能提供的文字。"""
+    for code, role in (("C77", "ghost"), ("C90", "brand"), ("C90", "tag"), ("C76", "issue"), ("C81", "note")):
+        r = C.load(code)["recipe"]
+        assert role in (r.get("required_text_roles", []) + r.get("optional_text_roles", [])), (code, role)
+        assert role in r.get("role_styles", {}), (code, role)
+    for code in ("C77", "C90"):
+        assert C.load(code)["recipe"]["layout"] == {"text_zone": "left", "hero_zone": "right"}

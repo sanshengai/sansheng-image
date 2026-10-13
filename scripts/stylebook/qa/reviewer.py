@@ -2,10 +2,15 @@
 
 SANSHENG_IMAGE_QA_BACKEND 可显式选择既有适配器；不会自动回退。
 本项目执行仅用 ark_coding_plan，旧 Claude/Agent Plan 保留历史兼容。
+
+看图是概率性的，所以 review() 对每张图做 N 次独立采样（SANSHENG_IMAGE_QA_SAMPLES，默认 3，最小 1），
+再由 stylebook.qa.aggregate_reviews 逐项「任一次判失败即失败」聚合；各次原始结果和分歧项都进报告。
+单次结论的完整性检查沿用原规则：任何一次采样不完整就停下并保留原回答，不自动重试、不丢弃该次。
 """
 from __future__ import annotations
 
 import base64
+import inspect
 import json
 import mimetypes
 import os
@@ -17,9 +22,13 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from . import active_items, missing_items, review_prompt, review_schema
+from . import active_items, aggregate_reviews, missing_items, review_prompt, review_schema
 
+# 仅 claude_cli 后端使用的模型名（SANSHENG_IMAGE_QA_MODEL 只影响它）。默认后端 ark_coding_plan 的模型固定为
+# coding_plan.MODEL，ark_agent_plan 固定为 ARK_MODEL；实际生效的型号请用 default_model()，不要读这个常量。
 DEFAULT_MODEL = os.environ.get("SANSHENG_IMAGE_QA_MODEL", "claude-sonnet-5")
+DEFAULT_SAMPLES = 3
+DEFAULT_SAMPLE_TEMPERATURE = 0.3
 ARK_MODEL = "doubao-seed-2.1-turbo"
 ARK_PLAN_URL = "https://ark.cn-beijing.volces.com/api/plan/v3"
 INDEPENDENT_SOURCES = frozenset({"claude_cli", "ark_agent_plan", "ark_coding_plan"})
@@ -81,6 +90,13 @@ def _bind_clause_ids(data: dict | None, contract: dict, text_mode: str) -> tuple
     return bound, errors
 
 
+def _strict_gaps(data: dict | None, contract: dict, text_mode: str) -> list[str]:
+    """新采样必须满足聚合口径（内容分项、失败子句）：先按 schema 2 标记再查缺项。"""
+    if data is None:
+        return missing_items(data, contract, text_mode)
+    return missing_items({**data, "_review_schema": 2}, contract, text_mode)
+
+
 def _quota_hit(text: str) -> bool:
     return bool(re.search(r'"api_error_status"\s*:\s*429|usage limit|rate[_ ]limit', text or "", re.I))
 
@@ -128,6 +144,34 @@ def source() -> str:
     if backend not in INDEPENDENT_SOURCES:
         raise ValueError(f"未知看图后端：{backend}")
     return backend
+
+
+def default_model() -> str:
+    """当前后端实际使用的看图模型（DEFAULT_MODEL 只对 claude_cli 生效）。"""
+    backend = source()
+    if backend == "ark_coding_plan":
+        from .coding_plan import MODEL
+        return MODEL
+    return ARK_MODEL if backend == "ark_agent_plan" else DEFAULT_MODEL
+
+
+def samples_requested() -> int:
+    """每张图的独立采样次数：SANSHENG_IMAGE_QA_SAMPLES，默认 3，最小 1；写错直接报错，不悄悄用默认值。"""
+    raw = os.environ.get("SANSHENG_IMAGE_QA_SAMPLES", "").strip()
+    if not raw:
+        return DEFAULT_SAMPLES
+    try:
+        return max(1, int(raw))
+    except ValueError as exc:
+        raise ValueError(f"SANSHENG_IMAGE_QA_SAMPLES 须为整数：{raw!r}") from exc
+
+
+def _sample_temperature(samples: int) -> float | None:
+    """多次采样才需要一点随机性，否则 N 次近似同一次；只有 coding_plan.request 支持 temperature 时才传。"""
+    if samples <= 1:
+        return None
+    raw = os.environ.get("SANSHENG_IMAGE_QA_TEMPERATURE", "").strip()
+    return float(raw) if raw else DEFAULT_SAMPLE_TEMPERATURE
 
 
 def _ark_text(response: dict) -> str:
@@ -198,7 +242,7 @@ def _review_ark(image: Path, contract: dict, expected_text: list[str] | None, te
         data = _extract(answer)
         if data and isinstance(data.get("must_see"), list):
             data["_reviewer"] = returned + " via Ark Agent Plan"
-            miss = missing_items(data, contract, text_mode)
+            miss = _strict_gaps(data, contract, text_mode)
             if not miss:
                 return data
             best, last = data, f"漏答 {len(miss)} 条"
@@ -211,7 +255,27 @@ def _review_ark(image: Path, contract: dict, expected_text: list[str] | None, te
 
 
 def review(image: Path, contract: dict, expected_text: list[str] | None = None, text_mode: str = "none",
-           model: str | None = None, timeout: int = 420, tries: int = 2) -> dict:
+           model: str | None = None, timeout: int = 420, tries: int = 2, samples: int | None = None) -> dict:
+    """对同一张图做 samples 次（默认见 samples_requested）独立看图并聚合；聚合规则见 aggregate_reviews。"""
+    count = max(1, samples) if samples is not None else samples_requested()
+    done: list[dict] = []
+    for _ in range(count):
+        try:
+            data = _review_once(image, contract, expected_text, text_mode, model, timeout, tries, count)
+        except ReviewerIncompleteResult as exc:
+            exc.review["_completed_samples"] = done  # 已完整的采样不丢，但不足以聚合出结论
+            raise
+        gaps = _strict_gaps(data, contract, text_mode)
+        if gaps:  # 旧后端遗留：漏答的结论带着缺项清单原样交给 judge 判缺项
+            data["_incomplete_review"] = gaps
+            data["_completed_samples"] = done
+            return data
+        done.append(data)
+    return aggregate_reviews(done)
+
+
+def _review_once(image: Path, contract: dict, expected_text: list[str] | None, text_mode: str,
+                 model: str | None, timeout: int, tries: int, samples: int = 1) -> dict:
     if source() == "ark_coding_plan":
         from .coding_plan import request
         content = [{"type": "text", "text": review_prompt(contract, expected_text, text_mode, clause_ids=True)},
@@ -222,9 +286,17 @@ def review(image: Path, contract: dict, expected_text: list[str] | None = None, 
             if contract.get(key):
                 content.extend([{"type": "text", "text": label},
                                 {"type": "image_url", "image_url": {"url": _image_uri(Path(contract[key]))}}])
-        answer, response = request(content, model=model, timeout=timeout)
+        extra = {}
+        temperature = _sample_temperature(samples)
+        if temperature is not None:
+            try:
+                if "temperature" in inspect.signature(request).parameters:
+                    extra["temperature"] = temperature
+            except (TypeError, ValueError):
+                pass
+        answer, response = request(content, model=model, timeout=timeout, **extra)
         data, id_errors = _bind_clause_ids(_extract(answer), contract, text_mode)
-        gaps = id_errors + missing_items(data, contract, text_mode)
+        gaps = id_errors + _strict_gaps(data, contract, text_mode)
         if not data or gaps:
             raise ReviewerIncompleteResult(data, response, gaps)
         data["_reviewer"] = f"ark_coding_plan:{response['model']}"
@@ -260,7 +332,7 @@ def review(image: Path, contract: dict, expected_text: list[str] | None = None, 
             data = _extract(cp.stdout)
             if data and isinstance(data.get("must_see"), list):
                 data["_reviewer"] = model or DEFAULT_MODEL
-                miss = missing_items(data, contract, text_mode)
+                miss = _strict_gaps(data, contract, text_mode)
                 if not miss:
                     return data
                 best, last = data, f"漏答 {len(miss)} 条"

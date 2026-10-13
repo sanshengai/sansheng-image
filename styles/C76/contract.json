@@ -1,6 +1,6 @@
 {
   "code": "C76",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "杂志编辑封面",
     "en": "Editorial Magazine Cover"
@@ -26,7 +26,17 @@
     "克制的低饱和色加一个点缀色"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): Editorial magazine cover layout: a large confident serif display headline as the hero element taking a large share of the frame, thin rules and a keyline frame, small issue-number style labels, one restrained subject integrated with the typography, strict grid and clear hierarchy, sophisticated muted palette with one accent colour, matte print feel.",
+    "positive": "Visual style (follow exactly): Editorial magazine cover layout: a large share of the frame reserved for a confident serif display headline as the hero element, thin rules and a keyline frame, one restrained subject integrated with the typography, strict grid and clear hierarchy, sophisticated muted palette with one accent colour, matte print feel.",
+    "required_text_roles": [
+      "title"
+    ],
+    "optional_text_roles": [
+      "issue"
+    ],
+    "role_styles": {
+      "title": "The headline is a large confident serif display set as the hero element, taking a large share of the frame.",
+      "issue": "The issue label is a small issue-number style label placed on the grid beside a thin rule, made of exactly the given characters."
+    },
     "text_mode": [
       "native",
       "none"
@@ -38,13 +48,17 @@
   "qa": {
     "must_see": [
       "衬线大标题是画面主角",
-      "细线框、编号式小标签、清晰网格",
+      "细线框与清晰网格",
       "克制的低饱和色加一个点缀色"
     ],
     "must_not_see": [
       "卡通插画感或杂乱装饰",
       "标题只是叠在图上的小字",
       "未请求的文字或水印"
+    ],
+    "when_text": [
+      "衬线大标题是画面主角",
+      "标题只是叠在图上的小字"
     ]
   },
   "evidence": {
@@ -63,6 +77,11 @@
       "revision": 2,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-10-13",
+      "note": "文字声明化：标题为 required_text_roles，编号式小标签改为可选角色 issue（给了才画，进入逐字文字清单）；配方正文不再自带文字，无字档不检查带字验收项。"
     }
   ],
   "inspiration": {

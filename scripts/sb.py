@@ -26,7 +26,7 @@
   style-for <场景> [--explicit C31]      按「本次指定 > 项目锁定 > 偏好 > 作者档案 > 出厂默认」定样式
   selection <recommend|normalize|apply|impact>  统一选择记录、局部修改与受影响图片
   preferences <show|set|clear|record|undo|forget|pause|resume|export|import>  管理本地偏好
-  plan-review <计划.json> --article 原文  独立复核配图计划是否合理（逐张给结论）
+  plan-review <计划.json> --article 原文 [--backend ...]  独立复核配图计划是否合理（逐张给结论）
   export <图> --format 格式 -o 输出       裁到格式比例并缩放到平台像素（公众号头条等另存方形裁切）
   sticker-split <透明宫格.png> --grid 3 -d 目录  检查格线并切出 2×2 至 4×4 独立透明 PNG
   sticker-check <目录> [--count 9]          检查逐张导出的透明表情包
@@ -124,7 +124,9 @@ def cmd_inbox(a) -> int:
 
 def cmd_qa(a) -> int:
     from stylebook import contract as CT
+    from stylebook.backends.base import load_dotenv
     from stylebook.qa import judge, write_report
+    load_dotenv()  # 看图后端的密钥只写在 ~/.config/sansheng-image/.env 时也要读到
     if a.contract:
         contract_path = Path(a.contract)
         c = json.loads(contract_path.read_text(encoding="utf-8"))
@@ -486,6 +488,39 @@ def cmd_preferences(a) -> int:
     return 0
 
 
+def _plan_review_call(PR, plan: dict, a):
+    """调用独立复核；失败时给出可操作的指引并返回非零退出码（2 = 复核没能完成），不出 traceback。"""
+    import os
+    from stylebook.backends.base import load_dotenv
+    from stylebook.qa.reviewer import QuotaExhausted, ReviewerAuthUnavailable, ReviewerNetworkUnavailable
+    added = None
+    try:
+        before = set(os.environ)
+        load_dotenv()  # 让 ~/.config/sansheng-image/.env 里的复核后端密钥生效
+        added = set(os.environ) - before
+        backend = getattr(a, "backend", None)
+        return PR.review(plan, Path(a.article), a.model, **({"backend": backend} if backend else {}))
+    except (QuotaExhausted, ReviewerAuthUnavailable, ReviewerNetworkUnavailable) as e:
+        print(f"配图计划复核没能完成：{e}", file=sys.stderr)
+        if isinstance(e, ReviewerAuthUnavailable):
+            print(PR.backend_guidance(), file=sys.stderr)
+        else:
+            print("额度、限流或网络问题通常稍后重试即可；急用可用 --backend 换一个复核后端（对照见 references/backends.md「独立复核后端」）。", file=sys.stderr)
+        return 2
+    except PR.PlanReviewIncomplete as e:
+        print(f"配图计划复核没能完成：{e}", file=sys.stderr)
+        if a.report:
+            Path(a.report).write_text(json.dumps(e.to_report(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print(f"原始回答与逐条缺口已写入 {a.report}", file=sys.stderr)
+        return 2
+    except (ValueError, RuntimeError) as e:  # 未知后端、预算设置不合法、截断、服务端 HTTP 错误等
+        print(f"配图计划复核没能完成：{e}", file=sys.stderr)
+        return 2
+    finally:
+        for key in added or ():
+            os.environ.pop(key, None)
+
+
 def cmd_plan_review(a) -> int:
     from stylebook.qa import plan_review as PR
     from stylebook import plan as PL
@@ -503,7 +538,9 @@ def cmd_plan_review(a) -> int:
     binding_files = {"article": Path(a.article), "plan": Path(a.plan)}
     binding_values = {"plan": plan}
     binding = snapshot("article-plan", files=binding_files, values=binding_values)
-    r = PR.review(plan, Path(a.article), a.model)
+    r = _plan_review_call(PR, plan, a)
+    if isinstance(r, int):
+        return r
     verify(binding, kind="article-plan", files=binding_files, values=binding_values)
     r["binding"] = binding
     if a.report:
@@ -804,7 +841,10 @@ def main(argv=None) -> int:
     p.add_argument("--note"); p.add_argument("--event-id"); p.add_argument("--file"); p.add_argument("--force", action="store_true")
     p.add_argument("--replace-conflicts", action="store_true"); p.set_defaults(fn=cmd_preferences)
     p = sub.add_parser("plan-review"); p.add_argument("plan"); p.add_argument("--article", required=True)
-    p.add_argument("--model"); p.add_argument("--report"); p.set_defaults(fn=cmd_plan_review)
+    p.add_argument("--model"); p.add_argument("--report")
+    p.add_argument("--backend", choices=["ark_coding_plan", "ark_agent_plan", "claude_cli"],
+                   help="复核后端；缺省读 SANSHENG_IMAGE_PLAN_REVIEW_BACKEND，再读 SANSHENG_IMAGE_QA_BACKEND，默认 ark_coding_plan")
+    p.set_defaults(fn=cmd_plan_review)
     p = sub.add_parser("export"); p.add_argument("image"); p.add_argument("--format", required=True); p.add_argument("-o", "--out", required=True)
     p.add_argument("--anchor", help="裁切焦点，相对坐标 x,y（默认 0.5,0.5）"); p.set_defaults(fn=cmd_export)
     p.add_argument("--overlay", help="叠字 JSON：items[].text、box=[x,y,w,h]、font_px、min_px")

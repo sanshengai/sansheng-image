@@ -440,10 +440,11 @@ def test_delivery_receipt_binds_prompt_pixels_and_renderer(tmp_path):
 
 def test_content_error_rejected_even_when_style_and_text_pass(tmp_path):
     p = xhs_plan(1)
-    seen = []
+    seen, seen_points = [], []
 
     def wrong_story(img, contract, expected, mode):
         seen.append(contract.get("_content_expectation"))
+        seen_points.append(contract.get("_content_point_expectations"))
         rv = ok_review(img, contract, expected, mode)
         rv["content_match"] = {"ok": False, "why": "狐狸已站在屋门口，计划要求它遥望远处的灯"}
         return rv
@@ -452,7 +453,9 @@ def test_content_error_rejected_even_when_style_and_text_pass(tmp_path):
     st, gen = run(tmp_path, p, review_fn=wrong_story, retries=0)
     rec = st["items"]["01"]
     assert len(gen.calls) == 1 and seen[0].startswith(p["items"][0]["subject"])
-    assert all(point in seen[0] for point in p["items"][0]["points"])
+    # points 逐条进 point_match，不再并入内容事实总述（避免同一条要点重复计罚）
+    assert seen_points[0] == p["items"][0]["points"]
+    assert not any(point in seen[0] for point in p["items"][0]["points"])
     assert rec["status"] == "failed" and any("内容不符" in x for x in rec["problems"])
     assert not json.loads((tmp_path / "b" / "deliverables.json").read_text())["items"][0]["ready"]
 

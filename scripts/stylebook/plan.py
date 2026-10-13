@@ -36,23 +36,42 @@ SHAPES: dict[str, dict] = {
     "combination": {"zh": "组合", "def": "几样东西组合成一个结果（A + B = C）", "forms": ["structure"], "structures": ["equation"]},
     "data": {"zh": "数据对比", "def": "同一口径的数字（价格、倍数、百分比）的比较或随时间的变化；定性差异不算", "forms": ["structure"], "structures": ["compare", "table", "grid", "timeline"]},  # 随时间变化的数据用时间线
 }
-# 判别要点：计划员（references/planning.md 原文收录）与独立复核员（qa/plan_review.py）用同一份
-PLANNING_RULES = [
-    "值得配图的位置：核心论点、抽象概念、数据对比、流程与操作过程；纯装饰、泛泛的氛围图不配。",
-    "先列出全文 2–5 个核心论点，以及结论或行动建议、最具体的操作过程；每项都要决定配图、已有视觉足够或文字足够，并写出针对该项的理由。不能只画一个例子就把其余核心机制视为已覆盖。",
-    "一节通常只放一张，除非它有两个互不相干的要点。",
-    "图放在一个意思讲完的那段之后：不紧跟总起句，也不紧跟悬念式设问；位置引用原文那一句，写成「……」之后。",
-    "原文已有表格、清单、截图或作者供图时，逐项判断它是否真正回答读者的问题。已有视觉只覆盖字段、界面或局部步骤，不自动覆盖跨步骤关系、易错分叉、判断边界；新图若补出这些信息就保留，完全同义重复才删除。",
-    "段落里有现成的同口径数据时，优先画数据，而不是氛围。比较前核对指标定义、分母、对象和时间范围；完播率与在看率等不同指标不是同口径，即使作者计算了倍数，也不能据此要求同一轴的倍数图或推断效果胜负。可保留明确标示口径差异的原表，或画指标区别；同一群体的独立指标仍可并列展示，但不能画成转化漏斗。",
-    "要点与画面细节都忠于原文：不漏环节、不编数字；原文说「可选」「这次没做」的照写；场景的动作和情绪与原文一致。",
-    "因果链原文没说首尾相接就不画成循环；只说“交易闭环”不足以证明末端会反馈到起点，须从原文另找循环依据。环节多于密度上限时合并相邻环节，不删环节。",
-    "并列类别、分工用组成与网格，不把它们画成上下等级；作者推断不画成官方承认的事实。",
-    "不把文中比喻按字面画出来；不画真实人物（名人、受访者、作者家人）的相似脸，用背影、剪影或标志性实物。",
-    "同一类对比在一篇里用同一种结构。",
-    "标题保留原文核心信息；改写不得改变对象、结论或行动。图中文字与要点保留读者理解机制或完成步骤所必需的条件，不用空泛标签代替具体内容。出图前逐字校对上图文案；画面描述只讲图形与关系，所有要印在图上的文字只列在 text.items。",
-    "数字、费用、能力边界和效果声明须能在原文找到依据；不得把有条件的效果写成绝对保证。读完图应能理解这一段的核心判断，教程图应能知道下一步做什么。",
-    "提交前把核心论点、关键机制、文末结论／行动建议和最具体操作逐项对照：已配图、现有视觉已解决同一阅读问题，或文字足够且图没有增益。遗漏有独立视觉增益的核心机制时补图；不得因张数已满或只见一张示例图就忽略它。",
+# 判别要点：(稳定 key, 原文)。复核提示词按 key 生成编号引用（rule_no），新增/删除/重排规则时引用随之更新或直接报错；
+# 每条规则必须被 plan_review 的至少一个判定项引用（tests/test_plan_review_backends.py 守着）。
+PLANNING_RULE_ITEMS = [
+    ("value", "值得配图的位置：核心论点、抽象概念、数据对比、流程与操作过程；纯装饰、泛泛的氛围图不配。"),
+    ("core_points", "先列出全文 2–5 个核心论点，以及结论或行动建议、最具体的操作过程；每项都要决定配图、已有视觉足够或文字足够，并写出针对该项的理由。不能只画一个例子就把其余核心机制视为已覆盖。"),
+    ("per_section", "一节通常只放一张，除非它有两个互不相干的要点。"),
+    ("placement", "图放在一个意思讲完的那段之后：不紧跟总起句，也不紧跟悬念式设问；位置引用原文那一句，写成「……」之后。"),
+    ("existing_visual", "原文已有表格、清单、截图或作者供图时，逐项判断它是否真正回答读者的问题。已有视觉只覆盖字段、界面或局部步骤，不自动覆盖跨步骤关系、易错分叉、判断边界；新图若补出这些信息就保留，完全同义重复才删除。"),
+    ("data_basis", "段落里有现成的同口径数据时，优先画数据，而不是氛围。比较前核对指标定义、分母、对象和时间范围；完播率与在看率等不同指标不是同口径，即使作者计算了倍数，也不能据此要求同一轴的倍数图或推断效果胜负。可保留明确标示口径差异的原表，或画指标区别；同一群体的独立指标仍可并列展示，但不能画成转化漏斗。"),
+    ("faithful", "要点与画面细节都忠于原文：不漏环节、不编数字；原文说「可选」「这次没做」的照写；场景的动作和情绪与原文一致。"),
+    ("causal_chain", "因果链原文没说首尾相接就不画成循环；只说“交易闭环”不足以证明末端会反馈到起点，须从原文另找循环依据。环节多于密度上限时合并相邻环节，不删环节。"),
+    ("parallel", "并列类别、分工用组成与网格，不把它们画成上下等级；作者推断不画成官方承认的事实。"),
+    ("metaphor_face", "不把文中比喻按字面画出来；不画真实人物（名人、受访者、作者家人）的相似脸，用背影、剪影或标志性实物。"),
+    ("same_structure", "同一类对比在一篇里用同一种结构。"),
+    ("title_text", "标题保留原文核心信息；改写不得改变对象、结论或行动。图中文字与要点保留读者理解机制或完成步骤所必需的条件，不用空泛标签代替具体内容。出图前逐字校对上图文案；画面描述只讲图形与关系，所有要印在图上的文字只列在 text.items。"),
+    ("claims_evidence", "数字、费用、能力边界和效果声明须能在原文找到依据；不得把有条件的效果写成绝对保证。读完图应能理解这一段的核心判断，教程图应能知道下一步做什么。"),
+    ("final_check", "提交前把核心论点、关键机制、文末结论／行动建议和最具体操作逐项对照：已配图、现有视觉已解决同一阅读问题，或文字足够且图没有增益。遗漏有独立视觉增益的核心机制时补图；不得因张数已满或只见一张示例图就忽略它。"),
 ]
+PLANNING_RULES = [text for _key, text in PLANNING_RULE_ITEMS]  # 与 references/planning.md 逐条同序收录
+
+
+def rule_no(*keys: str) -> str:
+    """按稳定 key 取判别要点当前编号（「1、3、4」）；key 不存在就抛 KeyError，不静默错位。"""
+    order = [key for key, _text in PLANNING_RULE_ITEMS]
+    missing = [k for k in keys if k not in order]
+    if missing:
+        raise KeyError(f"判别要点不存在：{missing}")
+    return "、".join(str(n) for n in sorted(order.index(k) + 1 for k in keys))
+
+
+def rule_text(key: str) -> str:
+    for k, text in PLANNING_RULE_ITEMS:
+        if k == key:
+            return text
+    raise KeyError(f"判别要点不存在：{key}")
+
 FORM_ZH = {"scene": "人物场景", "metaphor": "单幅隐喻", "structure": "结构图"}
 DENSITY_ORDER = ["sparse", "balanced", "dense"]
 DENSITY_ZH = {"sparse": "稀疏", "balanced": "均衡", "dense": "密集"}
@@ -247,12 +266,19 @@ def check(plan: dict, *, base_path: Path | None = None) -> tuple[list[str], list
                                           any("box" in x for x in t.get("items", []))):
             from .overlay import validate as validate_overlay
             errs.extend(f"{tag} {problem}" for problem in validate_overlay(t))
+        item_code = (it.get("style") if it.get("manual") and it.get("style") else code) or ""
+        if item_code and _has_contract(item_code.split("@")[0]):
+            from .compile import CompileError, _check_text_roles, text_mode_problem  # 与编译同一判据：计划里放行的组合，编译不会再拒
+            c = CT.load(item_code.split("@")[0])
+            problem = text_mode_problem(c, t, fmts.get(item_fmt_id))
+            if problem:
+                errs.append(f"{tag} {problem}")
+            else:
+                try:
+                    _check_text_roles(c, {"text": t}, fmts.get(item_fmt_id))
+                except CompileError as e:
+                    errs.append(f"{tag} {e}")
         if mode in ("native", "hybrid") and code and _has_contract(code.split("@")[0]):
-            c = CT.load(code.split("@")[0])
-            if "native" not in c["recipe"].get("text_mode", []):
-                warns.append(f"{tag} 样式 {code} 不擅长直接写字，建议文字用 overlay（事后排字）")
-            if mode == "hybrid" and "hybrid" not in c["recipe"].get("text_mode", []):
-                warns.append(f"{tag} 样式 {code} 尚未准入 hybrid 混合排字")
             limit = (fmts.get(it.get("format") or fmt_id) or {}).get("text", {}).get("title_max_chars")
             for x in native_items(t):
                 if x.get("role") == "title" and limit and len(x["text"]) > limit:

@@ -1,6 +1,6 @@
 # 测试矩阵与准入（维护者）
 
-矩阵 `state.json` 的每次 `reviews[]` 和 `report.md` 逐题记录看图来源。默认为 `ark_coding_plan`：固定 Coding Plan 套餐和 `deepseek-v4.1-flash`，发送实际图片，核对返回型号及完整意见；配置、鉴权、限流或响应失败均停止，不自动回退。`claude_cli` 与 `ark_agent_plan` 仅保留显式兼容及历史记录，本项目不调用。
+矩阵 `state.json` 的每次 `reviews[]` 和 `report.md` 逐题记录看图来源。默认为 `ark_coding_plan`：固定 Coding Plan 套餐和 `deepseek-v4.1-flash`，发送实际图片，核对返回型号及完整意见；配置、鉴权、限流或响应失败均停止，不自动回退。矩阵看图不调用 `claude_cli` 与 `ark_agent_plan`，它们仅保留显式兼容及历史记录；配图计划复核可显式选用它们，见 [backends.md](backends.md)。
 
 各自无历史上下文的有效模型请求可计入现有脚本的独立双评；由调用者提供的结论须标明来源，未标明记作 `provided_unspecified`，旧缓存无来源记作 `legacy_unknown`，这些不能顶替独立双评。续跑沿用旧看图结论时不改写其来源。当前项目采用 Coding Plan 独立意见加当前 Codex 原生逐项裁决，争议保留双方原文及实际图证据。已有证据经下面的 `matrix-evidence` 专用入口核验，不向旧来源集合加入一个 Root 标签来制造双评通过。
 

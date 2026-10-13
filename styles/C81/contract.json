@@ -1,6 +1,6 @@
 {
   "code": "C81",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "撕纸拼贴",
     "en": "Torn-Paper Collage"
@@ -26,7 +26,13 @@
     "黑、奶油加一个热色点缀"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): Torn-paper collage: ripped paper edges, halftone cut-out silhouettes, hand-written marginal notes, strips of tape, mismatched paper textures, a limited palette of black, cream and one hot accent colour, layered and slightly edgy composition with a clear focal piece.",
+    "positive": "Visual style (follow exactly): Torn-paper collage: ripped paper edges, halftone cut-out silhouettes, strips of tape, mismatched paper textures, a limited palette of black, cream and one hot accent colour, layered and slightly edgy composition with a clear focal piece.",
+    "optional_text_roles": [
+      "note"
+    ],
+    "role_styles": {
+      "note": "Each marginal note is a short hand-written annotation in the margin of a paper fragment, made of exactly the given characters."
+    },
     "text_mode": [
       "native",
       "none"
@@ -38,7 +44,7 @@
   "qa": {
     "must_see": [
       "撕边纸片与半色调剪影",
-      "手写批注与胶带",
+      "胶带与错位的纸张质感",
       "黑、奶油加一个热色点缀"
     ],
     "must_not_see": [
@@ -63,6 +69,11 @@
       "revision": 2,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-10-13",
+      "note": "文字声明化：手写批注改为可选角色 note（给了才画，进入逐字文字清单）；配方正文不再自带文字，避免与「只出清单里的文字」冲突。"
     }
   ],
   "inspiration": {

@@ -55,13 +55,28 @@ def _compiled_reference_paths(compiled: CP.Compiled, contract: dict) -> list[Pat
     return paths
 
 
-def expected_text(q: dict) -> list[str]:
-    t = q.get("text") or {}
+# 合同要求、但题目本身没给的文字角色，用固定的短文字补齐，保证同一题对所有画风可比。
+MATRIX_ROLE_TEXT = {"title": "慢慢来，比较快", "ghost": "SLOW IS FAST", "brand": "叁笙", "tag": "第 1 期"}
+
+
+def _fill_required_roles(text: dict, contract: dict | None) -> dict:
+    required = ((contract or {}).get("recipe") or {}).get("required_text_roles") or []
+    if not required or text.get("mode", "none") == "none":
+        return text
+    present = {i.get("role", "text") for i in text.get("items") or [] if isinstance(i, dict)}
+    extra = [{"role": r, "text": MATRIX_ROLE_TEXT.get(r, "叁笙")} for r in required if r not in present]
+    return {**text, "items": list(text.get("items") or []) + extra} if extra else text
+
+
+def expected_text(q: dict, contract: dict | None = None) -> list[str]:
+    t = _fill_required_roles(q.get("text") or {}, contract)
     return [it["text"] for it in t.get("items", [])] if t.get("mode") == "native" else []
 
 
-def manifest_for(style: str, q: dict, model: str, refs: list[tuple[Path, str]] | None = None) -> dict:
-    m: dict = {"style": style, "model": model, "aspect": q["aspect"], "text": q["text"],
+def manifest_for(style: str, q: dict, model: str, refs: list[tuple[Path, str]] | None = None,
+                 contract: dict | None = None) -> dict:
+    m: dict = {"style": style, "model": model, "aspect": q["aspect"],
+               "text": _fill_required_roles(q["text"], contract),
                "content": {"subject": q["subject"]}}
     if q.get("inventory"):
         m["content"]["inventory"] = q["inventory"]
@@ -215,7 +230,7 @@ def run(style: str, *, only: list[str] | None = None, out_dir: Path | None = Non
                 return
             refs.append((p, r["role"]))
         try:
-            c = CP.compile_manifest(manifest_for(contract["code"], q, model, refs), contract)
+            c = CP.compile_manifest(manifest_for(contract["code"], q, model, refs, contract), contract)
             compiled_refs = _compiled_reference_paths(c, contract)
         except CP.CompileError as e:  # 题目内容撞上样式冲突词：记下，不拖垮整轮
             upd(q["id"], status="compile_failed", error=f"编译被拦：{e}")
@@ -273,7 +288,7 @@ def run(style: str, *, only: list[str] | None = None, out_dir: Path | None = Non
             return
         sha = _sha(img)
         mc = merged_contract(contract, q)
-        rfp = hashlib.sha256(review_prompt(mc, expected_text(q), q["text"]["mode"]).encode()).hexdigest()[:16]
+        rfp = hashlib.sha256(review_prompt(mc, expected_text(q, contract), q["text"]["mode"]).encode()).hexdigest()[:16]
         mode = q["text"]["mode"]
         stored = rec.get("reviews") or ([{"review": rec["review"], "for": rec.get("review_for"), "fp": rec.get("review_fp"),
                                            "source": "legacy_unknown"}]
@@ -290,7 +305,7 @@ def run(style: str, *, only: list[str] | None = None, out_dir: Path | None = Non
             if stop.is_set():
                 break
             try:
-                new.append({"review": review_fn(img, mc, expected_text(q), mode), "for": sha, "fp": rfp,
+                new.append({"review": review_fn(img, mc, expected_text(q, contract), mode), "for": sha, "fp": rfp,
                             "source": review_source})
             except Exception as e:  # 普通单题失败继续；额度或登录不可用则整轮停下
                 err = str(e)[:300]
@@ -319,7 +334,7 @@ def run(style: str, *, only: list[str] | None = None, out_dir: Path | None = Non
         img = out / rec["image"] if rec.get("image") else None
         rvs = [r["review"] for r in rec.get("reviews") or []] or ([rec["review"]] if rec.get("review") else [])
         if img and img.is_file() and rvs:
-            vs = [judge(img, merged_contract(contract, q), rv, expected_text(q), q["text"]["mode"]) for rv in rvs]
+            vs = [judge(img, merged_contract(contract, q), rv, expected_text(q, contract), q["text"]["mode"]) for rv in rvs]
             npass = sum(v.passed for v in vs)
             probs: list[str] = []
             for v in vs:

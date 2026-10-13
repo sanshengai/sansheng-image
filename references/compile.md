@@ -70,6 +70,12 @@ S02 公众号头条封面的方形母版与扩图使用 `sb.py cover-flow`；它
 - **尺寸**：按比例和模型算生成尺寸（16 的倍数、长边默认 1536、比例不超过 3:1）；gpt-image 系列总像素须在 655,360 到 8,294,400 之间。中转返回的尺寸可能与请求不同但比例一致，导出时再裁切缩放。
 - **背景透明度**：普通格式和未指定格式的矩阵题都在提示词中要求整幅背景不透明，避免信息图出现半透明四角；`sticker-grid` 等显式透明格式不加这条。导出仍检查原图 alpha，提示词不能代替像素验收。
 
+## 合同与格式的冲突：编译期拦截（2026-10-13）
+
+- **文字档位**：合同 `recipe.text_mode` 不含实际生效的文字档位（清单 `text.mode`，没写取格式默认档）时，编译和 `sb.py plan` 都报错并列出可选档位；处理办法是在清单里写 `text.mode`，例如 C08 只有 `none / overlay`，用在默认原生字的封面上要写 `text.mode: overlay`；C91–C94、C97 没有 `overlay`，绘本页（默认 overlay）要写 `text.mode: none`。`none` 永远放行；格式默认落到 native 但清单没给任何 `text.items` 时视同无字，也放行；`hybrid` 在合同同时支持 `native` 和 `overlay` 时放行。
+- **画风要求的文字角色**：合同用 `recipe.required_text_roles` / `optional_text_roles` 声明自己需要画面里出现的文字（如 C77 的 `ghost` 影字，C90 的 `brand`、`tag`），`recipe.role_styles` 写各角色的呈现方式。图里有字的档位下，`text.items` 缺必需角色就在编译期（以及计划检查）报错并说明要补哪个 `role`；给了的角色算作已请求文字，进入「exactly as written」逐字清单，且只在该角色真的有文字时才附它的呈现方式。配方正文不得自带只有 `text.items` 才能提供的文字。无字档不检查。
+- **版式与居中方形裁切**：合同用 `recipe.layout`（`text_zone`、`hero_zone`、`wide_canvas_only`）声明版式。格式带 `safe_zone.center_square` 时，声明了两个分区的合同（C77、C90）会被明确要求把文字区和主体区都放进居中方形内；声明 `wide_canvas_only: true` 的合同与这类格式同用，直接报错。C77、C90 因此直接出 2.35:1，标题与主体都落在居中方形里，不走 S02 的方形母版扩图流程。
+
 ## 方言
 
 | 家族 | 模型 | 写法 |

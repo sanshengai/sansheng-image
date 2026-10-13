@@ -158,3 +158,12 @@ def test_cover_check_rejects_non_square(tmp_path):
     path = tmp_path / "wide.png"
     Image.new("RGB", (120, 100), "white").save(path)
     assert not check_square_master(path)["passed"]
+
+
+def test_zone_covers_c77_c90_do_not_use_the_square_first_flow():
+    """C77/C90 的左文右图直接在居中方形内分区出 2.35:1；方形优先流程仍只属于 S02。"""
+    for code in ("C77", "C90"):
+        with pytest.raises(CP.CompileError, match="S02"):
+            compile_flow({"style": code, "format": "wechat-cover-head",
+                          "content": {"subject": "a camera"},
+                          "text": {"mode": "native", "items": [{"role": "title", "text": "旧相机"}]}})

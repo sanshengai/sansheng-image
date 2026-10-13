@@ -22,6 +22,27 @@ ENV_HELP = {
 }
 
 
+def review_env_help() -> list[str]:
+    """独立复核（plan-review 配图计划复核、qa 看图）的后端与凭证；三选一，默认 ark_coding_plan。"""
+    from .qa import coding_plan as CPL
+    from .qa.reviewer import ARK_PLAN_URL
+    return [
+        "独立复核后端（给配图计划/成图做第二双眼睛；三选一，不设置时默认 ark_coding_plan）",
+        "SANSHENG_IMAGE_PLAN_REVIEW_BACKEND=ark_coding_plan   # 配图计划复核；可改 ark_agent_plan 或 claude_cli",
+        "SANSHENG_IMAGE_QA_BACKEND=ark_coding_plan            # 成图看图验收；上一项没设时配图计划复核也读它",
+        "# 方式一：火山方舟 Coding Plan（默认）",
+        f"ARK_CODING_PLAN_BASE_URL={CPL.BASE_URL}",
+        "ARK_CODING_PLAN_API_KEY=你的密钥",
+        "# 方式二：火山方舟 Agent Plan",
+        f"ARK_AGENT_PLAN_BASE_URL={ARK_PLAN_URL}",
+        "ARK_AGENT_PLAN_API_KEY=你的密钥",
+        "# 方式三：本机 Claude Code 命令行，不需要上面的 Key，只需在终端登录过 claude",
+        "# SANSHENG_IMAGE_QA_CLAUDE=/path/to/claude   # 可选：claude 不在 PATH 时指定",
+        "# 可选：配图计划复核的输出预算（2000–32000，claude_cli 不适用）",
+        "SANSHENG_IMAGE_PLAN_REVIEW_MAX_OUTPUT_TOKENS=12000",
+    ]
+
+
 def menu() -> str:
     inbox = len(ORDER) + 1
     lines = [f"选一家生图服务（有 ChatGPT / Codex 订阅就选 1，不按张付费；没有 Key 也能用：选 {inbox}，Skill 会给出逐张提示词，你在即梦、豆包等网页里免费出图后导回验收）：", ""]
@@ -44,6 +65,7 @@ def env_template() -> Path:
     for name in ORDER:
         body.append(f"# {PROVIDERS[name]['zh']}")
         body += [f"# {x}" for x in ENV_HELP[name]] + [""]
+    body += [f"# {x}" if not x.startswith("#") else x for x in review_env_help()] + [""]
     f.write_text("\n".join(body), encoding="utf-8")
     os.chmod(f, 0o600)
     return f

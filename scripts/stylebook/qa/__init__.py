@@ -5,6 +5,8 @@
 - 模型先把图里的字逐字抄出来，脚本拿它和应有的字逐字比对（防止模型把糊字脑补成通顺句子）；
 - 风格合同里有像素阈值的，按阈值判；
 - 任何一项不过即不合格，给出具体原因，供单张返修。
+- 看图是概率性的：同一张图要做多次独立采样，逐项「任一次判失败即失败」（见 aggregate_reviews），各次原始结果与分歧项都保留在报告里；
+- 本次任务单（内容计划、必要信息、分镜；不含已请求文字）的显式要求/禁止优先于画风合同的「必须看到」条目；冲突须逐字引用任务单原句，脚本校验原句确实存在，且每一次判失败的采样都须提出成立的声明。「不许看到」条目不能以冲突豁免。
 """
 from __future__ import annotations
 
@@ -80,6 +82,70 @@ def compare_text(expected: list[str], transcribed: list[str], *, strict: bool = 
     return problems
 
 
+# 「多写文字」由 compare_text / 无字检查依据逐字转录确定性判定；合同里这一条只作参考，不单独决定失败。
+# 只认合同里逐字相同的标准条款，不做关键词猜测。
+TEXT_BAN_ITEMS = frozenset({"未请求的文字或水印"})
+# 文字部分交给逐字比对后，图形水印/logo/签名仍须由看图判定，不能随文字一起降为参考
+MARK_BAN_ITEM = "水印、logo、签名或印章等未请求的标记（不论是否含字）"
+REVIEW_SCHEMA = 2  # 2 = 多次采样聚合 + 内容分项 + 冲突声明；缺此标记的结论按旧口径宽松读取（手工结论、历史缓存）
+CONTENT_PART_KEYS = ("subject", "relations", "inventory")
+CONTENT_PART_LABELS = {"subject": "主体", "relations": "动作与空间关系", "inventory": "物件清单"}
+MIN_CONFLICT_QUOTE = 6  # 冲突引用至少这么多个有效字符，防止拿一两个字当「原句」
+
+
+def _loose(s: str) -> str:
+    return _norm(str(s or "")).lower()
+
+
+def task_sheet_texts(contract: dict, expected_text: list[str] | None = None) -> list[str]:
+    """本次任务单的原文：内容计划分项、逐条要点、分镜、已请求文字（以及调用方额外给出的 _task_sheet）。"""
+    texts: list[str] = []
+    parts = contract.get("_content_parts")
+    if isinstance(parts, list) and parts:
+        texts += [str(p.get("text", "")) for p in parts if isinstance(p, dict)]
+    elif contract.get("_content_expectation"):
+        texts.append(str(contract["_content_expectation"]))
+    texts += [str(x) for x in contract.get("_content_point_expectations") or []]
+    texts += [str(x) for x in contract.get("_panel_expectations") or []]
+    extra = contract.get("_task_sheet")
+    if isinstance(extra, str):
+        texts.append(extra)
+    elif isinstance(extra, list):
+        texts += [str(x) for x in extra]
+    # 已请求文字（标题等）不算「要求」，不能拿来充当冲突引用
+    return [t for t in texts if t.strip()]
+
+
+def check_conflict(entry: dict, sheet: list[str]) -> tuple[bool, str]:
+    """冲突声明是否成立：必须有理由，且引用的任务单原句逐字出现在任务单里。
+
+    多次采样聚合后，每一次判失败的采样都必须各自提出成立的声明（claims），缺一次就不豁免。
+    """
+    claim = entry.get("conflict")
+    if not isinstance(claim, dict):
+        return False, "无冲突声明"
+    claims = claim.get("claims")
+    if claims is not None:
+        if not isinstance(claims, list) or not claims:
+            return False, "冲突声明不完整"
+        reasons = []
+        for one in claims:
+            ok, detail = check_conflict({"conflict": one}, sheet)
+            if not ok:
+                return False, detail
+            reasons.append(detail)
+        return True, reasons[0]
+    quote, reason = claim.get("task_quote"), claim.get("reason")
+    if not isinstance(quote, str) or not isinstance(reason, str) or not reason.strip():
+        return False, "冲突声明缺少任务单原句或理由"
+    needle = _loose(quote)
+    if len(needle) < MIN_CONFLICT_QUOTE:
+        return False, f"引用原句过短（少于 {MIN_CONFLICT_QUOTE} 个有效字符）"
+    if not any(needle in _loose(t) for t in sheet):
+        return False, "引用的原句没有出现在本次任务单里"
+    return True, reason.strip()
+
+
 @dataclass
 class Verdict:
     image: str
@@ -110,17 +176,25 @@ def active_items(contract: dict, text_mode: str) -> tuple[list[str], list[str]]:
     qa = contract["qa"]
     qa = (qa.get("mode_overrides") or {}).get(text_mode, qa)
     skip = set(qa.get("when_text", [])) if text_mode not in ("native", "overlay", "hybrid") else set()
-    return [x for x in qa["must_see"] if x not in skip], [x for x in qa["must_not_see"] if x not in skip]
+    bans = [x for x in qa["must_not_see"] if x not in skip]
+    if TEXT_BAN_ITEMS & set(bans) and MARK_BAN_ITEM not in bans:
+        bans.append(MARK_BAN_ITEM)
+    return [x for x in qa["must_see"] if x not in skip], bans
 
 
 def content_expectations(content: dict) -> dict:
-    """核对最终成品；生成底图时的留白指令不属于成品事实要求。"""
+    """核对最终成品；生成底图时的留白指令不属于成品事实要求。
+
+    points 是「要表达的意思」，不自动成为图中文字，也不并入内容事实总述：它们只进逐条 point_match，
+    精确字样只由 text.items 判定（避免同一条要点在两处重复计罚）。
+    """
     relations = content.get("final_relations", content.get("relations"))
-    general = "; ".join(str(value).strip() for value in
-                        (content.get("final_subject", content.get("subject")), relations, content.get("inventory")) if value)
-    if content.get("points"):
-        general += "; 必须表达的要点（按顺序，保留条件、否定、数字与单位）: " + "；".join(content["points"])
-    result = {"_content_expectation": general} if general else {}
+    sources = {"subject": content.get("final_subject", content.get("subject")),
+               "relations": relations, "inventory": content.get("inventory")}
+    parts = [{"key": key, "label": CONTENT_PART_LABELS[key], "text": str(sources[key]).strip()}
+             for key in CONTENT_PART_KEYS if sources[key] and str(sources[key]).strip()]
+    general = "; ".join(p["text"] for p in parts)
+    result = {"_content_expectation": general, "_content_parts": parts} if general else {}
     if content.get("points"):
         result["_content_point_expectations"] = [str(point).strip() for point in content["points"]]
     panels = content.get("panels") or []
@@ -166,11 +240,45 @@ def _point_verdicts(review: dict, contract: dict) -> tuple[list[dict], list[int]
     return [by_index[i] for i in range(1, len(expected) + 1) if i in by_index], missing
 
 
+def _strict(review: dict) -> bool:
+    """由多次采样聚合器产出（或同等格式）的结论：内容分项、失败子句必须齐全。"""
+    return type(review.get("_review_schema")) is int and review["_review_schema"] >= REVIEW_SCHEMA
+
+
+def _content_part_gaps(cm: dict, contract: dict, strict: bool) -> list[str]:
+    parts = cm.get("parts")
+    expected = [p["key"] for p in contract.get("_content_parts") or [] if isinstance(p, dict) and "key" in p]
+    if parts is None:
+        return ([f"content_match.parts：{CONTENT_PART_LABELS.get(k, k)}分项" for k in expected]
+                if strict and expected else [])
+    if not isinstance(parts, list):
+        return ["content_match.parts：须为分项数组"]
+    gaps, seen = [], {}
+    for row in parts:
+        key = row.get("key") if isinstance(row, dict) else None
+        if not isinstance(key, str) or key in seen or (expected and key not in expected):
+            gaps.append(f"content_match.parts：未知或重复的分项 {key!r}")
+            continue
+        seen[key] = row
+    for key in expected:
+        row = seen.get(key)
+        label = CONTENT_PART_LABELS.get(key, key)
+        if row is None or type(row.get("ok")) is not bool or not str(row.get("why", "")).strip():
+            gaps.append(f"content_match.parts：{label}分项")
+        elif strict and row["ok"] is False and not (isinstance(row.get("failed_clause"), str)
+                                                    and row["failed_clause"].strip()):
+            gaps.append(f"content_match.parts：{label}分项判失败须原样引用要求中未满足的具体子句（failed_clause）")
+    return gaps
+
+
 def missing_items(review: dict | None, contract: dict, text_mode: str) -> list[str]:
     """看图结论里漏答的条目（漏答会被判不合格，所以先让看图员补答）。"""
     if not isinstance(review, dict) or not review:
         return ["(无结论)"]
     must_items, ban_items = active_items(contract, text_mode)
+    id_clauses = (must_items, list(ban_items))  # 标识核对永远按完整清单，模型答了新增条款不算未知
+    if not _strict(review):  # 旧格式结论（历史缓存、手工结论）产生时还没有这一条，不要求它必答
+        ban_items = [x for x in ban_items if x != MARK_BAN_ITEM]
     def valid_answer(key: str, item: str, verdict_key: str) -> bool:
         rows = review.get(key)
         if not isinstance(rows, list):
@@ -180,8 +288,7 @@ def missing_items(review: dict | None, contract: dict, text_mode: str) -> list[s
                 and isinstance(matches[0].get("why"), str) and bool(matches[0]["why"].strip()))
 
     missing = []
-    for key, prefix, clauses in zip(("must_see", "must_not_see"), ("M", "B"),
-                                    (must_items, ban_items)):
+    for key, prefix, clauses in zip(("must_see", "must_not_see"), ("M", "B"), id_clauses):
         lookup = {f"{prefix}{i}": label for i, label in enumerate(clauses, 1)}
         seen = set()
         rows = review.get(key)
@@ -199,10 +306,19 @@ def missing_items(review: dict | None, contract: dict, text_mode: str) -> list[s
     transcribed = review.get("transcribed_text")
     if not isinstance(transcribed, list) or any(not isinstance(t, str) for t in transcribed):
         missing.append("transcribed_text：逐字转录")
+    for key in ("must_see", "must_not_see"):
+        for row in review.get(key) if isinstance(review.get(key), list) else []:
+            claim = row.get("conflict") if isinstance(row, dict) else None
+            if isinstance(row, dict) and "conflict" in row and not (
+                    isinstance(claim, dict) and isinstance(claim.get("task_quote"), str)
+                    and isinstance(claim.get("reason"), str)):
+                missing.append(f"{key}：冲突声明须含 task_quote 与 reason（{row.get('item', row.get('id'))!r}）")
     if contract.get("_content_expectation"):
         cm = review.get("content_match")
         if not isinstance(cm, dict) or not isinstance(cm.get("ok"), bool) or not str(cm.get("why", "")).strip():
             missing.append("content_match：主体、动作与空间关系")
+        else:
+            missing.extend(_content_part_gaps(cm, contract, _strict(review)))
     if contract.get("_content_point_expectations"):
         _, missing_points = _point_verdicts(review, contract)
         missing.extend(f"point_match：第 {i} 条必要信息" for i in missing_points)
@@ -285,10 +401,26 @@ def overlay_layout_problems(image: Path, contract: dict, manifest: dict | None) 
     return problems
 
 
+def _transcriptions(review: dict) -> list[list[str]]:
+    """每次采样各自的逐字转录；任一次与应有文字对不上都算（多次采样不允许挑一次好的）。"""
+    valid = lambda t: isinstance(t, list) and all(isinstance(x, str) for x in t)
+    samples = review.get("_samples")
+    if isinstance(samples, list):
+        found = [s["transcribed_text"] for s in samples if isinstance(s, dict) and valid(s.get("transcribed_text"))]
+        if found:
+            return found
+    main = review.get("transcribed_text")
+    return [main if valid(main) else []]
+
+
 def judge(image: Path, contract: dict, review: dict | None, expected_text: list[str] | None = None,
           text_mode: str = "none", fmt: str | None = None, manifest: dict | None = None) -> Verdict:
     problems: list[str] = []
     process_errors, pending_evidence = [], []
+    conflicts: list[dict] = []
+    conflicts_rejected: list[dict] = []
+    advisory: list[str] = []
+    disagreements: list = []
     problems.extend(overlay_layout_problems(image, contract, manifest))
     px = measure(image)
     if fmt == "sticker-single":
@@ -335,9 +467,18 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
         process_errors.append(problems[-1])
     else:
         gaps = missing_items(review, contract, text_mode)
+        if isinstance(review.get("_incomplete_review"), list):  # 看图员侧已判定不完整（含只有严格口径才查得出的缺项）
+            gaps += [g for g in review["_incomplete_review"] if isinstance(g, str) and g not in gaps]
         if gaps:
             problems.append("看图结论缺项或格式无效：" + "、".join(gaps))
             process_errors.append(problems[-1])
+        agg = review.get("_aggregation")
+        if isinstance(agg, dict):
+            disagreements = list(agg.get("disagreements") or [])
+            for c in agg.get("contradictions") or []:
+                process_errors.append("看图结论自相矛盾，待复核：" + json.dumps(c, ensure_ascii=False, sort_keys=True))
+                problems.append(process_errors[-1])
+        sheet = task_sheet_texts(contract, expected_text)
         for entry in _observations(review):
             if entry.get("observation") == "unverified":
                 label = entry.get("item", entry.get("index", entry.get("panel", "内容/裁切核对")))
@@ -348,6 +489,8 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
                 if isinstance(c, dict) and isinstance(c.get("item"), str)}
         na: list[str] = []
         must_items, ban_items = active_items(contract, text_mode)
+        if not _strict(review):
+            ban_items = [x for x in ban_items if x != MARK_BAN_ITEM]
         for item in must_items:
             c = must.get(item)
             if c is None:
@@ -355,7 +498,16 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
             elif c.get("applicable") is False:
                 na.append(item)
             elif not c.get("ok"):
-                problems.append(f"没做到：{item}（{c.get('why', '')}）")
+                honored, detail = check_conflict(c, sheet)
+                if honored:  # 任务单显式要求优先于画风合同：该条不适用，原因进报告
+                    na.append(item)
+                    conflicts.append({"kind": "must_see", "item": item,
+                                      "task_quote": c["conflict"]["task_quote"], "reason": detail})
+                else:
+                    note = f"；冲突声明被拒：{detail}" if "conflict" in c else ""
+                    if "conflict" in c:
+                        conflicts_rejected.append({"kind": "must_see", "item": item, "detail": detail})
+                    problems.append(f"没做到：{item}（{c.get('why', '')}{note}）")
         banned = {c["item"]: c for c in (review.get("must_not_see") or [])
                   if isinstance(c, dict) and isinstance(c.get("item"), str)}
         for item in ban_items:
@@ -363,11 +515,44 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
             if c is None:
                 problems.append(f"看图结论漏了一条禁止特征：{item}")
             elif c.get("present"):
-                problems.append(f"出现了禁止特征：{item}（{c.get('why', '')}）")
+                if item in TEXT_BAN_ITEMS:
+                    # 多写文字由逐字转录比对确定性判定；模型此项只作参考，防止它把「已请求文字」误判成未请求
+                    advisory.append(f"模型提示可能有未请求文字（仅参考，以逐字比对为准）：{c.get('why', '')}")
+                    continue
+                # 画风合同的禁止项不能靠冲突声明豁免：真有冲突应改任务单或换画风，而不是放行
+                note = ""
+                if "conflict" in c:
+                    note = "；冲突声明被拒：禁止特征不能以任务单冲突豁免"
+                    conflicts_rejected.append({"kind": "must_not_see", "item": item,
+                                               "detail": "禁止特征不能以任务单冲突豁免"})
+                problems.append(f"出现了禁止特征：{item}（{c.get('why', '')}{note}）")
         if contract.get("_content_expectation") or "content_match" in review:
             cm = review.get("content_match")
             if not isinstance(cm, dict) or not isinstance(cm.get("ok"), bool) or not str(cm.get("why", "")).strip():
                 problems.append("缺少内容事实核对结论")
+            elif isinstance(cm.get("parts"), list):
+                parts = [r for r in cm["parts"] if isinstance(r, dict) and type(r.get("ok")) is bool]
+                content_text = _loose(" ".join(str(p.get("text", "")) for p in contract.get("_content_parts") or []
+                                               if isinstance(p, dict)) or str(contract.get("_content_expectation", "")))
+                for row in parts:
+                    if row["ok"]:
+                        continue
+                    label = CONTENT_PART_LABELS.get(row.get("key"), str(row.get("key")))
+                    clauses = [c for c in ([row.get("failed_clause")] if isinstance(row.get("failed_clause"), str) else
+                               row.get("failed_clauses") or []) if isinstance(c, str) and len(_loose(c)) >= 2]
+                    located = [c for c in clauses if _loose(c) in content_text]
+                    if located:
+                        problems.append(f"内容不符（{label}）：未满足「{'」「'.join(located)}」——{row.get('why', '')}")
+                    elif _strict(review) or clauses:
+                        # 判了失败却指不出要求里的具体子句：不当作确认的失败，也不放行，交人复核
+                        process_errors.append(f"内容分项「{label}」判失败但未能引用要求原文中的具体子句，待复核：{row.get('why', '')}")
+                        problems.append(process_errors[-1])
+                    else:
+                        problems.append(f"内容不符（{label}）：{row.get('why', '')}")
+                if parts and cm["ok"] is False and all(r["ok"] for r in parts):
+                    # 整体判失败，各分项却全部通过：自相矛盾，不作为失败理由，待复核
+                    process_errors.append(f"内容核对整体结论与分项不一致（整体 ok=false，分项全部 ok=true），待复核：{cm['why']}")
+                    problems.append(process_errors[-1])
             elif not cm["ok"]:
                 problems.append(f"内容不符：{cm['why']}")
         if contract.get("_content_point_expectations"):
@@ -400,13 +585,19 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
                 problems.append(f"居中方形裁切丢失关键内容：{square['why']}")
         if na and len(na) * 3 > len(must_items):
             problems.append(f"不适用的条目过多（{len(na)}/{len(must_items)}），交人复核：{na}")
-        transcribed = review.get("transcribed_text")
-        if not isinstance(transcribed, list) or any(not isinstance(t, str) for t in transcribed):
-            transcribed = []
-        if text_mode in ("native", "overlay", "hybrid"):
-            problems += compare_text(expected_text or [], transcribed, strict=text_mode in ("overlay", "hybrid"))
-        elif text_mode == "none" and any(len(_norm(t)) >= 2 for t in transcribed):
-            problems.append(f"本图不该有字，却出现了：{transcribed}")
+        if text_mode in ("native", "overlay", "hybrid", "none"):
+            variants = _transcriptions(review)
+            groups: dict[tuple, list[int]] = {}
+            for index, lines in enumerate(variants, 1):
+                groups.setdefault(tuple(lines), []).append(index)
+            for lines, who in groups.items():
+                tag = f"采样{'、'.join(map(str, who))}：" if len(groups) > 1 else ""
+                lines = list(lines)
+                if text_mode in ("native", "overlay", "hybrid"):
+                    problems += [tag + p for p in compare_text(expected_text or [], lines,
+                                                               strict=text_mode in ("overlay", "hybrid"))]
+                elif any(len(_norm(t)) >= 1 for t in lines):
+                    problems.append(f"{tag}本图不该有字，却出现了：{lines}")
     # passed remains strict. This routes a failed check to diagnosis/evidence,
     # never to automatic regeneration. Advice/edit completion cannot waive a gate.
     review_data = review if isinstance(review, dict) else {}
@@ -417,9 +608,16 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
         "process_errors": process_errors,
         "suggestions": review_data.get("suggestions", []),
         "edit_goals": review_data.get("edit_goals", []),
+        "conflicts": conflicts,
+        "conflicts_rejected": conflicts_rejected,
+        "advisory": advisory,
+        "sample_disagreements": disagreements,
         "automatic_regeneration": False,
     }
     return Verdict(str(image), not problems, problems, px, review_data, triage=triage)
+
+
+TEXT_BAN_NOTE = "（参考项：多写/漏写文字由脚本拿你的逐字转录与「本图已请求的文字」确定性比对，此项不单独决定失败；仍须如实抄录并如实回答）"
 
 
 def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: str,
@@ -447,7 +645,8 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
         *[f"- [M{i}] {x}" if clause_ids else f"- {x}" for i, x in enumerate(must_items, 1)],
         "",
         "## 不许看到（逐条判断 present=true/false，并写依据）",
-        *[f"- [B{i}] {x}" if clause_ids else f"- {x}" for i, x in enumerate(ban_items, 1)],
+        *[(f"- [B{i}] {x}" if clause_ids else f"- {x}")
+          + (TEXT_BAN_NOTE if x in TEXT_BAN_ITEMS else "") for i, x in enumerate(ban_items, 1)],
         "",
         "## 图里的文字",
         ("把图里所有能看到的文字**逐字抄录**到 transcribed_text，独立文字块一条，块内可见换行用\\n保留；"
@@ -466,8 +665,16 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
     if isinstance(isolation, str) and isolation.strip():
         lines += ["", "## 参考图职责与隔离约束", isolation,
                   "只根据实际提供的图片判断；未提供参考图时，不猜测其内容或来源。"]
-    if text_mode in ("native", "overlay", "hybrid") and expected_text:
-        lines.append("（本图应有的文字由脚本另行比对，你只需如实抄录。）")
+    requested = [t for t in (expected_text or []) if isinstance(t, str) and t.strip()]
+    if text_mode in ("native", "overlay", "hybrid") and requested:
+        lines += ["", "## 本图已请求的文字（逐条）",
+                  *[f"- 「{t}」" for t in requested],
+                  "以上每一条都是本次任务明确要求出现的文字（含品牌名、产品名、徽章/标签上的字），"
+                  "不算「未请求的文字」，不能据此判任何条目失败，也不能把它们当作多写的文字。"
+                  "只有不在这份列表里的字才可能是多余文字；但多写、漏写、错字由脚本拿你的逐字转录与这份列表确定性比对，"
+                  "你无需自己下结论，必须做的是完整、如实地抄录（含看不清的 □）。"]
+    elif text_mode == "none":
+        lines += ["", "## 本图已请求的文字", "本次任务没有请求任何图中文字；图里出现的任何可读文字都要如实抄录。"]
     if any("ghost line behind the headline" in item and "no larger than the headline" in item
            for item in must_items):
         lines += ["", "## 英文 ghost 层的验收口径",
@@ -476,20 +683,37 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
                   "纯白字以 8%–14% 不透明度叠在深炭底色上会呈灰色；不要仅因合成后的字呈灰色就判不是白字。",
                   "若字高超过主标题、对比度抢过主标题、或缩略图第一眼落在英文上，仍须判不合格。"]
     expectation = contract.get("_content_expectation")
+    content_parts = [p for p in contract.get("_content_parts") or [] if isinstance(p, dict) and p.get("text")]
     if expectation:
-        lines += ["", "## 内容事实核对", f"计划要求：{expectation}",
-                  "只根据图像判断主体、动作、数量、远近与左右关系是否符合计划；画风合格不能抵消情节或空间关系错误。",
-                  "先列出实际可辨认的独立主体、道具和背景物件，再核对题面。原题或配方明确用Only、只能、限定等"
-                  "限定物件来源或种类时，限定优先；额外的独立背景实物也须核对，不能仅因未改变主动作而豁免。"
-                  "物件自身部件和表面/边框的装饰纹样不另算独立实物。没有此类明确限定时，"
-                  "同一主体的正侧背面、局部细节等辅助技术视图，以及不改变情节的布景和道具，不算内容偏题；"
-                  "技术分栏按上面的画风条目另行判断。只有额外元素与计划中的主体、动作、数量或空间关系冲突时才据此判内容不符。",
-                  "给 content_match={ok: bool, why: str}。看不清关键关系时 ok=false，并说出无法核实的部分。"]
+        base = ["只根据图像判断主体、动作、数量、远近与左右关系是否符合计划；画风合格不能抵消情节或空间关系错误。",
+                "先列出实际可辨认的独立主体、道具和背景物件，再核对题面。原题或配方明确用Only、只能、限定等"
+                "限定物件来源或种类时，限定优先；额外的独立背景实物也须核对，不能仅因未改变主动作而豁免。"
+                "物件自身部件和表面/边框的装饰纹样不另算独立实物。没有此类明确限定时，"
+                "同一主体的正侧背面、局部细节等辅助技术视图，以及不改变情节的布景和道具，不算内容偏题；"
+                "技术分栏按上面的画风条目另行判断。只有额外元素与计划中的主体、动作、数量或空间关系冲突时才据此判内容不符。"]
+        if content_parts:
+            lines += ["", "## 内容事实核对（按分项逐一判断）",
+                      "计划要求拆成下列独立分项，每项单独给结论，不要把几个子句混进同一个布尔：",
+                      *[f"- [{p['key']}] {p.get('label', p['key'])}：{p['text']}" for p in content_parts],
+                      *base,
+                      "给 content_match={ok:bool, why:str, parts:[{key:分项名, ok:bool, why:实际观察, failed_clause:str}]}，"
+                      "parts 必须覆盖上面每个分项各一条，key 只能原样使用方括号里的分项名（"
+                      + "、".join(p["key"] for p in content_parts) + "），不得自拟新名、不得把一个分项再拆成几条；"
+                      "content_match.ok 必须等于所有分项 ok 的逻辑与。"
+                      "某分项 ok=false 时，failed_clause 必须原样摘出该分项要求里未被满足的具体子句，why 说明画面实际如何不满足它；"
+                      "要求已满足的子句不得作为失败理由（why 若写的是「已满足」，ok 就不能是 false）。"
+                      "看不清关键关系时该分项 ok=false，并说出无法核实的部分。"]
+        else:
+            lines += ["", "## 内容事实核对", f"计划要求：{expectation}", *base,
+                      "给 content_match={ok: bool, why: str}。看不清关键关系时 ok=false，并说出无法核实的部分。"]
     points = contract.get("_content_point_expectations") or []
     if points:
-        lines += ["", "## 必要信息逐条核对",
-                  "每一条都根据画面独立判断，不用总主题通过代替条件、否定、数字和单位。"
-                  "若某条需要精确文字而画面无法证实，按未通过说明原因。",
+        lines += ["", "## 必要信息逐条核对（按含义，不按字面）",
+                  "points 是要表达的意思，不自动成为图中文字。每一条独立判断：画面能否通过图形、图标、位置与连线关系，"
+                  "或「本图已请求的文字」把这层意思传达出来。不要求把要点原句逐字写在图上，"
+                  "也不能因为图上没有出现某句原话就判失败；精确字样只由「本图已请求的文字」判定，这里不重复计罚。"
+                  "要点里的条件、否定、数字、单位属于含义的一部分：画面传达的数量、先后、因果或否定关系缺失、错误或相反才判失败；"
+                  "是否必须以文字形式出现，只看该文字是否在已请求文字里。看不清或无法核实时 ok=false 并说明。",
                   *[f"第 {i} 条：{point}" for i, point in enumerate(points, 1)],
                   "给 point_match 数组，每条一项 {index:序号, ok:bool, why:实际观察}；缺失或无法核实时 ok=false。"]
     panels = contract.get("_panel_expectations") or []
@@ -506,6 +730,15 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
                   "状态缺失、与原题相反、单格额外物件或身份不一致仍不通过；判断倾斜、湿土等状态须实际观察，不擅自要求更夸张的程度。",
                   *[f"第 {i} 格：{item}" for i, item in enumerate(panels, 1)],
                   "给 panel_match 数组，每格一条 {panel:序号, ok:bool, why:实际观察}；看不清或缺失时 ok=false。"]
+    if task_sheet_texts(contract, expected_text):
+        lines += ["", "## 任务单与画风合同冲突时的优先级",
+                  "「任务单」指上面的内容事实核对、必要信息和分镜逐格里的原句；「本图已请求的文字」不算要求，不能引用。"
+                  "任务单里显式的要求或禁止，优先于画风合同的「必须看到」条目；「不许看到」条目出现就是失败，不能声明冲突。",
+                  "若某条「必须看到」条目与任务单原文明确冲突（照合同做就会违反任务单明确写出的要求或禁止），"
+                  "该条仍如实回答 ok／present，并在该条里加 conflict={\"task_quote\":从任务单逐字摘出的冲突原句"
+                  f"（至少 {MIN_CONFLICT_QUOTE} 个字，必须能在任务单里原样找到）, \"reason\":冲突原因" "}。"
+                  "脚本会校验 task_quote 确实出现在任务单里，校验不过则声明作废，该条按原判定计。"
+                  "任务单只是没提到某条、或你觉得合同条目不合理，都不是冲突，不得声明。"]
     thumb = contract.get("_thumbnail_expectation")
     if thumb:
         lines += ["", "## 实际缩略尺寸", f"另有按真实展示尺寸缩小的预览：{thumb}",
@@ -529,7 +762,8 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
                   "不用复述item长文本。每个标识恰好回答一次，必须按它对应的完整条款判断，不能省略条款内容。"]
     lines += ["", "只输出 JSON：{\"must_see\":[{" + answer_key + ",\"ok\":bool,\"applicable\":bool,\"why\":str}],"
               "\"must_not_see\":[{" + answer_key + ",\"present\":bool,\"why\":str}],\"transcribed_text\":[str],"
-              + ("\"content_match\":{\"ok\":bool,\"why\":str}," if expectation else "")
+              + (("\"content_match\":{\"ok\":bool,\"why\":str,\"parts\":[{\"key\":str,\"ok\":bool,\"why\":str,\"failed_clause\":str}]},"
+                  if content_parts else "\"content_match\":{\"ok\":bool,\"why\":str},") if expectation else "")
               + ("\"point_match\":[{\"index\":int,\"ok\":bool,\"why\":str}]," if points else "")
               + ("\"panel_match\":[{\"panel\":int,\"ok\":bool,\"why\":str}]," if panels else "")
               + ("\"thumbnail_readable\":{\"ok\":bool,\"why\":str}," if thumb else "")
@@ -551,10 +785,20 @@ def review_schema(contract: dict) -> dict:
             "notes": {"type": "string"},
         },
     }
+    conflict = {"type": "object", "required": ["task_quote", "reason"],
+                "properties": {"task_quote": {"type": "string"}, "reason": {"type": "string"}}}
+    for key in ("must_see", "must_not_see"):
+        schema["properties"][key]["items"]["properties"]["conflict"] = conflict
     if contract.get("_content_expectation"):
         schema["required"].append("content_match")
         schema["properties"]["content_match"] = {"type": "object", "required": ["ok", "why"],
                                                   "properties": {"ok": {"type": "boolean"}, "why": {"type": "string"}}}
+        if contract.get("_content_parts"):
+            schema["properties"]["content_match"]["required"].append("parts")
+            schema["properties"]["content_match"]["properties"]["parts"] = {"type": "array", "items": {
+                "type": "object", "required": ["key", "ok", "why"],
+                "properties": {"key": {"type": "string", "enum": list(CONTENT_PART_KEYS)}, "ok": {"type": "boolean"},
+                               "why": {"type": "string"}, "failed_clause": {"type": "string"}}}}
     if contract.get("_content_point_expectations"):
         schema["required"].append("point_match")
         schema["properties"]["point_match"] = {"type": "array", "items": {
@@ -585,6 +829,146 @@ def review_schema(contract: dict) -> dict:
         "type": "object", "required": ["goal", "completed", "why"], "properties": {
             "goal": {"type": "string"}, "completed": {"type": "boolean"}, "why": {"type": "string"}}}}
     return schema
+
+
+# ---- 多次独立采样的聚合 ---------------------------------------------------------------
+# 规则 any_fail（保守）：每个判定项只要有任一次采样判失败就整体失败；各次理由、原始结果与分歧项都保留。
+# 选它而不是多数决：同一张图曾「一次通过一次不通过」，通过的那次还幻觉出不存在的影字——多数决会让这类
+# 幻觉在 2/3 概率下原样放行，而 any_fail 的代价只是误判时多一次诊断，不会自动重生图。
+AGGREGATION_RULE = "any_fail"
+
+
+def _verdict_must(e: dict) -> str:
+    return "na" if e.get("applicable") is False else ("pass" if e.get("ok") is True else "fail")
+
+
+def _verdict_ban(e: dict) -> str:
+    return "fail" if e.get("present") is True else "pass"
+
+
+def _verdict_ok(e: dict) -> str:
+    return "pass" if e.get("ok") is True else "fail"
+
+
+def _merge_rows(rows: list[dict], verdict, *, field: str, fail_value: bool) -> tuple[dict, list[str]]:
+    """rows 是同一判定项在各次采样里的回答。返回合并后的回答与各次结论。"""
+    n = len(rows)
+    verdicts = [verdict(r) for r in rows]
+    agg = "fail" if "fail" in verdicts else ("na" if all(v == "na" for v in verdicts) else "pass")
+    matching = [r for r, v in zip(rows, verdicts) if v == agg]
+    merged = {k: v for k, v in matching[0].items() if k not in ("conflict", "failed_clause", "failed_clauses")}
+    merged[field] = (agg == "fail") if fail_value else (agg != "fail")
+    if field == "ok" and "applicable" in merged:
+        merged["applicable"] = agg != "na"
+    # 理由：失败时保留所有判失败那几次的理由；通过时取一次即可，其余在 _samples 里
+    if n > 1 and agg == "fail":
+        failing = [(i + 1, r) for i, (r, v) in enumerate(zip(rows, verdicts)) if v == "fail"]
+        merged["why"] = "；".join(f"[采样{i}] {r.get('why', '')}" for i, r in failing)
+        if len(failing) < n:
+            merged["why"] += f"（{n} 次采样中 {len(failing)} 次判失败：采样{'、'.join(str(i) for i, _ in failing)}；其余采样未判失败，已留在 _samples）"
+    # 证据状态：失败要「所有判失败的采样都说看不清」才算未确认；通过要「所有判通过的采样都已确认」
+    states = [r.get("observation", "confirmed") for r in matching]
+    if any("observation" in r for r in rows):
+        unverified = all(x == "unverified" for x in states) if agg == "fail" else any(x == "unverified" for x in states)
+        merged["observation"] = "unverified" if unverified else "confirmed"
+    # 冲突豁免只在「每一次判失败的采样都提出了声明」时保留，且每条声明都交 judge 逐条核对原文；
+    # 少数采样的声明不能盖掉另一次采样判出的真实缺陷（任一失败即失败）
+    failing_rows = [(i + 1, r) for i, (r, v) in enumerate(zip(rows, verdicts)) if v == "fail"]
+    if agg == "fail" and failing_rows and all(isinstance(r.get("conflict"), dict) for _, r in failing_rows):
+        first = failing_rows[0][1]["conflict"]
+        merged["conflict"] = {**first, "claims": [r["conflict"] for _, r in failing_rows],
+                              "claimed_by_samples": [i for i, _ in failing_rows]}
+    clauses = [r["failed_clause"] for r, v in zip(rows, verdicts)
+               if v == "fail" and isinstance(r.get("failed_clause"), str) and r["failed_clause"].strip()]
+    if clauses:
+        merged["failed_clause"] = clauses[0]
+        merged["failed_clauses"] = clauses
+    merged["sample_verdicts"] = verdicts
+    return merged, verdicts
+
+
+def aggregate_reviews(samples: list[dict]) -> dict:
+    """把同一张图的多次完整看图结论合成一份（形状与单次结论一致，judge 可直接判）。"""
+    if not samples:
+        raise ValueError("没有可聚合的看图采样")
+    n = len(samples)
+    base = samples[0]
+    out: dict = {k: v for k, v in base.items() if not k.startswith("_") or k in ("_reviewer", "_response_metadata", "_criteria_id_map")}
+    disagreements: list[dict] = []
+    contradictions: list[dict] = []
+
+    def keyed(key: str, idx: str) -> list[dict]:
+        return [{r[idx]: r for r in s.get(key, []) if isinstance(r, dict) and idx in r} for s in samples]
+
+    def merge_list(key: str, idx: str, verdict, field: str, fail_value: bool) -> None:
+        tables = keyed(key, idx)
+        merged_rows = []
+        for r in base.get(key, []):
+            if not isinstance(r, dict) or idx not in r:
+                continue
+            rows = [t[r[idx]] for t in tables if r[idx] in t]
+            merged, verdicts = _merge_rows(rows, verdict, field=field, fail_value=fail_value)
+            if len(set(verdicts)) > 1:
+                disagreements.append({"field": key, idx: r[idx], "verdicts": verdicts})
+            merged_rows.append(merged)
+        out[key] = merged_rows
+
+    merge_list("must_see", "item", _verdict_must, "ok", False)
+    merge_list("must_not_see", "item", _verdict_ban, "present", True)
+    for key, idx in (("point_match", "index"), ("panel_match", "panel")):
+        if isinstance(base.get(key), list):
+            merge_list(key, idx, _verdict_ok, "ok", False)
+    for key in ("thumbnail_readable", "square_crop"):
+        if isinstance(base.get(key), dict):
+            merged, verdicts = _merge_rows([s[key] for s in samples], _verdict_ok, field="ok", fail_value=False)
+            merged.pop("sample_verdicts", None)
+            if len(set(verdicts)) > 1:
+                disagreements.append({"field": key, "verdicts": verdicts})
+            out[key] = merged
+    if isinstance(base.get("content_match"), dict):
+        cms = [s["content_match"] for s in samples]
+        merged, verdicts = _merge_rows(cms, _verdict_ok, field="ok", fail_value=False)
+        merged.pop("sample_verdicts", None)
+        if all(isinstance(c.get("parts"), list) for c in cms):
+            by_key = [{p["key"]: p for p in c["parts"] if isinstance(p, dict) and "key" in p} for c in cms]
+            merged_parts = []
+            for p in base_parts(cms[0]):
+                rows = [t[p["key"]] for t in by_key if p["key"] in t]
+                mp, pv = _merge_rows(rows, _verdict_ok, field="ok", fail_value=False)
+                if len(set(pv)) > 1:
+                    disagreements.append({"field": "content_match", "key": p["key"], "verdicts": pv})
+                merged_parts.append(mp)
+            merged["parts"] = merged_parts
+            for i, c in enumerate(cms, 1):  # 整体结论与自己的分项不一致：记下，judge 会标待复核
+                own = [p.get("ok") for p in c["parts"] if isinstance(p, dict)]
+                if own and c.get("ok") is not all(x is True for x in own):
+                    contradictions.append({"field": "content_match", "sample": i, "overall_ok": c.get("ok"),
+                                           "parts_ok": own})
+            merged["ok"] = all(p["ok"] is True for p in merged_parts)
+        elif len(set(verdicts)) > 1:
+            disagreements.append({"field": "content_match", "verdicts": verdicts})
+        out["content_match"] = merged
+    out["suggestions"] = list(dict.fromkeys(x for s in samples for x in s.get("suggestions", []) if isinstance(x, str)))
+    goals: dict[str, list[dict]] = {}
+    for s in samples:
+        for g in s.get("edit_goals", []):
+            if isinstance(g, dict) and isinstance(g.get("goal"), str):
+                goals.setdefault(g["goal"], []).append(g)
+    out["edit_goals"] = [{"goal": goal, "completed": all(g.get("completed") is True for g in rows),
+                          "why": "；".join(f"[采样{i}] {g.get('why', '')}" for i, g in enumerate(rows, 1))}
+                         for goal, rows in goals.items()]
+    notes = [f"[采样{i}] {s['notes']}" for i, s in enumerate(samples, 1) if isinstance(s.get("notes"), str) and s["notes"].strip()]
+    if notes:
+        out["notes"] = "；".join(notes)
+    out["_samples"] = [dict(s) for s in samples]
+    out["_aggregation"] = {"rule": AGGREGATION_RULE, "samples": n, "disagreements": disagreements,
+                           "contradictions": contradictions}
+    out["_review_schema"] = REVIEW_SCHEMA
+    return out
+
+
+def base_parts(cm: dict) -> list[dict]:
+    return [p for p in cm.get("parts", []) if isinstance(p, dict) and "key" in p]
 
 
 def write_report(verdicts: list[Verdict], out: Path) -> Path:

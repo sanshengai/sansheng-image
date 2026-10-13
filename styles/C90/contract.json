@@ -1,6 +1,6 @@
 {
   "code": "C90",
-  "revision": 1,
+  "revision": 2,
   "name": {
     "zh": "深色系列封面",
     "en": "Dark Series Cover"
@@ -26,7 +26,21 @@
     "只用一个暖色强调（橙红）加米金细线，其余深色"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): a premium dark series cover for articles in a numbered series. Deep aubergine-black canvas (#1B1624). Left side top to bottom: a small brand line with a thin underline, a rounded tag chip in warm orange-red (#E8704E) carrying the series name, then a very large bold serif headline in warm off-white (#F5EDE0) on one or two lines, and a thin champagne-gold rule beneath. Right side: one clearly recognisable hero subject (several overlapping items allowed) with a large flat warm-coloured sun disc and a dark silhouette skyline or landscape behind it, flat graphic shapes with fine paper grain; cinematic, calm and premium; no neon, no glow, no gradient starfield, no frames or boxes around the headline.",
+    "positive": "Visual style (follow exactly): a premium dark series cover for articles in a numbered series. Deep aubergine-black canvas (#1B1624). Two zones side by side: a text zone on the left kept dark and calm with a thin champagne-gold rule near its lower part, and on the right one clearly recognisable hero subject (several overlapping items allowed) with a large flat warm-coloured sun disc and a dark silhouette skyline or landscape behind it, flat graphic shapes with fine paper grain; cinematic, calm and premium; no neon, no glow, no gradient starfield, no frames or boxes around the headline.",
+    "required_text_roles": [
+      "title",
+      "brand",
+      "tag"
+    ],
+    "role_styles": {
+      "brand": "The brand line is small and sits at the top of the left zone with a thin underline beneath it.",
+      "tag": "The series tag is a small rounded chip in warm orange-red (#E8704E) below the brand line, carrying exactly the given series name.",
+      "title": "The headline is a very large bold serif in warm off-white (#F5EDE0) on one or two lines below the tag chip, with the thin champagne-gold rule beneath it."
+    },
+    "layout": {
+      "text_zone": "left",
+      "hero_zone": "right"
+    },
     "text_mode": [
       "native",
       "none"
@@ -55,7 +69,8 @@
   },
   "qa": {
     "must_see": [
-      "深色底、左侧品牌名加系列标签加超大主标题",
+      "深色底、左侧留出安静的文字区",
+      "左侧品牌名加系列标签加超大主标题",
       "右侧一个认得出的主体加暖色圆日与剪影",
       "只有一个暖色强调加米金细线"
     ],
@@ -63,6 +78,9 @@
       "霓虹光效堆砌",
       "标题被方框圈住",
       "未请求的文字或水印"
+    ],
+    "when_text": [
+      "左侧品牌名加系列标签加超大主标题"
     ]
   },
   "evidence": {
@@ -76,6 +94,11 @@
       "revision": 1,
       "date": "2026-10-04",
       "note": "新增：系列文章封面（品牌名、系列标签、超大主标题），色彩可换。"
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-13",
+      "note": "文字与版式声明化：品牌名、系列标签、标题改为 required_text_roles（缺角色编译即报错），版式用 layout 声明左文右图并在居中方形内分区；配方正文不再自带文字；无字档不检查带字验收项。"
     }
   ],
   "inspiration": {

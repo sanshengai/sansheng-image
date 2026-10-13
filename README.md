@@ -82,6 +82,8 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 
 `qa` 需要可用的独立看图模型，或另外提供可追溯的复核记录；缺少复核者时不能把像素检查结果当作整张通过。
 
+独立复核（`plan-review` 配图计划复核、`qa` 看图）有三个后端可选：火山方舟 Coding Plan（默认）、火山方舟 Agent Plan、本机已登录的 Claude Code（`claude_cli`，不需要 Ark Key）。选择方式、各自需要的环境变量和适用场景见 [后端说明「独立复核后端」](./references/backends.md)；没有任何一个可用时，计划复核会停下并告诉你怎么配，不会把没复核的结果当作通过。
+
 ## 选画风、手动调整与记忆
 
 - `python3 scripts/sb.py style-for wxillus`：查看公众号插图的当前默认、候选、选择来源及画风准入状态。当前出厂默认 C24（公众号插图／表情包）、C31（小红书）、C40（信息图）、C30（公众号封面）仍待正式准入；默认能出图不代表成图已通过验收。

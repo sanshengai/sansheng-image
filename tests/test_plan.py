@@ -54,9 +54,11 @@ def test_required_points_reach_prompt_and_visual_review():
     m = PL.manifests(p)[0]
     assert m["content"]["points"] == p["items"][0]["points"]
     prompt = CP.compile_manifest(m).prompt
-    expectation = content_expectations(m["content"])["_content_expectation"]
+    review = content_expectations(m["content"])
     for point in p["items"][0]["points"]:
-        assert point in prompt and point in expectation
+        # points 进生成提示词和逐条 point_match；不再并入 content_match（否则同一条要点重复计罚）
+        assert point in prompt and point in review["_content_point_expectations"]
+        assert point not in review["_content_expectation"]
 
 
 def test_story_source_facts_reach_prompt_and_review():
@@ -68,7 +70,7 @@ def test_story_source_facts_reach_prompt_and_review():
     manifest = PL.manifests(p)[0]
     assert manifest["content"]["points"] == [fact]
     assert fact in CP.compile_manifest(manifest).prompt
-    assert fact in content_expectations(manifest["content"])["_content_expectation"]
+    assert content_expectations(manifest["content"])["_content_point_expectations"] == [fact]
     p["items"][0]["points"] = [" "]
     assert any("必要事实" in error for error in PL.check(p)[0])
 
@@ -99,7 +101,7 @@ def test_overlay_plan_keeps_raw_generation_and_final_review_requirements_distinc
     assert "labels inside cards" in review
     assert "keep headline band empty" not in review
     assert "without letters" not in review
-    assert all(point in review for point in p["items"][0]["points"])
+    assert content_expectations(m["content"])["_content_point_expectations"] == p["items"][0]["points"]
 
 
 def test_three_real_flows_warn_without_blocking():
@@ -476,3 +478,26 @@ def test_story_formats_pass_characters_panels_and_refs(tmp_path):
     assert m["references"][0]["role"] == "identity"
     c = CP.compile_manifest({k: v for k, v in m.items() if k != "_id"})
     assert "Panel 4: She laughs." in c.prompt and "2×2 grid" in c.prompt and "character identity reference" in c.prompt
+
+
+def test_plan_rejects_text_mode_the_style_cannot_do_and_missing_required_roles():
+    # C08 只支持 none / overlay：计划里要原生字，计划阶段就拦（与编译同一判据）
+    p = plan([item(1, text={"mode": "native", "items": [{"role": "title", "text": "慢慢来"}]})],
+             style={"code": "C08", "source": "explicit", "why": "用户指定"})
+    assert any("文字档位只支持" in e and "C08" in e for e in PL.check(p)[0])
+    # 绘本默认 overlay，C91 没有 overlay：给了要排的字就拦；没写档位也没给字是无字图，与编译同口径放行
+    words = {"items": [{"role": "title", "text": "小熊", "box": [0.1, 0.1, 0.5, 0.2], "font_px": 40, "min_px": 20}]}
+    pb = plan([item(1, shape="story", form="scene", format="picturebook-page", text=words)], scene="book",
+              style={"code": "C91", "source": "explicit", "why": "用户指定"})
+    assert any("文字档位只支持" in e for e in PL.check(pb)[0])
+    bare = plan([item(1, shape="story", form="scene", format="picturebook-page")], scene="book",
+                style={"code": "C91", "source": "explicit", "why": "用户指定"})
+    assert not any("文字档位" in e for e in PL.check(bare)[0])
+    ok = plan([item(1, shape="story", form="scene", format="picturebook-page", text={"mode": "none"})], scene="book",
+              style={"code": "C91", "source": "explicit", "why": "用户指定"})
+    assert not any("文字档位" in e for e in PL.check(ok)[0])
+    # 画风要求的文字角色缺了，计划阶段报清楚
+    cv = plan([item(1, shape="story", form="scene", format="wechat-cover-head",
+                    text={"mode": "native", "items": [{"role": "title", "text": "旧相机"}]})], scene="wxcover",
+              style={"code": "C77", "source": "explicit", "why": "用户指定"})
+    assert any("ghost" in e for e in PL.check(cv)[0])

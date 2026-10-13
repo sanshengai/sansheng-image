@@ -129,6 +129,22 @@ def validate(contract: dict, *, where: Path | None = None) -> list[str]:
         problems.append("qa.overlay_layout 需要 recipe.text_mode 包含 overlay 或 hybrid")
     if isinstance(recipe, dict) and recipe.get("text_style_hybrid") and "hybrid" not in modes:
         problems.append("recipe.text_style_hybrid 需要 recipe.text_mode 包含 hybrid")
+    if isinstance(recipe, dict):
+        req, opt = recipe.get("required_text_roles", []), recipe.get("optional_text_roles", [])
+        styles = recipe.get("role_styles", {})
+        if isinstance(req, list) and isinstance(opt, list):
+            both = sorted(set(req) & set(opt))
+            if both:
+                problems.append(f"recipe 文字角色 {both} 不能同时是必需和可选")
+            if req and not set(modes).intersection({"native", "overlay", "hybrid"}):
+                problems.append("recipe.required_text_roles 需要 recipe.text_mode 包含 native、overlay 或 hybrid")
+            if isinstance(styles, dict):
+                unknown = sorted(k for k in styles if k not in set(req) | set(opt))
+                if unknown:
+                    problems.append(f"recipe.role_styles 的角色 {unknown} 没有在 required_text_roles / optional_text_roles 里声明")
+        layout = recipe.get("layout")
+        if isinstance(layout, dict) and layout.get("text_zone") and layout.get("text_zone") == layout.get("hero_zone"):
+            problems.append("recipe.layout 的 text_zone 与 hero_zone 不能在同一侧")
     structure_prompts = recipe.get("structure_prompts", {}) if isinstance(recipe, dict) else {}
     if isinstance(structure_prompts, dict):
         structure_data = json.loads((ROOT / "structures" / "structures.json").read_text(encoding="utf-8"))

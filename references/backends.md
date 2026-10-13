@@ -31,9 +31,25 @@
 
 使用 `sb.py generate` / `batch` 时，选服务顺序：命令行 `--provider` > 配置文件 `~/.config/sansheng-image/config.json` > 按上表顺序找第一个配好的（Codex 排第一）。当前会话没有内置工具且外部服务都未配置时，用 `sb.py inbox` 把编译好的提示词写成「待出图清单」，用户拿去任何工具出图，再回来验收。
 
+## 独立复核后端（配图计划复核 `plan-review`；成图看图 `qa` 同一套后端名）
+
+出图之外还需要一双独立的眼睛：`plan-review` 让另一个模型读完整原文，逐张判断配图计划合不合理。后端**只有三个**，由 `stylebook.qa.plan_review.resolve_backend()` 统一解析，顺序是：命令行 `--backend`（或 `review(..., backend=)`）> `SANSHENG_IMAGE_PLAN_REVIEW_BACKEND` > `SANSHENG_IMAGE_QA_BACKEND` > 默认 `ark_coding_plan`。值不在三者之内直接报错，不会悄悄换一个。结果里的 `_backend` 是实际使用的后端，调用方要记录后端请取它，不要自己再设默认。
+
+| 后端 | 所需凭证 / 环境变量 | 默认 | 适合谁 | 说明 |
+|---|---|---|---|---|
+| `ark_coding_plan` | `ARK_CODING_PLAN_BASE_URL=https://ark.cn-beijing.volces.com/api/coding/v3`、`ARK_CODING_PLAN_API_KEY` | 是 | 订阅了火山方舟 Coding Plan 的用户 | 固定 `deepseek-v4.1-flash`，原文全文随请求发送；地址或型号不符即停，不切别的通道 |
+| `ark_agent_plan` | `ARK_AGENT_PLAN_BASE_URL=https://ark.cn-beijing.volces.com/api/plan/v3`、`ARK_AGENT_PLAN_API_KEY` | 否 | 订阅了火山方舟 Agent Plan 的用户 | `doubao-seed-2.1-turbo`，原文全文随请求发送 |
+| `claude_cli` | 无 Key；本机装好并登录 `claude` 命令行，可用 `SANSHENG_IMAGE_QA_CLAUDE` 指向可执行文件 | 否 | 没有任何方舟套餐、但有 Claude Code 订阅的用户 | 模型用 Read 工具读原文；**没有输出预算设置**（`SANSHENG_IMAGE_PLAN_REVIEW_MAX_OUTPUT_TOKENS` 对它无效），由 CLI 自己管理 |
+
+配置方式：把变量写进 `~/.config/sansheng-image/.env`（`python3 scripts/sb.py setup --env-template` 生成模板；已有 `.env` 的老用户需自己把复核段落补上）或导出到环境。`sb.py plan-review` 会自动读取这个 `.env`；密钥不要发到对话里。缺凭证时命令会列出三个选项并以退出码 2 结束。
+
+- 输出预算（两个 Ark 后端）：默认按计划里的图片数分配，下限 5,000、上限 32,000 tokens，并给 `missed_positions` / `notes` 留固定余量（有封面简报时再加 `cover_review` 的余量）；可用 `SANSHENG_IMAGE_PLAN_REVIEW_MAX_OUTPUT_TOKENS` 指定 2,000–32,000。服务返回 `incomplete` 或 `finish_reason=length` 时仍拒绝验收，并报告状态、预算、使用量和中断原因，同时提示调大这个变量；不把不完整结论记为通过。
+- 缺项重问：模型答了但缺字段、布尔值类型不对或漏了某张图，会点名缺项重问 **1 次**；仍不完整就报错 `PlanReviewIncomplete`，里面保留每次的原始回答和逐条缺口（`sb.py plan-review --report` 会把它们写进报告文件）。额度、鉴权、网络、超时类故障不重问。
+- 错误分类对三个后端一致：429 或额度语 -> 额度用尽；401/403 或未登录 -> 鉴权/套餐不可用；连不上或超时 -> 网络不可用（超时单独说明）；其它 HTTP 错误会附服务返回的片段。
+
 ## 报错怎么处理
 
-Ark Agent Plan 的全文计划复核按图片数分配输出预算（最少 5,000、最多 32,000 tokens），可用 `SANSHENG_IMAGE_PLAN_REVIEW_MAX_OUTPUT_TOKENS` 指定 2,000–32,000。服务返回 `incomplete` 时仍拒绝验收，并报告状态、预算、使用量和中断原因；先依据实际诊断判断是否需要增加预算，不把不完整结论记为通过。
+配图计划复核的输出预算见上一节「独立复核后端」。
 
 | 类型 | 表现 | 处理 |
 |---|---|---|

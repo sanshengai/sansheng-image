@@ -1,6 +1,6 @@
 {
   "code": "C83",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "大字报排印",
     "en": "Oversized Type Poster"
@@ -26,7 +26,13 @@
     "字即图，无插画"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): A poster built almost entirely from one oversized bold Chinese character or short phrase, cropped by the frame, set on a flat saturated background with a single contrasting accent shape, tight tracking, typographic impact; the lettering is the image, no illustration.",
+    "positive": "Visual style (follow exactly): A poster built almost entirely from one oversized bold Chinese character or short phrase filling the frame, set on a flat saturated background with a single contrasting accent shape, tight tracking, typographic impact; every stroke needed to read the lettering stays fully visible and inside the canvas; the lettering is the image, no illustration.",
+    "required_text_roles": [
+      "title"
+    ],
+    "role_styles": {
+      "title": "The oversized lettering is exactly the given character or phrase, bold, filling the frame, with every stroke fully visible."
+    },
     "text_mode": [
       "native",
       "none"
@@ -63,6 +69,11 @@
       "revision": 2,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-10-13",
+      "note": "字即图：title 为 required_text_roles（有字档必须给标题文字）；去掉「被画框裁掉」以免与逐字准确、居中方形安全区冲突，笔画须完整可见。"
     }
   ],
   "inspiration": {

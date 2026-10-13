@@ -156,8 +156,66 @@ def _structure_section(manifest: dict, fmt: dict | None) -> list[str]:
     return out
 
 
+def effective_text_mode(text: dict | None, fmt: dict | None) -> tuple[str, bool]:
+    """返回（实际生效的文字档位, 是否清单显式指定）：清单 text.mode，否则格式默认档，再否则 none。"""
+    text = text or {}
+    explicit = text.get("mode")
+    return explicit or ((fmt or {}).get("text") or {}).get("default", "none"), bool(explicit)
+
+
+def defaults_to_textless(text: dict | None, fmt: dict | None) -> bool:
+    """清单没写 text.mode、也没给任何 text.items：不论格式默认哪个出字档，实际都不出字。"""
+    return not (text or {}).get("mode") and not ((text or {}).get("items") or [])
+
+
+def text_mode_problem(contract: dict, text: dict | None, fmt: dict | None) -> str | None:
+    """合同 recipe.text_mode 不含实际生效的文字档位时，返回错误说明，否则 None。
+
+    例外：none 档永远放行；只是格式默认落到某个出字档、清单又没给任何 text.items 时（见 defaults_to_textless），
+    实际不写也不排任何字，不是在要求这个画风写字，也不拦。
+    """
+    modes = (contract.get("recipe") or {}).get("text_mode") or []
+    mode, explicit = effective_text_mode(text, fmt)
+    if not modes or mode in modes or mode == "none":  # 不出字永远不违反画风；写字的档位才需要合同声明
+        return None
+    if mode == "hybrid" and {"native", "overlay"} <= set(modes):  # 混合档 = 原生字加后排字，两档都支持就够
+        return None
+    if defaults_to_textless(text, fmt):
+        return None
+    where = "清单 text.mode" if explicit else f"格式「{(fmt or {}).get('zh', '默认')}」的默认文字档位"
+    return (f"{contract['code']} 的文字档位只支持 {modes}，而实际生效的是 {mode}（来自{where}）；"
+            f"在清单 text.mode 里改用其中之一")
+
+
+def _check_text_roles(contract: dict, manifest: dict, fmt: dict | None) -> None:
+    """合同要求画面出现的文字角色，必须在 text.items 里有对应条目；有就算作已请求文字。"""
+    rec = contract["recipe"]
+    required = rec.get("required_text_roles") or []
+    t = manifest.get("text") or {}
+    mode, _ = effective_text_mode(t, fmt)
+    items = [i for i in (t.get("items") or []) if isinstance(i, dict)]
+    if not required or mode not in ("native", "hybrid", "overlay") or defaults_to_textless(t, fmt):
+        return
+    present = {i.get("role", "text") for i in items}
+    missing = [r for r in required if r not in present]
+    if missing:
+        hint = "；".join(f"{r}：{rec['role_styles'][r]}" for r in missing if r in (rec.get("role_styles") or {}))
+        raise CompileError(
+            f"{contract['code']} 要求画面里出现文字角色 {missing}，但 text.items 里没有；"
+            f"补一条 role 为 {'、'.join(missing)} 的条目（逐字写出要印的文字）"
+            + (f"。可选角色：{rec['optional_text_roles']}" if rec.get("optional_text_roles") else "")
+            + (f"。角色说明：{hint}" if hint else ""))
+
+
+def _role_style_text(contract: dict, items: list[dict]) -> str:
+    """按合同声明的顺序，只为清单里真的给了文字的角色附呈现方式。"""
+    styles = (contract.get("recipe") or {}).get("role_styles") or {}
+    present = {i.get("role", "text") for i in items}
+    return " ".join(v.strip() for k, v in styles.items() if k in present)
+
+
 def _text_section(manifest: dict, fmt: dict | None, family: str, text_style: str = "", *,
-                  reserve_default: str = "the top area") -> str:
+                  reserve_default: str = "the top area", contract: dict | None = None) -> str:
     t = manifest.get("text") or {}
     mode = t.get("mode") or ((fmt or {}).get("text") or {}).get("default", "none")
     if mode not in MODES:
@@ -174,9 +232,11 @@ def _text_section(manifest: dict, fmt: dict | None, family: str, text_style: str
         lines = "; ".join(f"{role_word.get(it.get('role', 'text'), it.get('role', 'text'))}: {q.format(it['text'])}"
                           + (f" at {it['position']}" if it.get("position") else "") for it in items)
         font = t.get("font")
+        role_style = _role_style_text(contract, items) if contract else ""
         prompt = (f"Text in the image, exactly as written (no other text): {lines}." + (f" Lettering: {font}." if font else "")
                 + " Every character must be correct and legible. Do not add step numbers or unrequested digits on props,"
                 " timers, clocks, dials, screens, or diagrams; show sequence with arrows or unnumbered marks."
+                + (f" {role_style}" if role_style else "")
                 + (f" {text_style.strip()}" if text_style else ""))
         if mode == "hybrid":
             prompt += (f" Reserve {t['reserve'].strip()} as clean, empty, material-matched space for exact text added"
@@ -252,6 +312,16 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     if comic_problems:
         raise CompileError("；".join(comic_problems))
     _check_bans(contract, manifest)
+    problem = text_mode_problem(contract, manifest.get("text"), fmt)
+    if problem:
+        raise CompileError(problem)
+    _check_text_roles(contract, manifest, fmt)
+    layout = (contract.get("recipe") or {}).get("layout") or {}
+    square_format = ((fmt or {}).get("safe_zone") or {}).get("center_square") is True
+    if layout.get("wide_canvas_only") and (square_format or stage == "center_square_master"):
+        raise CompileError(
+            f"{contract['code']} 的版式要用整幅宽画布，经不起居中方形裁切；"
+            f"格式「{(fmt or {}).get('zh', manifest.get('format'))}」会被裁成居中方形。换一个不裁方形的格式，或换样式")
 
     rec = contract["recipe"]
     sec: list[tuple[str, str]] = []
@@ -325,7 +395,7 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     reserve_default = ("the left title zone inside the central 70% safe area"
                        if stage == "center_square_master" else "the top area")
     sec.append(("text", _text_section(manifest, fmt, family, text_style,
-                                       reserve_default=reserve_default)))
+                                       reserve_default=reserve_default, contract=contract)))
     compose = ("A complete 1:1 square master with safe side margins; keep all high-contrast marks at "
                "least 15% in from each edge. The later landscape wings contain background only. "
                "The final image must stay flat-vector, without photographic collage." if stage == "center_square_master"
@@ -355,6 +425,12 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
             "inner square; leave visible breathing room inside its edges rather than placing glyphs "
             "or objects directly on the crop boundary. "
         )
+        if layout.get("text_zone") and layout.get("hero_zone"):
+            crop_safety += (
+                f"This style's two layout zones both sit inside that centered square: its text zone is the "
+                f"{layout['text_zone']} part of the square and its hero zone the {layout['hero_zone']} part of the "
+                "square, not of the full canvas. Neither zone extends into the areas outside the square. "
+            )
     sec.append(("format", (f"{compose} " if compose else "") + crop_safety + background + f"Aspect ratio {aspect}."))
     fixes = manifest.get("fixes") or []
     if fixes:  # 返修：上一张没做到的地方，写成正面要求

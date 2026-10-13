@@ -1,6 +1,6 @@
 {
   "code": "C89",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "地铁线路图",
     "en": "Transit Map Diagram"
@@ -25,7 +25,8 @@
     "浅色背景与清晰标签"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): Transit-map diagram: coloured route lines running only at 45 and 90 degrees, station dots and interchange markers, line-number badges, a light background, clean sans-serif labels, a clear overview of a process as a journey.",
+    "positive": "Visual style (follow exactly): Transit-map diagram: coloured route lines running only at 45 and 90 degrees, station dots and interchange markers, line-colour badges drawn as plain solid colour discs carrying no numerals, a light background, a clear overview of a process as a journey.",
+    "text_style": "Station labels are clean sans-serif text set beside their station dots, using exactly the given characters.",
     "text_mode": [
       "native",
       "none"
@@ -44,6 +45,9 @@
       "自由曲线",
       "写实地图",
       "未请求的文字或水印"
+    ],
+    "when_text": [
+      "浅色背景与清晰标签"
     ]
   },
   "evidence": {
@@ -62,6 +66,11 @@
       "revision": 2,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-10-13",
+      "note": "线路徽章改为无数字的纯色圆标，避免与编译器「不加未请求数字」条款冲突；站名标签的呈现方式移入 text_style（有字时才附），无字档不检查标签验收项。"
     }
   ],
   "inspiration": {

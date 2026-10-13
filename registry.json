@@ -3321,7 +3321,7 @@
       ],
       "dynasty": [],
       "en": "Editorial Magazine Cover",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "衬线大标题是画面主角",
         "细线框、编号式小标签、清晰网格",
@@ -3339,7 +3339,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "1ae245febc5f"
+      "recipe_sha": "e4ae433189b9"
     },
     {
       "code": "C77",
@@ -3368,7 +3368,7 @@
       ],
       "dynasty": [],
       "en": "Sansheng Deep Space",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "深炭底、左侧大标题加半隐英文影字",
         "品牌绿作唯一点缀",
@@ -3399,7 +3399,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "d2ce6c16c4b3"
+      "recipe_sha": "85e8eede9e80"
     },
     {
       "code": "C79",
@@ -3522,7 +3522,7 @@
       ],
       "dynasty": [],
       "en": "Torn-Paper Collage",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "撕边纸片与半色调剪影",
         "手写批注与胶带",
@@ -3540,7 +3540,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "1c8e04f46596"
+      "recipe_sha": "4debd992e0ef"
     },
     {
       "code": "C82",
@@ -3617,7 +3617,7 @@
       ],
       "dynasty": [],
       "en": "Oversized Type Poster",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "一个巨大汉字或短语占满画面",
         "纯色背景加一个对比色块",
@@ -3635,7 +3635,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "4ef85cdd7039"
+      "recipe_sha": "449b3aff3201"
     },
     {
       "code": "C84",
@@ -3901,7 +3901,7 @@
       ],
       "dynasty": [],
       "en": "Transit Map Diagram",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "只用 45 和 90 度的彩色线路",
         "站点圆点与换乘标记",
@@ -3919,7 +3919,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "1e9b1cbe2f65"
+      "recipe_sha": "95b690942407"
     },
     {
       "code": "C90",
@@ -3949,7 +3949,7 @@
       ],
       "dynasty": [],
       "en": "Dark Series Cover",
-      "revision": 1,
+      "revision": 2,
       "essence": [
         "深色底，左侧自上而下：品牌名一行小字、系列标签（圆角色块）、超大粗衬线主标题",
         "右侧一个认得出的主体（可多件叠放）加一轮暖色圆日与剪影",
@@ -3984,7 +3984,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "e88edb539cdc"
+      "recipe_sha": "11cd2970d529"
     },
     {
       "code": "C95",

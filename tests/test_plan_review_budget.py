@@ -28,7 +28,7 @@ def setup_review(monkeypatch, tmp_path, response):
     monkeypatch.delenv("SANSHENG_IMAGE_PLAN_REVIEW_MAX_OUTPUT_TOKENS", raising=False)
     article = tmp_path / "article.md"
     article.write_text("只读原文")
-    monkeypatch.setattr(PR, "prompt", lambda plan, path: "逐张检查")
+    monkeypatch.setattr(PR, "prompt", lambda plan, path, mode="inline", **kw: "逐张检查")
     sent = []
 
     def urlopen(request, timeout):

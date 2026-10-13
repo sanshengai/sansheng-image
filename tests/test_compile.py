@@ -546,3 +546,149 @@ def test_infographic_does_not_invent_a_closing_sentence(with_footer):
     assert "Never invent a closing sentence" in prompt
     assert ("用完归位" in prompt) == with_footer
     assert "and one short closing line at the bottom." not in prompt
+
+
+# ---- 画风合同 × 格式 × 编译规则的冲突（2026-10-13）----
+
+def _real(style, fmt, items=None, mode=None):
+    text = {}
+    if items is not None:
+        text["items"] = items
+    if mode:
+        text["mode"] = mode
+    return {"style": style, "format": fmt, "content": {"subject": "an old film camera"}, "text": text}
+
+
+def _role_contract():
+    k = copy.deepcopy(FREE)
+    k["recipe"].update(
+        required_text_roles=["title", "ghost"], optional_text_roles=["tag"],
+        role_styles={"ghost": "A faint all-caps English line set behind the headline, low contrast.",
+                     "tag": "A small rounded chip carrying exactly the given words."},
+        text_mode=["native", "none"])
+    return k
+
+
+def test_required_text_role_missing_is_rejected_and_present_counts_as_requested_text():
+    k = _role_contract()
+    m = _real("C99", "xhs-carousel", [{"role": "title", "text": "旧相机"}])
+    with pytest.raises(CP.CompileError, match="ghost"):
+        CP.compile_manifest(m, k)
+    m["text"]["items"].append({"role": "ghost", "text": "OLD CAMERA"})
+    prompt = CP.compile_manifest(m, k).prompt
+    assert "ghost: 「OLD CAMERA」" in prompt and "(no other text)" in prompt
+    assert "faint all-caps English line" in prompt  # 角色呈现方式只在有该角色文字时附上
+    assert "small rounded chip" not in prompt       # 可选角色没给文字就不描述
+
+
+def test_required_role_check_skips_textless_but_covers_any_requested_text():
+    k = _role_contract()
+    # 没写 text.mode 也没给字：格式默认档也不出字，提示词就是「无字」，不要求合同的文字角色
+    assert "No text, letters or captions" in CP.compile_manifest(_real("C99", "xhs-carousel"), k).prompt
+    with pytest.raises(CP.CompileError, match="title"):  # 给了字（哪怕只有别的角色）就必须补齐
+        CP.compile_manifest(_real("C99", "xhs-carousel", [{"role": "subtitle", "text": "副标题"}]), k)
+    with pytest.raises(CP.CompileError, match="title"):  # 显式写了出字档也一样
+        CP.compile_manifest(_real("C99", "xhs-carousel", mode="native"), k)
+    prompt = CP.compile_manifest(_real("C99", "music-cover"), k).prompt  # 无字格式不要求字
+    assert "No text, letters or captions" in prompt and "ghost" not in prompt
+    CP.compile_manifest(_real("C99", "xhs-carousel", mode="none"), k)
+
+
+def test_real_c77_requires_ghost_and_prints_it_in_exact_text():
+    with pytest.raises(CP.CompileError, match="ghost"):
+        CP.compile_manifest(_real("C77", "wechat-cover-head", [{"role": "title", "text": "旧相机"}]))
+    ok = CP.compile_manifest(_real("C77", "wechat-cover-head",
+                                   [{"role": "title", "text": "旧相机"}, {"role": "ghost", "text": "OLD CAMERA"}]))
+    assert "ghost: 「OLD CAMERA」" in ok.prompt
+    assert "ghost line" not in ok.prompt.split("Text in the image")[0]  # 锁定层不再自带影字
+    assert "No text, letters or captions" in CP.compile_manifest(_real("C77", "music-cover")).prompt
+
+
+@pytest.mark.parametrize("style,missing,items", [
+    ("C90", "brand", [{"role": "title", "text": "第三期"}, {"role": "tag", "text": "系列"}]),
+    ("C90", "tag", [{"role": "title", "text": "第三期"}, {"role": "brand", "text": "叁笙"}]),
+    ("C83", "title", [{"role": "label", "text": "慢"}]),
+])
+def test_real_contract_missing_role_is_rejected(style, missing, items):
+    with pytest.raises(CP.CompileError, match=missing):
+        CP.compile_manifest(_real(style, "wechat-cover-head", items))
+
+
+def test_optional_roles_are_text_only_when_given():
+    base = [{"role": "title", "text": "编辑部"}]
+    plain = CP.compile_manifest(_real("C76", "xhs-cover", base)).prompt
+    withissue = CP.compile_manifest(_real("C76", "xhs-cover", base + [{"role": "label", "text": "x"}, {"role": "issue", "text": "VOL.3"}])).prompt
+    assert "issue-number" not in plain.split("Text in the image")[1] and "VOL.3" in withissue
+    assert "issue-number" in withissue.split("Text in the image")[1]
+    # 配方正文里不再自带只有清单才能提供的文字
+    from stylebook import contract as CT
+    for code, words in (("C76", "issue-number"), ("C81", "hand-written marginal notes"), ("C77", "ghost line"), ("C90", "brand line")):
+        assert words not in CT.load(code)["recipe"]["positive"]
+
+
+def test_c89_has_no_numeral_badges_that_collide_with_the_no_digits_clause():
+    from stylebook import contract as CT
+    assert "number" not in CT.load("C89")["recipe"]["positive"].replace("no numerals", "")
+    prompt = CP.compile_manifest(_real("C89", "infographic", [{"role": "title", "text": "流程"}])).prompt
+    assert "carrying no numerals" in prompt and "unrequested digits" in prompt
+
+
+def test_wide_canvas_only_layout_is_rejected_for_center_square_formats():
+    k = copy.deepcopy(FREE)
+    k["recipe"]["layout"] = {"text_zone": "left", "hero_zone": "right", "wide_canvas_only": True}
+    with pytest.raises(CP.CompileError, match="居中方形"):
+        CP.compile_manifest(_real("C99", "wechat-cover-head"), k)
+    with pytest.raises(CP.CompileError, match="居中方形"):
+        CP.compile_manifest(_real("C99", "xhs-cover"), k)
+    CP.compile_manifest(_real("C99", "x-image"), k)  # 不裁方形的格式照常
+    k["recipe"]["layout"]["wide_canvas_only"] = False
+    CP.compile_manifest(_real("C99", "wechat-cover-head"), k)
+
+
+def test_declared_zones_are_placed_inside_the_center_square():
+    items = [{"role": "title", "text": "旧相机"}, {"role": "ghost", "text": "OLD CAMERA"}]
+    cover = CP.compile_manifest(_real("C77", "wechat-cover-head", items)).prompt
+    assert "text zone is the left part of the square" in cover and "hero zone the right part of the square" in cover
+    assert "left half" not in cover.split("Production")[0].split("Text in the image")[0]
+    x = CP.compile_manifest(_real("C77", "x-image", items)).prompt
+    assert "layout zones both sit inside" not in x  # 没有方形裁切的格式不加
+
+
+@pytest.mark.parametrize("style,fmt,items,mode", [
+    ("C08", "wechat-cover-head", [{"role": "title", "text": "x"}], None),   # 默认 native，合同只有 none/overlay
+    ("C91", "picturebook-page", [{"role": "title", "text": "x", "box": [0.1, 0.1, 0.5, 0.2], "font_px": 40, "min_px": 20}], None),  # 默认 overlay，合同只有 none/native
+    ("C95", "article-illustration", [{"role": "title", "text": "x"}], None),  # 合同只有 none
+    ("C96", "article-illustration", None, "overlay"),
+])
+def test_text_mode_not_in_contract_is_a_compile_error(style, fmt, items, mode):
+    with pytest.raises(CP.CompileError, match="文字档位只支持"):
+        CP.compile_manifest(_real(style, fmt, items, mode))
+
+
+def test_text_mode_error_names_the_allowed_modes_and_the_fix_compiles():
+    with pytest.raises(CP.CompileError) as e:
+        CP.compile_manifest(_real("C91", "picturebook-page", [{"role": "title", "text": "x", "box": [0.1, 0.1, 0.5, 0.2], "font_px": 40, "min_px": 20}]))
+    assert "['none', 'native']" in str(e.value) and "text.mode" in str(e.value)
+    # 默认档不论是 native 还是 overlay，没写档位又没给字都是无字图，同一口径放行
+    CP.compile_manifest(_real("C91", "picturebook-page"))
+    CP.compile_manifest(_real("C91", "picturebook-page", mode="none"))
+    CP.compile_manifest(_real("C08", "wechat-cover-head", [{"role": "title", "text": "x", "box": [0.1, 0.1, 0.5, 0.2],
+                                                         "font_px": 40, "min_px": 20}], "overlay"))
+    # 不出字永远放行；只靠格式默认落到 native 又没给字，不算在要求这个画风写字
+    CP.compile_manifest(_real("C95", "article-illustration"))
+    CP.compile_manifest(_real("C95", "article-illustration", mode="none"))
+    CP.compile_manifest(_real("C08", "wechat-cover-head"))
+
+
+def test_hybrid_is_allowed_when_native_and_overlay_are_both_supported():
+    k = copy.deepcopy(FREE)
+    k["recipe"]["text_mode"] = ["native", "overlay"]
+    m = _real("C99", "ppt")
+    m["text"] = {"mode": "hybrid", "reserve": "the plain pale left half",
+                 "items": [{"text": "活动企划", "role": "title", "render": "native"},
+                           {"text": "示例", "role": "label", "render": "overlay",
+                            "box": [0.07, 0.8, 0.3, 0.08], "font_px": 32, "min_px": 24}]}
+    CP.compile_manifest(m, k)
+    k["recipe"]["text_mode"] = ["native"]
+    with pytest.raises(CP.CompileError, match="文字档位只支持"):
+        CP.compile_manifest(m, k)

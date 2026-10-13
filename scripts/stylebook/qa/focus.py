@@ -26,7 +26,7 @@ def check(crop: Path, criterion: str, *, original: Path | None = None,
     contract = {"code": "FOCUS", "revision": 1,
                 "qa": {"must_see": [], "must_not_see": [criterion]}}
     independent = ask is None
-    ask = ask or (lambda path, spec: review(path, spec, text_mode="none"))
+    ask = ask or (lambda path, spec: review(path, spec, text_mode="none", samples=1))  # 本函数自己做两次独立复核
     reviews = []
     for _ in range(2):
         answer = ask(crop, contract)

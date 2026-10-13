@@ -487,3 +487,17 @@ def test_network_unavailable_stops_reviews(tmp_path):
         raise ReviewerNetworkUnavailable("网络不可用")
     st, _ = _run(tmp_path, review_fn=rv, jobs=1)
     assert len(seen) == 1 and all(v["result"] == "pending" for v in st["questions"].values())
+
+
+def test_matrix_fills_contract_required_text_roles():
+    """合同要求的文字角色（如 C77 影字）由矩阵补齐，编译不报错且逐字进入应有文字。"""
+    import json
+    q = {"id": "T8", "aspect": "3:4", "subject": "A quiet title card.",
+         "text": {"mode": "native", "items": [{"role": "title", "text": "慢慢来，比较快"}]}}
+    c77 = json.loads((Path(__file__).resolve().parents[1] / "styles/C77/contract.json").read_text())
+    with pytest.raises(CP.CompileError):
+        CP.compile_manifest(MX.manifest_for("C77", q, "gpt-image-2"), c77)
+    compiled = CP.compile_manifest(MX.manifest_for("C77", q, "gpt-image-2", contract=c77), c77)
+    assert "「SLOW IS FAST」" in compiled.prompt
+    assert MX.expected_text(q, c77) == ["慢慢来，比较快", "SLOW IS FAST"]
+    assert MX.expected_text(q) == ["慢慢来，比较快"]

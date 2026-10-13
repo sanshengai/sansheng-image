@@ -10,3 +10,9 @@ def _no_real_codex(monkeypatch):
         providers._CODEX_LOGIN.clear()
     except Exception:  # 导入路径尚未就绪的测试文件里忽略
         pass
+
+
+@pytest.fixture(autouse=True)
+def _single_review_sample(monkeypatch):
+    """历史测试按「一次请求一次结论」写成；多次采样聚合的行为在 test_qa_review_reliability.py 里显式开启。"""
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_SAMPLES", "1")
