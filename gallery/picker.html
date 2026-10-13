@@ -370,6 +370,13 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .lib-sel.on { border-color: var(--green); color: var(--strong); }
 .lib-sel:disabled { opacity: .38; cursor: not-allowed; }
 .lib-tax .btn-small { flex: none; min-height: 36px; padding: 4px 12px; }
+/* 吸顶栏：场景一行 + 右侧搜索与「更多筛选」；色系最多两行 */
+.lib-row-top .chips { flex: 1 1 auto; }
+.lib-row-top .lib-search { flex: 0 1 260px; }
+.lib-more { flex: none; min-height: 34px; }
+.lib-more.on { border-color: var(--green); color: var(--strong); }
+.chips-wrap { flex-wrap: wrap; overflow: hidden; max-height: calc(2 * 34px + 8px + 8px); row-gap: 8px; }
+.lib-bar.is-stuck { box-shadow: 0 18px 40px -18px rgba(0,0,0,.75); border-bottom-color: var(--line-2); }
 #quiz { width: min(760px, calc(100vw - 24px)); }
 .quiz-in { position: relative; padding: 28px; }
 .quiz-in .dlg-title { padding-right: 72px; }
@@ -378,7 +385,15 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .quiz-pick .thumb { aspect-ratio: 3 / 2; }
 .quiz-pick:hover .thumb { outline: 1px solid var(--line-2); }
 .quiz-pick .sc-name { font-size: 16px; margin-top: 8px; overflow-wrap: anywhere; }
+@media (max-width: 900px) {
+  .lib-row-top { flex-wrap: wrap; row-gap: 8px; }
+  .lib-row-top .chips { flex-basis: calc(100% - 2em - 12px); }
+  .lib-row-top .lib-search { flex: 1 1 auto; margin-left: calc(2em + 12px); max-width: none; }
+  .chips-wrap { flex-wrap: nowrap; overflow-x: auto; max-height: none; }
+}
 @media (max-width: 640px) {
+  .lib-bar-in { padding: 6px 0 4px; gap: 2px; }          /* 四行全开时也不超过屏高四分之一 */
+  .lib-bar-in .chips, .lib-tax { padding-bottom: 4px; }
   .lib-q { font-size: 16px; }
   .lib-tax { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
   .lib-sel { flex: 0 0 132px; font-size: 16px; padding: 4px 8px; }
@@ -747,13 +762,18 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     </div>
     <div class="lib-bar" id="lib-bar">
       <div class="wrap lib-bar-in">
-        <div class="lib-row">
+        <div class="lib-row lib-row-top">
           <span class="lib-label" id="lib-scene-label">场景</span>
           <div class="chips" id="lib-scenes" role="group" aria-labelledby="lib-scene-label"></div>
+          <div class="lib-search">
+            <input class="lib-q" id="lib-q" type="search" placeholder="搜编号、名字、画法" aria-label="搜索画风" autocomplete="off" spellcheck="false">
+            <button class="btn btn-small" id="lib-q-clear" type="button" hidden>清除</button>
+          </div>
+          <button class="btn btn-small lib-more" id="lib-more" type="button" aria-expanded="false" aria-controls="lib-tax-row" hidden>更多筛选</button>
         </div>
-        <div class="lib-row">
+        <div class="lib-row lib-row-pal">
           <span class="lib-label" id="lib-palette-label">色系</span>
-          <div class="chips" id="lib-palettes" role="group" aria-labelledby="lib-palette-label"></div>
+          <div class="chips chips-wrap" id="lib-palettes" role="group" aria-labelledby="lib-palette-label"></div>
         </div>
         <div class="lib-row" id="lib-tax-row" hidden>
           <span class="lib-label" id="lib-tax-label">分类</span>
@@ -763,13 +783,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
             <select class="lib-sel" id="lib-dynasty" aria-label="朝代" hidden></select>
             <select class="lib-sel" id="lib-family" aria-label="风格分类" hidden></select>
             <button class="btn btn-small" id="lib-tax-clear" type="button" hidden>清除</button>
-          </div>
-        </div>
-        <div class="lib-row">
-          <label class="lib-label" id="lib-q-label" for="lib-q">搜索</label>
-          <div class="lib-search">
-            <input class="lib-q" id="lib-q" type="search" placeholder="编号、名字、原作、气质、画法" autocomplete="off" spellcheck="false">
-            <button class="btn btn-small" id="lib-q-clear" type="button" hidden>清除</button>
           </div>
         </div>
       </div>
@@ -1676,8 +1689,18 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     applyFilter();
     writeHash();
   }
+  /* 地域 / 时代 / 朝代 / 分类收进「更多筛选」：平时不占吸顶栏，有筛选生效时自动展开 */
+  var taxOpen = false;
+  function setTaxOpen(open) {
+    taxOpen = !!open && taxOn;
+    $('#lib-tax-row').hidden = !taxOpen;
+    $('#lib-more').setAttribute('aria-expanded', taxOpen ? 'true' : 'false');
+    $('#lib-more').classList.toggle('on', taxActive());
+  }
   function renderTaxRow() {
-    $('#lib-tax-row').hidden = !taxOn;
+    $('#lib-more').hidden = !taxOn;
+    $('#lib-more').addEventListener('click', function () { setTaxOpen(!taxOpen); });
+    setTaxOpen(false);
     TAX_DIMS.forEach(function (dim) {
       var key = dim[0], sel = $('#lib-' + key);
       sel.textContent = '';
@@ -1699,6 +1722,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     dyn.disabled = libState.region !== TAX_CHINA;
     dyn.title = dyn.disabled ? '先把地域选为「中国」，再按朝代筛选' : '';
     $('#lib-tax-clear').hidden = !taxActive();
+    setTaxOpen(taxOpen || taxActive());
   }
 
   /* 搜索：保留编号、名字、原作、家族、特点、气质、画法和用途名，不分大小写，空格分开的每个词都要命中（与现役 picker 同口径） */
@@ -2195,7 +2219,11 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       im.src = '/logo.webp';
     });
   }
-  window.addEventListener('scroll', function () { navEl.classList.toggle('is-stuck', window.scrollY > 8); }, { passive: true });
+  var libBarEl = $('#lib-bar');
+  window.addEventListener('scroll', function () {
+    navEl.classList.toggle('is-stuck', window.scrollY > 8);
+    if (libBarEl) libBarEl.classList.toggle('is-stuck', libBarEl.getBoundingClientRect().top <= navEl.offsetHeight + 1 && window.scrollY > 200);   // 画风库栏吸住时浮起来
+  }, { passive: true });
 
   /* ---------- 搜索（和场景筛选取交集；搜索词不写进网址） ---------- */
   $('#lib-q').addEventListener('input', function () { libState.q = this.value; applyFilter(); });

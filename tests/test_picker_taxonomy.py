@@ -143,6 +143,8 @@ def _hash(page) -> dict:
 
 
 def _sel(page, key, value):
+    if page.is_hidden("#lib-tax-row"):   # 分类收在「更多筛选」里，先展开
+        page.click("#lib-more")
     page.select_option(f"#lib-{key}", value)
 
 
@@ -189,7 +191,12 @@ def test_row_sits_in_the_sticky_bar_and_options_follow_the_data(browser, built):
     d, html, meta = built
     with open_page(browser, d) as page:
         _open(page)
+        # 默认收起在「更多筛选」里，点开才出现；吸顶栏上不直接摆四个下拉框
+        assert page.is_visible("#lib-more") and page.is_hidden("#lib-tax-row")
+        assert page.get_attribute("#lib-more", "aria-expanded") == "false"
+        page.click("#lib-more")
         assert page.is_visible("#lib-tax-row") and page.is_hidden("#lib-tax-clear")
+        assert page.get_attribute("#lib-more", "aria-expanded") == "true"
         assert page.eval_on_selector("#lib-bar", "b=>!!b.querySelector('#lib-tax-row, #lib-scenes') && b.querySelector('#lib-tax-row') && b.querySelector('#lib-palettes') && b.querySelector('#lib-q') !== null")
         for key, label in (("region", "全部地域"), ("era", "全部时代"), ("dynasty", "全部朝代"), ("family", "全部分类")):
             got = page.eval_on_selector_all(f"#lib-{key} option", "o=>o.map(x=>x.textContent)")
@@ -202,7 +209,12 @@ def test_row_sits_in_the_sticky_bar_and_options_follow_the_data(browser, built):
         top = page.eval_on_selector("#lib-bar", "b=>b.getBoundingClientRect().top")
         nav = page.eval_on_selector("#topnav", "n=>n.getBoundingClientRect().bottom")
         assert nav > 0 and abs(top - nav) < 1.5, (top, nav)      # 吸顶，紧贴在站点顶栏下方
+        page.evaluate("window.dispatchEvent(new Event('scroll'))")
+        assert "is-stuck" in page.get_attribute("#lib-bar", "class")  # 吸住时有阴影浮起
         assert page.is_visible("#lib-region")
+        _open(page, "#g=" + _options(meta, "region")[0])          # 网址里带着分类筛选：自动展开，用户看得见是什么在生效
+        page.reload(); page.wait_for_selector("#lib-grid > li", state="attached")
+        assert page.is_visible("#lib-tax-row") and page.get_attribute("#lib-more", "aria-expanded") == "true"
 
 
 def test_dimensions_intersect_and_match_independent_oracle(browser, built):
@@ -494,7 +506,7 @@ def test_page_without_taxonomy_in_catalog_hides_the_row_and_keeps_everything_els
     assert "taxonomy" not in meta and not any("region" in c for c in meta["cands"])
     with open_page(browser, tmp_path / "out") as page:
         _open(page, "#g=中国&e=20世纪")
-        assert page.is_hidden("#lib-tax-row") and len(_visible(page)) == len(meta["cands"])
+        assert page.is_hidden("#lib-tax-row") and page.is_hidden("#lib-more") and len(_visible(page)) == len(meta["cands"])
         page.fill("#lib-q", meta["cands"][0]["id"])
         assert _visible(page) == {meta["cands"][0]["id"]}
         page.click(f'#lib-scenes .chip[data-scene="{meta["scenes"][0]["id"]}"]')       # 回写网址：没有词表时不认新键，也不会把它们传播下去
