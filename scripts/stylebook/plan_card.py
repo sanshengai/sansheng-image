@@ -15,6 +15,8 @@ CARD_NAME = "plan-card.md"
 _NUM = re.compile(r"\d+(?:[.,，]\d+)*")
 _QUOTE = re.compile(r"「([^」]{2,})」|“([^”]{2,})”|\"([^\"]{2,})\"|『([^』]{2,})』")
 _PROPER = re.compile(r"(?<![A-Za-z0-9])[A-Z][A-Za-z0-9]*(?:[.+\-&][A-Za-z0-9]+)*")   # 按单词查，多词专名逐词核对
+# 引导语：图本身就是内容，不在图上招呼读者看图、往下翻
+_GUIDE = re.compile(r"一张图(看懂|读懂|了解|搞懂)|如下图|如图所示|见下图|看下图|往下(看|滑|翻)|向下滑|点击|扫码|关注我|记得收藏|快收藏")
 # 版式用语，不算专名
 _PROPER_OK = {"VS", "OK", "DIY", "TOP", "NEW"}
 
@@ -59,13 +61,16 @@ def problems(text: str, source: str, *, derived: str | None = None) -> list[str]
 
 
 def check_items(text_spec, source: str | None, tag: str = "") -> list[str]:
-    """按条检查；没有原文时（纯创作题）不查。"""
-    if not source:
-        return []
+    """按条检查。引导语总是查；来源只在有原文时查（纯创作题不查）。"""
     errs = []
     for x in entries(text_spec):
         t = x.get("text")
         if not isinstance(t, str):
+            continue
+        m = _GUIDE.search(t)
+        if m:
+            errs.append(f"{tag}「{t}」图上不写引导语「{m.group(0)}」，图本身就是内容；招呼读者的话写在正文或发布文案里")
+        if not source:
             continue
         derived = x.get("derived")
         if "derived" in x and not (isinstance(derived, str) and len(derived.strip()) >= 4):

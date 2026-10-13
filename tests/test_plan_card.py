@@ -60,6 +60,16 @@ def test_no_source_means_no_check():
     assert PC.check_items({"items": [{"text": "增长 999%"}]}, None) == []
 
 
+@pytest.mark.parametrize("text", ["一张图看懂交付提速", "如下图所示", "往下滑看答案", "记得收藏"])
+def test_guide_phrases_are_rejected_even_without_source(text):
+    assert PC.check_items({"items": [{"text": text}]}, None)
+    assert PC.check_items({"items": [{"text": text}]}, ARTICLE)
+
+
+def test_plain_conclusion_is_not_a_guide_phrase():
+    assert PC.check_items({"items": [{"text": "先找最慢的一步，再谈提速"}]}, None) == []
+
+
 BRIEF = {"version": 1, "scene": "wxillus", "style": "C42", "reason": "清楚表现文章中的提速",
          "items": [{"position": "去年团队把交付周期从 21 天缩到 9 天", "message": "交付变快", "visual": "Two calendars", "text": ["从 21 天到 9 天"]}]}
 
