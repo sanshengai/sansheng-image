@@ -273,22 +273,26 @@ def three(*variants):
     return aggregate_reviews([copy.deepcopy(v) for v in variants])
 
 
-def test_one_failing_sample_out_of_three_fails_deterministically_and_keeps_all_reasons(tmp_path):
+def test_minority_failure_is_outvoted_but_recorded_and_majority_failure_fails(tmp_path):
     good, bad = rv(why="看到"), rv(fail_must={"笔记本完整"}, why="笔记本被裁切")
     merged = three(good, bad, good)
     row = next(r for r in merged["must_see"] if r["item"] == "笔记本完整")
-    assert row["ok"] is False and "笔记本被裁切" in row["why"] and "3 次采样中 1 次判失败" in row["why"]
-    assert row["sample_verdicts"] == ["pass", "fail", "pass"]
-    assert merged["_aggregation"]["rule"] == "any_fail"
+    assert row["ok"] is True and row["sample_verdicts"] == ["pass", "fail", "pass"]
+    assert merged["_aggregation"]["rule"] == "majority_after_escalation"
     assert {"field": "must_see", "item": "笔记本完整", "verdicts": ["pass", "fail", "pass"]} in merged["_aggregation"]["disagreements"]
-    assert len(merged["_samples"]) == 3 and merged["_samples"][1]["must_see"][2]["why"] == "笔记本被裁切"
-    verdict = judge(img(tmp_path), CONTRACT, merged, EXPECTED, "native")
-    assert not verdict.passed and verdict.triage["sample_disagreements"]
-    # 反例：三次都通过则通过，且没有分歧
+    assert merged["_samples"][1]["must_see"][2]["why"] == "笔记本被裁切"  # 少数意见原样留在报告里
+    assert judge(img(tmp_path), CONTRACT, merged, EXPECTED, "native").passed
+    # 反例：过半判失败就失败，且保留所有判失败那几次的理由
+    worse = three(bad, bad, good)
+    row = next(r for r in worse["must_see"] if r["item"] == "笔记本完整")
+    assert row["ok"] is False and "3 次采样中 2 次判失败" in row["why"]
+    assert not judge(img(tmp_path), CONTRACT, worse, EXPECTED, "native").passed
+    # 平票判失败（例如配置成 2 次采样）
+    tie = aggregate_reviews([copy.deepcopy(good), copy.deepcopy(bad)])
+    assert next(r for r in tie["must_see"] if r["item"] == "笔记本完整")["ok"] is False
     clean = three(good, good, good)
     assert judge(img(tmp_path), CONTRACT, clean, EXPECTED, "native").passed
     assert clean["_aggregation"]["disagreements"] == []
-
 
 def test_hallucination_in_one_sample_cannot_be_voted_away(tmp_path):
     """通过的那次幻觉出不存在的影字：另两次未见则按保守规则失败，而不是 2:1 放行。"""
@@ -298,10 +302,10 @@ def test_hallucination_in_one_sample_cannot_be_voted_away(tmp_path):
     assert not judge(img(tmp_path), CONTRACT, merged, EXPECTED, "native").passed
 
 
-def test_ban_item_present_in_any_sample_is_present():
-    merged = three(rv(), rv(present={"黑色背景"}), rv())
-    assert next(r for r in merged["must_not_see"] if r["item"] == "黑色背景")["present"] is True
-
+def test_ban_item_follows_the_majority_of_samples():
+    row = lambda m: next(r for r in m["must_not_see"] if r["item"] == "黑色背景")["present"]
+    assert row(three(rv(), rv(present={"黑色背景"}), rv())) is False
+    assert row(three(rv(present={"黑色背景"}), rv(present={"黑色背景"}), rv())) is True
 
 def test_na_in_one_sample_does_not_waive_a_failure_in_another():
     a = rv()
@@ -317,7 +321,7 @@ def test_conflict_waiver_needs_every_failing_sample_to_claim_it(tmp_path):
     passing_claim = rv(conflict={MUST_GHOST: claim()})
     row = lambda m: next(r for r in m["must_see"] if r["item"] == MUST_GHOST)
     # 一次采样判出缺陷却没提冲突：多数声明也不能盖掉它
-    for merged in (three(claimed, claimed, silent), three(silent, passing_claim, passing_claim)):
+    for merged in (three(claimed, claimed, silent), three(silent, silent, passing_claim)):
         assert "conflict" not in row(merged)
         assert not judge(img(tmp_path), CONTRACT, merged, EXPECTED, "native").passed
     unanimous = three(claimed, claimed, claimed)
@@ -337,7 +341,8 @@ def test_each_sample_transcript_is_compared_not_just_the_first(tmp_path):
 
 def test_content_parts_and_overall_are_aggregated_consistently_and_sample_contradiction_is_kept(tmp_path):
     fine, bad = rv(), rv(cm_fail={"inventory": "macOS 徽章"})
-    merged = three(fine, bad, fine)
+    assert three(fine, bad, fine)["content_match"]["ok"] is True  # 少数意见不定结论
+    merged = three(bad, bad, fine)
     cm = merged["content_match"]
     assert cm["ok"] is False and [p["ok"] for p in cm["parts"]] == [True, True, False]
     assert cm["parts"][2]["failed_clause"] == "macOS 徽章"
@@ -404,15 +409,29 @@ def model_answer(contract=CONTRACT, **kw):
 
 def test_default_is_three_independent_samples_aggregated(route, tmp_path, monkeypatch):
     monkeypatch.delenv("SANSHENG_IMAGE_QA_SAMPLES")
-    sent = serve(monkeypatch, [model_answer(), model_answer(fail_must={"笔记本完整"}, why="被裁"), model_answer()])
+    sent = serve(monkeypatch, [model_answer()] * 3)
     result = reviewer.review(img(tmp_path), CONTRACT, EXPECTED, "native")
-    assert len(sent) == 3 and len(result["_samples"]) == 3
+    assert len(sent) == 3 and len(result["_samples"]) == 3  # 一致就不加看
     assert result["_aggregation"]["samples"] == 3 and result["_review_schema"] == 2
     assert result["_reviewer"] == "ark_coding_plan:deepseek-v4-1-flash"
-    assert next(r for r in result["must_see"] if r["item"] == "笔记本完整")["ok"] is False
     if "temperature" in inspect.signature(coding_plan.request).parameters:
         assert all(body["temperature"] == reviewer.DEFAULT_SAMPLE_TEMPERATURE for body in sent)
 
+
+def test_disagreement_escalates_to_five_samples_and_majority_decides(route, tmp_path, monkeypatch):
+    monkeypatch.delenv("SANSHENG_IMAGE_QA_SAMPLES")
+    bad = model_answer(fail_must={"笔记本完整"}, why="被裁")
+    sent = serve(monkeypatch, [model_answer(), bad, model_answer(), bad, model_answer()])
+    result = reviewer.review(img(tmp_path), CONTRACT, EXPECTED, "native")
+    assert len(sent) == 5 and result["_aggregation"]["escalated_from"] == 3
+    assert next(r for r in result["must_see"] if r["item"] == "笔记本完整")["ok"] is True  # 2/5
+    sent = serve(monkeypatch, [model_answer(), bad, model_answer(), bad, bad])
+    result = reviewer.review(img(tmp_path), CONTRACT, EXPECTED, "native")
+    assert next(r for r in result["must_see"] if r["item"] == "笔记本完整")["ok"] is False  # 3/5
+    monkeypatch.setenv("SANSHENG_IMAGE_QA_ESCALATE", "0")
+    sent = serve(monkeypatch, [model_answer(), bad, model_answer()])
+    reviewer.review(img(tmp_path), CONTRACT, EXPECTED, "native")
+    assert len(sent) == 3
 
 @pytest.mark.parametrize("value,count", [("1", 1), ("0", 1), ("-4", 1), ("2", 2)])
 def test_sample_count_is_configurable_with_minimum_one(route, tmp_path, monkeypatch, value, count):
@@ -461,7 +480,9 @@ def test_end_to_end_default_flow_passes_clean_image_and_rejects_one_bad_sample(r
     assert judge(image, CONTRACT, reviewer.review(image, CONTRACT, EXPECTED, "native"), EXPECTED, "native").passed
     serve(monkeypatch, [model_answer(), model_answer(transcript=EXPECTED + ["影"], present={"黑色背景"}), model_answer()])
     verdict = judge(image, CONTRACT, reviewer.review(image, CONTRACT, EXPECTED, "native"), EXPECTED, "native")
-    assert not verdict.passed and any("黑色背景" in p for p in verdict.problems)
+    # 逐字转录仍是每次各自比对：一次多写了字就不通过；禁止项只被一次看到则按多数不算
+    assert not verdict.passed and any("多写了文字" in p for p in verdict.problems)
+    assert not any("黑色背景" in p for p in verdict.problems)
 
 
 def test_default_model_reports_the_backend_that_is_actually_used(route, monkeypatch):

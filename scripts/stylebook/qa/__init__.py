@@ -5,7 +5,7 @@
 - 模型先把图里的字逐字抄出来，脚本拿它和应有的字逐字比对（防止模型把糊字脑补成通顺句子）；
 - 风格合同里有像素阈值的，按阈值判；
 - 任何一项不过即不合格，给出具体原因，供单张返修。
-- 看图是概率性的：同一张图要做多次独立采样，逐项「任一次判失败即失败」（见 aggregate_reviews），各次原始结果与分歧项都保留在报告里；
+- 看图是概率性的：同一张图要做多次独立采样，有分歧时加看并逐项多数决（见 aggregate_reviews），各次原始结果与分歧项都保留在报告里；
 - 本次任务单（内容计划、必要信息、分镜；不含已请求文字）的显式要求/禁止优先于画风合同的「必须看到」条目；冲突须逐字引用任务单原句，脚本校验原句确实存在，且每一次判失败的采样都须提出成立的声明。「不许看到」条目不能以冲突豁免。
 """
 from __future__ import annotations
@@ -832,10 +832,13 @@ def review_schema(contract: dict) -> dict:
 
 
 # ---- 多次独立采样的聚合 ---------------------------------------------------------------
-# 规则 any_fail（保守）：每个判定项只要有任一次采样判失败就整体失败；各次理由、原始结果与分歧项都保留。
-# 选它而不是多数决：同一张图曾「一次通过一次不通过」，通过的那次还幻觉出不存在的影字——多数决会让这类
-# 幻觉在 2/3 概率下原样放行，而 any_fail 的代价只是误判时多一次诊断，不会自动重生图。
-AGGREGATION_RULE = "any_fail"
+# 规则 majority_after_escalation：每个判定项按各次采样多数决（平票判失败）；reviewer.review 在默认 3 次
+# 出现任何分歧时会再独立看 2 次，于是有分歧的条目按 5 次多数定。
+# 为什么不用 any_fail：真实看图里单次采样有约两三成概率在某一条上看错（实测：明摆着的代码文件图标
+# 被一次采样说成没有），any_fail 让合格图三次里约一半被卡；纯 3 次多数又会让一次漏看真缺陷的概率偏高。
+# 分歧时加看到 5 次，两类错误都压到约 5%。逐字转录仍是每次采样各自比对，任何一次对不上都算。
+# 冲突豁免另有更严的规则：每一次判失败的采样都须提出成立的声明（见 _merge_rows）。
+AGGREGATION_RULE = "majority_after_escalation"
 
 
 def _verdict_must(e: dict) -> str:
@@ -854,7 +857,11 @@ def _merge_rows(rows: list[dict], verdict, *, field: str, fail_value: bool) -> t
     """rows 是同一判定项在各次采样里的回答。返回合并后的回答与各次结论。"""
     n = len(rows)
     verdicts = [verdict(r) for r in rows]
-    agg = "fail" if "fail" in verdicts else ("na" if all(v == "na" for v in verdicts) else "pass")
+    fails = verdicts.count("fail")
+    if fails and fails * 2 >= n:  # 多数决，平票判失败
+        agg = "fail"
+    else:  # 没过半的失败之外，有判通过的就是通过，否则全是不适用
+        agg = "pass" if "pass" in verdicts else "na"
     matching = [r for r, v in zip(rows, verdicts) if v == agg]
     merged = {k: v for k, v in matching[0].items() if k not in ("conflict", "failed_clause", "failed_clauses")}
     merged[field] = (agg == "fail") if fail_value else (agg != "fail")
@@ -872,7 +879,7 @@ def _merge_rows(rows: list[dict], verdict, *, field: str, fail_value: bool) -> t
         unverified = all(x == "unverified" for x in states) if agg == "fail" else any(x == "unverified" for x in states)
         merged["observation"] = "unverified" if unverified else "confirmed"
     # 冲突豁免只在「每一次判失败的采样都提出了声明」时保留，且每条声明都交 judge 逐条核对原文；
-    # 少数采样的声明不能盖掉另一次采样判出的真实缺陷（任一失败即失败）
+    # 少数采样的声明不能盖掉另一次采样判出的真实缺陷
     failing_rows = [(i + 1, r) for i, (r, v) in enumerate(zip(rows, verdicts)) if v == "fail"]
     if agg == "fail" and failing_rows and all(isinstance(r.get("conflict"), dict) for _, r in failing_rows):
         first = failing_rows[0][1]["conflict"]

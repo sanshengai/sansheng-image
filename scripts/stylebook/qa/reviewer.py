@@ -155,6 +155,9 @@ def default_model() -> str:
     return ARK_MODEL if backend == "ark_agent_plan" else DEFAULT_MODEL
 
 
+DEFAULT_ESCALATE = 2
+
+
 def samples_requested() -> int:
     """每张图的独立采样次数：SANSHENG_IMAGE_QA_SAMPLES，默认 3，最小 1；写错直接报错，不悄悄用默认值。"""
     raw = os.environ.get("SANSHENG_IMAGE_QA_SAMPLES", "").strip()
@@ -271,7 +274,36 @@ def review(image: Path, contract: dict, expected_text: list[str] | None = None, 
             data["_completed_samples"] = done
             return data
         done.append(data)
-    return aggregate_reviews(done)
+    merged = aggregate_reviews(done)
+    extra = escalation_requested() if count >= 3 else 0
+    if extra and merged["_aggregation"]["disagreements"]:
+        # 有分歧时再独立看几次，分歧条目按全部采样多数决；一致的条目不受影响
+        for _ in range(extra):
+            try:
+                data = _review_once(image, contract, expected_text, text_mode, model, timeout, tries, count)
+            except ReviewerIncompleteResult as exc:
+                exc.review["_completed_samples"] = done
+                raise
+            gaps = _strict_gaps(data, contract, text_mode)
+            if gaps:
+                data["_incomplete_review"] = gaps
+                data["_completed_samples"] = done
+                return data
+            done.append(data)
+        merged = aggregate_reviews(done)
+        merged["_aggregation"]["escalated_from"] = count
+    return merged
+
+
+def escalation_requested() -> int:
+    """默认 3 次采样出现分歧时追加的独立采样次数：SANSHENG_IMAGE_QA_ESCALATE，默认 2，0 关闭。"""
+    raw = os.environ.get("SANSHENG_IMAGE_QA_ESCALATE", "").strip()
+    if not raw:
+        return DEFAULT_ESCALATE
+    try:
+        return max(0, int(raw))
+    except ValueError as exc:
+        raise ValueError(f"SANSHENG_IMAGE_QA_ESCALATE 须为整数：{raw!r}") from exc
 
 
 def _review_once(image: Path, contract: dict, expected_text: list[str] | None, text_mode: str,
