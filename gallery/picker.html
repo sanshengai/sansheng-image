@@ -1827,6 +1827,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       if (gridEl.lastElementChild !== li) gridEl.appendChild(li);
     });
     layoutMasonry();
+    gridEl.setAttribute('data-scene', libState.scene);   // 动态版脚本据此给本场景有动态示例的画风加「会动」角标
     document.querySelectorAll('#lib-scenes .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scene === libState.scene ? 'true' : 'false'); });
     document.querySelectorAll('.scene-card').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scene === libState.scene ? 'true' : 'false'); });
     document.querySelectorAll('#lib-palettes .chip[data-pal]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.pal === libState.palette ? 'true' : 'false'); });

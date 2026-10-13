@@ -908,6 +908,45 @@ def test_every_palette_chip_is_reachable_when_folded(browser, built, width):
         page.click(f'#lib-palettes .chip[data-pal="{last}"]')
         assert page.get_attribute(f'#lib-palettes .chip[data-pal="{last}"]', "aria-pressed") == "true"
 
+
+_MOTION_CARDS = "[...document.querySelectorAll('#lib-grid > li.motion-lib-item')].map(l => l.dataset.style).sort()"
+
+
+def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, built, synthetic_motion):
+    """动态版接进画风库：只给当前场景有动态示例的画风加「会动」角标；公众号封面、分镜不出；减少动效时不加载视频。"""
+    d, _ = built
+    items = [m for m in synthetic_motion["doc"]["items"] if m["style_code"] and m["homepage_scene"]]
+    scenes = {m["homepage_scene"] for m in items}
+    assert scenes, "合成数据里没有挂到场景的动态示例，无法验证角标"
+    with open_page(browser, d) as page:
+        _open(page, "")
+        page.wait_for_selector("#lib-grid > li.motion-lib-item", state="attached")
+        assert page.evaluate(_MOTION_CARDS) == sorted({m["style_code"] for m in items})
+        for sid in sorted(scenes):
+            _open(page, f"#u={sid}")
+            page.wait_for_function(f"document.getElementById('lib-grid').dataset.scene === '{sid}'")
+            want = sorted({m["style_code"] for m in items if m["homepage_scene"] == sid})
+            page.wait_for_function(f"JSON.stringify({_MOTION_CARDS}) === JSON.stringify({want!r})".replace("'", '"'))
+            assert page.locator("#lib-grid > li.motion-lib-item .motion-badge").first.inner_text() == "会动"
+        for sid in ("wxcover", "board"):
+            _open(page, f"#u={sid}")
+            page.wait_for_function(f"document.getElementById('lib-grid').dataset.scene === '{sid}'")
+            assert page.evaluate(_MOTION_CARDS) == [], sid
+        groups = page.eval_on_selector_all("#motion-showcase .motion-group", "g => g.map(x => x.getAttribute('aria-label'))")
+        assert len(groups) == len(set(groups)) >= 2   # 示例按场景分组，每组只出现一次
+    with open_page(browser, d, reduced_motion="reduce") as page:
+        _open(page, f"#u={items[0]['homepage_scene']}")
+        li = page.locator("#lib-grid > li.motion-lib-item:not([hidden])").first
+        li.wait_for(state="attached")
+        li.scroll_into_view_if_needed()
+        li.locator(".style-card").hover()
+        page.wait_for_timeout(600)
+        assert li.evaluate("l => [l.querySelector('video').getAttribute('src'), getComputedStyle(l.querySelector('.motion-badge')).display]") == [None, "none"]
+        assert page.locator("#motion-showcase .motion-fig-dyn").evaluate("e => getComputedStyle(e).display") == "none"
+        page.eval_on_selector("#motion-showcase .motion-play", "b => b.click()")   # 按钮已隐藏；即使被触发也只留海报帧
+        page.wait_for_timeout(300)
+        assert page.eval_on_selector("#motion-showcase .motion-play", "b => b.textContent") == "播放动态"   # 没有进入加载、在播或失败
+
 # ---------------- GitHub 入口、安装命令与来源措辞 ----------------
 
 def _star_text(v) -> str:

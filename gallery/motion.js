@@ -10,6 +10,7 @@
   var hasIO = typeof window.IntersectionObserver === 'function';
   var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var mqCoarse = window.matchMedia('(pointer: coarse)');
+  var NO_MOTION_SCENES = ['wxcover', 'board'];   // 公众号封面、视频分镜首帧：成品本身是静图，不展示动态版
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   function onMq(mq, fn) { if (mq.addEventListener) mq.addEventListener('change', fn); else if (mq.addListener) mq.addListener(fn); }
@@ -56,6 +57,7 @@
       if (o.note != null && !(str(o.note, 1, 240) && o.note.trim() !== '')) return;
       if (o.style_code != null && !(typeof o.style_code === 'string' && /^C\d{1,3}$/.test(o.style_code))) return;
       if (o.homepage_scene != null && !(typeof o.homepage_scene === 'string' && /^[a-z0-9_-]{1,32}$/.test(o.homepage_scene))) return;
+      if (NO_MOTION_SCENES.indexOf(o.homepage_scene) !== -1) return;
       if (!dim(o.width) || !dim(o.height)) return;
       if (!(typeof o.duration === 'number' && o.duration > 0 && o.duration <= 60)) return;
       var poster = mediaPath(o.poster, 'poster.png');
@@ -80,12 +82,14 @@
   var active = null;
 
   function updateBtn(p) {
+    p.area.classList.toggle('is-moving', p.state === 'playing');
+    if (!p.btn) return;
     var busy = p.state === 'loading' || p.state === 'playing';
     var label = busy ? '暂停' : (p.state === 'failed' ? '重试播放' : '播放动态');
     p.btn.textContent = label;
     p.btn.setAttribute('aria-label', label + (p.item ? '：' + p.item.title : ''));
   }
-  function setStatus(p, msg) { p.status.textContent = msg || ''; }
+  function setStatus(p, msg) { if (p.status) p.status.textContent = msg || ''; }
 
   function releaseSrc(p) {
     var v = p.v;
@@ -114,8 +118,8 @@
   }
 
   function play(p, mode) {
-    if (!p.item) return;
-    if (mode === 'auto' && (mqReduce.matches || document.hidden)) return;
+    if (!p.item || mqReduce.matches) return;   // 减少动效：只显示海报帧，手动也不播
+    if (mode === 'auto' && document.hidden) return;
     if (active && active !== p) stop(active);
     active = p;
     var gen = ++p.gen;
@@ -191,7 +195,7 @@
       if (v.getAttribute('src') === null || p.state === 'idle') return;
       fail(p, '视频没有加载出来，点按钮可重试。');
     });
-    o.btn.addEventListener('click', function () { onBtn(p); });
+    if (o.btn) o.btn.addEventListener('click', function () { onBtn(p); });
     var autoArea = o.autoArea || o.video.parentNode;
     if (autoArea.tagName !== 'BUTTON') { autoArea.tabIndex = 0; autoArea.setAttribute('aria-label', '动态预览'); }
     autoArea.addEventListener('mouseenter', function () { p.hover = true; desktopTry(p); });
@@ -237,6 +241,19 @@
     return '鼠标移上去或用键盘聚焦会播放，移开就停；也可以点按钮。';
   }
 
+  function subText() {
+    return mqReduce.matches ? '系统开了「减少动态效果」，这里只显示海报帧。' : '按场景分组；左边是静态首帧，右边是动态示范，仅作展示。';
+  }
+  var SCENE_GROUP = { brand: '品牌', article: '文章配图', infographic: '信息图', xiaohongshu: '小红书', ppt: 'PPT', music: '音乐封面' };
+  function sceneGroups() {
+    var out = [], by = {};
+    items.forEach(function (it, i) {
+      if (!by[it.scene]) { by[it.scene] = { name: SCENE_GROUP[it.scene] || it.sceneLabel, idx: [] }; out.push(by[it.scene]); }
+      by[it.scene].idx.push(i);
+    });
+    return out;
+  }
+
   /* ---------- 「动态版」区块（画风库之后） ---------- */
   var secEl = null;
   function insertSection(bodyKids) {
@@ -256,7 +273,7 @@
   }
 
   function buildFallback() {
-    cleanupWall();
+    cleanupLibrary();
     players.slice().forEach(destroyPlayer);
     secEl = insertSection([h('p', { class: 'motion-note', role: 'status', text: '动态示例暂未加载' })]);
   }
@@ -286,20 +303,26 @@
       h('figcaption', { class: 'motion-cap', text: '静态首帧' })
     ]);
 
-    var tabsBox = h('div', { class: 'motion-tabs', role: 'group', 'aria-label': '选择示例' });
+    var tabsBox = h('div', { class: 'motion-tabs' });
     var sceneEl = h('span', { class: 'motion-scene' });
     var titleEl = h('span', { class: 'motion-title-text' });
     var noteEl = h('p', { class: 'motion-note' });
     var hintEl = h('p', { class: 'motion-hint', text: hintText() });
-    var tabs = items.map(function (it, i) {
-      var b = h('button', { class: 'chip', type: 'button', 'aria-pressed': 'false', text: it.title });
-      b.addEventListener('click', function () { show(i); });
-      tabsBox.appendChild(b);
-      return b;
+    var tabs = [];
+    sceneGroups().forEach(function (g) {
+      var row = h('div', { class: 'motion-group', role: 'group', 'aria-label': g.name }, [h('span', { class: 'motion-group-name', text: g.name })]);
+      g.idx.forEach(function (i) {
+        var b = h('button', { class: 'chip', type: 'button', 'aria-pressed': 'false', text: items[i].title });
+        b.addEventListener('click', function () { show(i); });
+        row.appendChild(b);
+        tabs[i] = b;
+      });
+      tabsBox.appendChild(row);
     });
+    var subEl = h('p', { class: 'sec-sub', text: subText() });
 
     secEl = insertSection([
-      h('p', { class: 'sec-sub', text: '左边是静态首帧，右边是动态示范，仅作展示。' }),
+      subEl,
       tabsBox,
       h('p', { class: 'motion-meta' }, [sceneEl, titleEl]),
       h('div', { class: 'motion-compare' }, [staticFig, dynFig]),
@@ -340,119 +363,68 @@
       }, { rootMargin: '400px 0px' });
       near.observe(s.frame);
     }
-    onMq(mqReduce, function () { hintEl.textContent = hintText(); });
+    onMq(mqReduce, function () { hintEl.textContent = hintText(); subEl.textContent = subText(); });
     onMq(mqCoarse, function () { hintEl.textContent = hintText(); });
   }
 
-  /* ---------- 场景墙可动卡：只处理真实文章场景，选该场景第一个 article 示例 ----------
-     结构：li > button.scene-card（原按钮，点击筛选逻辑不动）+ 兄弟 button.motion-wall-play + p.motion-wall-status
-     动态 video 放在 button 内的 .thumb 里（无 controls，不是交互元素），播放控制不嵌进 button。 */
-  var wall = [];
-  var wallMO = null;
-
+  /* ---------- 画风库卡片「会动」角标：按当前场景挑该画风的动态示例；
+     桌面鼠标划入或键盘聚焦就播，手机滚到画面里自动播；公众号封面、分镜场景不出 ----------
+     视频叠在卡片缩略图上，平时透明、预加载为 none，只有在播时才显示，卡片原图与点击逻辑不动。 */
+  var libDeco = [];
+  var libMO = null;
   function rmNode(n) { if (n && n.parentNode) n.parentNode.removeChild(n); }
-
-  function decorateCard(card, it) {
-    var li = card.parentNode, th = card.querySelector('.thumb');
-    if (!li || li.nodeName !== 'LI' || !th) return;
-    if (li.classList.contains('motion-wall-item')) return;
-
-    var img = th.querySelector('img'), made = false;
-    var orig = img ? {
-      alt: img.getAttribute('alt'), title: img.getAttribute('title'),
-      src: img.getAttribute('src'), dsrc: img.getAttribute('data-src')
-    } : null;
-    if (img) {
-      img.removeAttribute('data-src');   // 阻止页面的懒加载再把该场景的静态代表图设回来
-    } else {
-      img = h('img', { alt: '', decoding: 'async' });
-      img.addEventListener('load', function () { img.classList.add('is-in'); });
-      img.addEventListener('error', function () { img.classList.add('broken'); });
-      th.appendChild(img);
-      made = true;
-    }
-    var nameEl = card.querySelector('.scene-name');
-    var sceneName = (nameEl && nameEl.textContent) || it.sceneLabel;
-    img.setAttribute('alt', sceneName + '样图，示例：' + it.title + '（动态示范的静态首帧）');
-    img.setAttribute('title', it.title);
-
-    var video = h('video', { class: 'motion-video motion-wall-video', 'aria-hidden': 'true' });
-    var badge = h('span', { class: 'motion-badge', text: '可动 · ' + (it.styleCode || '示例') });
-    th.appendChild(video);
-    th.appendChild(badge);
-
-    var ctl = h('button', { class: 'btn btn-small motion-wall-play', type: 'button', text: '播放动态' });
-    var status = h('p', { class: 'motion-status motion-wall-status', role: 'status' });
-    li.classList.add('motion-wall-item');
-    li.appendChild(ctl);
-    li.appendChild(status);
-
-    var player = makePlayer({ video: video, btn: ctl, status: status, area: li, autoArea: card, mobileAuto: true });
-    setItem(player, it);
-
-    var w = { li: li, img: img, made: made, orig: orig, video: video, badge: badge, ctl: ctl, status: status, player: player, near: null, shown: false };
-    function showPoster() {
-      if (w.shown) return;
-      w.shown = true;
-      if (w.near) { w.near.disconnect(); w.near = null; }
-      img.classList.remove('is-in', 'broken');
-      img.src = it.poster;
-      video.setAttribute('poster', it.poster);
-    }
-    wall.push(w);
-
-    // poster 按需：卡片图已被页面加载过说明卡片已在附近，立刻换；否则靠近视口 400px 内才设置
-    if (!hasIO || (orig && orig.src)) showPoster();
-    else {
-      w.near = new IntersectionObserver(function (es) {
-        for (var i = 0; i < es.length; i++) if (es[i].isIntersecting) { showPoster(); return; }
-      }, { rootMargin: '400px 0px' });
-      w.near.observe(th);
-    }
-  }
-
-  function cleanupWall() {
-    if (wallMO) { wallMO.disconnect(); wallMO = null; }
-    wall.forEach(function (w) {
-      if (w.near) w.near.disconnect();
-      destroyPlayer(w.player);
-      [w.video, w.badge, w.ctl, w.status].forEach(rmNode);
-      w.li.classList.remove('motion-wall-item');
-      if (w.made) rmNode(w.img);
-      else if (w.orig) {
-        var o = w.orig, im = w.img;
-        if (o.alt == null) im.removeAttribute('alt'); else im.setAttribute('alt', o.alt);
-        if (o.title == null) im.removeAttribute('title'); else im.setAttribute('title', o.title);
-        im.classList.remove('broken');
-        if (o.src != null) im.setAttribute('src', o.src);
-        else if (o.dsrc != null) im.setAttribute('src', o.dsrc);
-        else im.removeAttribute('src');
-      }
-    });
-    wall = [];
-  }
-
-  function markScenes() {
-    var ids = [], picks = [];
+  function libPicks(scene) {
+    var by = {};
+    if (NO_MOTION_SCENES.indexOf(scene) !== -1) return by;
     items.forEach(function (it) {
-      if (it.scene === 'article' && it.homeScene && ids.indexOf(it.homeScene) === -1) { ids.push(it.homeScene); picks.push(it); }
+      if (!it.styleCode || !it.homeScene) return;
+      if (scene !== 'all' && it.homeScene !== scene) return;
+      if (!by[it.styleCode]) by[it.styleCode] = it;
     });
-    if (!ids.length) return;
-    var grid = $('#scene-grid');
+    return by;
+  }
+  function undecorate(w) {
+    destroyPlayer(w.player);
+    rmNode(w.video); rmNode(w.badge);
+    w.li.classList.remove('motion-lib-item', 'is-moving');
+  }
+  function syncLibrary() {
+    var grid = $('#lib-grid');
     if (!grid) return;
-    function apply() {
-      var done = 0;
-      ids.forEach(function (sid, i) {
-        var card = grid.querySelector('.scene-card[data-scene="' + sid + '"]');
-        if (!card) return;
-        done++;
-        decorateCard(card, picks[i]);
-      });
-      return done === ids.length;
-    }
-    if (apply() || !window.MutationObserver) return;
-    wallMO = new MutationObserver(function () { if (apply() && wallMO) { wallMO.disconnect(); wallMO = null; } });
-    wallMO.observe(grid, { childList: true });
+    var by = libPicks(grid.getAttribute('data-scene') || 'all');
+    libDeco = libDeco.filter(function (w) {
+      var ok = w.li.parentNode === grid && by[w.li.getAttribute('data-style')] === w.player.item;
+      if (!ok) undecorate(w);
+      return ok;
+    });
+    Object.keys(by).forEach(function (code) {
+      var li = grid.querySelector('li[data-style="' + code + '"]');
+      if (!li || li.classList.contains('motion-lib-item')) return;
+      var card = li.querySelector('.style-card'), th = card && card.querySelector('.thumb');
+      if (!th) return;
+      var it = by[code];
+      var video = h('video', { class: 'motion-video motion-lib-video', 'aria-hidden': 'true' });
+      var badge = h('span', { class: 'motion-badge', text: '会动' });
+      th.appendChild(video);
+      th.appendChild(badge);
+      li.classList.add('motion-lib-item');
+      var player = makePlayer({ video: video, area: li, autoArea: card, mobileAuto: true });
+      setItem(player, it);
+      libDeco.push({ li: li, video: video, badge: badge, player: player });
+    });
+  }
+  function watchLibrary() {
+    var grid = $('#lib-grid');
+    if (!grid) return;
+    syncLibrary();
+    if (!window.MutationObserver || libMO) return;
+    libMO = new MutationObserver(syncLibrary);
+    libMO.observe(grid, { attributes: true, attributeFilter: ['data-scene'], childList: true });
+  }
+  function cleanupLibrary() {
+    if (libMO) { libMO.disconnect(); libMO = null; }
+    libDeco.forEach(undecorate);
+    libDeco = [];
   }
 
   /* ---------- 详情页动态缩略图：只读 dialog 的现有 DOM（#dlg-id 文本 / .dlg-text），不改页面全局函数 ---------- */
@@ -525,7 +497,7 @@
       if (!items.length) throw new Error('empty');
       buildShowcase();
       if (!secEl) throw new Error('no-slot');
-      markScenes();
+      watchLibrary();
       watchDialog();
     }).catch(function () {
       items = [];
