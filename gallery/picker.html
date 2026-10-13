@@ -205,8 +205,6 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   .hero-title { font-size: 48px; gap: 12px; }
   .skill-tag { transform: translateY(-6px); }
   .hero-sub { font-size: 19px; }
-  .metrics dd { font-size: 26px; }
-  .metrics > div { padding-left: 10px; }
   .sec { padding-top: 52px; }
   .sec-title { font-size: 26px; }
   .scene-grid { grid-template-columns: repeat(2, 1fr); gap: 24px 14px; }
@@ -449,10 +447,10 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0; pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--bg));
 }
-.hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 54fr) minmax(0, 46fr); gap: 64px; align-items: center; }
+.hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 48px; align-items: center; }
 .hero-left, .hero-right { min-width: 0; }
 .hero-kicker { font-size: 13px; color: var(--green); letter-spacing: .04em; }
-.hero-title { margin-top: 18px; font: 700 clamp(44px, 5.6vw, 76px)/1.14 var(--serif); color: var(--strong); letter-spacing: .01em; }
+.hero-title { margin-top: 18px; font: 700 clamp(40px, 4.4vw, 66px)/1.16 var(--serif); white-space: nowrap; color: var(--strong); letter-spacing: .01em; }
 .hero-sub { margin-top: 22px; max-width: 30em; font: 400 18px/1.8 var(--sans); color: var(--fg); }
 .hero-en { margin-top: 8px; max-width: 34em; font: italic 16px/1.6 var(--latin); color: var(--mut); }
 
@@ -470,19 +468,17 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .install-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .cmd { flex: 1 1 260px; min-width: 0; font: 13px/1.6 var(--mono); color: var(--strong); white-space: pre-wrap; word-break: break-all; }
 
-.metrics { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 8px 36px; }
-.metrics > div { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
-.metrics dd { font: 700 28px/1.1 var(--serif); color: var(--strong); font-variant-numeric: tabular-nums; }
-.metrics dt { font-size: 13px; color: var(--mut); }
+.metrics { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 6px 0; font-size: 14px; color: var(--mut); }
+.metrics span + span::before { content: "｜"; margin: 0 10px; color: var(--line-2); }
+.metrics b { font: 700 22px/1.1 var(--serif); color: var(--strong); font-variant-numeric: tabular-nums; margin-right: 2px; }
+.metrics span:nth-child(2) b { margin: 0 2px; }
 
 /* 展台 */
 .stage { padding: 14px; background: rgba(21, 29, 26, .7); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
-.stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 2px 4px 12px; }
-.stage-title { font: 600 14px/1.4 var(--sans); color: var(--strong); }
-.stage-cap { font: italic 13px/1.4 var(--latin); color: var(--mut); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.stage-frame { position: relative; aspect-ratio: 3 / 2; width: 100%; background: #070C0A; border-radius: 12px; overflow: hidden; isolation: isolate; }
+.stage-frame { position: relative; aspect-ratio: 2.35 / 1; width: 100%; background: #070C0A; border-radius: 12px; overflow: hidden; isolation: isolate; }
 .slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
 .slide.is-active { opacity: 1; }
+.slide .amb:not([src]) { display: none; }
 #stage-logo { object-fit: contain; }
 /* 每张作品按原比例挂在画框里，背后是它自己放大虚化后的暗色光晕，宽图、方图、竖图放在一起都成立 */
 .slide .amb { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; filter: blur(30px) saturate(1.4) brightness(.62); }
@@ -493,6 +489,8 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 }
 .slide .art.wide { width: 94%; }
 .slide .art.tall { height: 80%; }
+/* 与画框同比例的宽屏封面直接铺满，不留边、不加光晕 */
+.slide .art.fill { inset: 0; left: 0; top: 0; transform: none; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; border-radius: 0; box-shadow: none; }
 .stage-name {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; margin: 0;
   display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
@@ -605,11 +603,11 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   .hero-en { font-size: 14px; }
   .cmdbar { padding-left: 14px; }
   .cmdbar-c { font-size: 12.5px; }
-  .metrics { gap: 6px 16px; }
-  .metrics dd { font-size: 20px; }
-  .metrics dt { font-size: 12px; }
+  .metrics { font-size: 13px; }
+  .metrics b { font-size: 18px; }
+  .metrics { gap: 4px 16px; }
+  .metrics span + span::before { content: none; }
   .stage { padding: 10px; border-radius: 16px; }
-  .stage-cap { display: none; }
   .stage-strip { gap: 4px; }
   .sec { padding-top: 60px; }
   .cobuild { padding-top: 64px; }
@@ -657,10 +655,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   <div class="wrap hero-grid">
     <div class="hero-left" id="hero-left">
       <div id="title-block" class="title-block">
-        <p class="hero-kicker">开源生图 Skill，适用于 Claude Code、Codex 等 AI 助手</p>
+        <p class="hero-kicker">开源生图技能 · 装进 Claude Code、Codex 就能用</p>
         <h1 class="hero-title">挑一个画风，<br>整组图都像它。</h1>
-        <p class="hero-sub">读懂你的文章，挑出值得画的观点，按同一个画风出封面、配图、小红书、PPT 与信息图。</p>
-        <p class="hero-en">One style, one coherent set of images. Pick it here, hand the code to your agent.</p>
+        <p class="hero-sub">封面、配图、PPT、小红书，从第一张到最后一张，都是同一种画风。在这里挑好，复制一句话发给 AI。</p>
+        <p class="hero-en">One style, every image.</p>
       </div>
 
       <div class="cmdbar" id="install">
@@ -699,20 +697,15 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         </details>
       </div>
 
-      <dl class="metrics" id="metrics">
-        <div><dd data-metric="styles">—</dd><dt>种画风</dt></div>
-        <div><dd data-metric="scenes">—</dd><dt>类场景</dt></div>
-        <div><dd data-metric="palettes">—</dd><dt>套色系</dt></div>
-        <div><dd data-metric="samples">—</dd><dt>张样图</dt></div>
-      </dl>
+      <p class="metrics" id="metrics">
+        <span><b data-metric="styles">—</b> 种精选画风</span>
+        <span>每种平均 <b data-metric="perStyle">—</b> 张真实样图</span>
+        <span><b data-metric="palettes">—</b> 套有故事的色系</span>
+      </p>
     </div>
 
     <div class="hero-right" id="hero-right">
       <section class="stage" id="stage" aria-roledescription="轮播" aria-label="各画风代表作">
-        <div class="stage-head">
-          <p class="stage-title">每种画风，挑一张它最好的</p>
-          <p class="stage-cap" id="stage-cap">真实场景样图</p>
-        </div>
         <div class="stage-frame" id="stage-frame">
           <img class="slide is-active" id="stage-logo" alt="叁笙 Logo 动态展示" decoding="async">
           <noscript><p class="load-fail">需要开启 JavaScript 才能浏览画风库。</p></noscript>
@@ -1255,7 +1248,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   var FLOAT_KEYS = ['cv', 'xhs', 'wxi', 'ppt', 'inf', 'au', 's1', 'cm'];
   function measureTitle() {
     var hr = heroEl.getBoundingClientRect();
-    titleBox = ['#title-block', '#install', '#stage'].map(function (sel) {
+    titleBox = ['#title-block', '#install', '.actions', '#metrics', '#stage'].map(function (sel) {
       var el = $(sel);
       if (!el) return null;
       var r = el.getBoundingClientRect();
@@ -1392,7 +1385,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
   /* ================== 展台：Logo → 同题轮播 ================== */
   var logoImg = $('#stage-logo'), frameEl = $('#stage-frame');
-  var nameEl = $('#stage-name'), labelEl = $('#stage-label'), sceneEl = $('#stage-scene'), countEl = $('#stage-count'), capEl = $('#stage-cap');
+  var nameEl = $('#stage-name'), labelEl = $('#stage-label'), sceneEl = $('#stage-scene'), countEl = $('#stage-count');
   var btnPrev = $('#stage-prev'), btnNext = $('#stage-next'), btnToggle = $('#stage-toggle');
   var slides = [{ el: logoImg, kind: 'logo', label: '叁笙生图' }];
   var stripEl = $('#stage-strip'), stripBtns = [];
@@ -1405,7 +1398,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     var s = slides[i];
     if (!s || s.kind === 'logo' || s.requested) return;
     s.requested = true;
-    s.amb.src = s.ambSrc;
+    if (s.ambSrc) s.amb.src = s.ambSrc;
     if (s.kind === 'motion') { if (!mqReduce.matches) { s.art.preload = 'auto'; s.art.src = s.src; } }   // 减少动效：只显示海报帧
     else s.art.src = s.src;
   }
@@ -1437,7 +1430,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     labelEl.textContent = slides[cur].label;
     sceneEl.textContent = slides[cur].scene || '';
     stripBtns.forEach(function (b, j) { b.setAttribute('aria-pressed', j + 1 === cur ? 'true' : 'false'); });
-    capEl.textContent = cur === 0 ? '叁笙早安标志动态版' : (slides[cur].kind === 'motion' ? '动态版' : '真实场景样图') + ' · ' + (slides.length - 1) + ' 种画风';
     syncVideos();
     countEl.textContent = (cur + 1) + ' / ' + slides.length;
     if (user) announce('第 ' + (cur + 1) + ' 张，' + slides[cur].label);
@@ -1491,7 +1483,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   if (stageIO) stageIO.observe(frameEl);
 
   function initCarousel(list) {
-    var boxR = .94 * 1.5 / .8;                          // 作品可占的区域（画框 3:2 的 94% × 80%）的宽高比
+    var FRAME_R = 2.35, boxR = .94 * FRAME_R / .8;       // 画框 2.35:1；作品可占的区域（画框的 94% × 80%）的宽高比
     list.forEach(function (c) {
       var st = styleById[c.id];
       if (!st) return;                                  // 数据里有、画风库里没有的项直接跳过，不出空白幻灯片
@@ -1505,7 +1497,9 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         ? h('video', { class: 'art', muted: true, loop: true, playsinline: true, preload: 'none', 'aria-label': label + '（动态版）' })
         : h('img', { class: 'art', decoding: 'async', alt: label + (c.scene ? '画风的' + c.scene + '样图' : '画风样图') });
       if (isMotion) { art.muted = true; art.poster = ambSrc; }
-      art.classList.add(r >= boxR ? 'wide' : 'tall');
+      var fill = !isMotion && Math.abs(r - FRAME_R) < .12;   // 宽屏封面与画框同比例：铺满
+      art.classList.add(fill ? 'fill' : (r >= boxR ? 'wide' : 'tall'));
+      if (fill) ambSrc = '';
       art.style.setProperty('--r', r);
       var amb = h('img', { class: 'amb', alt: '', decoding: 'async' });
       var el = h('div', { class: 'slide', 'aria-hidden': 'true' }, [amb, art]);
@@ -1516,7 +1510,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       sb.addEventListener('click', function () { show(idx, true); });
       stripEl.appendChild(sb); stripBtns.push(sb);
     });
-    capEl.textContent = '叁笙早安标志动态版';
     countEl.textContent = '1 / ' + slides.length;
     stageSched();
   }
@@ -1538,6 +1531,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         samples: styles.reduce(function (n, s) { return n + (s.imgs ? s.imgs.length : 0); }, 0)
       };
     }
+    m = Object.assign({}, m, { perStyle: m.styles ? Math.round(m.samples / m.styles) : null });
     document.querySelectorAll('[data-metric]').forEach(function (el) {
       var v = m[el.dataset.metric];
       el.textContent = (typeof v === 'number') ? v.toLocaleString('en-US') : '—';

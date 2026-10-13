@@ -124,6 +124,14 @@
       "ratio": 2.35
     },
     {
+      "topic": "公众号封面（展台高清版，依原图高清重绘）",
+      "file": "samples/cv-hd.webp",
+      "source_sha256": "320ec2b99cbf4e0ca823757cec3ef59d6a7af5565194ca432e1124fbc2f247a4",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 2.351
+    },
+    {
       "topic": "信息图 第 1 张",
       "file": "samples/inf.webp",
       "renderer": "codex-builtin",

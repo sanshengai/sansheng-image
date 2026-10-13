@@ -37,10 +37,9 @@ BROWSER_BOUNDARY = ("需要 playwright + Chromium：浏览器行为（渲染、�
 
 # 首页精选 12 与首屏轮播的固定名单（只剔除缺 s2 同题图的，不自动替补）
 PINNED_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
-PINNED_CAROUSEL = [("C56", "cv"), ("C17", "au"), ("motion", "moving"), ("C59", "cv"), ("C34", "ppt"), ("C70", "cv"),
-                   ("C57", "au"), ("C20", "cv"), ("C46", "inf-7"), ("C74", "cv"), ("motion", "travel"), ("C64", "cv"),
-                   ("C16", "xhs"), ("C85", "cv"), ("C27", "cv"), ("C83", "ppt"), ("C01", "cv"), ("C93", "wxi"),
-                   ("C53", "cv"), ("motion", "beach"), ("C07", "au"), ("C52", "cv"), ("C54", "cv"), ("C97", "wxi-2")]
+PINNED_CAROUSEL = [(c, "cv") for c in ["C01", "C17", "C74", "C70", "C20", "C64", "C27", "C46", "C63", "C18", "C30", "C22",
+                                        "C96", "C19", "C24", "C49", "C08", "C69", "C76", "C66", "C77", "C92"]]
+PINNED_HERO_MOTION = ["moving", "travel", "beach"]
 
 _webp_buffer = io.BytesIO()
 Image.new("RGB", (2, 2), "white").save(_webp_buffer, "WEBP", lossless=True)
@@ -400,18 +399,18 @@ def test_embedded_data_matches_registry_and_manifest(built):
     # 首屏展台：人工挑的「每种画风一张代表作」，静态图有单独的清晰图并登记进 manifest；一种画风只出现一次
     assert BD.HOME_CAROUSEL == PINNED_CAROUSEL
     motion = {m["id"]: m for m in json.loads((BD.CT.ROOT / "gallery" / "motion-data.json").read_text(encoding="utf-8"))["items"]}
-    want = [(motion[k]["style_code"], k) if c == "motion" else (c, k) for c, k in PINNED_CAROUSEL
-            if (c == "motion" and motion.get(k, {}).get("style_code") in cands) or (c != "motion" and k in cands.get(c, {}).get("imgs", []))]
-    assert [(c["id"], c.get("motion") or c.get("kind")) for c in meta["carousel"]] == want
+    # 展台只放静态宽屏封面，不放动态版
+    want = [(c, k) for c, k in PINNED_CAROUSEL if k in cands.get(c, {}).get("imgs", [])]
+    assert [(c["id"], c["kind"]) for c in meta["carousel"]] == want
     ids = [c["id"] for c in meta["carousel"]]
     assert len(ids) == len(set(ids)), "展台里同一种画风只放一张"
     for c in meta["carousel"]:
+        assert "motion" not in c
         assert c["name"] == cands[c["id"]]["name"] and c["scene"] and c["ratio"] > 0
-        if "motion" in c:
-            assert "image" not in c and c["dur"] > 0
-        else:
-            assert c["image"] == f"hero-{c['id']}-{c['kind']}.webp" and c["image"] in names
-    assert {m["id"] for m in meta["heroMotion"]} == {k for c, k in PINNED_CAROUSEL if c == "motion"} & set(motion)
+        assert c["image"] == f"hero-{c['id']}-{c['kind']}.webp" and c["image"] in names
+    # 首屏背景近景浮图只播这三支动态版
+    assert BD.HERO_MOTION == PINNED_HERO_MOTION
+    assert {m["id"] for m in meta["heroMotion"]} == set(PINNED_HERO_MOTION) & set(motion)
 
     plugin = json.loads((BD.CT.ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
     assert meta["site"] == {"pkgVersion": plugin["version"], "releases": SITE_URL + "/releases"}
@@ -706,6 +705,8 @@ def test_page_renders_all_blocks_without_overflow_and_only_requests_manifest_ima
         assert page.locator("#feat-grid > li").count() == len(meta["featured"])
         assert page.eval_on_selector_all("main > section", "e=>e.map(s=>s.id)") == ["scenes", "motion-showcase", "featured", "library", "palettes"]
         assert page.inner_text("[data-metric=styles]").replace(",", "") == str(meta["metrics"]["styles"])
+        m = meta["metrics"]  # 数字行：「每种平均 N 张真实样图」= 样图数 ÷ 画风数，四舍五入（与页面 Math.round 同口径）
+        assert page.inner_text("[data-metric=perStyle]") == str(int(m["samples"] / m["styles"] + 0.5))
         imgs = [u.split("?")[0] for u in page.requests if u.endswith(".webp")]
         assert all("/tools/image/img/" in u for u in imgs), [u for u in imgs if "/tools/image/img/" not in u][:3]
         assert {u.rsplit("/", 1)[1] for u in imgs} <= names
@@ -1414,3 +1415,16 @@ def test_canvas_unavailable_keeps_search_detail_and_copy(browser, built, canvas_
         parsed = SC.parse(SC.find(copied)[0])
         assert parsed.style == "C01" and SC.validate(parsed) == []
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+
+
+def test_hero_prefers_registered_hd_and_hd_stays_out_of_library(tmp_path, monkeypatch):
+    """展台高清版 samples/cv-hd.* 只给展台用：登记且文件存在才采用，否则退回原图；不能变成画风库里的一种样图。"""
+    cp = tmp_path / "styles" / "C99" / "contract.json"
+    (cp.parent / "samples").mkdir(parents=True)
+    contract = {"samples": [{"file": "samples/cv.webp", "ratio": 2.35}, {"file": "samples/cv-hd.webp", "ratio": 2.35}]}
+    monkeypatch.setattr(BD.CT, "load", lambda code: contract)
+    assert BD._hero_hd("C99", cp, "cv") is None, "登记了但文件不在，必须退回原图"
+    (cp.parent / "samples" / "cv-hd.webp").write_bytes(b"x")
+    assert BD._hero_hd("C99", cp, "cv") == cp.parent / "samples" / "cv-hd.webp"
+    assert BD._hero_hd("C99", cp, "au") is None, "只认同种类的高清版"
+    assert set(BD._sample_files("C99", cp)) == {"cv"}, "cv-hd 不能成为画风库样图种类"

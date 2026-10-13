@@ -93,6 +93,14 @@
       "ratio": 2.35
     },
     {
+      "topic": "公众号封面（展台高清版，依原图高清重绘）",
+      "file": "samples/cv-hd.webp",
+      "source_sha256": "0dd1b6eed8d63923019ca273a0ffbbb818a304972aa3aac96430abeab5c1cf32",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 2.351
+    },
+    {
       "topic": "小红书 第 1 张",
       "file": "samples/xhs.webp",
       "renderer": "codex-builtin",

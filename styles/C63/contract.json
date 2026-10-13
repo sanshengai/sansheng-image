@@ -112,6 +112,14 @@
       "ratio": 2.35
     },
     {
+      "topic": "公众号封面（展台高清版，依原图高清重绘）",
+      "file": "samples/cv-hd.webp",
+      "source_sha256": "d643cbd35029072e76b7d3cb388ee740dcf2c1235b2cbaa2d817f33e0bbb2bce",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 2.354
+    },
+    {
       "topic": "AI 短剧分镜·角色三视图",
       "file": "samples/sb.webp",
       "renderer": "codex-builtin",

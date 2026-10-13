@@ -624,6 +624,14 @@
       "renderer": "codex-builtin+program-overlay",
       "date": "2026-10-12",
       "ratio": 1.778
+    },
+    {
+      "topic": "公众号封面（展台高清版，依原图高清重绘）",
+      "file": "samples/cv-hd.webp",
+      "source_sha256": "5da99a82a115e180643f1217813dc2d249af9703c4da40f66ce47f2ff526c9bb",
+      "renderer": "codex-builtin",
+      "date": "2026-10-13",
+      "ratio": 2.354
     }
   ]
 }

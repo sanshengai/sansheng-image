@@ -277,16 +277,16 @@ BRAND_DIR_ENV = "SANSHENG_IMAGE_BRAND_DIR"
 RELEASES_URL = "https://github.com/sanshengai/sansheng-image/releases"
 # 首页精选 12 种（顺序即展示顺序）；缺同题物件图 s2 的会被过滤，页面标题随实际数量变
 HOME_FEATURED = ["C01", "C04", "C08", "C17", "C21", "C24", "C25", "C31", "C40", "C59", "C73", "C56"]
-# 首屏展台轮播（Logo 之后依次出现）：每种画风只上一张，从各场景的真实样图里人工挑出最能代表它、也最好看的那张；
-# ("motion", id) 是动态版，只收动作真实、首尾帧都好看的几支。冷暖与场景交错排列。
-HOME_CAROUSEL = [("C56", "cv"), ("C17", "au"), ("motion", "moving"), ("C59", "cv"), ("C34", "ppt"), ("C70", "cv"),
-                 ("C57", "au"), ("C20", "cv"), ("C46", "inf-7"), ("C74", "cv"), ("motion", "travel"), ("C64", "cv"),
-                 ("C16", "xhs"), ("C85", "cv"), ("C27", "cv"), ("C83", "ppt"), ("C01", "cv"), ("C93", "wxi"),
-                 ("C53", "cv"), ("motion", "beach"), ("C07", "au"), ("C52", "cv"), ("C54", "cv"), ("C97", "wxi-2")]
+# 首屏展台轮播：宽屏 2.35:1，只放静态封面。每种画风一张，从公众号封面样图里人工挑出最能代表它的；冷暖交错排列。
+# 合同里登记了同名高清版（samples/cv-hd.*，Codex 依原图高清重绘）就用它，没有就退回原图。
+HOME_CAROUSEL = [("C01", "cv"), ("C17", "cv"), ("C74", "cv"), ("C70", "cv"), ("C20", "cv"), ("C64", "cv"),
+                 ("C27", "cv"), ("C46", "cv"), ("C63", "cv"), ("C18", "cv"), ("C30", "cv"), ("C22", "cv"),
+                 ("C96", "cv"), ("C19", "cv"), ("C24", "cv"), ("C49", "cv"), ("C08", "cv"), ("C69", "cv"),
+                 ("C76", "cv"), ("C66", "cv"), ("C77", "cv"), ("C92", "cv")]
 HERO_SCENE = {"cv": "公众号封面", "au": "播客封面", "ppt": "PPT", "inf": "信息图", "xhs": "小红书", "wxi": "公众号配图",
               "wxt": "公众号配图", "wxx": "推特配图", "cm": "漫画"}
-HERO_MOTION = [m for k, m in HOME_CAROUSEL if k == "motion"]  # 首屏背景近景浮图也只播这几支
-HERO_PX, HERO_Q = 1200, 80  # 展台图比画风库缩略图清楚：长边 1200
+HERO_MOTION = ["moving", "travel", "beach"]  # 首屏背景近景浮图只播这三支（动作真实、首尾帧都好看）；展台不放动态版
+HERO_PX, HERO_Q = 1600, 82  # 展台图放大铺满宽屏画框：长边 1600
 # 与页面里 GROUP_KINDS 同口径：一个用途的样图种类属于哪一组
 IMG_GROUP_KINDS = {"cv": ["cv"], "au": ["au"], "xhs": ["xhs"], "wxi": ["wxi", "wxt", "wxx"], "inf": ["inf"], "ppt": ["ppt"],
                    "comic": ["cm", "cx", "ce"], "sb": ["sb"], "bd": ["bd"], "same": ["s1", "s2", "s3"], "anchor": ["anchor"]}
@@ -398,6 +398,15 @@ def _sample_files(code: str, cp: Path | None) -> dict[str, tuple[Path, float | N
     return out
 
 
+def _hero_hd(code: str, cp: Path, kind: str) -> Path | None:
+    """合同登记的展台高清版 samples/<种类>-hd.*（不属于任何画风库样图种类，只给展台用）；文件存在才返回。"""
+    for sample in CT.load(code).get("samples", []):
+        sp = cp.parent / sample["file"]
+        if sp.stem == f"{kind}-hd" and sp.is_file():
+            return sp
+    return None
+
+
 def _thumb_bytes(p: Path, m: int = THUMB, q: int = 60) -> bytes:
     from PIL import Image
     im = Image.open(p).convert("RGB")
@@ -459,7 +468,8 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
             src, registered = entry if isinstance(entry, tuple) else (entry, None)
             base_kind = kind.split("-")[0]
             if (code, kind) in HOME_CAROUSEL:  # 展台单独出一档清晰图；公开包没有样图时只登记名字
-                hero_imgs[(code, kind)] = (src if src.is_file() else None)
+                hd = _hero_hd(code, cp, kind)
+                hero_imgs[(code, kind)] = hd or (src if src.is_file() else None)
             if src.is_file():
                 thumb_jobs.append((f"{code}-{kind}.webp", src))
                 with Image.open(src) as im:
@@ -514,16 +524,9 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     pals = [{"id": p["id"], "name": p["name"], "en": p.get("en", ""), "group": p.get("group", ""), "story": p.get("story", ""),
              "colors": p.get("colors", [])} for p in reg["palettes"]["palettes"]]
     names = {x["id"]: x["name"] for x in cands}
-    motion_by_id = {m["id"]: m for m in motion_plan.doc.get("items", [])}
     carousel, hero_names = [], []  # 展台图在样图计数之后再登记，不算进「张样图」
     for code, kind in HOME_CAROUSEL:
-        if code == "motion":
-            m = motion_by_id.get(kind)
-            if m and m.get("style_code") in names:
-                carousel.append({"id": m["style_code"], "name": names[m["style_code"]], "motion": kind,
-                                 "scene": m.get("scene_label") if m.get("homepage_scene") else "动态版", "ratio": round(m["width"] / m["height"], 3),
-                                 "dur": m.get("duration") or 6})
-        elif kind in have.get(code, []):
+        if kind in have.get(code, []):
             name = f"hero-{code}-{kind}.webp"
             hero_names.append(name)
             carousel.append({"id": code, "name": names[code], "kind": kind, "scene": HERO_SCENE.get(kind.split("-")[0], ""),
