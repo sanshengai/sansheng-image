@@ -2,6 +2,8 @@
 
 场景 id `wxillus`。格式 `article-summary`（16:9）、`article-summary-tall`（9:16 竖版）。与写作 Skill 的接口见本页末尾。
 
+先应用 [内容取舍与评审](../editorial-review.md)：读者与沟通目标先于画风默认值；覆盖与字号按本用途验收。
+
 ## 目的
 
 替读者概括上下文：读者不看正文也知道这一段说了什么。

@@ -108,4 +108,7 @@ def brief_table(prepared: dict) -> str:
         texts = "；".join(x["text"] for x in entries((t.get("manifest") or {}).get("text")) if isinstance(x.get("text"), str)) or "—"
         cells = [str(i), t.get("position", ""), t.get("message", ""), texts]
         head.append("| " + " | ".join(str(c).replace("|", "/").replace("\n", " ") for c in cells) + " |")
+    if prepared.get("editorial") is not None:
+        from .editorial import card
+        head += ["", card(prepared["editorial"])]
     return "\n".join(head)

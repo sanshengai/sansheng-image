@@ -459,7 +459,7 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
     min_margin = (contract.get("qa") or {}).get("center_square_margin_min")
     if min_margin is not None and square_preview and Path(square_preview).is_file():
         from ..cover_flow import check_square_master
-        margin_check = check_square_master(Path(square_preview), min_margin=float(min_margin))
+        margin_check = check_square_master(Path(square_preview), style=contract["code"], min_margin=float(min_margin))
         px["center_square_margin"] = margin_check
         problems.extend("实际居中方形：" + p for p in margin_check["problems"])
     if not isinstance(review, dict):

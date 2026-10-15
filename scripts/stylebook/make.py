@@ -37,9 +37,11 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
     if not isinstance(brief, dict) or brief.get("version") != 1:
         raise BriefError("brief.version 必须是 1")
     allowed = {"version", "scene", "style", "palette", "reason", "code", "source", "items", "format", "references",
-               "chosen_by", "task_id", "confirmed"}
+               "chosen_by", "task_id", "confirmed", "editorial", "use_anchor"}
     if set(brief) - allowed:
         raise BriefError(f"brief 未知字段：{sorted(set(brief) - allowed)}")
+    if "use_anchor" in brief and type(brief["use_anchor"]) is not bool:
+        raise BriefError("use_anchor 必须是布尔值")
     selected = SEL.normalize(brief["code"], scene=brief.get("scene")) if brief.get("code") else None
     scene = selected["scene"] if selected else brief.get("scene")
     if scene not in D.scenes():
@@ -74,6 +76,15 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
         if not source_text.strip():
             raise BriefError("原文不得为空")
         source = {"path": str(path), "sha256": hashlib.sha256(source_bytes).hexdigest()}
+    editorial = None
+    if "editorial" in brief:
+        from .editorial import validate
+        ids = {it.get("id", f"{n:02d}") for n, it in enumerate(items, 1)
+               if isinstance(it, dict) and isinstance(it.get("id", f"{n:02d}"), str)}
+        try:
+            editorial = validate(brief["editorial"], source=source_text, item_ids=ids)
+        except ValueError as exc:
+            raise BriefError(str(exc)) from exc
     tasks, seen = [], set()
     references = brief.get("references", [])
     if not isinstance(references, list) or any(not isinstance(r, dict) or set(r) != {"role", "path"}
@@ -124,12 +135,17 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
         if text_errs:
             raise BriefError("图上文字来源不合格：" + "；".join(text_errs))
         purpose = item["message"]
+        if editorial is not None:
+            purpose += (f"\nAudience: {editorial['audience']}\nReading context: {editorial['context']}"
+                        f"\nCommunication goal: {editorial['goal']}")
         constraints = D.scenes()[scene].get("constraints", [])
         if constraints:
             purpose += "\nTextbook constraints: " + " ".join(constraints)
         manifest = {"style": chosen["code"], "format": fmt, "model": model, "palette": palette,
                     "references": references, **({"use_anchor": False} if any(r["role"] == "style" for r in references) else {}),
                     "content": {"subject": item["visual"], "purpose": purpose}, "text": text_spec}
+        if "use_anchor" in brief:
+            manifest["use_anchor"] = brief["use_anchor"] and not any(r["role"] == "style" for r in references)
         for field in ("points", "panels"):
             if field in item:
                 values = item[field]
@@ -157,7 +173,8 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
                       "prompt_sha256": hashlib.sha256(compiled.prompt.encode()).hexdigest(),
                       "manifest": manifest, "compiled": compiled.to_dict(), "references": refs, "overlay_assets": overlay_assets})
     return {"version": 1, "scene": scene, "selection": chosen, "palette": palette,
-            "reason": reason, "source": source, "tasks": tasks}
+            "reason": reason, "source": source, "tasks": tasks,
+            **({"editorial": editorial} if editorial is not None else {})}
 
 
 def execution_card(task: dict, source: dict | None = None) -> dict:

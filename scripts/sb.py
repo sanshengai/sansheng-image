@@ -4,7 +4,7 @@
 命令：
   compile  <清单.json>                 编译出提示词（不出图）
   cover-flow <清单.json>              S02 方形母版与横向扩图的两段提示词
-  cover-check <方形.png>              S02 方形母版高对比内容边距预检
+  cover-check <方形.png> --style S02  S02 方形母版高对比内容边距预检
   generate <清单.json> -o 输出.png      编译并出图（自动重试、繁忙切备用线路）
   doctor [--deep]                      自检：各家「已配置 / 能连通 / 能出图」
   setup  [--provider X --model Y]      首次配置向导（不写密钥）
@@ -69,7 +69,7 @@ def cmd_cover_flow(a) -> int:
 
 def cmd_cover_check(a) -> int:
     from stylebook.cover_flow import check_square_master
-    result = check_square_master(Path(a.image))
+    result = check_square_master(Path(a.image), style=a.style)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["passed"] else 1
 
@@ -763,7 +763,7 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("compile"); p.add_argument("manifest"); p.add_argument("--json", action="store_true"); p.set_defaults(fn=cmd_compile)
     p = sub.add_parser("cover-flow"); p.add_argument("manifest"); p.set_defaults(fn=cmd_cover_flow)
-    p = sub.add_parser("cover-check"); p.add_argument("image"); p.set_defaults(fn=cmd_cover_check)
+    p = sub.add_parser("cover-check"); p.add_argument("image"); p.add_argument("--style", required=True); p.set_defaults(fn=cmd_cover_check)
     p = sub.add_parser("generate"); p.add_argument("manifest"); p.add_argument("-o", "--out", required=True)
     p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality")
     p.add_argument("--force", action="store_true", help="允许覆盖已存在的输出文件"); p.set_defaults(fn=cmd_generate)

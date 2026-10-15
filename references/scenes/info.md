@@ -2,6 +2,8 @@
 
 场景 id `info`，格式 `infographic`。图型决策见 [figure-types](../lib/figure-types.md)，文字见 [text-budget](../lib/text-budget.md)。结构几何在 `structures/structures.json`（24 种，如 flow、compare、quadrant、pyramid、iceberg、funnel、cycle、timeline、mindmap）。
 
+先应用 [内容取舍与评审](../editorial-review.md)：读者与沟通目标先于画风默认值；覆盖与字号按本用途验收。
+
 ## 两种信息图
 
 - **单结构图**（默认）：一张图只讲一个结构，一个版式讲一件事。几何写在提示词前面，节点数写死；副标题明确写「不是一步，不编号」这类防误读句；矩阵逐格写明每个象限放什么，否则模型会放错格。

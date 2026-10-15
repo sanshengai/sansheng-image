@@ -2,6 +2,8 @@
 
 场景 id `xhs`。格式 `xhs-cover`、`xhs-carousel`。页序与组型表在 [recipes.md](../recipes.md) 第 3 节；本页补规划层。
 
+先应用 [内容取舍与评审](../editorial-review.md)：读者与沟通目标先于画风默认值；覆盖与字号按本用途验收。
+
 ## 目的
 
 缩到手机大小一眼想点开，图为主、文字为辅；读完想收藏。

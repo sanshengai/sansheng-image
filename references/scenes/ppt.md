@@ -2,6 +2,8 @@
 
 场景 id `ppt`，格式 `ppt`。页型、规格卡、节奏、备注、改字见 [ppt-pages](../lib/ppt-pages.md)。要可编辑文件时用 `sb.py pptx --mode illustration`。
 
+先应用 [内容取舍与评审](../editorial-review.md)：读者与沟通目标先于画风默认值；覆盖与字号按本用途验收。
+
 ## 目的
 
 屏幕上就是这一页，一眼看出讲者要说的核心主旨。主标题是一句整句结论，不是话题词。

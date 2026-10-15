@@ -142,22 +142,22 @@ def test_cover_check_rejects_edge_content_and_empty_square(tmp_path, capsys):
     path = tmp_path / "square.png"
     im = Image.new("RGB", (100, 100), (14, 14, 16))
     im.save(path)
-    assert sb.main(["cover-check", str(path)]) == 1
+    assert sb.main(["cover-check", str(path), "--style", "S02"]) == 1
     assert "空图" in capsys.readouterr().out
     draw = ImageDraw.Draw(im)
     draw.rectangle((20, 20, 79, 79), fill=(255, 255, 255))
     im.save(path)
-    assert check_square_master(path)["passed"]
+    assert check_square_master(path, style="S02")["passed"]
     draw.rectangle((3, 40, 10, 50), fill=(255, 255, 255))
     im.save(path)
-    result = check_square_master(path)
+    result = check_square_master(path, style="S02")
     assert not result["passed"] and result["margins"]["left"] == 0.03
 
 
 def test_cover_check_rejects_non_square(tmp_path):
     path = tmp_path / "wide.png"
     Image.new("RGB", (120, 100), "white").save(path)
-    assert not check_square_master(path)["passed"]
+    assert not check_square_master(path, style="S02")["passed"]
 
 
 def test_zone_covers_c77_c90_do_not_use_the_square_first_flow():
@@ -167,3 +167,10 @@ def test_zone_covers_c77_c90_do_not_use_the_square_first_flow():
             compile_flow({"style": code, "format": "wechat-cover-head",
                           "content": {"subject": "a camera"},
                           "text": {"mode": "native", "items": [{"role": "title", "text": "旧相机"}]}})
+
+
+@pytest.mark.parametrize("style", [None, "C75", "C76@r1", "S020"])
+def test_cover_check_rejects_unsupported_before_reading_image(tmp_path, style):
+    result = check_square_master(tmp_path / "missing.png", style=style)
+    assert result["passed"] is False
+    assert result["status"] == "unsupported" and result["margins"] is None

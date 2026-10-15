@@ -286,10 +286,13 @@ def test_square_margin_gate_checks_actual_crop_even_when_reviewer_accepts(tmp_pa
     draw = ImageDraw.Draw(art)
     draw.rectangle((20, 20, 79, 79), fill="white")
     art.save(square)
-    contract = {**K, "qa": {**K["qa"], "pixel": {}, "center_square_margin_min": 0.15},
+    contract = {**K, "code": "S02", "qa": {**K["qa"], "pixel": {}, "center_square_margin_min": 0.15},
                 "_square_crop_expectation": str(square)}
     review = {**_rv(), "square_crop": {"ok": True, "why": "标题、主体完整"}}
     assert judge(image, contract, review, [], "none", "wechat-cover-head").passed
+    unsupported = judge(image, {**contract, "code": "C75"}, review, [], "none", "wechat-cover-head")
+    assert not unsupported.passed
+    assert unsupported.pixel["center_square_margin"]["status"] == "unsupported"
     draw.rectangle((5, 40, 10, 50), fill="white")
     art.save(square)
     verdict = judge(image, contract, review, [], "none", "wechat-cover-head")

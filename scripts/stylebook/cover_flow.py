@@ -11,8 +11,11 @@ from .textspec import native_items, overlay_items
 from .overlay import validate as validate_overlay
 
 
-def check_square_master(image: Path, *, min_margin: float = 0.15) -> dict:
+def check_square_master(image: Path, *, style: str | None = None, min_margin: float = 0.15) -> dict:
     """S02 高对比内容的边距预检；低对比 ghost 与语义仍须看图。"""
+    if not isinstance(style, str) or style.split("@", 1)[0] != "S02":
+        return {"passed": False, "status": "unsupported", "size": None, "margins": None,
+                "problems": ["此预检只支持显式声明的 S02 深色母版；其他画风须实际看图，不能套用黑底阈值"]}
     with Image.open(image) as source:
         w, h = source.size
         if w != h:
@@ -93,9 +96,9 @@ def compile_flow(manifest: dict) -> dict:
         "outpaint": {"aspect": "2.35:1", "reference_role": "finished_square_master", "prompt": outpaint},
         "expected_text": texts,
         **({"postprocess": "export_overlay"} if mode == "overlay" else {}),
-        "acceptance": ("先运行 sb.py cover-check 预检方形边距，再看主体、徽章和画风；扩图后用 "
+        "acceptance": ("先运行 sb.py cover-check --style S02 预检方形边距，再看主体、徽章和画风；扩图后用 "
                        "sb.py export --overlay 叠加清单里的精确文字，导出 900×383 和实际居中方形，"
                        "再逐字看图并运行 sb.py qa --manifest。" if mode == "overlay" else
-                       "先运行 sb.py cover-check 预检方形边距，再看文字、主体、徽章和画风；扩图后用 "
+                       "先运行 sb.py cover-check --style S02 预检方形边距，再看文字、主体、徽章和画风；扩图后用 "
                        "sb.py export 导出 900×383 和实际居中方形，再对导出横图运行 sb.py qa --manifest。"),
     }

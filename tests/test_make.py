@@ -371,3 +371,59 @@ def test_overlay_asset_change_is_bound_and_rejected(tmp_path):
     report = MK.run(brief, tmp_path / "out", base_path=tmp_path, gen_fn=mutate)
     assert report["failed"] == 1
     assert "发生变化" in report["items"][0]["error"]["message"]
+
+
+def editorial_brief(tmp_path):
+    b = copy.deepcopy(BRIEF)
+    (tmp_path / 'source.md').write_text('两个方案有不同用途。细节留在正文。', encoding='utf-8')
+    b.update(source='source.md', editorial={
+        'audience': '成年项目负责人', 'context': '手机文章正文', 'goal': '辨认两个方案适用条件',
+        'coverage': [{'quote': '两个方案有不同用途', 'decision': 'show', 'targets': ['01'], 'reason': '本图解释差异'},
+                     {'quote': '细节留在正文', 'decision': 'body', 'targets': [], 'reason': '不重复正文'}]})
+    b['items'][0]['position'] = '两个方案有不同用途'
+    return b
+
+
+def test_editorial_reaches_prompt_and_plan_card(tmp_path):
+    from stylebook.plan_card import brief_table
+    b = editorial_brief(tmp_path)
+    p = MK.prepare(b, base_path=tmp_path)
+    assert '成年项目负责人' in p['tasks'][0]['compiled']['prompt']
+    assert '细节留在正文' in brief_table(p)
+    assert '不代表语义完整性已验收' in brief_table(p)
+    b['editorial']['goal'] = 'changed'
+    assert p['editorial']['goal'] != 'changed'
+
+
+@pytest.mark.parametrize('mutation', [
+    lambda e: e.update(coverage=[]),
+    lambda e: e.update(audience=''),
+    lambda e: e['coverage'][0].update(quote='原文没有这句话'),
+    lambda e: e['coverage'][0].update(targets=['missing']),
+    lambda e: e['coverage'][0].update(targets=[]),
+    lambda e: e['coverage'][1].update(targets=['01']),
+    lambda e: e['coverage'][0].update(reason=''),
+])
+def test_editorial_rejects_broken_accounting_in_prepare(tmp_path, mutation):
+    b = editorial_brief(tmp_path)
+    mutation(b['editorial'])
+    with pytest.raises(MK.BriefError):
+        MK.prepare(b, base_path=tmp_path)
+
+
+def test_editorial_requires_source(tmp_path):
+    b = editorial_brief(tmp_path)
+    del b['source']
+    with pytest.raises(MK.BriefError, match='source'):
+        MK.prepare(b, base_path=tmp_path)
+
+
+
+def test_brief_can_isolate_contract_anchor(tmp_path):
+    b = copy.deepcopy(BRIEF)
+    b['use_anchor'] = False
+    p = MK.prepare(b, base_path=tmp_path)
+    assert p['tasks'][0]['compiled']['references'] == []
+    b['use_anchor'] = 'false'
+    with pytest.raises(MK.BriefError, match='use_anchor'):
+        MK.prepare(b, base_path=tmp_path)
