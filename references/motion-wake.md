@@ -43,6 +43,20 @@ Agent负责从这句话走到成品，不要求用户先准备HTML工程或填�
 
 本包只提供自写的调用脚本，不包含上游动作代码，不自动安装第三方依赖。需要 Node.js、上游的 Playwright/浏览器环境、uv、ffmpeg 和 ffprobe；上游 Python 脚本的环境由其 `uv run --script` 处理。先按上游环境检查完成配置。
 
+### 首次配置
+
+由Agent先定位已有上游目录，避免重复下载。尚未取得上游时，从上述仓库单独获取，并按本页已验证的commit核对版本；不要用作者本机路径作为安装要求。`$WAKE` 指向其中的 `skills/wake`。
+
+已验证版本的 `scripts/package.json` 声明 `playwright-core`，Node依赖装在上游脚本目录：
+
+```sh
+npm install --prefix "$WAKE/scripts"
+```
+
+上游渲染器会依次寻找 `CHROME` 环境变量、Playwright缓存和系统Chrome/Chromium；已有可用浏览器时无需另装一份。需要指定时，把 `CHROME` 设为实际浏览器可执行文件。缺浏览器则按上游说明配置，不用 `animate doctor` 的结果代替本路径检查。
+
+确认 `node --version`、`uv --version`、`ffmpeg -version`、`ffprobe -version` 能运行。首次 `uv run --script` 可能联网取得上游声明的Python依赖；后续使用缓存。`--plan` 只检查输入及基本命令是否存在，不启动浏览器，也不证明Node包、浏览器和Python依赖都已就绪；完整导出成功才是该环境的实际验证。
+
 `$WAKE` 由执行者根据实际安装位置填写，`$SRC` 是已准备好的自包含工程；不需要用户选择内部参数。先预演：
 
 ```sh
