@@ -1,6 +1,6 @@
 {
   "code": "C93",
-  "revision": 1,
+  "revision": 2,
   "name": {
     "zh": "年画木版敷彩",
     "en": "New Year Print Woodblock Colouring"
@@ -96,8 +96,8 @@
   "renderer": "codex",
   "anchor": {
     "enabled": true,
-    "file": "anchor.png",
-    "sha256": "c5b5f83e35d6a3a6b86b0ad5c9ab2bf37178443276b81d36595b60b573ca47b4",
+    "file": "anchor.jpg",
+    "sha256": "7edc0ceb3f3aa766bbb90b54337f5335bc57bb9f181816affaf4a5b036ef4de6",
     "isolation": "Transfer only the thick carved black outlines, the saturated flat hand-coloured plates (peach pink, vermilion, yellow, green, blue), the plump simplified forms and the cream paper technique from this reference board. Do not reproduce its title, labels, swatches, panel grid, frames, borders, sample figures, flowers as layout or composition. Do not copy any content of the reference board: its people, animals (such as its sleeping cat), cups and vessels, books, window, reading room, furniture, decorative layout, poses or arrangement. Draw people, animals, cups, books, windows, rooms or furniture only when the current brief itself asks for them, and then compose them fresh from the brief's own wording, never from the board's scene. When the brief gives no setting, use the cream paper ground of the technique instead of adding a room or scenery from the board. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering.; reproduce no writing from the board, and add text only where the brief explicitly requests it, spelled exactly as given."
   },
   "uses": [

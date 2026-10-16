@@ -1,6 +1,6 @@
 {
   "code": "C46",
-  "revision": 5,
+  "revision": 6,
   "name": {
     "zh": "复古旧纸",
     "en": "Nostalgic Aged Paper"
@@ -355,8 +355,8 @@
     }
   ],
   "anchor": {
-    "file": "aged-reference.png",
-    "sha256": "cec90df9b32cfd69181e86997dbb480b307c0ebd7b7345cdec5c0ed910309c49",
+    "file": "aged-reference.jpg",
+    "sha256": "ccfcf82d8ab7b5f5ae3e2206239f806c1dab9b496e89bd2229c20e3467e137d1",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }
