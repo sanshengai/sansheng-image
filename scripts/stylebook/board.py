@@ -133,7 +133,8 @@ def load(path: Path) -> dict:
 
 
 def run(board_path: Path, out_dir: Path, *, gen_fn=None, provider: str | None = None, model: str | None = None,
-        sheets: dict[str, Path] | None = None, settings: dict[str, Path] | None = None, force: bool = False) -> dict:
+        sheets: dict[str, Path] | None = None, settings: dict[str, Path] | None = None, force: bool = False,
+        prepare_only: bool = False) -> dict:
     """一条命令出整场首帧：每镜竖屏、横屏各一张，外加镜头表 shots.md 与计划卡。已存在的图不重出（force 例外）。"""
     from . import compile as CP
     from . import plan_card as PC
@@ -151,6 +152,22 @@ def run(board_path: Path, out_dir: Path, *, gen_fn=None, provider: str | None = 
     out.mkdir(parents=True, exist_ok=True)
     (out / "shots.md").write_text(table_md(board) + "\n", encoding="utf-8")
     PC.write(out, table_md(board), confirmed=board.get("confirmed"))
+    if prepare_only:
+        import hashlib
+        tasks = []
+        for j in jobs:
+            c = CP.compile_manifest(j["manifest"])
+            refs = [{**r, "sha256": hashlib.sha256(Path(r["path"]).read_bytes()).hexdigest()}
+                    for r in c.references]
+            tasks.append({**j, "compiled": c.to_dict(), "references": refs,
+                          "prompt_sha256": hashlib.sha256(c.prompt.encode()).hexdigest(),
+                          "tool_arguments": {"prompt": c.prompt,
+                                             "referenced_image_paths": [r["path"] for r in refs],
+                                             "transparent_background": False}})
+        prepared = {"version": 1, "status": "pending_host", "accepted": False,
+                    "board_sha256": hashlib.sha256(board_path.read_bytes()).hexdigest(), "tasks": tasks}
+        (out / "prepared.json").write_text(json.dumps(prepared, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return {"status": "pending_host", "prepared": str(out / "prepared.json"), "accepted": False}
     if gen_fn is None:
         from . import backends as B
         provider, model = B.choose(provider, model, need_refs=True)
@@ -206,12 +223,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--provider")
     ap.add_argument("--model")
     ap.add_argument("--force", action="store_true", help="已存在的首帧也重出")
+    ap.add_argument("--prepare", action="store_true", help="只编译镜头及参考图指纹，交给当前会话出图，不调用后台")
     a = ap.parse_args(argv)
     if not a.locations and not a.out:
         ap.error("出镜头要给 -o 输出目录；只出地点设定图用 --locations")
+    if a.prepare and a.locations:
+        ap.error("--prepare 仅编译首帧；地点设定请按 location 手册分步编译并查看")
     try:
         r = (run_locations(Path(a.board), provider=a.provider, model=a.model, force=a.force) if a.locations else
-             run(Path(a.board), Path(a.out), provider=a.provider, model=a.model, force=a.force))
+             run(Path(a.board), Path(a.out), provider=a.provider, model=a.model, force=a.force, prepare_only=a.prepare))
     except (ValueError, OSError) as e:
         print(f"分镜没能开始：{e}", file=sys.stderr)
         return 2

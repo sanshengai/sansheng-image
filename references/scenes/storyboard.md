@@ -43,6 +43,10 @@
 
 ## 一条命令出整场首帧
 
+在 Codex 当前会话中，使用 `python3 scripts/sb.py board 镜头表.json -o 首帧/ --prepare`：只校验、编译并写出 `prepared.json`，不调用后台生图。Agent 查看实际参考图后，将各任务的 `tool_arguments` 原样交给原生生图工具；生成后逐张查看，另存真实调用记录。该入口尚无自动导入与验收功能，`pending_host` 不等于成图完成，文件存在也不等于连续性通过。地点设定、定调仍按上节分步编译与查看。
+
+以下一键入口用于明确选择后台运行的环境，不能代替当前会话的原生工具调用：
+
 `cd scripts && python3 -m stylebook.board ../镜头表.json -o ../首帧/` 校验镜头表后，每镜出竖屏 `sXX-v.png` 与横屏 `sXX-h.png`，并写出 `shots.md`（交给视频模型与后期的镜头表）和 `plan-card.md`。已出的首帧不重出，加 `--force` 才覆盖。
 
 ## 电影感要点

@@ -406,7 +406,7 @@ def cmd_plan(a) -> int:
 def cmd_board(a) -> int:
     from stylebook import board as BD
     argv = [a.board] + (["-o", a.out] if a.out else []) + (["--locations"] if a.locations else []) + \
-        (["--provider", a.provider] if a.provider else []) + (["--model", a.model] if a.model else []) + (["--force"] if a.force else [])
+        (["--provider", a.provider] if a.provider else []) + (["--model", a.model] if a.model else []) + (["--force"] if a.force else []) + (["--prepare"] if a.prepare else [])
     return BD.main(argv)
 
 
@@ -844,6 +844,7 @@ def main(argv=None) -> int:
     p = sub.add_parser("plan"); p.add_argument("plan"); p.add_argument("--manifests"); p.add_argument("--model"); p.set_defaults(fn=cmd_plan)
     p = sub.add_parser("board", help="按镜头表一次出整场竖屏与横屏首帧（--locations 先出地点设定图与定调图）")
     p.add_argument("board"); p.add_argument("-o", "--out"); p.add_argument("--locations", action="store_true")
+    p.add_argument("--prepare", action="store_true", help="交给当前会话出图，不调用后台")
     p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--force", action="store_true"); p.set_defaults(fn=cmd_board)
     p = sub.add_parser("style-for"); p.add_argument("scene"); p.add_argument("--explicit"); p.add_argument("--project"); p.set_defaults(fn=cmd_style_for)
     p = sub.add_parser("selection"); p.add_argument("action", choices=["recommend", "normalize", "apply", "impact"])

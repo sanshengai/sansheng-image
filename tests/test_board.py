@@ -123,3 +123,37 @@ def test_locations_make_setting_then_tone_with_setting_as_background(tmp_path, m
     assert "tower-setting.png" in calls[1][1] and "tower-setting.png" not in calls[0][1]
     BD.run_locations(tmp_path / "board.json", gen_fn=gen)
     assert len(calls) == 2
+
+
+def test_prepare_never_selects_backend_and_binds_actual_refs(tmp_path, monkeypatch):
+    import hashlib
+    def forbidden(*args, **kwargs):
+        raise AssertionError("prepare must not call a backend")
+    monkeypatch.setattr(B, "choose", forbidden)
+    monkeypatch.setattr(B, "generate", forbidden)
+    (tmp_path / "c.json").write_text(json.dumps(CHAR), encoding="utf-8")
+    (tmp_path / "l.json").write_text(json.dumps(LOC), encoding="utf-8")
+    sheet = tmp_path / "apprentice-sheet.png"
+    Image.new("RGB", (64, 36), "grey").save(sheet)
+    bp = tmp_path / "board.json"
+    bp.write_text(json.dumps(board()), encoding="utf-8")
+    result = BD.run(bp, tmp_path / "out", prepare_only=True)
+    prepared = json.loads(Path(result["prepared"]).read_text())
+    assert prepared["status"] == "pending_host" and prepared["accepted"] is False
+    assert prepared["board_sha256"] == hashlib.sha256(bp.read_bytes()).hexdigest()
+    assert len(prepared["tasks"]) == 2
+    task = prepared["tasks"][0]
+    assert task["tool_arguments"]["prompt"] == task["compiled"]["prompt"]
+    assert task["prompt_sha256"] == hashlib.sha256(task["compiled"]["prompt"].encode()).hexdigest()
+    ref = next(r for r in task["references"] if r["role"] == "identity")
+    assert ref["sha256"] == hashlib.sha256(sheet.read_bytes()).hexdigest()
+    assert not list((tmp_path / "out").glob("*.png"))
+
+
+def test_prepare_rejects_empty_and_invalid_board_before_backend(tmp_path, monkeypatch):
+    monkeypatch.setattr(B, "choose", lambda *a, **k: pytest.fail("backend called"))
+    for shots in ([], [{**SHOT, "axis": "invalid"}]):
+        bp = tmp_path / "board.json"
+        bp.write_text(json.dumps({"style": "C58", "confirmed": "skipped", "shots": shots}))
+        with pytest.raises(ValueError, match="镜头表不合格"):
+            BD.run(bp, tmp_path / "out", prepare_only=True)
