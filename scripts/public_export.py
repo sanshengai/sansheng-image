@@ -27,6 +27,7 @@ PUBLIC_FILES = {
     "gallery/motion.js", "gallery/motion.css", "gallery/motion-data.json",  # 动态展示只放源码；poster/mp4 媒体不进 Git 也不进包
     "registry.json", "requirements-ppt.txt", "requirements-motion.txt", "requirements.txt",
     "scripts/sb.py", "scripts/first_run.py", "scripts/public_export.py", "scripts/samples_sync.py",
+    "scripts/replay_wake.py",
 }
 PUBLIC_DIRS = ("formats/", "palettes/", "references/", "scenes/",
                "scripts/stylebook/", "structures/", "styles/", "tests/")
