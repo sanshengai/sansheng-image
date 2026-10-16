@@ -2,7 +2,7 @@
 
 [中文](./README.md) | **English**
 
-Local v1.1 candidate status (2026-10-16): the selector has passed local browser checks; this round did not verify the deployed version. Storyboard generation in the current Agent session uses `sb.py board board.json -o frames --prepare`; this compiles tasks without invoking a backend and does not import or approve generated images. Long-article representative pages and a two-shot storyboard remain trials, with content and lighting limitations. See the [closure record](references/release-readiness.md) (Chinese). No release was published in this round.
+Local v1.1 candidate status (2026-10-16): the selector has passed local browser checks; this round did not verify the deployed version. Storyboard generation in the current Agent session uses `sb.py board board.json -o frames --prepare`; this compiles tasks without invoking a backend and does not import or approve generated images. A fixed 21-image long-article set and a two-shot storyboard were generated and inspected. Some explanations and character details remain weak; generation and export do not constitute full quality acceptance. See the [closure record](references/release-readiness.md) (Chinese). No release was published in this round.
 
 **Choose one visual style and keep it across a set of static images.** This Agent skill plans illustrations from source content, compiles style and palette rules, generates images through an available image tool, and checks each result. Article covers and illustrations are its first use case. Slide images, cards, infographics, stories, comics, audio covers, and stickers are at varying trial stages.
 
