@@ -1062,7 +1062,7 @@
       ],
       "dynasty": [],
       "en": "Layered Paper Sculpture",
-      "revision": 3,
+      "revision": 4,
       "essence": [
         "多层纸雕形成真实厚度",
         "纸边与投影清晰可辨",
@@ -1081,7 +1081,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "0025c0bf92e3",
+      "recipe_sha": "2ed77d40c8d6",
       "motion_dialect": {
         "language": "叠纸层按各自深度错开抬升、平移再落回，投影随层间距离变化；纸面与切边保持硬挺。",
         "primitives": [

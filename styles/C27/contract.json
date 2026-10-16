@@ -1,6 +1,6 @@
 {
   "code": "C27",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "纸雕层叠",
     "en": "Layered Paper Sculpture"
@@ -26,7 +26,7 @@
     "暖光下的微缩立体舞台"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): A sculptural 3D paper-craft diorama artwork, rendered like a soft 3D render of a handcrafted layered paper sculpture, NOT flat papercut, NOT symmetrical ornament. CHARACTER RECIPE (for any figure): THE HEAD IS SCULPTURAL — a smooth rounded three-dimensional sculpted form like a stop-motion puppet, softly shaded with real volume, NOT a flat paper cutout face; the bangs are a smooth volumetric dome of thick curved paper sweeping across the forehead and casting a soft shadow on it; the nose is a small 3D paper wedge physically protruding from the face, catching light on one side and casting a tiny shadow on the other; gently rounded cheeks with soft rosy blush circles; closed eyes as thin calm curved lines; tiny serene lips; hair and clothing built from thick curved paper ribbons, rolled quilling spirals, pleated paper fans and layered scalloped paper feathers like overlapping bird plumage; some pieces carry embossed damask folk patterns. FOLK ELEMENTS: a few Scandinavian folk-art paper pieces placed beside the subject —one stylized folk cloud, a few stylized leaves and one rolled paper spiral— sparse, asymmetric editorial composition with lots of breathing room. MATERIAL: every piece is matte felt-like cardstock with visible embossed fiber texture and fine swirling filigree embossing, slightly curled edges. DEPTH & LIGHT (most important): strong sculptural depth — elements physically raised several millimeters off the background, casting large soft realistic drop shadows onto the wall and onto each other; soft warm studio lighting from upper left; the plain background has a soft directional light gradient — noticeably brighter toward the upper left, gently darker in the lower corners (gentle vignette). PALETTE: muted jewel tones — mustard yellow, ochre, coral orange, magenta pink, lilac purple, slate blue, teal — on a warm earthy backdrop. Warm handcrafted editorial illustration mood.",
+    "positive": "Visual style (follow exactly): A sculptural 3D paper-craft diorama artwork, rendered like a soft 3D render of a handcrafted layered paper sculpture, NOT flat papercut, NOT symmetrical ornament. CHARACTER RECIPE (for any figure): THE HEAD IS SCULPTURAL — a smooth rounded three-dimensional sculpted form like a stop-motion puppet, softly shaded with real volume, NOT a flat paper cutout face; the bangs are a smooth volumetric dome of thick curved paper sweeping across the forehead and casting a soft shadow on it; the nose is a small 3D paper wedge physically protruding from the face, catching light on one side and casting a tiny shadow on the other; gently rounded cheeks with soft rosy blush circles; closed eyes as thin calm curved lines; tiny serene lips; hair and clothing built from thick curved paper ribbons, rolled quilling spirals, pleated paper fans and layered scalloped paper feathers like overlapping bird plumage; some pieces carry embossed damask folk patterns. FOLK ELEMENTS: a few Scandinavian folk-art paper pieces placed beside the subject —one stylized folk cloud, a few stylized leaves and one rolled paper spiral— sparse, asymmetric editorial composition with lots of breathing room. MATERIAL: Every piece is stiff matte cut cardstock, with fine pressed paper grain and crisp exposed cut edges. Use rolled paper strips and folded card planes with visible gaps and cast shadows. Do not use felt, wool, plush, fuzzy fibres, stitched fabric or inflated upholstered forms. Decorative embossing stays shallow and sparse; the material must remain visibly paper rather than felt. Slightly curled paper edges. DEPTH & LIGHT (most important): strong sculptural depth — elements physically raised several millimeters off the background, casting large soft realistic drop shadows onto the wall and onto each other; soft warm studio lighting from upper left; the plain background has a soft directional light gradient — noticeably brighter toward the upper left, gently darker in the lower corners (gentle vignette). PALETTE: muted jewel tones — mustard yellow, ochre, coral orange, magenta pink, lilac purple, slate blue, teal — on a warm earthy backdrop. Warm handcrafted editorial illustration mood.",
     "text_mode": [
       "native",
       "overlay",
@@ -68,6 +68,11 @@
       "revision": 3,
       "date": "2026-09-30",
       "note": "画风库 v2：配方加入原作名；旧自产锚点退役（移入 legacy/），改用 MIT 原作样图或不配锚点；新增用途、渲染器与同题样图。"
+    },
+    {
+      "revision": 4,
+      "date": "2026-10-16",
+      "note": "移除felt-like材质歧义，明确硬挺卡纸切边、折叠与纸层投影；同题物件、标准T5及原高清封面分别实测。仅修材质配方，正式准入仍待验证。"
     }
   ],
   "anchor": {
@@ -144,18 +149,18 @@
       "ratio": 2.35
     },
     {
-      "topic": "公众号封面（展台高清版，依原图高清重绘）",
+      "topic": "公众号封面（展台高清版，硬挺纸雕材质修正版）",
       "file": "samples/cv-hd.webp",
-      "source_sha256": "020a0485fe1b0fd5339cf310d461022580ff93d6f2649d0e925bcee69755f3bc",
+      "source_sha256": "4dd9560f1a4b79252898296c2571e997d22cadb2bc336e67b0ec3fdbdda15882",
       "renderer": "codex-builtin",
-      "date": "2026-10-13",
-      "ratio": 2.354,
+      "date": "2026-10-16",
+      "ratio": 2.351,
       "generation": {
-        "revision": 3,
-        "prompt_sha256": "982e93cbfa50968bd5f4dc0006d61e4da1e33e839e83ad29ebcfa9aa2c0df1a7",
+        "revision": 4,
+        "prompt_sha256": "516fab6dd53a12aed8a442168ef74bef43d086951e912df61091e9e6f183cb2b",
         "attempts": 1,
         "picked_from": 1,
-        "edited": false
+        "edited": true
       }
     },
     {
