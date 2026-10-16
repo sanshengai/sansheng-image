@@ -119,3 +119,19 @@ Design ideas (no text or code copied) were also learned from: yanliudesign/mono-
 (required axes, ablation testing), jiemianduan/poster-style-transfer (style spec extraction,
 weighted fidelity rubric), onebluecloud/book-to-comic (inbox fallback, series inheritance),
 black-forest-labs/skills (negative-to-positive prompt rewriting).
+
+
+## Lemomo / lemo-wake: optional external workflow (not bundled)
+
+https://github.com/lemomo-ai/lemo-wake — author: Lemomo. The optional workflow in
+`references/motion-wake.md` was validated against upstream commit
+`f17890701dd3c782fe0e0a992fb5c2c12063194d`. Its Skill/code/docs are marked
+CC BY-NC 4.0; consult the actual upstream files and asset licenses before use or
+redistribution. Our MIT license does not relicense that external material.
+
+`scripts/replay_wake.py` is our own invocation wrapper. It calls the user's
+separately obtained upstream scripts; no upstream choreography, scripts, models,
+fonts or demonstration projects are copied into this package. Local research
+adaptations and their artwork are not included in the public package. Public
+showcase films require their own source and license review; using external tools
+does not automatically authorize commercial use or redistribution.

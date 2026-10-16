@@ -112,6 +112,10 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 
 ## 动态版：依赖与命令边界
 
+动态制作有两条可选路径。沿用已认可的 lemo-wake 方法时，按 [外部成熟动态方法](./references/motion-wake.md) 先读上游、选动作并准备素材和工程，再用 `python3 scripts/replay_wake.py <src> --wake-skill <外部skills/wake目录> --out <新目录>` 导出。此路径需要 Node.js、上游 Playwright/浏览器环境、uv、ffmpeg/ffprobe，**不要求 HyperFrames**。脚本只复跑准备好的工程，不会自动把任意图片变成满意动画；上游代码与素材不随本包分发，CC BY-NC 4.0 等许可单独适用。
+
+下面保留原 HyperFrames 路径的依赖和命令，已有工程可继续使用：
+
 - 只在你明确要动态版时使用，且必须先有同一内容的静态版。流程与正反例见 [动态场景](./references/motion-scenes.md)。
 - 额外依赖（静态出图不需要）：Python 侧 `python3 -m pip install -r requirements-motion.txt`（只有 numpy，Pillow 已是基线依赖）；其余由你自行安装：Node.js 22 或更新、HyperFrames 0.8.140、ffmpeg 与 ffprobe、本机 Chrome 或 chrome-headless-shell。缺哪一项 `python3 scripts/sb.py animate doctor --hyperframes-cli <hyperframes.mjs 的绝对路径>` 会逐条指出，封装不会自动下载。
 - 命令：`python3 scripts/sb.py animate doctor|plan|render|qa ...`。`doctor` 不读输入；`plan` 只读预演，不创建文件；`render` 与 `qa` 需要 manifest；`render` 的输出目录必须尚不存在，`qa` 使用该次已渲染的现有输出目录。均不覆盖已有文件，也不写进输入工程。
