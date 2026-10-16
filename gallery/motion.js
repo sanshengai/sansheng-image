@@ -45,6 +45,9 @@
     return u.pathname;
   }
   function str(v, min, max) { return typeof v === 'string' && v.length >= min && v.length <= max; }
+  function playbackPath(path) {
+    return location.protocol === 'file:' ? new URL('motion/' + path.slice(MEDIA_PREFIX.length), location.href).href : path;
+  }
   function dim(v) { return typeof v === 'number' && isFinite(v) && Math.floor(v) === v && v >= 16 && v <= 8000; }
 
   function parseItems(d) {
@@ -68,7 +71,7 @@
       out.push({
         id: o.id, title: o.title, styleCode: o.style_code || null,
         scene: o.scene, homeScene: o.homepage_scene || null, sceneLabel: o.scene_label,
-        width: o.width, height: o.height, poster: poster, video: video,
+        width: o.width, height: o.height, poster: playbackPath(poster), video: playbackPath(video),
         note: (typeof o.note === 'string' ? o.note : null)
       });
     });
@@ -485,7 +488,22 @@
   onMq(mqCoarse, stopAll);
 
   /* ---------- 启动 ---------- */
+  function showItems(d) {
+    items = parseItems(d);
+    if (!items.length) throw new Error('empty');
+    buildShowcase();
+    if (!secEl) throw new Error('no-slot');
+    watchLibrary();
+    watchDialog();
+  }
   function start() {
+    if (location.protocol === 'file:') {
+      try {
+        var data = JSON.parse(document.getElementById('page-data').textContent);
+        showItems(data.motionPreview);
+      } catch (e) { items = []; buildFallback(); }
+      return;
+    }
     if (!window.fetch || !window.Promise) { buildFallback(); return; }
     var req;
     try { req = fetch(DATA_URL, { credentials: 'same-origin' }); } catch (e) { buildFallback(); return; }
@@ -493,12 +511,7 @@
       if (!r.ok) throw new Error('http');
       return r.json();
     }).then(function (d) {
-      items = parseItems(d);
-      if (!items.length) throw new Error('empty');
-      buildShowcase();
-      if (!secEl) throw new Error('no-slot');
-      watchLibrary();
-      watchDialog();
+      showItems(d);
     }).catch(function () {
       items = [];
       destroyDlgBox();

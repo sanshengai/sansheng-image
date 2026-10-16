@@ -443,8 +443,9 @@ def test_build_is_deterministic_and_does_not_touch_source(built, tmp_path):
 # ---------------- 合成动态媒体（仅测图片路径与构建完整性） ----------------
 
 def test_synthetic_motion_media_and_sha_are_checked_by_real_build(built, synthetic_motion):
-    d, _ = built
+    d, html = built
     doc, real = synthetic_motion["doc"], synthetic_motion["real"]
+    assert _data(html)["motionPreview"] == doc
     expected = BD.MG.expected_media(doc)
     assert expected and len(expected) == 2 * len(doc["items"])
     on_disk = sorted(p.relative_to(d).as_posix() for p in (d / BD.MG.MEDIA_DIR).rglob("*") if p.is_file())
