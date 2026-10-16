@@ -1490,11 +1490,11 @@
       ],
       "dynasty": [],
       "en": "Editorial Magazine Infographic",
-      "revision": 4,
+      "revision": 5,
       "essence": [
-        "杂志式信息层级",
-        "清楚的插图与视觉隐喻",
-        "有节制的分栏和重点框"
+        "杂志式信息层级与几何编排",
+        "写实摄影或精绘材质的主场景",
+        "有限局部细节视图与克制留白"
       ],
       "colors": [],
       "text_mode": [
@@ -1509,7 +1509,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "3a8907feef86",
+      "recipe_sha": "b8c98c556795",
       "motion_dialect": {
         "language": "数据与视觉隐喻按原文逻辑在各自分栏依次落位，最后聚焦结论，节奏像编辑版面逐层呈现。",
         "primitives": [
@@ -1863,10 +1863,10 @@
       ],
       "dynasty": [],
       "en": "Nostalgic Aged Paper",
-      "revision": 4,
+      "revision": 5,
       "essence": [
         "泛黄旧纸与历史档案质感",
-        "复古地图或探险日志装饰",
+        "细墨线边框与克制植物档案纹饰",
         "克制的棕褐色层次"
       ],
       "colors": [],
@@ -1882,7 +1882,7 @@
       },
       "admission": "pending",
       "tests": {},
-      "recipe_sha": "814d7c473701"
+      "recipe_sha": "3fb323cb5a69"
     },
     {
       "code": "C48",

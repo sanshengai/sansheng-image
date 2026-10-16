@@ -1,6 +1,6 @@
 {
   "code": "C34",
-  "revision": 4,
+  "revision": 5,
   "name": {
     "zh": "杂志编辑信息图",
     "en": "Editorial Magazine Infographic"
@@ -21,12 +21,12 @@
     "notes": "基于 2026-09-25 同题三题提示词的共同风格段整理；基础可调用版，尚未通过准入。"
   },
   "essence": [
-    "杂志式信息层级",
-    "清楚的插图与视觉隐喻",
-    "有节制的分栏和重点框"
+    "杂志式信息层级与几何编排",
+    "写实摄影或精绘材质的主场景",
+    "有限局部细节视图与克制留白"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): in the style of Wired and The Verge editorial infographics. Polished magazine editorial infographic. Organise one clear visual narrative with a strong headline area, structured sections, purposeful callout boxes and clean illustrations or visual metaphors. Use consistent professional typography, restrained accents and generous separation between ideas.",
+    "positive": "Visual style (follow exactly): Polished magazine editorial collage with a large primary scene and a small number of purposeful detail insets. Render subjects with realistic photographic or carefully painted material detail, embedded in restrained geometric colour fields, thin editorial rules and generous ivory negative space. Preserve realistic lighting, perspective and texture within each scene; geometric framing does not flatten the subject into mid-century vector illustration. Use structured visual hierarchy. Detail insets may repeat existing objects from the main scene, but must not invent new subjects or extra physical instances. When no text is requested, hierarchy comes from framing and size alone; never add headline placeholders, labels or pseudo-text.",
     "text_mode": [
       "native",
       "overlay",
@@ -38,20 +38,20 @@
   },
   "qa": {
     "must_see": [
-      "杂志式信息层级",
-      "清楚的插图与视觉隐喻",
-      "有节制的分栏和重点框"
+      "真实材质的主场景与几何色域编排",
+      "主次明确的编辑式信息层级",
+      "有限细节视图只展示当前任务已有物件，不擅加其他主题"
     ],
     "must_not_see": [
-      "拥挤无序排版或照片拼贴",
+      "拥挤无序排版或缺少真实材质的扁平色块插画",
       "未请求的文字或水印"
     ]
   },
   "evidence": {
     "admission": "pending",
-    "model": "未在基础合同上完成模型实测",
-    "date": "2026-09-30",
-    "notes": "配方加入原作名并换用原作样图（或取消自产锚点）；仅完成合同校验与同题试出图，尚未通过正式准入。"
+    "model": "Codex 内置生图；实际底层模型未知",
+    "date": "2026-10-16",
+    "notes": "修正展示图与平面配方矛盾；旧同题猫和T5茶具已有真实调用，未完成正式准入。原历史参考图无生成记录，不伪造其来源。"
   },
   "changelog": [
     {
@@ -73,6 +73,11 @@
       "revision": 4,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 5,
+      "date": "2026-10-16",
+      "note": "恢复现有展示样图的写实材质几何编辑拼贴；以已有展示图作为画法参考，旧平面参考板保留。配方修复不等于正式准入。"
     }
   ],
   "inspiration": {
@@ -467,8 +472,8 @@
     }
   ],
   "anchor": {
-    "file": "anchor.png",
-    "sha256": "855fb6b0299cfc3b31d6593fd20af73c72a5095d550bccbdb5f42d4037b27b74",
+    "file": "editorial-reference.jpg",
+    "sha256": "d0137010f0df2b3ed43a7841a00f06e84f3d20608d2904328a51ae14c00c7a31",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }

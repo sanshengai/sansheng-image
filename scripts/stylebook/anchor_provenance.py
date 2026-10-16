@@ -30,19 +30,24 @@ def verify(root: Path = ROOT) -> list[str]:
             problems.append(f"duplicate or invalid style: {code}")
             continue
         seen.add(code)
-        path = root / "styles" / code / "anchor.png"
         contract_path = root / "styles" / code / "contract.json"
-        if not path.is_file() or not contract_path.is_file():
+        if not contract_path.is_file():
+            problems.append(f"{code}: anchor or contract missing")
+            continue
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+        path = contract_path.parent / (contract.get("anchor") or {}).get("file", "anchor.png")
+        if not path.is_file():
             problems.append(f"{code}: anchor or contract missing")
             continue
         origin = entry.get("origin")
         if not isinstance(origin, dict) or not origin.get("repo") or origin.get("license") != "MIT":
             problems.append(f"{code}: anchor has no MIT upstream origin in the ledger")
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        contract = json.loads(contract_path.read_text(encoding="utf-8"))
         if digest != entry.get("sha256") or digest != (contract.get("anchor") or {}).get("sha256"):
             problems.append(f"{code}: anchor hash differs from provenance or contract")
-    expected = {p.parent.name for p in (root / "styles").glob("C*/anchor.png")}
+    expected = {p.parent.name for p in (root / "styles").glob("C*/contract.json")
+                if (json.loads(p.read_text(encoding="utf-8")).get("anchor") or {}).get("file")
+                or (p.parent / "anchor.png").is_file()}
     if seen != expected:
         problems.append(f"ledger coverage differs: missing={sorted(expected - seen)}, extra={sorted(seen - expected)}")
     return problems

@@ -1,6 +1,6 @@
 {
   "code": "C46",
-  "revision": 4,
+  "revision": 5,
   "name": {
     "zh": "复古旧纸",
     "en": "Nostalgic Aged Paper"
@@ -22,11 +22,11 @@
   },
   "essence": [
     "泛黄旧纸与历史档案质感",
-    "复古地图或探险日志装饰",
+    "细墨线边框与克制植物档案纹饰",
     "克制的棕褐色层次"
   ],
   "recipe": {
-    "positive": "Visual style (follow exactly): Nostalgic historical-document illustration on warm aged paper. Use subtle paper wear, archival map and journal details, fine ink drawing, sepia and muted earth colours, careful caption areas and a calm heritage atmosphere.",
+    "positive": "Visual style (follow exactly): Nostalgic archival illustration on warm aged parchment, with visible but restrained paper wear, fine sepia ink contours, muted brown and olive washes and a calm heritage atmosphere. Keep one dominant illustrated scene within a thin irregular ink border and small botanical corner flourishes; the same fine ink and parchment rendering applies to any subject. Any archival or map-like ornament stays abstract and subordinate. Do not insert a compass, direction rose, seal, map label or decorative handwriting unless the current content explicitly requests it. When no text is requested, all margins and ornaments remain entirely wordless, with no caption placeholders, letters, numerals or pseudo-script.",
     "text_mode": [
       "native",
       "overlay",
@@ -39,19 +39,19 @@
   "qa": {
     "must_see": [
       "泛黄旧纸与历史档案质感",
-      "复古地图或探险日志装饰",
-      "克制的棕褐色层次"
+      "细墨线边框、植物角饰或克制抽象档案纹样",
+      "克制棕褐和灰橄榄色层次"
     ],
     "must_not_see": [
       "明亮科技色或纯白无纹理底",
-      "未请求的文字或水印"
+      "未请求的罗盘、方位字母、手写痕迹、文字或水印"
     ]
   },
   "evidence": {
     "admission": "pending",
-    "model": "未在基础合同上完成模型实测",
-    "date": "2026-09-30",
-    "notes": "配方加入原作名并换用原作样图（或取消自产锚点）；仅完成合同校验与同题试出图，尚未通过正式准入。"
+    "model": "Codex 内置生图；实际底层模型未知",
+    "date": "2026-10-16",
+    "notes": "无字参考的局部编辑、跨题材茶具与原高清旧书摊封面均保留实际调用；未见未请求罗盘或字母。正式准入仍待完整矩阵与稳定性证据。"
   },
   "changelog": [
     {
@@ -73,6 +73,11 @@
       "revision": 4,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 5,
+      "date": "2026-10-16",
+      "note": "以无字旧纸插画替换带方位字母的参考，边饰不默认包含罗盘与伪手写；原参考板保留。"
     }
   ],
   "inspiration": {
@@ -126,16 +131,16 @@
     {
       "topic": "公众号封面（展台高清版，依原图高清重绘）",
       "file": "samples/cv-hd.webp",
-      "source_sha256": "320ec2b99cbf4e0ca823757cec3ef59d6a7af5565194ca432e1124fbc2f247a4",
+      "source_sha256": "e2a44bae9b7f53b3a71d0b97bf282e0b0104ee9dfabbf7a3b69414b4b3136bd8",
       "renderer": "codex-builtin",
-      "date": "2026-10-13",
-      "ratio": 2.351,
+      "date": "2026-10-16",
+      "ratio": 2.35,
       "generation": {
-        "revision": 4,
-        "prompt_sha256": "7ee12e5d1602ad31ef449b06fcb7183a6a192355ed0a3d0459a1111e7023e1b8",
+        "revision": 5,
+        "prompt_sha256": "aaffd4c7b8fd5a1b6a6d00884ce691fcd510614930b8cc32d039c4b06c9cfdda",
         "attempts": 1,
         "picked_from": 1,
-        "edited": false
+        "edited": true
       }
     },
     {
@@ -350,8 +355,8 @@
     }
   ],
   "anchor": {
-    "file": "anchor.png",
-    "sha256": "4e1639e1cdd7c0f07a170057ecda1ae2c216953dca4901b1f9a9661d30e7c16e",
+    "file": "aged-reference.png",
+    "sha256": "cec90df9b32cfd69181e86997dbb480b307c0ebd7b7345cdec5c0ed910309c49",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }
