@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "file_count": 382,
+  "file_count": 384,
   "files": {
     ".claude-plugin/marketplace.json": "cf63f3ca74525c607aed3c7ed767034d6495039adc419edffb615799b865b030",
     ".claude-plugin/plugin.json": "339b9759e28008dbf9dd5ea6e19482dd56c13a8bf54dd4990306521e3274431e",
@@ -88,7 +88,7 @@
     "scripts/stylebook/backends/providers.py": "f88427b2bd054cefc5753fb39d26dbd3c24f1ebf8099c722c6f0b0c2075c0aa6",
     "scripts/stylebook/batch.py": "c8e9e961a45e647d8db6dc3ad71f50b69ae0484d1b8098f7bcc47859395e207a",
     "scripts/stylebook/board.py": "a4debccfff546ff953d4a64e85b3b76387f1f06d736ac4fb4d0a9fb344db62ae",
-    "scripts/stylebook/build.py": "915045b67648d92a6bbbfd4bddd6d3f8c5933cdea075c642aee871ed2acd4fd9",
+    "scripts/stylebook/build.py": "a12886aa018500590a247f20c57693defd4774884556f7e8c4cddacccb614aea",
     "scripts/stylebook/character.py": "7d90a44bfb5790d048235f98ec9fadae2da4704434e2e8624b303b2ad5223e73",
     "scripts/stylebook/comic.py": "64fbb34489981581b42ca8080c96098eb1f142143d2a089d3dd9c31224530fac",
     "scripts/stylebook/comic_book.py": "c3e620566206a00a3d40b6f37ce6b1091c34cb054fbf93a88bcbe350f721c07f",
@@ -189,6 +189,7 @@
     "styles/C32/contract.json": "fd7c6acef4200290bef02a055f8ee026f09bf7e974b26f252e87f1998939554e",
     "styles/C34/anchor.png": "855fb6b0299cfc3b31d6593fd20af73c72a5095d550bccbdb5f42d4037b27b74",
     "styles/C34/contract.json": "c4999a55b66471d5b17424cf6a893e5e86d0e964b5343ef55ec0856a27f45550",
+    "styles/C34/editorial-reference.jpg": "d0137010f0df2b3ed43a7841a00f06e84f3d20608d2904328a51ae14c00c7a31",
     "styles/C35/anchor.png": "75e944970fa122eabeab575f9ab6971f7022f20a28a74bf509f11cbd0caf4c84",
     "styles/C35/contract.json": "12445d3ddddc24d4dab2d9dc18091f621ba2d409246d2a207003ac051fbac48a",
     "styles/C36/anchor.png": "db9963bdf567b7e7b72065d11ac6813ddbba84bc97224cfb709ef884eeda37db",
@@ -201,6 +202,7 @@
     "styles/C41/contract.json": "7f34dcbf5e13873b9cc79cd95abedfbda596feb032768a11a5b4d4d2ebba7ebd",
     "styles/C42/anchor.png": "e9304195ddba05cb18185207dc8b0d4f71e773f5b96938474cfae459dbbcf279",
     "styles/C42/contract.json": "895fd806399d490e808197f90fd16b6197ed95c13fbbadf5fa1aa069b901686d",
+    "styles/C46/aged-reference.png": "cec90df9b32cfd69181e86997dbb480b307c0ebd7b7345cdec5c0ed910309c49",
     "styles/C46/anchor.png": "4e1639e1cdd7c0f07a170057ecda1ae2c216953dca4901b1f9a9661d30e7c16e",
     "styles/C46/contract.json": "775fa3c83c3999b65b76d6b66f96fc5df9edb890644dc96c96708c83ea3a8015",
     "styles/C48/anchor.png": "ee9ec01803867233ae169003dac182e4d8a010f85646f24d7f32c12f6c64daff",
