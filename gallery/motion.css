@@ -3,17 +3,6 @@
 .motion-sec { padding-bottom: 8px; }
 .motion-body { min-width: 0; }
 
-.motion-tabs { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-.motion-tabs .chip { max-width: 100%; white-space: normal; text-align: left; overflow-wrap: anywhere; background: var(--bg); }
-
-.motion-meta { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
-.motion-scene { font-size: 13px; color: var(--green); }
-.motion-title-text { font: 700 20px/1.4 var(--serif); color: var(--strong); }
-
-.motion-compare {
-  margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px; align-items: start;
-}
 .motion-fig { margin: 0; min-width: 0; }
 .motion-frame {
   position: relative; width: 100%; aspect-ratio: 16 / 9;
@@ -49,11 +38,6 @@
 }
 .motion-lib-item.is-moving .thumb .motion-lib-video { opacity: 1; }
 
-/* 动态版示例按场景分组 */
-.motion-tabs { flex-direction: column; gap: 10px; }
-.motion-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.motion-group-name { min-width: 5em; font-size: 13px; color: var(--mut); }
-
 /* 详情页动态缩略图 */
 .motion-dlg { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); min-width: 0; }
 .motion-dlg-title { margin-bottom: 8px; font-size: 13px; color: var(--mut); }
@@ -75,3 +59,28 @@
   .motion-play, .motion-hint, .motion-fig-dyn, .motion-badge, .motion-lib-video { display: none !important; }
   .motion-compare { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
 }
+
+/* 作品直接上墙：小原图、大动态，同一张卡片内对照。 */
+.motion-gallery { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 24px; margin-top:24px; }
+.motion-card { min-width:0; padding:12px; border:1px solid var(--line); border-radius:18px; background:var(--bg); }
+.motion-pair { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2.35fr); gap:8px; align-items:stretch; }
+.motion-original { position:relative; min-width:0; overflow:hidden; border-radius:9px; display:flex; flex-direction:column; justify-content:center; }
+.motion-original img { display:block; width:100%; height:auto; object-fit:contain; }
+.motion-original .motion-tag { position:static; align-self:flex-start; order:-1; margin-bottom:8px; }
+.motion-pair .motion-frame { border:0; border-radius:9px; }
+.motion-pair video { object-fit:contain; }
+.motion-card .motion-tag { top:8px; left:8px; border-radius:20px; padding:4px 8px; font-size:11px; }
+.motion-tag-live::before { content:''; display:inline-block; width:6px; height:6px; background:var(--green); border-radius:50%; margin-right:5px; }
+.motion-card-foot { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 2px 2px; }
+.motion-card-foot h3 { margin:0; font:600 15px/1.5 var(--sans); }
+.motion-actions { display:flex; flex-shrink:0; gap:12px; }
+.motion-toggle,.motion-enlarge { appearance:none; border:0; background:none; color:var(--mut); cursor:pointer; font:12px/1.5 var(--sans); padding:4px 0; }
+.motion-toggle:hover,.motion-enlarge:hover { color:var(--strong); }
+.motion-toggle:focus-visible,.motion-enlarge:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+.motion-lightbox { padding:16px; border:1px solid var(--line); border-radius:16px; color:var(--strong); background:var(--bg); width:min(1100px,92vw); max-height:94vh; }
+.motion-lightbox::backdrop { background:rgba(0,0,0,.8); }
+.motion-lightbox>button { display:block; margin:0 0 12px auto; }
+.motion-lightbox video { display:block; max-width:100%; max-height:78vh; margin:auto; }
+@media(max-width:900px) { .motion-gallery { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:480px) { .motion-card { padding:8px; border-radius:12px; } .motion-card-foot { align-items:flex-start; } .motion-card-foot h3 { font-size:13px; } .motion-tag { font-size:10px; } }
+@media(prefers-reduced-motion:reduce) { .motion-tag-live::before { display:none; } }

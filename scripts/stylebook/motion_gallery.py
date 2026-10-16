@@ -33,7 +33,7 @@ MAX_DURATION = 60
 
 REQUIRED_KEYS = frozenset({"id", "title", "scene", "scene_label", "width", "height", "duration",
                            "poster", "video", "poster_sha256", "video_sha256"})
-OPTIONAL_KEYS = frozenset({"style_code", "homepage_scene", "note"})
+OPTIONAL_KEYS = frozenset({"style_code", "homepage_scene", "note", "source", "source_sha256"})
 ALLOWED_KEYS = REQUIRED_KEYS | OPTIONAL_KEYS
 
 ID_RE = re.compile(r"[A-Za-z0-9_-]{1,32}")
@@ -123,7 +123,18 @@ def _item_problems(it, where: str) -> list[str]:
                 p.append(f"{where}.{field} 必须恰好是 {MEDIA_URL_PREFIX}<id>/{name}")
         if sha_key in it and not (isinstance(it[sha_key], str) and SHA_RE.fullmatch(it[sha_key])):
             p.append(f"{where}.{sha_key} 必须是小写 64 位十六进制")
+    if ("source" in it) != ("source_sha256" in it):
+        p.append(f"{where}.source 与 source_sha256 必须同时提供")
+    if "source" in it:
+        if not id_ok or it["source"] != f"{MEDIA_URL_PREFIX}{iid}/source.png":
+            p.append(f"{where}.source 必须恰好是 {MEDIA_URL_PREFIX}<id>/source.png")
+        if not (isinstance(it.get("source_sha256"), str) and SHA_RE.fullmatch(it["source_sha256"])):
+            p.append(f"{where}.source_sha256 必须是小写 64 位十六进制")
     return p
+
+
+def item_media(it):
+    return MEDIA_FILES + ((("source", "source.png", "source_sha256"),) if "source" in it else ())
 
 
 def validate_document(doc) -> list[str]:
@@ -180,7 +191,7 @@ def _sha(raw: bytes) -> str:
 def expected_media(doc: dict) -> list[tuple[str, str]]:
     """(相对输出目录的路径, 期望 SHA-256)，按路径排序。"""
     out = [(f"{MEDIA_DIR}/{it['id']}/{name}", it[sha_key])
-           for it in doc["items"] for _field, name, sha_key in MEDIA_FILES]
+           for it in doc["items"] for _field, name, sha_key in item_media(it)]
     return sorted(out)
 
 
@@ -196,7 +207,7 @@ def read_media(doc: dict, motion_dir) -> dict[str, bytes]:
         if idir.is_symlink():
             problems.append(f"{it['id']}/ 是符号链接")
             continue
-        for _field, name, sha_key in MEDIA_FILES:
+        for _field, name, sha_key in item_media(it):
             rel = f"{MEDIA_DIR}/{it['id']}/{name}"
             path = idir / name
             try:

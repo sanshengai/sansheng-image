@@ -144,7 +144,7 @@ def test_unknown_missing_and_duplicate_fields():
     assert MG.validate_document(doc)
     for key in sorted(MG.REQUIRED_KEYS):
         doc = make_doc("a")
-        del doc["items"][0][key]
+        doc["items"][0].pop(key, None)
         assert MG.validate_document(doc), key
     doc = make_doc("a", "a")
     assert any("重复" in p for p in MG.validate_document(doc))
@@ -153,7 +153,7 @@ def test_unknown_missing_and_duplicate_fields():
 def test_optional_fields_may_be_absent():
     doc = make_doc("a")
     for key in MG.OPTIONAL_KEYS:
-        del doc["items"][0][key]
+        doc["items"][0].pop(key, None)
     assert MG.validate_document(doc) == []
 
 
@@ -449,3 +449,30 @@ def test_symlinked_media_root_is_rejected(tmp_path):
     link.symlink_to(media, target_is_directory=True)
     with pytest.raises(ValueError):
         MG.read_media(doc, link)
+
+
+def test_original_source_is_bound_and_copied(tmp_path):
+    doc = make_doc("ink")
+    raw = b"original-source"
+    doc["items"][0].update(source="/tools/image/motion/ink/source.png", source_sha256=sha(raw))
+    assert MG.validate_document(doc) == []
+    media = make_media(tmp_path, doc)
+    (media / "ink" / "source.png").write_bytes(raw)
+    assert MG.read_media(doc, media)["motion/ink/source.png"] == raw
+    assert ("motion/ink/source.png", sha(raw)) in MG.expected_media(doc)
+    (media / "ink" / "source.png").write_bytes(b"wrong")
+    with pytest.raises(ValueError, match="SHA-256"):
+        MG.read_media(doc, media)
+
+
+@pytest.mark.parametrize("over", [
+    {"source": "/tools/image/motion/ink/source.png"},
+    {"source_sha256": "0" * 64},
+    {"source": "https://evil.test/source.png", "source_sha256": "0" * 64},
+    {"source": "/tools/image/motion/ink/../source.png", "source_sha256": "0" * 64},
+    {"source": "/tools/image/motion/ink/source.png", "source_sha256": ""},
+])
+def test_original_source_rejects_unbound_or_unsafe_input(over):
+    doc = make_doc("ink")
+    doc["items"][0].update(over)
+    assert MG.validate_document(doc)

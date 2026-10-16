@@ -4,7 +4,7 @@
   var DATA_URL = '/tools/image/motion-data.json';
   var MEDIA_PREFIX = '/tools/image/motion/';
   var MAX_ITEMS = 12;
-  var SCROLL_PLAY_RATIO = 0.6;   // 手机：露出这么多才开始播
+  var SCROLL_PLAY_RATIO = 0.6;   // 展示区进入视口即播放
   var SCROLL_STOP_RATIO = 0.25;  // 低于这个比例视为离开，停止
 
   var hasIO = typeof window.IntersectionObserver === 'function';
@@ -67,11 +67,13 @@
       var video = mediaPath(o.video, 'share.mp4');
       if (!poster || !video) return;
       if (poster !== MEDIA_PREFIX + o.id + '/poster.png' || video !== MEDIA_PREFIX + o.id + '/share.mp4') return;
+      var source = o.source == null ? null : mediaPath(o.source, 'source.png');
+      if (o.source != null && source !== MEDIA_PREFIX + o.id + '/source.png') return;
       seen[o.id] = 1;
       out.push({
         id: o.id, title: o.title, styleCode: o.style_code || null,
         scene: o.scene, homeScene: o.homepage_scene || null, sceneLabel: o.scene_label,
-        width: o.width, height: o.height, poster: playbackPath(poster), video: playbackPath(video),
+        width: o.width, height: o.height, poster: playbackPath(poster), video: playbackPath(video), source: source ? playbackPath(source) : null,
         note: (typeof o.note === 'string' ? o.note : null)
       });
     });
@@ -80,7 +82,7 @@
 
   var items = [];
 
-  /* ---------- 播放器：全局最多一个在播 ---------- */
+  /* 展示区同时播放可见卡片；画风库仍沿用单项预览。 */
   var players = [];
   var active = null;
 
@@ -121,10 +123,10 @@
   }
 
   function play(p, mode) {
-    if (!p.item || mqReduce.matches) return;   // 减少动效：只显示海报帧，手动也不播
+    if (!p.item || (mode === 'auto' && mqReduce.matches)) return;
     if (mode === 'auto' && document.hidden) return;
     if (active && active !== p) stop(active);
-    active = p;
+    if (!p.viewportAuto) active = p;
     var gen = ++p.gen;
     p.mode = mode; p.state = 'loading';
     setStatus(p, '');
@@ -152,10 +154,14 @@
   }
 
   function desktopTry(p) {
+    if (p.viewportAuto) { viewportTry(p); return; }
     if (mqCoarse.matches || !hasIO || !p.item || p.suppressed || p.state !== 'idle') return;
     if (!(p.hover || p.focus) || p.ratio < SCROLL_STOP_RATIO) return;
     if (mqReduce.matches || document.hidden) return;
     play(p, 'auto');
+  }
+  function viewportTry(p) {
+    if (p.viewportAuto && hasIO && p.item && !p.suppressed && p.state === 'idle' && p.ratio >= SCROLL_PLAY_RATIO && !mqReduce.matches && !document.hidden) play(p, 'auto');
   }
   function mobileTry(p) {
     if (!mqCoarse.matches || !hasIO || !p.mobileAuto || !p.item || p.suppressed || p.state !== 'idle') return;
@@ -163,6 +169,7 @@
     if (p.ratio >= SCROLL_PLAY_RATIO) play(p, 'auto');
   }
   function leaveCheck(p) {
+    if (p.viewportAuto) return;
     if (p.hover || p.focus) return;
     p.suppressed = false;
     if (p.mode === 'auto') stop(p);
@@ -190,7 +197,7 @@
     v.setAttribute('preload', 'none'); v.preload = 'none';
     v.setAttribute('disablepictureinpicture', '');
     var p = {
-      v: v, btn: o.btn, status: o.status, area: o.area, mobileAuto: !!o.mobileAuto,
+      v: v, btn: o.btn, status: o.status, area: o.area, mobileAuto: !!o.mobileAuto, viewportAuto: !!o.viewportAuto,
       item: null, state: 'idle', mode: null, gen: 0,
       hover: false, focus: false, suppressed: false, ratio: 0
     };
@@ -244,19 +251,6 @@
     return '鼠标移上去或用键盘聚焦会播放，移开就停；也可以点按钮。';
   }
 
-  function subText() {
-    return mqReduce.matches ? '系统开了「减少动态效果」，这里只显示海报帧。' : '按场景分组；左边是静态首帧，右边是动态示范，仅作展示。';
-  }
-  var SCENE_GROUP = { brand: '品牌', article: '文章配图', infographic: '信息图', xiaohongshu: '小红书', ppt: 'PPT', music: '音乐封面' };
-  function sceneGroups() {
-    var out = [], by = {};
-    items.forEach(function (it, i) {
-      if (!by[it.scene]) { by[it.scene] = { name: SCENE_GROUP[it.scene] || it.sceneLabel, idx: [] }; out.push(by[it.scene]); }
-      by[it.scene].idx.push(i);
-    });
-    return out;
-  }
-
   /* ---------- 「动态版」区块（画风库之后） ---------- */
   var secEl = null;
   function insertSection(bodyKids) {
@@ -282,92 +276,41 @@
   }
 
   function buildShowcase() {
-    var first = items[0];
-    var s = frameNode(first, '静态首帧');
-    var d = frameNode(first, '动态示范');
-
-    var img = h('img', { alt: '', decoding: 'async' });
-    img.addEventListener('error', function () { img.classList.add('broken'); });
-    s.frame.appendChild(img);
-    s.frame.appendChild(s.tag);
-
-    var video = h('video', { class: 'motion-video' });
-    d.frame.appendChild(video);
-    d.frame.appendChild(d.tag);
-
-    var btn = h('button', { class: 'btn btn-small motion-play', type: 'button', text: '播放动态' });
-    var status = h('p', { class: 'motion-status', role: 'status' });
-    var dynFig = h('figure', { class: 'motion-fig motion-fig-dyn' }, [
-      d.frame,
-      h('figcaption', { class: 'motion-cap' }, [btn])
-    ]);
-    var staticFig = h('figure', { class: 'motion-fig' }, [
-      s.frame,
-      h('figcaption', { class: 'motion-cap', text: '静态首帧' })
-    ]);
-
-    var tabsBox = h('div', { class: 'motion-tabs' });
-    var sceneEl = h('span', { class: 'motion-scene' });
-    var titleEl = h('span', { class: 'motion-title-text' });
-    var noteEl = h('p', { class: 'motion-note' });
-    var hintEl = h('p', { class: 'motion-hint', text: hintText() });
-    var tabs = [];
-    sceneGroups().forEach(function (g) {
-      var row = h('div', { class: 'motion-group', role: 'group', 'aria-label': g.name }, [h('span', { class: 'motion-group-name', text: g.name })]);
-      g.idx.forEach(function (i) {
-        var b = h('button', { class: 'chip', type: 'button', 'aria-pressed': 'false', text: items[i].title });
-        b.addEventListener('click', function () { show(i); });
-        row.appendChild(b);
-        tabs[i] = b;
-      });
-      tabsBox.appendChild(row);
-    });
-    var subEl = h('p', { class: 'sec-sub', text: subText() });
-
-    secEl = insertSection([
-      subEl,
-      tabsBox,
-      h('p', { class: 'motion-meta' }, [sceneEl, titleEl]),
-      h('div', { class: 'motion-compare' }, [staticFig, dynFig]),
-      status,
-      noteEl,
-      hintEl
-    ]);
+    var grid = h('div', { class: 'motion-gallery' });
+    secEl = insertSection([grid]);
     if (!secEl) return;
+    items.forEach(function (it) {
+      var source = h('img', { src: it.source || it.poster, alt: '静态图：' + it.title, loading: 'lazy', decoding: 'async' });
+      var original = h('div', { class: 'motion-original' }, [source, h('span', { class: 'motion-tag', text: it.source ? '原图' : '静态图' })]);
+      var video = h('video', { class: 'motion-video', poster: it.poster });
+      var frame = h('div', { class: 'motion-frame' }, [video, h('span', { class: 'motion-tag motion-tag-live', text: '动态版' })]);
+      frame.style.aspectRatio = it.width + ' / ' + it.height;
+      var btn = h('button', { class: 'motion-toggle', type: 'button' });
+      var enlarge = h('button', { class: 'motion-enlarge', type: 'button', text: '放大', 'aria-label': '放大观看：' + it.title });
+      var status = h('p', { class: 'motion-status', role: 'status' });
+      var card = h('article', { class: 'motion-card' }, [
+        h('div', { class: 'motion-pair' }, [original, frame]),
+        h('div', { class: 'motion-card-foot' }, [h('h3', { text: it.title }), h('div', { class: 'motion-actions' }, [btn, enlarge])]), status
+      ]);
+      grid.appendChild(card);
+      var player = makePlayer({ video: video, btn: btn, status: status, area: frame, viewportAuto: true });
+      setItem(player, it);
+      enlarge.addEventListener('click', function () { openMotion(it); });
+    });
+  }
 
-    var sp = makePlayer({ video: video, btn: btn, status: status, area: dynFig, mobileAuto: true });
-    var nearSeen = !hasIO;
-
-    function showPoster() {
-      if (!nearSeen || !sp.item) return;
-      img.classList.remove('broken');
-      img.src = sp.item.poster;
-      video.setAttribute('poster', sp.item.poster);
-    }
-    function show(i) {
-      var it = items[i];
-      tabs.forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
-      sceneEl.textContent = it.sceneLabel;
-      titleEl.textContent = it.title;
-      noteEl.textContent = itemNote(it);
-      s.frame.style.aspectRatio = d.frame.style.aspectRatio = it.width + ' / ' + it.height;
-      img.alt = '静态首帧：' + it.title;
-      setItem(sp, it);
-      showPoster();
-      mobileTry(sp); desktopTry(sp);
-    }
-    show(0);
-
-    if (hasIO) {
-      var near = new IntersectionObserver(function (es) {
-        for (var i = 0; i < es.length; i++) {
-          if (es[i].isIntersecting) { nearSeen = true; near.disconnect(); showPoster(); return; }
-        }
-      }, { rootMargin: '400px 0px' });
-      near.observe(s.frame);
-    }
-    onMq(mqReduce, function () { hintEl.textContent = hintText(); subEl.textContent = subText(); });
-    onMq(mqCoarse, function () { hintEl.textContent = hintText(); });
+  function openMotion(it) {
+    stopAll();
+    var video = h('video', { src: it.video, poster: it.poster, controls: true, muted: true, playsinline: true, loop: true });
+    video.muted = true;
+    var close = h('button', { class: 'btn', type: 'button', text: '关闭' });
+    var dlg = h('dialog', { class: 'motion-lightbox', 'aria-label': it.title }, [close, video]);
+    document.body.appendChild(dlg);
+    function cleanup() { video.pause(); video.removeAttribute('src'); video.load(); dlg.remove(); players.forEach(viewportTry); }
+    close.addEventListener('click', function () { dlg.close(); });
+    dlg.addEventListener('close', cleanup, { once: true });
+    dlg.showModal();
+    if (!mqReduce.matches) { var playing = video.play(); if (playing && playing.catch) playing.catch(function () {}); }
   }
 
   /* ---------- 画风库卡片「会动」角标：按当前场景挑该画风的动态示例；
@@ -482,9 +425,9 @@
   /* ---------- 全局：隐藏页面、减少动态、指针类型变化 ---------- */
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) stopAll();
-    else players.forEach(mobileTry);
+    else players.forEach(function (p) { mobileTry(p); viewportTry(p); });
   });
-  onMq(mqReduce, stopAll);
+  onMq(mqReduce, function () { stopAll(); if (!mqReduce.matches) players.forEach(viewportTry); });
   onMq(mqCoarse, stopAll);
 
   /* ---------- 启动 ---------- */
