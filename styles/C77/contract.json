@@ -132,13 +132,13 @@
     {
       "topic": "公众号封面（展台高清版，依原图高清重绘）",
       "file": "samples/cv-hd.webp",
-      "source_sha256": "fed1847a1fd11bea8d59b2ff9854c1a7399007cc4d38da04a477690174278bd8",
+      "source_sha256": "428bb83f7aed0fbb2c8708f7441472f1e621be56fd71dc5a6ed8ca6becc2114f",
       "renderer": "codex-builtin",
-      "date": "2026-10-13",
-      "ratio": 2.354,
+      "date": "2026-10-16",
+      "ratio": 2.334,
       "generation": {
-        "revision": 2,
-        "prompt_sha256": "e689e5b06d2e123af5652e4f162f06ebbc277643faeef679656163086ee7e392",
+        "revision": 4,
+        "prompt_sha256": "a020d1e1aecddde55dd0ebce82f3c3ae6417f8d9dc235e780dc2cd35aeddffdc",
         "attempts": 1,
         "picked_from": 1,
         "edited": false
