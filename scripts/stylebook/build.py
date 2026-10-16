@@ -552,7 +552,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
             "metrics": metrics, "carousel": carousel, "prov": prov,
-            **({"motionPreview": motion_plan.doc} if motion_plan.media is not None else {}),  # 随媒体一起交付，支持用户直接打开本地 HTML
+            "motionPreview": motion_plan.doc,  # 清单确定性内嵌；媒体单独验 SHA，支持用户直接打开附媒体的 HTML
             "heroMotion": [{"id": m["id"], "ratio": round(m["width"] / m["height"], 3)}  # 首屏近景浮图直接播放的动态版
                            for m in motion_plan.doc.get("items", []) if m["id"] in HERO_MOTION and m.get("width") and m.get("height")],
             **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),
