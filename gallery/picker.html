@@ -1001,7 +1001,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
   var DATA = null, styles = [], styleById = {}, sceneList = [], sceneById = {}, palettes = [], paletteById = {};
   var kinds = KINDS_DEFAULT, kindLabels = LABELS_DEFAULT, palCompare = {}, palShots = {}, ratios = {}, prov = {}, firstScene = '';
-  var libState = { scene: 'all', palette: 'orig', light: 0, sat: 0, hex: [], q: '', region: '', era: '', dynasty: '', family: '' };
+  var libState = { scene: 'wxcover', palette: 'orig', light: 0, sat: 0, hex: [], q: '', region: '', era: '', dynasty: '', family: '' };
   /* 地域 / 时代 / 朝代 / 风格分类：选项只取页面数据 taxonomy 词表里确有画风的值；空值＝全部，各维度取交集 */
   var TAX_DIMS = [['region', '地域', '全部地域'], ['era', '时代', '全部时代'], ['dynasty', '朝代', '全部朝代'], ['family', '风格分类', '全部分类']];
   var TAX_PENDING = '资料待定', TAX_CHINA = '中国';
@@ -1634,11 +1634,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     var sceneBox = $('#lib-scenes'), palBox = $('#lib-palettes'), grid = $('#lib-grid');
     renderTaxRow();
     function sceneChip(id, label) {
-      var b = h('button', { class: 'chip', type: 'button', 'data-scene': id, 'aria-pressed': id === 'all' ? 'true' : 'false', text: label });
+      var b = h('button', { class: 'chip', type: 'button', 'data-scene': id, 'aria-pressed': id === libState.scene ? 'true' : 'false', text: label });
       b.addEventListener('click', function () { selectScene(id, false); });
       sceneBox.appendChild(b);
     }
-    sceneChip('all', '全部');
     sceneList.forEach(function (sc) { sceneChip(sc.id, sc.short || sc.name); });
 
     palettes.forEach(function (p) {
@@ -1880,7 +1879,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   }
 
   function selectScene(id, jump) {
-    libState.scene = id;
+    libState.scene = sceneById[id] ? id : firstScene;
     applyFilter();
     writeHash();
     if (jump) {
@@ -1905,7 +1904,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   function readHash() {
     var p = new URLSearchParams(location.hash.replace(/^#/, ''));
     var u = p.get('u'), pal = p.get('p'), l = +p.get('l'), t = +p.get('t');
-    libState.scene = (u && sceneById[u]) ? u : 'all';
+    libState.scene = (u && sceneById[u]) ? u : firstScene;
     libState.palette = (pal && pal !== 'brand' && pal !== 'orig' && paletteById[pal]) ? pal : 'orig';
     libState.light = [-1, 0, 1].indexOf(l) !== -1 ? l : 0;
     libState.sat = [-1, 0, 1].indexOf(t) !== -1 ? t : 0;
@@ -1922,7 +1921,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   }
   function writeHash() {
     var p = new URLSearchParams();
-    if (libState.scene !== 'all') p.set('u', libState.scene);
+    if (libState.scene) p.set('u', libState.scene);
     if (dlgStyle) p.set('s', dlgStyle.id);
     if (libState.palette !== 'orig' && libState.palette !== 'brand') p.set('p', libState.palette);
     if (libState.light) p.set('l', libState.light);
@@ -2431,7 +2430,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       return o;
     });
     sceneList.forEach(function (s) { sceneById[s.id] = s; });
-    firstScene = d.first && sceneById[d.first] ? d.first : (sceneList[0] && sceneList[0].id) || '';
+    firstScene = sceneById.wxcover ? 'wxcover' : (d.first && sceneById[d.first] ? d.first : (sceneList[0] && sceneList[0].id) || '');
     palettes = d.palettes || d.pals || [];
     palettes.forEach(function (p) { paletteById[p.id] = p; });
     kinds = d.kinds || KINDS_DEFAULT;

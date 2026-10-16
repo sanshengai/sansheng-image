@@ -743,8 +743,8 @@ def test_images_load_for_every_card_with_and_without_trailing_slash(browser, bui
             assert bad == [], (scene, bad[:5])
 
 
-def test_each_use_shows_only_its_own_pool_and_all_shows_everything(browser, built):
-    """用途页只放适合的画风；「全部」仍是全部；教材不在官网用途条里，AI 短剧分镜在。"""
+def test_each_use_shows_its_pool_and_default_is_cover(browser, built):
+    """用途页只放适合的画风；默认/旧全部链接回到封面；不再提供全部入口。"""
     d, html = built
     meta = _data(html)
     assert {s["id"] for s in meta["scenes"]}.isdisjoint({"tb-vocab", "tb-grammar"})
@@ -757,9 +757,12 @@ def test_each_use_shows_only_its_own_pool_and_all_shows_everything(browser, buil
             assert _visible(page) == set(scene["pool"]), scene["id"]
             assert page.locator("#lib-grid > li:not([hidden])").count() == len(scene["pool"]), scene["id"]
             assert "其余画风" not in page.content(), scene["id"]
-        _open(page, "#u=all")
-        assert _visible(page) == {c["id"] for c in meta["cands"]}
-        assert page.locator("#lib-grid > li:not([hidden])").count() == len(meta["cands"])
+        cover = next(sc for sc in meta["scenes"] if sc["id"] == "wxcover")
+        for frag in ("", "#u=all", "#u=unknown"):
+            _open(page, frag)
+            assert _visible(page) == set(cover["pool"])
+            assert page.locator('#lib-scenes .chip[data-scene="all"]').count() == 0
+            assert page.get_attribute('#lib-scenes .chip[data-scene="wxcover"]', "aria-pressed") == "true"
         assert "试用中" not in page.content()
 
 
@@ -1062,7 +1065,8 @@ def _picks(page) -> list[str]:
 def test_search_matches_id_name_origin_family_essence_tone_craft_and_use_names(browser, built):
     d, html = built
     meta = _data(html)
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     c_id = cands[0]
     c_name = next(c for c in cands if len(c["name"]) >= 2)
     c_origin = next((c for c in cands if re.search(r"[A-Za-z]{3,}", c.get("origin") or "")), None)
@@ -1124,10 +1128,11 @@ def test_search_intersects_scene_shows_empty_message_and_clears(browser, built):
         page.click("#lib-q-clear")
         assert page.input_value("#lib-q") == "" and _visible(page) == pool and page.is_hidden("#lib-empty")
         assert page.evaluate("document.activeElement.id") == "lib-q"
-        # 先搜后换场景：仍然取交集；切到「全部」回到全部匹配
+        # 先搜后换场景：切到封面仍与搜索取交集
         page.fill("#lib-q", tok)
-        page.click('#lib-scenes .chip[data-scene="all"]')
-        assert _visible(page) == allm
+        page.click('#lib-scenes .chip[data-scene="wxcover"]')
+        cover = next(sc for sc in meta["scenes"] if sc["id"] == "wxcover")
+        assert _visible(page) == allm & set(cover["pool"])
 
 
 @pytest.mark.parametrize("size", [(1440, 900), (390, 844)])
@@ -1206,8 +1211,8 @@ def test_recommendation_click_opens_real_detail_with_selected_scene_and_code(bro
     cands = {c["id"]: c for c in meta["cands"]}
     sc = next(s for s in meta["scenes"] if s["id"] != meta["first"] and len(s["pool"]) >= 3)
     with open_page(browser, d) as page:
-        _open(page)                                   # 画风库当前是「全部」，三问里另选场景
-        assert page.get_attribute('#lib-scenes .chip[data-scene="all"]', "aria-pressed") == "true"
+        _open(page)                                   # 画风库默认封面，三问里另选场景
+        assert page.get_attribute('#lib-scenes .chip[data-scene="wxcover"]', "aria-pressed") == "true"
         page.click("#quiz-btn")
         page.wait_for_selector("#quiz[open]")
         page.click(f'#quiz-u .chip[data-v="{sc["id"]}"]')
@@ -1218,7 +1223,7 @@ def test_recommendation_click_opens_real_detail_with_selected_scene_and_code(bro
         page.wait_for_function("document.documentElement.classList.contains('lock') && document.getElementById('quiz').open === false", timeout=2000)
         assert page.is_hidden("#quiz") and page.evaluate("document.documentElement.classList.contains('lock')")
         assert page.inner_text("#dlg-title") == cands[want]["name"] and page.inner_text("#dlg-id").startswith(want)
-        assert page.get_attribute('#lib-scenes .chip[data-scene="all"]', "aria-pressed") == "false"
+        assert page.get_attribute('#lib-scenes .chip[data-scene="wxcover"]', "aria-pressed") == "false"
         assert page.get_attribute(f'#lib-scenes .chip[data-scene="{sc["id"]}"]', "aria-pressed") == "true"
         assert page.eval_on_selector_all('#dlg-uses button[aria-pressed="true"]', "e=>e.map(x=>x.dataset.for)") == [sc["id"]]
         parsed = SC.parse(SC.find(page.inner_text("#dlg-copyline"))[0])
@@ -1370,13 +1375,14 @@ def _wait_floats_settled(page):
 def test_page_works_without_animation_frame_and_intersection_observer(browser, built):
     d, html = built
     meta = _data(html)
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     with open_page(browser, d, init_script=DEGRADE_SCRIPT) as page:
         _open(page)
         reads = page.evaluate("window.__degradeReads")
         assert all(reads[k] >= 1 for k in ("requestAnimationFrame", "cancelAnimationFrame", "IntersectionObserver")), reads
         assert page.is_hidden("#load-fail")
-        assert page.locator("#lib-grid > li").count() == len(cands)
+        assert page.locator("#lib-grid > li").count() == len(meta["cands"])
         assert page.inner_text("[data-metric=styles]").replace(",", "") == str(meta["metrics"]["styles"])
         # 没有 IntersectionObserver：不做懒加载，所有画风库图片立即请求
         assert page.eval_on_selector_all("#lib-grid img", "e=>e.every(i=>i.getAttribute('src'))")
@@ -1504,7 +1510,7 @@ def _card_kind(src: str, sid: str) -> str:
 
 @pytest.mark.parametrize("size", [(1440, 900), (390, 844)], ids=["desktop", "phone"])
 def test_library_cards_use_real_scene_images_in_a_masonry(browser, built, size):
-    """画风库卡片：全部视图用真实场景样图（不拿同题沙发猫当默认图），选了场景就换成该场景的样图；瀑布流不重叠、从左到右读。"""
+    """画风库默认封面样图，切换用途后展示对应样图；瀑布流不重叠、从左到右读。"""
     d, html = built
     meta = _data(html)
     cands = {c["id"]: c for c in meta["cands"]}
@@ -1512,13 +1518,14 @@ def test_library_cards_use_real_scene_images_in_a_masonry(browser, built, size):
     with open_page(browser, d, *size) as page:
         _open(page)
         cards = page.evaluate(CARD_STATE)
-        assert len(cards) == len(cands)
+        cover = next(sc for sc in meta["scenes"] if sc["id"] == "wxcover")
+        assert {c["id"] for c in cards} == set(cover["pool"])
         for c in cards:
             k = _card_kind(c["src"], c["id"])
             assert k in cands[c["id"]]["imgs"], c
             assert k not in same or not (set(cands[c["id"]]["imgs"]) - same - {"anchor", "bd"}), ("用了同题图作默认", c)
         kinds = [_card_kind(c["src"], c["id"]) for c in cards]
-        assert len(set(kinds)) >= 4, "全部视图里相邻卡片应轮换不同用途"
+        assert all(k.split("-")[0] == cover["sample"].split("-")[0] for k in kinds), "默认应使用封面样图"
         # 瀑布流：互不重叠；第一行从左到右就是前几种画风
         for i, a in enumerate(cards):
             for b in cards[i + 1:]:

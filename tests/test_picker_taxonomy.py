@@ -203,7 +203,7 @@ def test_row_sits_in_the_sticky_bar_and_options_follow_the_data(browser, built):
             assert got == [label, *_options(meta, key)], key
             assert page.input_value(f"#lib-{key}") == ""
         assert PENDING in _options(meta, "region") and PENDING in _options(meta, "era") and PENDING not in _options(meta, "dynasty")
-        assert page.is_disabled("#lib-dynasty") and len(_visible(page)) == len(meta["cands"])   # 默认＝全部
+        assert page.is_disabled("#lib-dynasty") and _visible(page) == set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))   # 默认＝封面
         page.evaluate("window.scrollTo({top: document.getElementById('library').getBoundingClientRect().top + scrollY + 600, behavior: 'instant'})")
         page.wait_for_timeout(200)
         top = page.eval_on_selector("#lib-bar", "b=>b.getBoundingClientRect().top")
@@ -219,7 +219,8 @@ def test_row_sits_in_the_sticky_bar_and_options_follow_the_data(browser, built):
 
 def test_dimensions_intersect_and_match_independent_oracle(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     combos = [(r, e, f) for r, e, f in itertools.product(["", *_options(meta, "region")], ["", *_options(meta, "era")], ["", *_options(meta, "family")])]
     nonempty_multi = 0
     with open_page(browser, d) as page:
@@ -238,7 +239,8 @@ def test_dimensions_intersect_and_match_independent_oracle(browser, built):
 
 def test_era_is_a_field_of_its_own_not_guessed_from_dynasty(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     only_era = {c["id"] for c in cands if "传统语汇" in c["era"] and not c["dynasty"]}
     assert only_era, "需要有 era=传统语汇 但没有朝代的画风，才能证明时代不是按朝代推出来的"
     with open_page(browser, d) as page:
@@ -255,7 +257,8 @@ def test_era_is_a_field_of_its_own_not_guessed_from_dynasty(browser, built):
 
 def test_dynasty_only_for_china_and_switching_away_clears_it(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     dyn = next(v for v in _options(meta, "dynasty") if any(v in c["dynasty"] for c in cands))
     with open_page(browser, d) as page:
         _open(page)
@@ -277,7 +280,8 @@ def test_dynasty_only_for_china_and_switching_away_clears_it(browser, built):
 
 def test_empty_result_can_be_cleared_from_the_message_and_from_the_row(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     empty = next(((r, e, f) for r, e, f in itertools.product(_options(meta, "region"), _options(meta, "era"), _options(meta, "family"))
                   if not _expect(cands, region=r, era=e, family=f)), None)
     assert empty, "数据里没有会得到空结果的组合，空结果提示无法验证"
@@ -323,7 +327,8 @@ def test_status_line_mentions_filters_and_not_a_dating_claim(browser, built):
 
 def test_pending_style_is_reachable_only_through_the_pending_option(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     pend = {c["id"] for c in cands if not c["region"]}
     assert pend == {c["id"] for c in cands if not c["era"]} and pend
     with open_page(browser, d) as page:
@@ -340,7 +345,8 @@ def test_pending_style_is_reachable_only_through_the_pending_option(browser, bui
 
 def test_search_still_finds_legacy_family_and_finds_new_family(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     legacy = next(c["legacyFamily"] for c in cands if c["legacyFamily"] and c["legacyFamily"] not in {x["family"] for x in cands})
     newfam = cands[0]["family"]
     with open_page(browser, d) as page:
@@ -362,7 +368,8 @@ def test_search_still_finds_legacy_family_and_finds_new_family(browser, built):
 
 def test_old_hash_keys_still_parse_and_new_keys_are_independent(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     sc = meta["scenes"][0]
     pal = next(p for p in meta["pals"] if p["id"] not in ("orig", "brand") and p["colors"])
     with open_page(browser, d) as page:
@@ -400,7 +407,8 @@ def test_old_hash_keys_still_parse_and_new_keys_are_independent(browser, built):
 
 def test_invalid_hash_values_are_dropped_and_never_written_back(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     dyn = next(v for v in _options(meta, "dynasty") if any(v in c["dynasty"] for c in cands))
     sc = meta["scenes"][1]
     with open_page(browser, d) as page:
@@ -426,7 +434,8 @@ def test_invalid_hash_values_are_dropped_and_never_written_back(browser, built):
 
 def test_selection_round_trips_through_reload_and_back_forward(browser, built):
     d, html, meta = built
-    cands = meta["cands"]
+    cover_pool = set(next(sc["pool"] for sc in meta["scenes"] if sc["id"] == "wxcover"))
+    cands = [c for c in meta["cands"] if c["id"] in cover_pool]
     with open_page(browser, d) as page:
         _open(page)
         _sel(page, "region", "中国")
