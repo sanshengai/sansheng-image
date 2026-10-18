@@ -113,7 +113,8 @@ def _required_entries():
 
 def test_export_whitelist_has_motion_sources_but_never_media():
     media = ["gallery/motion/brand/poster.png", "gallery/motion/brand/share.mp4", "gallery/motion/x/share.mp4",
-             "motion/brand/poster.png", "gallery/motion-media/a.mp4"]
+             "gallery/motion/x/source.png", "gallery/motion/x/share.gif",
+             "motion/brand/poster.png", "motion/x/share.gif", "gallery/motion-media/a.mp4"]
     chosen = PE.select(_required_entries() + [("100644", n) for n in (*MOTION_SOURCES, *media)])
     for name in MOTION_SOURCES:
         assert name in chosen and name in PE.PUBLIC_FILES
@@ -138,8 +139,17 @@ def test_bare_package_rebuilds_identical_motion_resources(full_and_bare):
     for name in ("motion.js", "motion.css", "motion-data.json"):
         assert (bare / name).read_bytes() == (ROOT / "gallery" / name).read_bytes(), name
     manifest = json.loads((bare / "motion-manifest.json").read_text(encoding="utf-8"))
-    assert len(manifest["sources"]) == 3 and len(manifest["media"]) == 24
-    assert all(m["path"].startswith("motion/") and m["path"].endswith(("/poster.png", "/share.mp4")) for m in manifest["media"])
+    assert len(manifest["sources"]) == len(MOTION_SOURCES)
+    registered = json.loads((ROOT / "gallery/motion-data.json").read_text(encoding="utf-8"))
+    expected_media = {
+        (item[field].removeprefix("/tools/image/"), item[f"{field}_sha256"])
+        for item in registered["items"]
+        for field in ("poster", "video", "source", "gif")
+        if field in item
+    }
+    actual_media = [(m["path"], m["sha256"]) for m in manifest["media"]]
+    assert len(actual_media) == len(expected_media), "媒体登记不能遗漏或重复"
+    assert set(actual_media) == expected_media, "路径与摘要须逐项对应真实登记"
     assert not (bare / "motion").exists(), "无媒体包只登记清单，不造媒体"
     assert not list(bare.rglob("*.mp4"))
     html = (bare / "index.html").read_text(encoding="utf-8")
