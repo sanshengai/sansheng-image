@@ -78,7 +78,7 @@ Slide images and optional PPTX assembly are distinct from editable slide element
 
 ## Landscape motion illustrations
 
-The first batch targets illustrations inside WeChat articles and posts on X: 16:9 output, a 1280×720 master, and a silent loop whose duration follows the action and reading time. Three new examples are under review and are not yet released as featured work. The gallery preserves the actual source image and offers pause, replay, enlargement, GIF, and MP4 downloads.
+The first batch targets illustrations inside WeChat articles and posts on X: 16:9 output, a 1280×720 master, and a silent loop whose duration follows the action and reading time. The first three selected films are “A City in Three Inks,” “How to Verify a Claim,” and “Night Unfolds from a Book,” covering a material process, a three-step explanation, and a story illustration. Film review is complete; public release and platform upload checks are recorded separately. The gallery preserves the actual source image and offers pause, replay, enlargement, GIF, and MP4 downloads.
 
 On 2026-10-18, one 960×540 travel-journal GIF was uploaded and previewed in an X draft, without posting. Other files and mobile playback remain unverified. On the same day, a user confirmed that one 960×540 GIF, “How to verify a claim,” played correctly with clear text in a WeChat article phone preview. This verifies that file and the manual route; automated article upload remains unverified. Ordinary animated-GIF image posts on Xiaohongshu remain unverified. Slides, covers, and static video storyboard frames are outside this motion batch.
 
