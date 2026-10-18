@@ -37,6 +37,8 @@ Agent负责从这句话走到成品，不要求用户先准备HTML工程或填�
 
 工程遵守上游 `window.CFG` / `window.render(t)` / `window.READY` 约定。同一 `t` 可重复渲染；图片和字体加载完成再 READY。现有 `sb.py animate` 的 HyperFrames manifest 与本格式不同，不相互冒充，也不把一个强塞给另一个渲染器。
 
+上述已验证版本的配置字段为 `window.CFG = { outW: 1280, outH: 720, fps: 30, dur: 7.2 }`，`dur` 的单位是秒。先设 `window.READY = false`，所有本地图片和字体加载完成后再赋值为布尔值 `true`；不要把 Promise 本身赋给 READY。`window.render(t)` 接收秒数并绘制该时刻的完整状态。替换上游版本时重新核对这些字段，不用其他工具的 `width` / `height` / `duration` 猜测接口。
+
 先用上游 `render.mjs ... stills` 看动作起中末和极值；主动作、裁切、遮挡与文字通过自检后再导出。导演说明记录用途、原图、主动作及理由、素材完整性、保留项、准确文字、关键时刻与动作极值、首尾状态、来源及停止制作的条件。说明哪些是借用的方法、哪些是自行编排，不把上游的展厅分类直接变成客户必须选择的流程。
 
 ## 从本 Skill 复跑与导出
