@@ -87,7 +87,7 @@
 
   var items = [];
 
-  /* 展示区同时播放可见卡片；画风库仍沿用单项预览。 */
+  /* 展示区一次展示一支；全页同一时刻只保留一支动态播放。 */
   var players = [];
   var active = null;
 
@@ -95,13 +95,15 @@
     p.area.classList.toggle('is-moving', p.state === 'playing');
     if (!p.btn) return;
     var busy = p.state === 'loading' || p.state === 'playing';
-    var label = busy ? '暂停' : (p.state === 'failed' ? '重试播放' : '播放动态');
+    if (p.gifBtn) p.gifBtn.setAttribute('aria-pressed', String(p.state === 'gif'));
+    var label = p.state === 'gif' ? '暂停 GIF' : busy ? '暂停' : (p.state === 'failed' ? '重试播放' : '播放动态');
     p.btn.textContent = label;
     p.btn.setAttribute('aria-label', label + (p.item ? '：' + p.item.title : ''));
   }
   function setStatus(p, msg) { if (p.status) p.status.textContent = msg || ''; }
 
   function releaseSrc(p) {
+    if (p.gifNode) { p.gifNode.hidden = true; p.gifNode.removeAttribute('src'); }
     var v = p.v;
     try { v.pause(); } catch (e) { /* 忽略 */ }
     if (v.getAttribute('src') !== null) {
@@ -130,8 +132,8 @@
   function play(p, mode) {
     if (!p.item || (mode === 'auto' && mqReduce.matches)) return;
     if (mode === 'auto' && document.hidden) return;
-    if (active && active !== p) stop(active);
-    if (!p.viewportAuto) active = p;
+    players.slice().forEach(function (other) { if (other !== p && other.state !== 'idle') stop(other); });
+    active = p;
     var gen = ++p.gen;
     p.mode = mode; p.state = 'loading';
     setStatus(p, '');
@@ -153,7 +155,7 @@
 
   function onBtn(p) {
     if (!p.item) return;
-    if (p.state === 'loading' || p.state === 'playing') { p.suppressed = true; stop(p); return; }
+    if (p.state === 'loading' || p.state === 'playing' || p.state === 'gif') { p.suppressed = true; stop(p); return; }
     p.suppressed = false;
     play(p, 'manual');
   }
@@ -280,39 +282,81 @@
     secEl = insertSection([h('p', { class: 'motion-note', role: 'status', text: '动态示例暂未加载' })]);
   }
 
-  function buildShowcase() {
-    var grid = h('div', { class: 'motion-gallery' });
-    var brandGrid = h('div', { class: 'motion-gallery motion-brand-gallery' });
-    var brand = h('details', { class: 'motion-brand' }, [h('summary', { text: '品牌示例' }), brandGrid]);
-    secEl = insertSection([h('p', { class: 'motion-intro', text: '为公众号正文与 X 配图制作横版动态。保留完整原图，重新编排画面，让动作服务于内容。' }), grid]);
-    if (!secEl) return;
-    var hasBrand = false;
-    items.forEach(function (it) {
-      if (it.placement === 'background') return;
-      var source = h('img', { src: it.source || it.poster, alt: (it.source ? '原图：' : '静态图：') + it.title, loading: 'lazy', decoding: 'async' });
-      var original = h('div', { class: 'motion-original' }, [source, h('span', { class: 'motion-tag', text: it.source ? '原图' : '静态图' })]);
-      var video = h('video', { class: 'motion-video', poster: it.poster });
-      var frame = h('div', { class: 'motion-frame' }, [video, h('span', { class: 'motion-tag motion-tag-live', text: '动态版' })]);
-      frame.style.aspectRatio = it.width + ' / ' + it.height;
-      var btn = h('button', { class: 'motion-toggle', type: 'button' });
-      var replay = h('button', { class: 'motion-replay', type: 'button', text: '重播', 'aria-label': '重播：' + it.title });
-      var enlarge = h('button', { class: 'motion-enlarge', type: 'button', text: '放大', 'aria-label': '放大观看：' + it.title });
-      var status = h('p', { class: 'motion-status', role: 'status' });
-      var card = h('article', { class: 'motion-card' }, [
-        frame,
-        h('div', { class: 'motion-card-foot' }, [h('div', { class: 'motion-caption' }, [h('h3', { text: it.title }), h('p', { text: [it.styleCode, it.sceneLabel, it.duration + ' 秒'].filter(Boolean).join(' · ') })]), original]),
-        h('div', { class: 'motion-actions' }, [btn, replay, enlarge,
-          it.gif ? h('a', { href: it.gif, download: it.id + '.gif', text: '下载 GIF', 'aria-label': '下载 GIF：' + it.title }) : null,
-          h('a', { href: it.video, download: it.id + '.mp4', text: '下载 MP4', 'aria-label': '下载 MP4：' + it.title })]), status
-      ]);
-      if (it.placement === 'brand') { brandGrid.appendChild(card); hasBrand = true; }
-      else grid.appendChild(card);
-      var player = makePlayer({ video: video, btn: btn, status: status, area: frame, viewportAuto: true });
-      setItem(player, it);
-      replay.addEventListener('click', function () { stop(player); player.suppressed = false; play(player, 'manual'); });
-      enlarge.addEventListener('click', function () { openMotion(it); });
+  function showcaseCard(it) {
+    var source = h('img', { src: it.source || it.poster, alt: (it.source ? '原图：' : '静态图：') + it.title, loading: 'lazy', decoding: 'async' });
+    var original = h('figure', { class: 'motion-source' }, [h('a', { href: it.source || it.poster, target: '_blank', rel: 'noopener' }, [source]), h('figcaption', { text: it.source ? '原始静图 · 完整画幅' : '静态定格' })]);
+    var video = h('video', { class: 'motion-video', poster: it.poster });
+    var gif = h('img', { class: 'motion-gif', alt: '实际编码的 GIF：' + it.title, hidden: true });
+    var frame = h('div', { class: 'motion-frame' }, [video, gif, h('span', { class: 'motion-tag motion-tag-live', text: '动态版' })]);
+    frame.style.aspectRatio = it.width + ' / ' + it.height;
+    var btn = h('button', { class: 'motion-toggle', type: 'button' });
+    var replay = h('button', { class: 'motion-replay', type: 'button', text: '重播', 'aria-label': '重播：' + it.title });
+    var gifBtn = it.gif ? h('button', { class: 'motion-gif-toggle', type: 'button', text: '看实际 GIF', 'aria-pressed': 'false' }) : null;
+    var status = h('p', { class: 'motion-status', role: 'status' });
+    var card = h('article', { class: 'motion-card' }, [
+      h('div', { class: 'motion-pair' }, [original, frame]),
+      h('div', { class: 'motion-caption' }, [h('h3', { text: it.title }), h('p', { text: [it.styleCode, it.sceneLabel, it.duration + ' 秒'].filter(Boolean).join(' · ') }), h('p', { text: itemNote(it) })]),
+      h('div', { class: 'motion-actions' }, [btn, replay, gifBtn,
+        h('button', { class: 'motion-enlarge', type: 'button', text: '放大', 'aria-label': '放大观看：' + it.title }),
+        it.gif ? h('a', { href: it.gif, download: it.id + '.gif', text: '下载 GIF', 'aria-label': '下载 GIF：' + it.title }) : null,
+        h('a', { href: it.video, download: it.id + '.mp4', text: '下载 MP4', 'aria-label': '下载 MP4：' + it.title })]), status
+    ]);
+    var player = makePlayer({ video: video, btn: btn, status: status, area: frame, viewportAuto: true });
+    player.gifNode = gif; player.gifBtn = gifBtn;
+    setItem(player, it);
+    replay.addEventListener('click', function () { stop(player); player.suppressed = false; play(player, 'manual'); });
+    if (gifBtn) gifBtn.addEventListener('click', function () {
+      if (player.state === 'gif') { player.suppressed = true; stop(player); return; }
+      stopAll(); player.suppressed = true; gif.hidden = false; gif.src = it.gif;
+      player.state = 'gif'; active = player;
+      setStatus(player, '正在播放实际 GIF；点「暂停 GIF」返回静帧。'); updateBtn(player);
     });
-    if (hasBrand) $('.motion-body', secEl).appendChild(brand);
+    gif.addEventListener('error', function () { if (gif.getAttribute('src')) fail(player, 'GIF 没有加载出来，可重试或下载查看。'); });
+    $('.motion-enlarge', card).addEventListener('click', function () { openMotion(it); });
+    return { node: card, player: player };
+  }
+
+  function buildShowcase() {
+    var featured = items.filter(function (it) { return it.placement === 'featured'; });
+    var tabs = h('div', { class: 'motion-choices', role: 'tablist', 'aria-label': '选择动态示例' });
+    var stage = h('div', { class: 'motion-exhibit', id: 'motion-selected', role: 'tabpanel' });
+    secEl = insertSection([h('p', { class: 'motion-intro', text: '为公众号正文与 X 配图制作横版动态。过程、关系和故事值得被看见，再让画面动起来。' }), tabs, stage]);
+    if (!secEl) return;
+    var selected = null, current = null, buttons = [];
+    function select(it, focus) {
+      if (current) destroyPlayer(current.player);
+      stage.textContent = '';
+      current = showcaseCard(it); selected = it;
+      stage.appendChild(current.node);
+      var selectedIndex = featured.indexOf(it);
+      stage.setAttribute('aria-labelledby', 'motion-choice-' + selectedIndex);
+      buttons.forEach(function (b, i) { b.setAttribute('aria-selected', String(i === selectedIndex)); b.tabIndex = i === selectedIndex ? 0 : -1; });
+      if (focus) buttons[selectedIndex].focus();
+    }
+    featured.forEach(function (it, i) {
+      var b = h('button', { type: 'button', role: 'tab', id: 'motion-choice-' + i, 'aria-controls': 'motion-selected', 'aria-selected': 'false', tabindex: '-1', text: it.title });
+      b.addEventListener('click', function () { select(it, false); });
+      b.addEventListener('keydown', function (e) {
+        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf(e.key) === -1) return;
+        e.preventDefault(); var at = featured.indexOf(selected);
+        var next = e.key === 'Home' ? 0 : e.key === 'End' ? featured.length - 1 : (at + (e.key === 'ArrowRight' ? 1 : -1) + featured.length) % featured.length;
+        select(featured[next], true);
+      });
+      buttons.push(b); tabs.appendChild(b);
+    });
+    if (featured.length) select(featured[0], false);
+    else { tabs.hidden = true; stage.removeAttribute('role'); stage.appendChild(h('p', { class: 'motion-note', text: '横版动态示例正在更新，可以先浏览上方的静态画风与样图。' })); }
+    var brands = items.filter(function (it) { return it.placement === 'brand'; });
+    if (brands.length) {
+      var brandBody = h('div', { class: 'motion-brand-gallery' });
+      var brand = h('details', { class: 'motion-brand' }, [h('summary', { text: '品牌示例' }), brandBody]);
+      var brandPlayers = [];
+      brand.addEventListener('toggle', function () {
+        brandPlayers.forEach(function (p) { destroyPlayer(p); }); brandPlayers = []; brandBody.textContent = '';
+        if (brand.open) brands.forEach(function (it) { var c = showcaseCard(it); brandBody.appendChild(c.node); brandPlayers.push(c.player); });
+      });
+      $('.motion-body', secEl).appendChild(brand);
+    }
   }
 
   function openMotion(it) {

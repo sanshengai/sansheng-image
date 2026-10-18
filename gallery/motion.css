@@ -98,3 +98,29 @@
 .motion-brand summary { cursor:pointer; font-size:14px; }
 .motion-brand-gallery { max-width:800px; grid-template-columns:minmax(0,1fr); }
 @media(max-width:480px) { .motion-caption h3 { font-size:16px; } .motion-original { flex-basis:72px; height:64px; } .motion-actions { gap:5px 13px; } }
+
+/* 单支横版展示：原图保持实际画幅，未选作品不挂载媒体。 */
+.motion-choices { display:flex; flex-wrap:wrap; gap:10px; margin:24px 0 16px; }
+.motion-choices[hidden] { display:none; }
+.motion-choices button { appearance:none; padding:10px 16px; border:1px solid var(--line); border-radius:24px; background:var(--bg); color:var(--mut); cursor:pointer; font:500 14px/1.5 var(--sans); }
+.motion-choices button[aria-selected="true"] { border-color:var(--green); color:var(--green); }
+.motion-choices button:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+.motion-exhibit .motion-card { padding:20px; }
+.motion-pair { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,3.4fr); align-items:end; gap:20px; }
+.motion-source { min-width:0; margin:0; }
+.motion-source a { display:block; }
+.motion-source img { display:block; width:100%; height:auto; border-radius:6px; }
+.motion-source figcaption { margin-top:10px; color:var(--mut); font:12px/1.6 var(--sans); }
+.motion-pair .motion-frame img,.motion-pair .motion-frame video { object-fit:contain; }
+.motion-frame .motion-gif[hidden] { display:none; }
+.motion-gif { z-index:1; }
+.motion-card>.motion-caption { margin:20px 0 12px; }
+.motion-brand-gallery { margin-top:20px; }
+@media(max-width:640px) {
+  .motion-exhibit .motion-card { padding:12px; }
+  .motion-pair { display:flex; flex-direction:column-reverse; align-items:stretch; gap:14px; }
+  .motion-source { width:34%; }
+  .motion-card>.motion-caption { margin-top:16px; }
+  .motion-choices { gap:7px; }
+  .motion-choices button { padding:8px 12px; font-size:12px; }
+}

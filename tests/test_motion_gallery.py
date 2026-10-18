@@ -73,7 +73,10 @@ def test_real_source_data_passes_strict_schema():
     assert 0 < len(doc["items"]) <= MG.MAX_ITEMS
     assert len(MG.expected_media(doc)) == sum(len(MG.item_media(it)) for it in doc["items"])
     featured = [it for it in doc["items"] if it.get("placement", "featured") == "featured"]
-    assert featured and all(it["width"] * 9 == it["height"] * 16 for it in featured)
+    assert all(it["width"] * 9 == it["height"] * 16 for it in featured)
+    # 用户否定的样板与尚未采用的候选不进入正式精选，背景轮播仍保留。
+    by_id = {it["id"]: it for it in doc["items"]}
+    assert all(by_id[i]["placement"] == "background" for i in ("paper-city", "travel-journal", "verify-source"))
     for it in doc["items"]:
         if it["homepage_scene"] is not None:
             assert it["style_code"], it["id"]

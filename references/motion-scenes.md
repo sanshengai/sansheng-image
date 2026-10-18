@@ -129,7 +129,7 @@ python3 scripts/sb.py animate qa     manifest.json --out ./motion-out-1
 
 ## 审美复盘
 
-编排动作前查 [审美判断](motion-taste.md)，按场景参考 [十二支原创示范的经验卡](motion-experience.md)。单支作品的审片通过只对应已审文件，新作品重新验收；手机试发仍待完成。
+编排动作前查 [审美判断](motion-taste.md)，参考 [历史示范的诊断记录](motion-experience.md)。这些旧示范未获整组审美采用，不能当作当前质量基准。手机与平台实证只对应 README 中列出的具体文件，新作品重新验收。
 
 ## 动态作品如何进入画风库
 

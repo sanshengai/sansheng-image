@@ -944,6 +944,9 @@ def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, 
     doc = json.loads(json.dumps(synthetic_motion["doc"]))
     # 保留一条明确关联场景的合成示范，避免未准入的新作品被测试夹具错误地接进场景池。
     next(m for m in doc["items"] if m["id"] == "moving")["placement"] = "featured"
+    for m in doc["items"]:
+        if m["id"] in {"paper-city", "travel-journal"}:
+            m["placement"] = "featured"  # 只在合成输入验证作品切换，不改变正式采用状态。
     items = [m for m in doc["items"] if m.get("placement", "featured") == "featured" and m["style_code"] and m["homepage_scene"]]
     scenes = {m["homepage_scene"] for m in items}
     assert scenes, "合成数据里没有挂到场景的动态示例，无法验证角标"
@@ -963,10 +966,18 @@ def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, 
             page.wait_for_function(f"document.getElementById('lib-grid').dataset.scene === '{sid}'")
             assert page.evaluate(_MOTION_CARDS) == [], sid
         featured = [m for m in doc["items"] if m.get("placement", "featured") == "featured"]
-        assert page.locator("#motion-showcase .motion-body > .motion-gallery > .motion-card").count() == len(featured)
+        assert page.locator("#motion-showcase [role='tab']").count() == len(featured)
+        assert page.locator("#motion-selected .motion-card").count() == 1
         assert not page.locator("#motion-showcase .motion-brand").evaluate("e => e.open")
-        assert page.locator("#motion-showcase a[download$='.gif']").count() == sum("gif" in m for m in featured)
-        assert page.locator("#motion-showcase .motion-original img[alt^='原图：']").count() == sum("source" in m for m in featured)
+        assert page.locator("#motion-selected a[download$='.gif']").count() == int("gif" in featured[0])
+        assert page.locator("#motion-selected .motion-source img[alt^='原图：']").count() == int("source" in featured[0])
+        old_video = page.locator("#motion-selected video").element_handle()
+        page.locator("#motion-showcase [role='tab']").nth(1).click()
+        assert page.locator("#motion-selected .motion-caption h3").inner_text() == featured[1]["title"]
+        assert page.locator("#motion-selected video").count() == 1
+        assert old_video.evaluate("v => [v.isConnected, v.getAttribute('src')]") == [False, None]
+        page.locator("#motion-showcase [role='tab']").nth(1).press("Home")
+        assert page.locator("#motion-showcase [role='tab'][aria-selected='true']").inner_text() == featured[0]["title"]
     with open_page(browser, d, reduced_motion="reduce") as page:
         page.route("**/motion-data.json", lambda route: route.fulfill(json=doc))
         _open(page, f"#u={items[0]['homepage_scene']}")

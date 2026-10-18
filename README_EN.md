@@ -2,7 +2,7 @@
 
 [中文](./README.md) | **English**
 
-**Help your Agent create better covers and illustrations.** Sansheng Image is an open-source image Skill for Claude Code, Codex, and other Agents. Give your Agent an article or an idea, choose a style and palette, and create a consistent set of images.
+**An image-generation Skill for your Agent.** Sansheng Image is an open-source Skill for Claude Code, Codex, and other Agents. Give your Agent an article or an idea, choose a style, and create a consistent set of images.
 
 Use it for WeChat article covers and illustrations, Xiaohongshu image posts, X images, slide images, infographics, and static storyboard frames. Images are generated with your Agent’s image tool, a configured image service, or an external tool using the compiled prompts. Validation varies by style and use case; see the capability boundaries below.
 
