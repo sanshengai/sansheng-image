@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>叁笙生图 Skill · 让你的 Agent，画好封面与配图</title>
-<meta name="description" content="给 Claude Code、Codex 的开源生图 Skill。制作公众号封面与插图、小红书图文、X 配图、PPT 页面和视频分镜首帧。">
+<title>叁笙生图 · 给 Agent 的生图 Skill</title>
+<meta name="description" content="给 Claude Code、Codex 的开源生图 Skill。制作公众号封面与配图、PPT 页面、小红书图文、X 配图、静态视频分镜首帧。选好画风，把内容交给 Agent，画出一整组风格一致的图。">
 <meta name="theme-color" content="#05080D">
 <style>
 :root {
@@ -2339,11 +2339,13 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   $('#pal-jump').addEventListener('click', function () { scrollToPalettes(true); });
   $('#nav-pal').addEventListener('click', function (e) { e.preventDefault(); scrollToPalettes(true); });
   var navEl = $('#topnav');
-  /* 品牌 Logo 用主站自己的图：只在 sanshengai.top 上加载，其他地方（本地预览、公开包）显示文字字标，不发外部请求 */
-  if (/(^|\.)sanshengai\.top$/.test(location.hostname)) {
+  /* 官网及本地预览只请求同源品牌图；其他站点和离线公开包保留文字字标。 */
+  if (/(^|\.)sanshengai\.top$/.test(location.hostname) || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
     document.querySelectorAll('.brand').forEach(function (a) {
       var im = a.querySelector('.brand-logo'), tx = a.querySelector('.brand-text');
+      if (!im) return;
       im.addEventListener('load', function () { im.hidden = false; if (tx) tx.hidden = true; });
+      im.addEventListener('error', function () { im.hidden = true; if (tx) tx.hidden = false; });
       im.src = '/logo.webp';
     });
   }
