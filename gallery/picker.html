@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>叁笙生图 Skill · 一句话，让你的 AI 按挑好的画风出整组图</title>
-<meta name="description" content="叁笙生图：挑好画风，一句话让你的 AI 按它出整组图。">
+<title>叁笙生图 Skill · 让你的 Agent，画好封面与配图</title>
+<meta name="description" content="给 Claude Code、Codex 的开源生图 Skill。制作公众号封面与插图、小红书图文、X 配图、PPT 页面和视频分镜首帧。">
 <meta name="theme-color" content="#05080D">
 <style>
 :root {
@@ -376,7 +376,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .lib-sel.on { border-color: var(--green); color: var(--strong); }
 .lib-sel:disabled { opacity: .38; cursor: not-allowed; }
 .lib-tax .btn-small { flex: none; min-height: 36px; padding: 4px 12px; }
-/* 吸顶栏：场景一行 + 右侧搜索与「更多筛选」；色系最多两行 */
+/* 吸顶栏：场景筛选与色系分行，色系默认仅显示一排推荐。 */
 .lib-row-top .chips { flex: 1 1 auto; }
 .lib-row-top .lib-search { flex: 0 1 260px; }
 .lib-more { flex: none; min-height: 34px; }
@@ -384,9 +384,12 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .chip-entry { border-style: dashed; color: var(--green); }
 .chip-entry:hover { color: var(--strong); }
 .chips-wrap { flex-wrap: wrap; row-gap: 8px; column-gap: 6px; }
-.chips-wrap.is-folded { max-height: calc(2 * 34px + 8px + 6px); overflow: hidden; }
-.pal-side { flex: none; display: flex; flex-direction: column; gap: 8px; align-self: flex-start; padding-top: 2px; }
-.chips-wrap .chip { padding: 4px 11px; gap: 6px; }   /* 宽屏两行排下；更窄时宁可多一行，也不把色系藏起来 */
+.lib-row-pal { align-items: flex-start; }
+.lib-row-pal .lib-label { padding-top: 12px; }
+#lib-palettes { flex: 1 1 auto; }
+#lib-palettes.is-folded { flex-wrap: nowrap; overflow: hidden; }
+.pal-side { flex: none; display: flex; gap: 8px; align-self: flex-start; padding-top: 2px; }
+.chips-wrap .chip { padding: 4px 11px; gap: 6px; max-width: 100%; }
 .lib-bar.is-stuck { box-shadow: 0 18px 40px -18px rgba(0,0,0,.75); border-bottom-color: var(--line-2); }
 #quiz { width: min(760px, calc(100vw - 24px)); }
 .quiz-in { position: relative; padding: 28px; }
@@ -400,8 +403,10 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   .lib-row-top { flex-wrap: wrap; row-gap: 8px; }
   .lib-row-top .chips { flex-basis: calc(100% - 2em - 12px); }
   .lib-row-top .lib-search { flex: 1 1 auto; margin-left: calc(2em + 12px); max-width: none; }
-  .chips-wrap, .chips-wrap.is-folded { flex-wrap: nowrap; overflow-x: auto; max-height: none; }
-  .pal-side { flex-direction: row; }
+  .lib-row-pal { display: grid; grid-template-columns: 2em minmax(0, 1fr); }
+  .lib-row-pal .pal-side { grid-column: 2; }
+  #lib-palettes { flex-wrap: wrap; }
+  #lib-palettes.is-folded { flex-wrap: nowrap; }
 }
 @media (max-width: 640px) {
   .lib-bar-in { padding: 6px 0 4px; gap: 2px; }          /* 四行全开时也不超过屏高四分之一 */
@@ -446,6 +451,9 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .product { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; flex: none; }
 .product-zh { font: 700 17px/1 var(--serif); color: var(--strong); letter-spacing: .04em; }
 .product-en { font: italic 14px/1 var(--latin); color: var(--mut); }
+.product-lockup { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.product-version { flex: none; padding: 4px 7px; border: 1px solid var(--line-2); border-radius: 6px; color: var(--mut); font: 11px/1.2 var(--mono); text-decoration: none; }
+.product-version:hover { color: var(--strong); border-color: var(--green); }
 .nav-links { margin-left: auto; display: flex; gap: 4px; }
 .nav-links a { padding: 6px 12px; font-size: 14px; color: var(--fg); text-decoration: none; border-radius: 999px; }
 .nav-links a:hover { color: var(--strong); background: rgba(238,232,220,.06); }
@@ -477,7 +485,7 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 48px; align-items: center; }
 .hero-left, .hero-right { min-width: 0; }
 .hero-kicker { font-size: 13px; color: var(--green); letter-spacing: .04em; }
-.hero-title { margin-top: 18px; font: 700 clamp(40px, 4.4vw, 66px)/1.16 var(--serif); white-space: nowrap; color: var(--strong); letter-spacing: .01em; }
+.hero-title { margin-top: 18px; font: 700 clamp(40px, 4.2vw, 62px)/1.16 var(--serif); white-space: nowrap; color: var(--strong); letter-spacing: .01em; }
 .hero-sub { margin-top: 22px; max-width: 30em; font: 400 18px/1.8 var(--sans); color: var(--fg); }
 .hero-en { margin-top: 8px; max-width: 34em; font: italic 16px/1.6 var(--latin); color: var(--mut); }
 
@@ -594,14 +602,16 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 .cobuild-act { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 
 /* 页脚 */
-.foot { position: relative; z-index: 1; padding: 36px 0 56px; background: transparent; }
-.foot-in { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
-.foot-brand .brand-logo { height: 26px; opacity: .9; }
-.foot-links { font-size: 14px; gap: 4px 22px; }
+.foot { position: relative; z-index: 1; padding: 36px 0 32px; background: transparent; }
+.foot-in { display: flex; align-items: center; justify-content: space-between; gap: 24px 40px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--line); }
+.foot-brand .brand-logo { height: 32px; }
+.foot-links { font-size: 14px; gap: 4px 24px; }
 .foot-links a { color: var(--fg); text-decoration: none; }
 .foot-links a:hover { color: var(--strong); }
 .foot-text { display: inline-flex; min-height: 36px; align-items: center; color: var(--mut); }
-.foot-note { margin-top: 14px; }
+.foot-bottom { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; }
+.foot-bottom a { color: var(--mut); font-size: 12px; text-underline-offset: 3px; }
+.foot-note { margin-top: 0; font-size: 12px; }
 
 @media (max-width: 1080px) {
   .nav-links { display: none; }
@@ -619,13 +629,16 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 @media (max-width: 640px) {
   :root { --nav-h: 56px; }
   .wrap { width: calc(100% - 32px); }
-  .topnav-in { gap: 10px; }
+  .topnav-in { gap: 8px; }
   .brand-logo { height: 28px; }
+  .topnav .brand-text { font-size: 14px; }
+  .product-lockup { flex: none; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .product-version { padding: 2px 4px; font-size: 10px; line-height: 1; }
   .product-en, #github-btn .star { display: none; }
   .nav-act .btn { padding: 4px 10px; }
   .nav-sep { height: 18px; }
   .product-zh { font-size: 15px; }
-  .hero-title { font-size: 42px; }
+  .hero-title { font-size: clamp(32px, 8.8vw, 42px); }
   .hero-sub { font-size: 16px; }
   .hero-en { font-size: 14px; }
   .cmdbar { padding-left: 14px; }
@@ -662,7 +675,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       <span class="brand-text">叁笙早安 AI</span>
     </a>
     <span class="nav-sep" aria-hidden="true"></span>
-    <a class="product" href="#top"><span class="product-zh">叁笙生图</span><span class="product-en">Sansheng Image</span></a>
+    <div class="product-lockup">
+      <a class="product" href="#top"><span class="product-zh">叁笙生图</span><span class="product-en">Sansheng Image</span></a>
+      <a class="product-version" id="product-version" href="https://github.com/sanshengai/sansheng-image/releases" aria-label="查看版本与更新日志" hidden></a>
+    </div>
     <div class="nav-links">
       <a href="#library">画风库</a>
       <a href="#motion-showcase">动态版</a>
@@ -682,10 +698,9 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   <div class="wrap hero-grid">
     <div class="hero-left" id="hero-left">
       <div id="title-block" class="title-block">
-        <p class="hero-kicker">开源生图技能 · 装进 Claude Code、Codex 就能用</p>
-        <h1 class="hero-title">挑一个画风，<br>整组图都像它。</h1>
-        <p class="hero-sub">封面、配图、PPT、小红书，从第一张到最后一张，都是同一种画风。在这里挑好，复制一句话发给 AI。</p>
-        <p class="hero-en">One style, every image.</p>
+        <p class="hero-kicker">给 Claude Code、Codex 的开源生图 Skill</p>
+        <h1 class="hero-title">让你的 Agent，<br>画好封面与配图。</h1>
+        <p class="hero-sub">公众号封面与插图、小红书图文、X 配图、PPT 页面、视频分镜首帧。挑好画风和配色，把内容交给 Agent，生成一组风格一致的图片。</p>
       </div>
 
       <div class="cmdbar" id="install">
@@ -694,8 +709,8 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         <button class="btn btn-small btn-copy" type="button" data-copy-target="hero-cmd">复制</button>
       </div>
       <div class="actions">
-        <a class="btn btn-paper" href="#library">浏览画风库</a>
-        <button class="btn" id="install-btn" type="button" aria-expanded="false" aria-controls="install-panel">其他安装方式</button>
+        <a class="btn btn-paper" href="#library">浏览画风与样图</a>
+        <button class="btn" id="install-btn" type="button" aria-expanded="false" aria-controls="install-panel">安装到 Agent</button>
       </div>
       <div class="install-panel" id="install-panel" hidden>
         <p class="install-hint">在终端里运行这一行（需要 Node.js），装完重开你的 AI 助手：</p>
@@ -726,7 +741,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
       <p class="metrics" id="metrics">
         <span><b data-metric="styles">—</b> 种精选画风</span>
-        <span>每种平均 <b data-metric="perStyle">—</b> 张真实样图</span>
         <span><b data-metric="palettes">—</b> 套有故事的色系</span>
       </p>
     </div>
@@ -787,7 +801,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
           <span class="lib-label" id="lib-palette-label">色系</span>
           <div class="chips chips-wrap is-folded" id="lib-palettes" role="group" aria-labelledby="lib-palette-label"></div>
           <div class="pal-side">
-            <button class="chip chip-entry" id="pal-more" type="button" aria-expanded="false" aria-controls="lib-palettes" hidden>展开全部</button>
+            <button class="chip chip-entry" id="pal-more" type="button" aria-expanded="false" aria-controls="lib-palettes" hidden>全部色系</button>
             <button class="chip chip-entry" id="pal-entry" type="button" aria-label="看色系图鉴">色系图鉴</button>
           </div>
         </div>
@@ -836,20 +850,20 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 <footer class="foot">
   <div class="wrap foot-in">
     <a class="brand foot-brand" href="https://sanshengai.top/" aria-label="叁笙早安 AI 首页">
-      <img class="brand-logo" alt="叁笙早安 AI" width="98" height="35" loading="lazy" decoding="async" hidden>
+      <img class="brand-logo" alt="叁笙早安 AI" width="98" height="35" decoding="async" hidden>
       <span class="brand-text">叁笙早安 AI</span>
     </a>
     <nav class="foot-links" aria-label="页脚链接">
       <a href="https://github.com/sanshengai/sansheng-image" target="_blank" rel="noopener">GitHub</a>
       <a id="releases-link" href="https://github.com/sanshengai/sansheng-image/releases" target="_blank" rel="noopener">更新日志</a>
-      <a href="/tools/github/repo/sanshengai/sansheng-image/">宝藏页（国内下载镜像）</a>
+      <a href="/tools/github/repo/sanshengai/sansheng-image/">国内下载</a>
       <a href="/tools/image/feedback/">反馈与共建</a>
-      <a href="/">叁笙早安 AI</a>
-      <span class="foot-text">许可证 MIT</span>
-      <span class="foot-text">画风参考，不代表与创作者有关</span>
     </nav>
   </div>
-  <div class="wrap"><p class="foot-note">画风里的「参考」仅用来说明风格的来源，不代表与相关创作者有任何关系。</p></div>
+  <div class="wrap foot-bottom">
+    <a href="https://github.com/sanshengai/sansheng-image/blob/main/LICENSE" target="_blank" rel="noopener">项目代码 MIT 许可</a>
+    <p class="foot-note">画风参考用于说明风格来源，与相关创作者无关联；外部工具与素材按各自许可使用。</p>
+  </div>
 </footer>
 
 </div>
@@ -1555,8 +1569,17 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   function fillSite(d) {
     var site = d.site || {};
     var ver = typeof site.pkgVersion === 'string' ? site.pkgVersion.trim() : '';
-    if (/^\d+\.\d+\.\d+$/.test(ver)) { $('#pkg-ver').textContent = 'v' + ver; $('#pkg-ver-wrap').hidden = false; }
-    if (typeof site.releases === 'string' && /^https:\/\/github\.com\//.test(site.releases)) $('#releases-link').href = site.releases;
+    if (/^\d+\.\d+\.\d+$/.test(ver)) {
+      $('#pkg-ver').textContent = 'v' + ver; $('#pkg-ver-wrap').hidden = false;
+      var badge = $('#product-version');
+      badge.textContent = 'v' + ver;
+      badge.setAttribute('aria-label', '当前版本 v' + ver + '，查看更新日志');
+      badge.hidden = false;
+    }
+    if (typeof site.releases === 'string' && /^https:\/\/github\.com\//.test(site.releases)) {
+      $('#releases-link').href = site.releases;
+      $('#product-version').href = site.releases;
+    }
   }
 
   /* 画风库卡片用真实场景样图：「全部」时相邻卡片轮换不同用途，选了场景就换成该场景的样图；同题沙发猫只作最后兜底 */
@@ -1568,18 +1591,39 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     return imgKey(st);
   }
   function cardRatio(key) { return Number(ratios[baseKind(key)] || ratios[key]) || 1; }
-  /* 色系默认折成两行；放不下时给「展开全部」，选中的色系落在折叠区里就自动展开，不让任何色系点不到 */
+  /* 默认一排推荐；收起时优先保留当前选项，隐藏项不进入键盘焦点序列。 */
   var palExpanded = false;
+  var PAL_RECOMMENDED = ['orig', 'macaron', 'morandi', 'ocean', 'qinglv', 'mono'];
   function syncPalFold() {
     var box = $('#lib-palettes'), more = $('#pal-more');
     if (!box || !more) return;
-    box.classList.add('is-folded');
-    var overflow = box.scrollHeight > box.clientHeight + 2;
-    var on = box.querySelector('.chip[aria-pressed="true"]');
-    if (overflow && on && on.getBoundingClientRect().bottom > box.getBoundingClientRect().bottom + 2) palExpanded = true;
+    var chips = Array.from(box.querySelectorAll('.chip[data-pal]'));
+    if (!chips.length) return;
+    var selected = chips.find(function (b) { return b.getAttribute('aria-pressed') === 'true'; });
+    var ordered = chips.slice().sort(function (a, b) {
+      var ai = PAL_RECOMMENDED.indexOf(a.dataset.pal), bi = PAL_RECOMMENDED.indexOf(b.dataset.pal);
+      return (ai < 0 ? PAL_RECOMMENDED.length : ai) - (bi < 0 ? PAL_RECOMMENDED.length : bi);
+    });
+    /* 窄屏先留选择本身，原色和其它推荐项按剩余宽度补入。展开时恢复固定推荐顺序。 */
+    if (!palExpanded && selected && selected.dataset.pal !== 'orig') {
+      ordered = [selected].concat(ordered.filter(function (b) { return b !== selected; }));
+    }
     box.classList.toggle('is-folded', !palExpanded);
-    more.hidden = !overflow && !palExpanded;
-    more.textContent = palExpanded ? '收起' : '展开全部';
+    chips.forEach(function (b) { b.hidden = false; });
+    var available = box.clientWidth, used = 0;
+    var gap = parseFloat(getComputedStyle(box).columnGap) || 0;
+    ordered.forEach(function (b, i) {
+      b.style.order = i;
+      if (palExpanded) return;
+      var wanted = b === selected || PAL_RECOMMENDED.indexOf(b.dataset.pal) !== -1;
+      var width = b.getBoundingClientRect().width;
+      var next = used + (used ? gap : 0) + width;
+      b.hidden = !wanted || next > available + 1;
+      if (!b.hidden) used = next;
+    });
+    var count = chips.filter(function (b) { return b.dataset.pal !== 'orig'; }).length;
+    more.hidden = !palExpanded && !chips.some(function (b) { return b.hidden; });
+    more.textContent = palExpanded ? '收起' : '全部色系（' + count + '）';
     more.setAttribute('aria-expanded', palExpanded ? 'true' : 'false');
   }
   var MASONRY_ROW = 4;
@@ -1654,6 +1698,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     $('#pal-entry').addEventListener('click', function () { scrollToPalettes(true); });   // 色系行末尾：去看每个色系的故事与真图
     $('#pal-more').addEventListener('click', function () { palExpanded = !palExpanded; syncPalFold(); });
     window.addEventListener('resize', syncPalFold);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncPalFold);
     syncPalFold();
 
     styles.forEach(function (st) {

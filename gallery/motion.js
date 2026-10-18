@@ -10,7 +10,7 @@
   var hasIO = typeof window.IntersectionObserver === 'function';
   var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var mqCoarse = window.matchMedia('(pointer: coarse)');
-  var NO_MOTION_SCENES = ['wxcover', 'board'];   // 公众号封面、视频分镜首帧：成品本身是静图，不展示动态版
+  var NO_MOTION_SCENES = ['wxcover', 'board', 'ppt'];
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   function onMq(mq, fn) { if (mq.addEventListener) mq.addEventListener('change', fn); else if (mq.addListener) mq.addListener(fn); }
@@ -60,6 +60,7 @@
       if (o.note != null && !(str(o.note, 1, 240) && o.note.trim() !== '')) return;
       if (o.style_code != null && !(typeof o.style_code === 'string' && /^C\d{1,3}$/.test(o.style_code))) return;
       if (o.homepage_scene != null && !(typeof o.homepage_scene === 'string' && /^[a-z0-9_-]{1,32}$/.test(o.homepage_scene))) return;
+      if (o.placement != null && ['featured', 'brand', 'background'].indexOf(o.placement) === -1) return;
       if (NO_MOTION_SCENES.indexOf(o.homepage_scene) !== -1) return;
       if (!dim(o.width) || !dim(o.height)) return;
       if (!(typeof o.duration === 'number' && o.duration > 0 && o.duration <= 60)) return;
@@ -69,11 +70,15 @@
       if (poster !== MEDIA_PREFIX + o.id + '/poster.png' || video !== MEDIA_PREFIX + o.id + '/share.mp4') return;
       var source = o.source == null ? null : mediaPath(o.source, 'source.png');
       if (o.source != null && source !== MEDIA_PREFIX + o.id + '/source.png') return;
+      var gif = o.gif == null ? null : mediaPath(o.gif, 'share.gif');
+      if (o.gif != null && (gif !== MEDIA_PREFIX + o.id + '/share.gif' || !/^[a-f0-9]{64}$/.test(o.gif_sha256 || ''))) return;
+      if (o.gif == null && o.gif_sha256 != null) return;
       seen[o.id] = 1;
       out.push({
         id: o.id, title: o.title, styleCode: o.style_code || null,
         scene: o.scene, homeScene: o.homepage_scene || null, sceneLabel: o.scene_label,
-        width: o.width, height: o.height, poster: playbackPath(poster), video: playbackPath(video), source: source ? playbackPath(source) : null,
+        placement: o.placement || 'featured', duration: o.duration,
+        width: o.width, height: o.height, poster: playbackPath(poster), video: playbackPath(video), source: source ? playbackPath(source) : null, gif: gif ? playbackPath(gif) : null,
         note: (typeof o.note === 'string' ? o.note : null)
       });
     });
@@ -261,7 +266,7 @@
     var body = h('div', { class: 'motion-body' }, bodyKids);
     var sec = h('section', { class: 'sec motion-sec', id: 'motion-showcase', 'aria-labelledby': 'motion-title' }, [
       h('div', { class: 'wrap' }, [
-        h('h2', { class: 'sec-title', id: 'motion-title', text: '动态版' }),
+        h('h2', { class: 'sec-title', id: 'motion-title', text: '让插图动起来' }),
         body
       ])
     ]);
@@ -277,26 +282,37 @@
 
   function buildShowcase() {
     var grid = h('div', { class: 'motion-gallery' });
-    secEl = insertSection([grid]);
+    var brandGrid = h('div', { class: 'motion-gallery motion-brand-gallery' });
+    var brand = h('details', { class: 'motion-brand' }, [h('summary', { text: '品牌示例' }), brandGrid]);
+    secEl = insertSection([h('p', { class: 'motion-intro', text: '为公众号正文与 X 配图制作横版动态。保留完整原图，重新编排画面，让动作服务于内容。' }), grid]);
     if (!secEl) return;
+    var hasBrand = false;
     items.forEach(function (it) {
-      var source = h('img', { src: it.source || it.poster, alt: '静态图：' + it.title, loading: 'lazy', decoding: 'async' });
+      if (it.placement === 'background') return;
+      var source = h('img', { src: it.source || it.poster, alt: (it.source ? '原图：' : '静态图：') + it.title, loading: 'lazy', decoding: 'async' });
       var original = h('div', { class: 'motion-original' }, [source, h('span', { class: 'motion-tag', text: it.source ? '原图' : '静态图' })]);
       var video = h('video', { class: 'motion-video', poster: it.poster });
       var frame = h('div', { class: 'motion-frame' }, [video, h('span', { class: 'motion-tag motion-tag-live', text: '动态版' })]);
       frame.style.aspectRatio = it.width + ' / ' + it.height;
       var btn = h('button', { class: 'motion-toggle', type: 'button' });
+      var replay = h('button', { class: 'motion-replay', type: 'button', text: '重播', 'aria-label': '重播：' + it.title });
       var enlarge = h('button', { class: 'motion-enlarge', type: 'button', text: '放大', 'aria-label': '放大观看：' + it.title });
       var status = h('p', { class: 'motion-status', role: 'status' });
       var card = h('article', { class: 'motion-card' }, [
-        h('div', { class: 'motion-pair' }, [original, frame]),
-        h('div', { class: 'motion-card-foot' }, [h('h3', { text: it.title }), h('div', { class: 'motion-actions' }, [btn, enlarge])]), status
+        frame,
+        h('div', { class: 'motion-card-foot' }, [h('div', { class: 'motion-caption' }, [h('h3', { text: it.title }), h('p', { text: [it.styleCode, it.sceneLabel, it.duration + ' 秒'].filter(Boolean).join(' · ') })]), original]),
+        h('div', { class: 'motion-actions' }, [btn, replay, enlarge,
+          it.gif ? h('a', { href: it.gif, download: it.id + '.gif', text: '下载 GIF', 'aria-label': '下载 GIF：' + it.title }) : null,
+          h('a', { href: it.video, download: it.id + '.mp4', text: '下载 MP4', 'aria-label': '下载 MP4：' + it.title })]), status
       ]);
-      grid.appendChild(card);
+      if (it.placement === 'brand') { brandGrid.appendChild(card); hasBrand = true; }
+      else grid.appendChild(card);
       var player = makePlayer({ video: video, btn: btn, status: status, area: frame, viewportAuto: true });
       setItem(player, it);
+      replay.addEventListener('click', function () { stop(player); player.suppressed = false; play(player, 'manual'); });
       enlarge.addEventListener('click', function () { openMotion(it); });
     });
+    if (hasBrand) $('.motion-body', secEl).appendChild(brand);
   }
 
   function openMotion(it) {
@@ -323,6 +339,7 @@
     var by = {};
     if (NO_MOTION_SCENES.indexOf(scene) !== -1) return by;
     items.forEach(function (it) {
+      if (it.placement !== 'featured') return;
       if (!it.styleCode || !it.homeScene) return;
       if (scene !== 'all' && it.homeScene !== scene) return;
       if (!by[it.styleCode]) by[it.styleCode] = it;
@@ -387,7 +404,7 @@
     var m = /^(C\d{1,3})(?!\d)/.exec(idEl.textContent || '');
     if (!m) return;
     var it = null;
-    for (var i = 0; i < items.length; i++) if (items[i].styleCode === m[1]) { it = items[i]; break; }
+    for (var i = 0; i < items.length; i++) if (items[i].placement === 'featured' && items[i].styleCode === m[1]) { it = items[i]; break; }
     if (!it) return;
 
     var f = frameNode(it, '动态示范');

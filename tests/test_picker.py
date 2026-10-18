@@ -119,7 +119,16 @@ def _synthetic_motion(base: Path) -> dict:
         idir.mkdir()
         (idir / "poster.png").write_bytes(poster)
         (idir / "share.mp4").write_bytes(video)
-        items.append({**item, "poster_sha256": BD.MG._sha(poster), "video_sha256": BD.MG._sha(video)})
+        row = {**item, "poster_sha256": BD.MG._sha(poster), "video_sha256": BD.MG._sha(video)}
+        for field, filename, sha_key in BD.MG.OPTIONAL_MEDIA_FILES:
+            if field not in item:
+                continue
+            extra = io.BytesIO()
+            Image.new("RGB", (16, 24), (60, 130, 170)).save(extra, "GIF" if field == "gif" else "PNG")
+            raw = extra.getvalue()
+            (idir / filename).write_bytes(raw)
+            row[sha_key] = BD.MG._sha(raw)
+        items.append(row)
     doc = {**real, "items": items}
     (gallery / BD.MG.DATA_NAME).write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     assert BD.MG.parse_text((gallery / BD.MG.DATA_NAME).read_bytes()) == doc   # 合成清单同样通过严格校验
@@ -447,14 +456,14 @@ def test_synthetic_motion_media_and_sha_are_checked_by_real_build(built, synthet
     doc, real = synthetic_motion["doc"], synthetic_motion["real"]
     assert _data(html)["motionPreview"] == doc
     expected = BD.MG.expected_media(doc)
-    assert expected and len(expected) == 2 * len(doc["items"])
+    assert expected and len(expected) == sum(len(BD.MG.item_media(i)) for i in doc["items"])
     on_disk = sorted(p.relative_to(d).as_posix() for p in (d / BD.MG.MEDIA_DIR).rglob("*") if p.is_file())
     assert on_disk == [rel for rel, _ in expected], "motion/ 下的媒体集合必须恰为清单登记的集合"
     assert all(BD.MG._sha((d / rel).read_bytes()) == sha for rel, sha in expected)
     manifest = json.loads((d / BD.MG.MANIFEST_NAME).read_text(encoding="utf-8"))
     assert manifest["media"] == [{"path": rel, "sha256": sha} for rel, sha in expected]
-    # 保留真实清单的全部项目字段，只换两个 SHA；合成 SHA 不得与真实 SHA 相同（没有碰真实数据）
-    strip = lambda it: {k: v for k, v in it.items() if k not in ("poster_sha256", "video_sha256")}  # noqa: E731
+    # 保留真实清单的全部项目字段，只换合成媒体的 SHA（没有碰真实数据）。
+    strip = lambda it: {k: v for k, v in it.items() if not k.endswith("_sha256")}  # noqa: E731
     assert [strip(i) for i in doc["items"]] == [strip(i) for i in real["items"]]
     assert all(a["poster_sha256"] != b["poster_sha256"] and a["video_sha256"] != b["video_sha256"]
                for a, b in zip(doc["items"], real["items"]))
@@ -703,8 +712,8 @@ def test_page_renders_all_blocks_without_overflow_and_only_requests_manifest_ima
         assert page.locator("#scene-grid, #feat-grid, .scene-card").count() == 0  # 场景卡区、精选区已删
         assert page.eval_on_selector_all("main > section", "e=>e.map(s=>s.id)") == ["library", "motion-showcase", "palettes"]
         assert page.inner_text("[data-metric=styles]").replace(",", "") == str(meta["metrics"]["styles"])
-        m = meta["metrics"]  # 数字行：「每种平均 N 张真实样图」= 样图数 ÷ 画风数，四舍五入（与页面 Math.round 同口径）
-        assert page.inner_text("[data-metric=perStyle]") == str(int(m["samples"] / m["styles"] + 0.5))
+        assert page.locator("[data-metric=perStyle]").count() == 0
+        assert page.inner_text("[data-metric=palettes]") == str(meta["metrics"]["palettes"])
         imgs = [u.split("?")[0] for u in page.requests if u.endswith(".webp")]
         assert all("/tools/image/img/" in u for u in imgs), [u for u in imgs if "/tools/image/img/" not in u][:3]
         assert {u.rsplit("/", 1)[1] for u in imgs} <= names
@@ -891,39 +900,56 @@ def test_palette_real_shots_page_is_consumed(browser, built):
 
 _HIDDEN_PALS = """(() => { const box = document.getElementById('lib-palettes'), bb = box.getBoundingClientRect();
   return [...box.querySelectorAll('.chip[data-pal]')].filter(c => { const r = c.getBoundingClientRect();
-    return r.bottom > bb.bottom + 1 || r.right > bb.right + 1 || r.left < bb.left - 1; }).map(c => c.dataset.pal); })()"""
+    return c.hidden || r.bottom > bb.bottom + 1 || r.right > bb.right + 1 || r.left < bb.left - 1; }).map(c => c.dataset.pal); })()"""
 
 
-@pytest.mark.parametrize("width", [1440, 1000])
+@pytest.mark.parametrize("width", [1920, 1440, 1000, 360])
 def test_every_palette_chip_is_reachable_when_folded(browser, built, width):
-    """色系折叠成两行时必须给出「展开全部」，展开后每个色系都看得见、点得到（A3 曾把末尾两种藏掉）。"""
+    """默认单排，展开全部；非推荐项收起、刷新和改变宽度后仍可见，隐藏项不接受键盘焦点。"""
     d, _ = built
     with open_page(browser, d, width=width) as page:
         _open(page, "")
         hidden = page.evaluate(_HIDDEN_PALS)
         more = page.locator("#pal-more")
-        if hidden:
-            assert more.is_visible() and more.get_attribute("aria-expanded") == "false", hidden
-            more.click()
-            assert more.get_attribute("aria-expanded") == "true"
+        assert hidden and more.is_visible() and more.get_attribute("aria-expanded") == "false"
+        tops = page.eval_on_selector_all("#lib-palettes .chip:not([hidden])", "cs => cs.map(c => Math.round(c.getBoundingClientRect().top))")
+        assert len(set(tops)) == 1, tops
+        assert page.eval_on_selector_all("#lib-palettes .chip[hidden]", "cs => cs.every(c => c.getClientRects().length === 0)")
+        more.click()
+        assert more.get_attribute("aria-expanded") == "true"
         assert page.evaluate(_HIDDEN_PALS) == []
         pals = page.eval_on_selector_all("#lib-palettes .chip[data-pal]", "cs => cs.map(c => c.dataset.pal)")
         last = pals[-1]
         page.click(f'#lib-palettes .chip[data-pal="{last}"]')
         assert page.get_attribute(f'#lib-palettes .chip[data-pal="{last}"]', "aria-pressed") == "true"
+        more.click()
+        assert more.get_attribute("aria-expanded") == "false"
+        assert last not in page.evaluate(_HIDDEN_PALS)
+        page.set_viewport_size({"width": 360, "height": 900})
+        assert page.locator(f'#lib-palettes .chip[data-pal="{last}"]').is_visible()
+        assert last not in page.evaluate(_HIDDEN_PALS)
+        page.reload()
+        page.wait_for_selector('#lib-palettes .chip[aria-pressed="true"]')
+        assert page.get_attribute(f'#lib-palettes .chip[data-pal="{last}"]', "aria-pressed") == "true"
+        assert last not in page.evaluate(_HIDDEN_PALS)
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), "手机页面横向溢出"
 
 
 _MOTION_CARDS = "[...document.querySelectorAll('#lib-grid > li.motion-lib-item')].map(l => l.dataset.style).sort()"
 
 
 def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, built, synthetic_motion):
-    """动态版接进画风库：只给当前场景有动态示例的画风加「会动」角标；公众号封面、分镜不出；减少动效时不加载视频。"""
+    """只给精选中已登记场景的画风加角标；背景退出作品墙；减少动效时不自动加载视频。"""
     d, _ = built
-    items = [m for m in synthetic_motion["doc"]["items"] if m["style_code"] and m["homepage_scene"]]
+    doc = json.loads(json.dumps(synthetic_motion["doc"]))
+    # 保留一条明确关联场景的合成示范，避免未准入的新作品被测试夹具错误地接进场景池。
+    next(m for m in doc["items"] if m["id"] == "moving")["placement"] = "featured"
+    items = [m for m in doc["items"] if m.get("placement", "featured") == "featured" and m["style_code"] and m["homepage_scene"]]
     scenes = {m["homepage_scene"] for m in items}
     assert scenes, "合成数据里没有挂到场景的动态示例，无法验证角标"
     with open_page(browser, d) as page:
-        _open(page, "")
+        page.route("**/motion-data.json", lambda route: route.fulfill(json=doc))
+        _open(page, "#u=wxillus")
         page.wait_for_selector("#lib-grid > li.motion-lib-item", state="attached")
         assert page.evaluate(_MOTION_CARDS) == sorted({m["style_code"] for m in items})
         for sid in sorted(scenes):
@@ -932,13 +958,17 @@ def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, 
             want = sorted({m["style_code"] for m in items if m["homepage_scene"] == sid})
             page.wait_for_function(f"JSON.stringify({_MOTION_CARDS}) === JSON.stringify({want!r})".replace("'", '"'))
             assert page.locator("#lib-grid > li.motion-lib-item .motion-badge").first.inner_text() == "会动"
-        for sid in ("wxcover", "board"):
+        for sid in ("wxcover", "board", "ppt"):
             _open(page, f"#u={sid}")
             page.wait_for_function(f"document.getElementById('lib-grid').dataset.scene === '{sid}'")
             assert page.evaluate(_MOTION_CARDS) == [], sid
-        groups = page.eval_on_selector_all("#motion-showcase .motion-group", "g => g.map(x => x.getAttribute('aria-label'))")
-        assert len(groups) == len(set(groups)) >= 2   # 示例按场景分组，每组只出现一次
+        featured = [m for m in doc["items"] if m.get("placement", "featured") == "featured"]
+        assert page.locator("#motion-showcase .motion-body > .motion-gallery > .motion-card").count() == len(featured)
+        assert not page.locator("#motion-showcase .motion-brand").evaluate("e => e.open")
+        assert page.locator("#motion-showcase a[download$='.gif']").count() == sum("gif" in m for m in featured)
+        assert page.locator("#motion-showcase .motion-original img[alt^='原图：']").count() == sum("source" in m for m in featured)
     with open_page(browser, d, reduced_motion="reduce") as page:
+        page.route("**/motion-data.json", lambda route: route.fulfill(json=doc))
         _open(page, f"#u={items[0]['homepage_scene']}")
         li = page.locator("#lib-grid > li.motion-lib-item:not([hidden])").first
         li.wait_for(state="attached")
@@ -946,10 +976,9 @@ def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, 
         li.locator(".style-card").hover()
         page.wait_for_timeout(600)
         assert li.evaluate("l => [l.querySelector('video').getAttribute('src'), getComputedStyle(l.querySelector('.motion-badge')).display]") == [None, "none"]
-        assert page.locator("#motion-showcase .motion-fig-dyn").evaluate("e => getComputedStyle(e).display") == "none"
-        page.eval_on_selector("#motion-showcase .motion-play", "b => b.click()")   # 按钮已隐藏；即使被触发也只留海报帧
-        page.wait_for_timeout(300)
-        assert page.eval_on_selector("#motion-showcase .motion-play", "b => b.textContent") == "播放动态"   # 没有进入加载、在播或失败
+        page.locator("#motion-showcase").scroll_into_view_if_needed()
+        assert page.eval_on_selector_all("#motion-showcase video", "v => v.every(e => !e.getAttribute('src'))")
+        assert page.locator("#motion-showcase .motion-toggle").first.inner_text() == "播放动态"
 
 # ---------------- GitHub 入口、安装命令与来源措辞 ----------------
 
@@ -981,8 +1010,10 @@ def test_hero_github_button_install_commands_and_origin_wording(browser, built):
         assert "npx skills add sanshengai/sansheng-image -g" in page.inner_text("#install-cmd")
         assert SITE_URL in page.inner_text("#install-ask")
         assert f"git clone {SITE_URL}.git" in page.text_content("#install-git")  # 折叠在「其他装法」里，读文本不要求可见
-        assert "画风参考，不代表与创作者有关" in page.inner_text(".foot")
-        assert "不代表与相关创作者有任何关系" in page.inner_text(".foot-note")
+        assert "与相关创作者无关联" in page.inner_text(".foot-note")
+        assert page.locator(".foot-links a").count() == 4
+        assert page.locator("#product-version").inner_text() == "v" + meta["site"]["pkgVersion"]
+        assert page.get_attribute("#product-version", "href") == meta["site"]["releases"]
         assert page.get_attribute("#releases-link", "href") == meta["site"]["releases"]
 
         with_origin = next(c for c in meta["cands"] if c.get("origin"))
@@ -1309,6 +1340,7 @@ def test_missing_optional_data_has_explicit_fallbacks(browser, tmp_path, monkeyp
         _open(page)
         assert page.locator("#github-btn .star").is_hidden()                          # 没有星数快照就只显示 GitHub
         assert page.locator("#pkg-ver-wrap").is_hidden()                              # 读不到版本就不写版本
+        assert page.locator("#product-version").is_hidden()
         assert page.get_attribute("#releases-link", "href") == SITE_URL + "/releases"
 
 

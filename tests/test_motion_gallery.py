@@ -71,7 +71,9 @@ def _no_motion_env(monkeypatch):
 def test_real_source_data_passes_strict_schema():
     doc = MG.parse_text((ROOT / "gallery" / "motion-data.json").read_bytes())
     assert 0 < len(doc["items"]) <= MG.MAX_ITEMS
-    assert len(MG.expected_media(doc)) == 2 * len(doc["items"]) == 24
+    assert len(MG.expected_media(doc)) == sum(len(MG.item_media(it)) for it in doc["items"])
+    featured = [it for it in doc["items"] if it.get("placement", "featured") == "featured"]
+    assert featured and all(it["width"] * 9 == it["height"] * 16 for it in featured)
     for it in doc["items"]:
         if it["homepage_scene"] is not None:
             assert it["style_code"], it["id"]
@@ -473,6 +475,36 @@ def test_original_source_is_bound_and_copied(tmp_path):
     {"source": "/tools/image/motion/ink/source.png", "source_sha256": ""},
 ])
 def test_original_source_rejects_unbound_or_unsafe_input(over):
+    doc = make_doc("ink")
+    doc["items"][0].update(over)
+    assert MG.validate_document(doc)
+
+
+def test_gif_is_hash_bound_and_copied_with_other_media(tmp_path):
+    raw = b"GIF89a-test-media"
+    doc = make_doc("ink")
+    doc["items"][0].update(gif="/tools/image/motion/ink/share.gif", gif_sha256=sha(raw), placement="featured")
+    assert not MG.validate_document(doc)
+    media = make_media(tmp_path, doc)
+    (media / "ink/share.gif").write_bytes(raw)
+    assert MG.read_media(doc, media)["motion/ink/share.gif"] == raw
+    assert ("motion/ink/share.gif", sha(raw)) in MG.expected_media(doc)
+    (media / "ink/share.gif").write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="SHA-256"):
+        MG.read_media(doc, media)
+
+
+@pytest.mark.parametrize("over", [
+    {"gif": "/tools/image/motion/ink/share.gif"},
+    {"gif_sha256": "0" * 64},
+    {"gif": "", "gif_sha256": "0" * 64},
+    {"gif": "/tools/image/motion/ink/../share.gif", "gif_sha256": "0" * 64},
+    {"gif": "https://evil.test/share.gif", "gif_sha256": "0" * 64},
+    {"gif": "/tools/image/motion/ink/share.mp4", "gif_sha256": "0" * 64},
+    {"gif": "/tools/image/motion/ink/share.gif", "gif_sha256": False},
+    {"placement": "unknown"}, {"placement": ""}, {"placement": []},
+])
+def test_optional_downloads_and_placement_reject_invalid_input(over):
     doc = make_doc("ink")
     doc["items"][0].update(over)
     assert MG.validate_document(doc)

@@ -26,6 +26,7 @@ MEDIA_DIR = "motion"
 MOTION_DIR_ENV = "SANSHENG_IMAGE_MOTION_DIR"
 MEDIA_URL_PREFIX = "/tools/image/motion/"
 MEDIA_FILES = (("poster", "poster.png", "poster_sha256"), ("video", "share.mp4", "video_sha256"))
+OPTIONAL_MEDIA_FILES = (("source", "source.png", "source_sha256"), ("gif", "share.gif", "gif_sha256"))
 MAX_ITEMS = 12
 SCHEMA_VERSION = 1
 MIN_DIM, MAX_DIM = 16, 8000          # 与 motion.js 的 dim() 同口径
@@ -33,7 +34,8 @@ MAX_DURATION = 60
 
 REQUIRED_KEYS = frozenset({"id", "title", "scene", "scene_label", "width", "height", "duration",
                            "poster", "video", "poster_sha256", "video_sha256"})
-OPTIONAL_KEYS = frozenset({"style_code", "homepage_scene", "note", "source", "source_sha256"})
+OPTIONAL_KEYS = frozenset({"style_code", "homepage_scene", "note", "placement",
+                           "source", "source_sha256", "gif", "gif_sha256"})
 ALLOWED_KEYS = REQUIRED_KEYS | OPTIONAL_KEYS
 
 ID_RE = re.compile(r"[A-Za-z0-9_-]{1,32}")
@@ -103,6 +105,8 @@ def _item_problems(it, where: str) -> list[str]:
             p.append(f"{where}.{key} 必须是 1..{hi} 字的非空白文本")
     if "note" in it and not _text(it["note"], 240):
         p.append(f"{where}.note 必须是 1..240 字的非空白文本")
+    if "placement" in it and it["placement"] not in ("featured", "brand", "background"):
+        p.append(f"{where}.placement 必须是 featured、brand 或 background")
     sc = it.get("style_code")
     if sc is not None and not (isinstance(sc, str) and STYLE_RE.fullmatch(sc)):
         p.append(f"{where}.style_code 不合法")
@@ -123,18 +127,19 @@ def _item_problems(it, where: str) -> list[str]:
                 p.append(f"{where}.{field} 必须恰好是 {MEDIA_URL_PREFIX}<id>/{name}")
         if sha_key in it and not (isinstance(it[sha_key], str) and SHA_RE.fullmatch(it[sha_key])):
             p.append(f"{where}.{sha_key} 必须是小写 64 位十六进制")
-    if ("source" in it) != ("source_sha256" in it):
-        p.append(f"{where}.source 与 source_sha256 必须同时提供")
-    if "source" in it:
-        if not id_ok or it["source"] != f"{MEDIA_URL_PREFIX}{iid}/source.png":
-            p.append(f"{where}.source 必须恰好是 {MEDIA_URL_PREFIX}<id>/source.png")
-        if not (isinstance(it.get("source_sha256"), str) and SHA_RE.fullmatch(it["source_sha256"])):
-            p.append(f"{where}.source_sha256 必须是小写 64 位十六进制")
+    for field, name, sha_key in OPTIONAL_MEDIA_FILES:
+        if (field in it) != (sha_key in it):
+            p.append(f"{where}.{field} 与 {sha_key} 必须同时提供")
+        if field in it:
+            if not id_ok or it[field] != f"{MEDIA_URL_PREFIX}{iid}/{name}":
+                p.append(f"{where}.{field} 必须恰好是 {MEDIA_URL_PREFIX}<id>/{name}")
+            if not (isinstance(it.get(sha_key), str) and SHA_RE.fullmatch(it[sha_key])):
+                p.append(f"{where}.{sha_key} 必须是小写 64 位十六进制")
     return p
 
 
 def item_media(it):
-    return MEDIA_FILES + ((("source", "source.png", "source_sha256"),) if "source" in it else ())
+    return MEDIA_FILES + tuple(row for row in OPTIONAL_MEDIA_FILES if row[0] in it)
 
 
 def validate_document(doc) -> list[str]:
