@@ -1,6 +1,8 @@
 ---
 name: sansheng-image
 description: 用户说“给这篇文章配几张图”“做个封面”“出一张图”“换个画风”，或要做小红书知识卡、信息图、教材插图、漫画、绘本、整页 PPT、音乐或播客封面时使用；给出 sb2/sb1 或 C31 等画风码，或配置、检查叁笙生图时也用。读内容后挑视觉要点，同一系列保持选定画风，默认轻量出图，出图走 Codex 订阅额度。默认出静态图；用户明确要动态版（做成动的、动图、短视频版）时见动态手册。
+metadata:
+  version: "2.2.2"
 ---
 
 # 叁笙生图
@@ -28,6 +30,8 @@ python3 scripts/sb.py make brief.json -o 新目录
 出图默认走 Codex 内置生图（订阅额度）。当前会话已有内置生图工具时，使用 `make … --prepare` 编译，直接调用当前会话的内置工具，再通过 `--import-results` 导回（见 [quick.md](references/quick.md)）；即使本机有 `codex` 命令，也不再启动另一个 Codex 出图。Claude Code 等没有内置生图工具的助手才使用普通 `make`，由适配层调用已登录的 Codex CLI；没有可用 Codex 时用已配置的其他服务。首次配置读 [setup.md](references/setup.md)，后端行为与限制读 [backends.md](references/backends.md)。不得把 pending_host 当作已出图。
 
 ## 发布档与专项
+
+动态作品需要进一步剪辑、字幕、配音或配乐时，交接给已安装的视频制作 Skill；使用 `sansheng-video` 时，每个新会话（含接手旧工程与局部改音）先运行它的 `python3 setup.py --show-profile`，读取返回的 `context_file`，涉及素材再读 `media_library.usage`。图像与动态生成仍沿用本 Skill 的已选方法和已有工程；按原动态手册交付的静音作品不强加声音，也不为补音更换渲染器。
 
 - 用户要求严格验收、写作 Skill 正式发布调用：增加原文覆盖、数字条件与编造自检；教程、数据或条件判断文章再做独立计划复核。带字的成品及封面做独立看图，核对事实、逐字和缩略图吸引力。图上超过一个标题时用留白底图加精确排字。
 - 发布档尚未整合成 make 的一键步骤。现阶段按 [planning.md](references/planning.md)、[text.md](references/text.md)、[qa.md](references/qa.md) 的实际命令保留证据；不能只凭轻量总览宣布正式发布验收完成。
