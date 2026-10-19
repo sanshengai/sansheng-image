@@ -411,6 +411,10 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 @media (max-width: 640px) {
   .lib-bar-in { padding: 6px 0 4px; gap: 2px; }          /* 四行全开时也不超过屏高四分之一 */
   .lib-bar-in .chips, .lib-tax { padding-bottom: 4px; }
+  .lib-row-top .lib-search { flex: 1 1 0; }          /* 搜索框和筛选按钮共享第二行，320px 也不另起一行 */
+  .lib-row-pal { grid-template-columns: 2em minmax(0, 1fr) auto; }
+  .lib-row-pal .pal-side { grid-column: 3; grid-row: 1; }
+  #pal-entry { display: none; }                     /* 库标题旁仍有「色系图鉴」，手机不重复占一行 */
   .lib-q { font-size: 16px; }
   .lib-tax { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
   .lib-sel { flex: 0 0 132px; font-size: 16px; padding: 4px 8px; }
@@ -1720,6 +1724,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     if (!box || !more) return;
     var chips = Array.from(box.querySelectorAll('.chip[data-pal]'));
     if (!chips.length) return;
+    var count = chips.filter(function (b) { return b.dataset.pal !== 'orig'; }).length;
+    more.textContent = palExpanded ? '收起' : (window.innerWidth <= 640 ? '展开' : '全部色系（' + count + '）');
+    more.setAttribute('aria-label', palExpanded ? '收起色系' : '展开全部 ' + count + ' 款色系');
+    more.hidden = false;                              // 先为按钮留位，再计算当前色系的可用宽度
     var selected = chips.find(function (b) { return b.getAttribute('aria-pressed') === 'true'; });
     var ordered = chips.slice().sort(function (a, b) {
       var ai = PAL_RECOMMENDED.indexOf(a.dataset.pal), bi = PAL_RECOMMENDED.indexOf(b.dataset.pal);
@@ -1742,9 +1750,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       b.hidden = !wanted || next > available + 1;
       if (!b.hidden) used = next;
     });
-    var count = chips.filter(function (b) { return b.dataset.pal !== 'orig'; }).length;
     more.hidden = !palExpanded && !chips.some(function (b) { return b.hidden; });
-    more.textContent = palExpanded ? '收起' : '全部色系（' + count + '）';
     more.setAttribute('aria-expanded', palExpanded ? 'true' : 'false');
   }
   var MASONRY_ROW = 4;
@@ -2467,7 +2473,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       if (!im) return;
       im.addEventListener('load', function () { im.hidden = false; if (tx) tx.hidden = true; });
       im.addEventListener('error', function () { im.hidden = true; if (tx) tx.hidden = false; });
-      im.src = '/logo.webp';
+      im.src = LOGO_SRC;
     });
   }
   var libBarEl = $('#lib-bar');

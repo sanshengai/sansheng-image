@@ -673,6 +673,30 @@ def _open(page, frag="", slash=""):
     page.wait_for_load_state("networkidle")
 
 
+@pytest.mark.parametrize('slash', ['', '/'])
+@pytest.mark.parametrize('has_brand', [True, False], ids=['brand-image', 'text-fallback'])
+def test_brand_uses_packaged_asset_path_and_missing_images_keep_text(browser, built, tmp_path, slash, has_brand):
+    d, _ = built
+    out = tmp_path / 'site'
+    shutil.copytree(d, out)
+    if has_brand:
+        for name in ('logo.webp', 'logo-poster.webp'):
+            (out / 'img' / name).write_bytes(FAKE_WEBP)
+    with open_page(browser, out) as page:
+        _open(page, slash=slash)
+        images = page.locator('.brand .brand-logo')
+        assert images.count() == 2, '页眉、页脚都应使用同一品牌图'
+        assert images.evaluate_all('xs => xs.every(i => i.complete)')
+        assert images.evaluate_all('xs => xs.every(i => new URL(i.src).pathname === "/tools/image/img/logo.webp")')
+        if has_brand:
+            assert images.evaluate_all('xs => xs.every(i => i.naturalWidth > 0 && !i.hidden)')
+            assert page.locator('.brand .brand-text').evaluate_all('xs => xs.every(x => x.hidden)')
+        else:
+            assert images.evaluate_all('xs => xs.every(i => i.hidden && i.naturalWidth === 0)')
+            assert page.locator('.brand .brand-text').evaluate_all('xs => xs.every(x => !x.hidden)')
+        assert not any(url.split('?')[0] == page.base + '/logo.webp' for url in page.requests)
+
+
 STUB_CLIPBOARD = "window.__copied=null;navigator.clipboard.writeText=t=>{window.__copied=t;return Promise.resolve()}"
 
 
@@ -765,6 +789,24 @@ def test_images_load_for_every_card_with_and_without_trailing_slash(browser, bui
             assert bad == [], (scene, bad[:5])
 
 
+def _assert_no_retired_library_labels(page):
+    # 历史更新日志应保留原文；这里只检查用户当前操作的画风库。
+    live_text = page.locator('#library').inner_text()
+    for label in ('其余画风', '试用中'):
+        assert label not in live_text, label
+
+
+@pytest.mark.parametrize('label', ['其余画风', '试用中'])
+def test_retired_label_check_rejects_visible_library_controls(browser, built, label):
+    d, _ = built
+    with open_page(browser, d) as page:
+        _open(page)
+        _assert_no_retired_library_labels(page)
+        page.eval_on_selector('#library', '(el, text) => { const b = document.createElement("button"); b.textContent = text; el.append(b); }', label)
+        with pytest.raises(AssertionError, match=label):
+            _assert_no_retired_library_labels(page)
+
+
 def test_each_use_shows_its_pool_and_default_is_cover(browser, built):
     """用途页只放适合的画风；默认/旧全部链接回到封面；不再提供全部入口。"""
     d, html = built
@@ -778,14 +820,14 @@ def test_each_use_shows_its_pool_and_default_is_cover(browser, built):
             _open(page, f"#u={scene['id']}")
             assert _visible(page) == set(scene["pool"]), scene["id"]
             assert page.locator("#lib-grid > li:not([hidden])").count() == len(scene["pool"]), scene["id"]
-            assert "其余画风" not in page.content(), scene["id"]
+            _assert_no_retired_library_labels(page)
         cover = next(sc for sc in meta["scenes"] if sc["id"] == "wxcover")
         for frag in ("", "#u=all", "#u=unknown"):
             _open(page, frag)
             assert _visible(page) == set(cover["pool"])
             assert page.locator('#lib-scenes .chip[data-scene="all"]').count() == 0
             assert page.get_attribute('#lib-scenes .chip[data-scene="wxcover"]', "aria-pressed") == "true"
-        assert "试用中" not in page.content()
+        _assert_no_retired_library_labels(page)
 
 
 def test_copied_code_roundtrips_defaults_and_modes(browser, built):
@@ -808,7 +850,7 @@ def test_copied_code_roundtrips_defaults_and_modes(browser, built):
         sc = SC.parse(code)
         assert (sc.scene, sc.style, sc.palette, sc.light, sc.sat) == ("xhs", free, pal, -1, 1) and SC.validate(sc) == []
         assert SC.find(line) == [code]  # 整句里只有一个完整有效码
-        expected = f"用叁笙生图帮我出一组{xhs['name']}图：画风 {free} {cands[free]['name']}，色系「{pals[pal]['name']}」（{code}）。内容是："
+        expected = f"用叁笙生图帮我出一组{xhs['name']}：画风 {free} {cands[free]['name']}，色系「{pals[pal]['name']}」（{code}）。内容是："
         assert line == expected
 
         # 只用一次：复制出去的就是页面上显示的整句
@@ -915,7 +957,7 @@ _HIDDEN_PALS = """(() => { const box = document.getElementById('lib-palettes'), 
     return c.hidden || r.bottom > bb.bottom + 1 || r.right > bb.right + 1 || r.left < bb.left - 1; }).map(c => c.dataset.pal); })()"""
 
 
-@pytest.mark.parametrize("width", [1920, 1440, 1000, 360])
+@pytest.mark.parametrize("width", [1920, 1440, 1000, 390, 360, 320])
 def test_every_palette_chip_is_reachable_when_folded(browser, built, width):
     """默认单排，展开全部；非推荐项收起、刷新和改变宽度后仍可见，隐藏项不接受键盘焦点。"""
     d, _ = built
