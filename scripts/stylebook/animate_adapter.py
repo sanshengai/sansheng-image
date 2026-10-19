@@ -1,4 +1,7 @@
-"""叁笙生图「动态版」同 Skill 适配器 v2（阶段 4.10 候选）：sb.py animate <doctor|plan|render|qa> ... 的唯一后端。
+"""叁笙生图动态入口：wake 为原图到动态流程，其余子命令兼容已有工程。
+
+显式 `wake` 请求才延迟加载 wake_workflow，由该模块管理独立外部运行环境。
+下面的 v2 协议与无网络/无写入约束指已有 HyperFrames 适配部分，不适用于 wake 制作流程。
 
 v1 的缺口：适配器先 load_manifest 校验 scene，再交 pipeline.main()，main 内部又读一次 manifest；
 两次读取之间磁盘文件可被换成 ppt / music，白名单被绕过。v2 的做法：
@@ -86,6 +89,10 @@ def main(argv: Sequence[str], *, pipeline_module=None) -> int:
     if bad:
         return _fail(f"argv 的每个元素都必须是字符串，第 {bad[0]} 个是 {type(argv[bad[0]]).__name__}")
     args_list = list(argv)
+    if args_list and args_list[0] == "wake":
+        # Full image-to-motion workflow is opt-in; static commands never import or configure it.
+        from stylebook import wake_workflow
+        return wake_workflow.main(args_list[1:])
     if args_list and args_list[0] == ASSETS_COMMAND:
         # 资源导出只复制包内动作库，不读 manifest、不加载渲染底座，也不经过四场景校验
         from stylebook import motion_assets

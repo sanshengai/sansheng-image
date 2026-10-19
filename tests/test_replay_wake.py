@@ -42,6 +42,32 @@ class ReplayWakeTests(unittest.TestCase):
         self.assertEqual(report["commands"][0][2], str(self.out.resolve() / "src"))
         self.assertEqual((self.src / "index.html").read_text(), "prepared source")
 
+    def test_actual_fps_is_shared_by_reset_encode_and_qa(self):
+        code, output = self.run_cli("--plan", "--reset", "paper", "--fps", "24")
+        self.assertEqual(code, 0)
+        commands = json.loads(output)["commands"]
+        timed = [c for c in commands if "--fps" in c]
+        self.assertEqual(len(timed), 3)
+        self.assertTrue(all(c[c.index("--fps") + 1] == "24.0" for c in timed))
+
+    def test_invalid_fps_is_rejected_without_output(self):
+        for fps in ("nan", "0", "121"):
+            code, _ = self.run_cli("--fps", fps)
+            self.assertEqual(code, 2)
+        self.assertFalse(self.out.exists())
+
+    def test_other_upstream_transition_is_forwarded_without_shell_syntax(self):
+        code, output = self.run_cli("--plan", "--reset", "dissolve")
+        self.assertEqual(code, 0)
+        commands = json.loads(output)["commands"]
+        reset = next(c for c in commands if "--kind" in c)
+        self.assertEqual(reset[reset.index("--kind") + 1], "dissolve")
+        for value in ("../paper", "paper;echo", ""):
+            with self.subTest(value=value):
+                code, _ = self.run_cli("--plan", "--reset", value)
+                self.assertEqual(code, 2)
+        self.assertFalse(self.out.exists())
+
     def test_existing_output_is_never_overwritten(self):
         self.out.mkdir()
         marker = self.out / "keep.txt"

@@ -5,7 +5,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -17,10 +19,11 @@ def main(argv=None):
     ap.add_argument("project", type=Path, help="prepared source directory containing index.html")
     ap.add_argument("--wake-skill", required=True, type=Path, help="external skills/wake directory")
     ap.add_argument("--out", required=True, type=Path, help="new output directory; never overwritten")
-    ap.add_argument("--reset", choices=("none", "paper"), default="none")
+    ap.add_argument("--reset", default="none", help="none or a transition name from the pinned upstream reset.py --list")
     ap.add_argument("--hold", type=float, default=0.7)
     ap.add_argument("--transition", type=float, default=0.6)
     ap.add_argument("--stills", type=float, nargs="+", default=[0.0], help="review times in seconds within the project duration")
+    ap.add_argument("--fps", type=float, default=30, help="actual render fps; used consistently by reset, encode and QA")
     ap.add_argument("--plan", action="store_true", help="check inputs and show commands without writing")
     a = ap.parse_args(argv)
     src, skill, out = (p.expanduser().resolve() for p in (a.project, a.wake_skill, a.out))
@@ -36,8 +39,12 @@ def main(argv=None):
             raise ValueError("input and output must be separate, non-nested directories")
         if not 0 <= a.hold <= 5 or not 0 < a.transition <= 3:
             raise ValueError("hold must be 0..5 seconds; transition must be >0..3 seconds")
+        if not re.fullmatch(r"[a-z][a-z0-9_-]*", a.reset):
+            raise ValueError("reset must be a transition name; see upstream reset.py --list")
         if any(not 0 <= t < float("inf") for t in a.stills):
             raise ValueError("still times must be finite and nonnegative")
+        if not math.isfinite(a.fps) or not 0 < a.fps <= 120:
+            raise ValueError("fps must be finite and >0..120")
         for tool in ("node", "uv", "ffmpeg", "ffprobe"):
             if not shutil.which(tool):
                 raise ValueError(f"missing dependency: {tool}")
@@ -51,14 +58,14 @@ def main(argv=None):
         if a.reset != "none":
             commands.append(["uv", "run", "--quiet", "--script", str(skill / "scripts/reset.py"),
                              str(dest / "frames"), "--kind", a.reset, "--dur", str(a.transition),
-                             "--pre-hold", str(a.hold), "--seed", "18"])
+                             "--pre-hold", str(a.hold), "--seed", "18", "--fps", str(a.fps)])
         commands.extend([
-            ["uv", "run", "--quiet", "--script", str(skill / "scripts/encode.py"), str(frames), str(stem), "--no-sticker"],
+            ["uv", "run", "--quiet", "--script", str(skill / "scripts/encode.py"), str(frames), str(stem), "--no-sticker", "--fps", str(a.fps)],
             ["uv", "run", "--quiet", "--script", str(skill / "scripts/qa.py"), str(frames), "--src", str(dest),
-             "--encode", str(stem) + ".encode.json", "--json", str(out / "qa.json")],
+             "--encode", str(stem) + ".encode.json", "--json", str(out / "qa.json"), "--fps", str(a.fps)],
         ])
         # Exclude only known generated outputs; retain every source resource and local font.
-        omitted = {"frames", "frames_loop", "stills", "render.log", "qa_sheet.jpg", "__pycache__"}
+        omitted = {"frames", "frames_loop", "stills", "render.log", "qa_sheet.jpg", "__pycache__", ".DS_Store"}
         sources = {}
         for p in sorted(src.rglob("*")):
             rel = p.relative_to(src)

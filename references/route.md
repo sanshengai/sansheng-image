@@ -14,9 +14,9 @@
 | 漫画、四格、条漫、知识漫画 | [scenes/comic.md](scenes/comic.md) | comic-* |
 | AI 短剧分镜、视频分镜首帧、角色三视图 | [scenes/storyboard.md](scenes/storyboard.md) | storyboard-frame |
 | 绘本、音乐或播客封面、教材单词与语法、贴纸 | [quick.md](quick.md) 与 `scenes/scenes.json` | 见 formats |
-| **仅当用户明确要动态版**（做成动的、动图、短视频版） | [motion-scenes.md](motion-scenes.md) | article / infographic / xiaohongshu；brand 只做原创品牌动态示范 |
+| **仅当用户明确要动态版**（做成动的、动图、短视频版） | [motion-wake.md](motion-wake.md) | 从原图到成片；复用静态图与原文，现有工程保留原渲染方法 |
 
-动态版是附加流程：先按上表读对应静态手册；已有同一内容且已采用的静态图时直接复用，缺图或内容确需改变时才制作相应静态图。用户明确要动态才再读 motion-scenes.md。没有明确要求，一律走静态，不主动改成动态。PPT 与音乐封面的动态不开放，仍出静态图。
+动态版是附加流程：先按上表读对应静态手册；已有同一内容且已采用的静态图时直接复用，缺图或内容确需改变时才制作相应静态图。用户明确要动态才读 motion-wake.md。没有明确要求，一律走静态，不主动改成动态。PPT 与音乐封面的动态不开放，仍出静态图。展示类别用于找作品；制作方法按媒材、结构和素材条件选择，不按类别凑模板。
 
 ## 第二步：共享库（场景手册会点名，按需读）
 

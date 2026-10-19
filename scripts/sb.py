@@ -37,6 +37,7 @@
   animate  <doctor|plan|render|qa> ...   四场景动态版（本机渲染与验收）
   animate  assets --out 新目录          导出原创动作库
   animate  dialect --style 画风码       读取该画风的动作语言建议
+  animate  wake <setup|init|preview|render|review|status|tool|doctor> ...  原图到动态（可选）
 """
 from __future__ import annotations
 
@@ -880,7 +881,7 @@ def main(argv=None) -> int:
     p = sub.add_parser("layers"); p.add_argument("brief"); p.add_argument("-o", "--out", required=True)
     p.add_argument("--prepare", action="store_true"); p.add_argument("--import-results"); p.add_argument("--prepared")
     p.set_defaults(fn=cmd_layers)
-    p = sub.add_parser("animate"); p.add_argument("rest", nargs=argparse.REMAINDER, help="doctor|plan|render|qa|assets|dialect 及其参数")
+    p = sub.add_parser("animate"); p.add_argument("rest", nargs=argparse.REMAINDER, help="wake|doctor|plan|render|qa|assets|dialect 及其参数")
     p.set_defaults(fn=cmd_animate)
     p = sub.add_parser("batch"); p.add_argument("plan"); p.add_argument("-o", "--out", required=True)
     p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality"); p.add_argument("--retries", type=int, default=2)

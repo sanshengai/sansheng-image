@@ -101,7 +101,7 @@ Artist, studio and work names in the contracts (`inspiration.names`) and in the 
 
 ## Motion edition: runtime dependencies (not bundled)
 
-The optional motion edition (`sb.py animate`, see `references/motion-scenes.md`) uses these tools at run time. None of them is bundled in this repository or downloaded automatically; users install them and `sb.py animate doctor` checks they are present.
+The compatible HyperFrames motion edition (`sb.py animate`, see `references/motion-scenes.md`) uses these tools at run time. None of them is bundled in this repository or downloaded automatically; users install them and `sb.py animate doctor` checks they are present. The opt-in `animate wake` workflow below has its own runtime setup and does not require HyperFrames.
 
 - **HyperFrames** (Apache License 2.0) — version 0.8.140 is the supported version. It is invoked as an external command-line program that renders a local HTML project. No HyperFrames source or binary is copied into this repository.
 - **Node.js 22+**, **ffmpeg** and **ffprobe**, and a local render browser (Chrome or chrome-headless-shell) — separate programs under their own licenses, installed by the user.
@@ -129,9 +129,16 @@ https://github.com/lemomo-ai/lemo-wake — author: Lemomo. The optional workflow
 CC BY-NC 4.0; consult the actual upstream files and asset licenses before use or
 redistribution. Our MIT license does not relicense that external material.
 
-`scripts/replay_wake.py` is our own invocation wrapper. It calls the user's
-separately obtained upstream scripts; no upstream choreography, scripts, models,
-fonts or demonstration projects are copied into this package. Local research
+`scripts/replay_wake.py`, `scripts/stylebook/wake_runtime.py`,
+`scripts/stylebook/wake_workflow.py` and the protocol inspector are our own
+invocation/orchestration code. `animate wake setup --install` optionally obtains
+the fixed upstream source into a separate runtime directory, retains its original
+LICENSE and verifies the selected source hashes in `references/wake-upstream.json`.
+It is not registered as a second Skill. Node dependencies are installed there;
+model downloads are separate, task-dependent upstream operations. No upstream
+choreography, scripts, models, fonts or demonstration projects are copied into
+this package. Generated projects record the upstream author, revision and license
+in `UPSTREAM.md`; their copied templates retain the upstream terms. Local research
 adaptations and their artwork are not included in the public package. Public
-showcase films require their own source and license review; using external tools
-does not automatically authorize commercial use or redistribution.
+showcase films require their own source and license review; external execution
+does not remove the noncommercial restriction or authorize redistribution.

@@ -108,7 +108,8 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 | Codex 订阅额度出图（默认）、按张付费服务（显式备用） | 可用；Codex 单张约 45–100 秒，比中转服务慢，但不额外花钱 |
 | 成长飞轮（自动记录选择 / 采用 / 返修，同向 3 个任务问一次） | 已实现；长期效果仍需连续使用验证 |
 | 横版动态插图（公众号正文与 X） | 首批三支原创成片已获采用，三支 GIF 与三支 MP4 已通过 X 桌面草稿上传预览；公众号已验证旧版单支正文 GIF 手机预览，新三支仍待手机反馈。不推及自动发布接口；小红书 GIF 图文路线尚未核实；PPT、封面和静态视频首帧不属于本批动态用途 |
-| 跨设备记忆同步、视频、Logo | 当前未提供 |
+| 统一动态制作 `animate wake`（未发布功能） | 已接通固定上游环境、备料、确定性预览、导出及返修记录；已完成真实工程和静态编译继承回归。新图仍逐片制作与审片，不因接入而自动达到画廊质量 |
+| 跨设备记忆同步、完整视频制作、Logo | 当前未提供 |
 
 当前准入为 C91–C98 共 8 款；场景覆盖 344 项、配色覆盖 108 项完成，原始失败题、返修链和限制保留。其余 73 款仍待准入，画廊可选不等于实际用途已经验收。
 
@@ -122,7 +123,7 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 
 2026-10-19，首批三支成片的 960×540 GIF 与 1280×720 MP4 均已在 X 桌面草稿完成上传和预览，未发帖；手机端及发布后的转码结果未验证。2026-10-18，一支旧版 960×540 的《一条信息如何核验》GIF 已由用户在公众号正文手机预览中确认可正常播放、文字清楚；该反馈只绑定当时的文件，新三支仍待手机预览反馈，自动上传接口也未验证。小红书普通 GIF 图文仍未核实；本批不宣传 PPT、封面或视频关键帧的动态用途。
 
-动态制作有两条可选路径。沿用已认可的 lemo-wake 方法时，按 [外部成熟动态方法](./references/motion-wake.md) 先读上游、选动作并准备素材和工程，再用 `python3 scripts/replay_wake.py <src> --wake-skill <外部skills/wake目录> --out <新目录>` 导出。此路径需要 Node.js、上游 Playwright/浏览器环境、uv、ffmpeg/ffprobe，**不要求 HyperFrames**。脚本只复跑准备好的工程，不会自动把任意图片变成满意动画；上游代码与素材不随本包分发，CC BY-NC 4.0 等许可单独适用。
+动态版统一从 `python3 scripts/sb.py animate wake` 进入：当前 Agent 承接原文、画风与色系，先选图和备料，再设计动作、预览、渲染与审片返修。首次使用由 Agent 执行 `animate wake setup --install` 和 `animate wake doctor`，固定版本的 lemo-wake 作为独立运行依赖保存，用户仍只使用一个 Skill。输出含原图与动态紧邻对照、自动循环的审阅页；通过技术检查仍是待审候选，不能保证任意图片都适合做动画。完整步骤及实验差异见 [动态制作](./references/motion-wake.md)。此路径需要 Node.js 18+、上游 Playwright/浏览器环境、uv、ffmpeg/ffprobe，**不要求 HyperFrames**；静态出图不加载它。上游代码与素材不随本包分发，CC BY-NC 4.0 等许可单独适用。已有工程仍兼容下方 HyperFrames 路径及 `scripts/replay_wake.py`。
 
 下面保留原 HyperFrames 路径的依赖和命令，已有工程可继续使用：
 
@@ -132,7 +133,7 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 - 只接受 `brand`（原创品牌动态示范）/ `article` / `infographic` / `xiaohongshu` 四种 scene；其他 scene 与 PPT、音乐封面格式一律拒绝。
 - 渲染在本机完成，不联网、不调用付费出图服务；静态图与分件图仍按原有方式出图，有内置生图工具时先 `--prepare`、用当前会话的内置工具出图、再 `--import-results`。分件抠图只用项目自带的颜色键代码，不调用系统自带的 Vision 工具，也没有自动 Vision 回退。
 - 许可：HyperFrames 为 Apache 2.0 的外部运行依赖，不随本仓分发；颜色键模块 `cutlib` 是本项目原创的 MIT 代码。详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
-- 本地测试：`python3 -I -m unittest discover -s tests -v`。真实渲染的可选测试读取环境变量 `HYPERFRAMES_CLI`（或项目自装的 `node_modules`），缺工具会明确跳过。真实动画测试还需本地 GSAP，可用 `GSAP_JS_PATH` 指定 `gsap.min.js`；不会从 CDN 下载。
+- 本地测试：`python3 -m pytest tests -q`。真实渲染的可选测试读取环境变量 `HYPERFRAMES_CLI`（或项目自装的 `node_modules`），缺工具会明确跳过。真实动画测试还需本地 GSAP，可用 `GSAP_JS_PATH` 指定 `gsap.min.js`；不会从 CDN 下载。
 
 ## 参与贡献
 
