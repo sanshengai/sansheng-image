@@ -298,9 +298,19 @@ def test_single_placeholder_is_enforced(tmp_path, monkeypatch):
 
 def test_page_is_small_and_images_are_external(built):
     d, html = built
-    assert html.stat().st_size < 250_000, "页面本体应只含文字与数据"
+    # 包内完整版本记录随页面分发，保留 300 KB 文本预算；图片仍必须外链。
+    assert 0 < html.stat().st_size < 300_000, "页面本体应只含文字与数据，且不超过 300 KB"
     assert len(list((d / "img").glob("*.webp"))) >= 57 * 3
     assert "data:image" not in html.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("content", ["", "x" * 300_000], ids=["empty", "oversized"])
+def test_page_size_guard_rejects_empty_and_oversized_output(tmp_path, content):
+    html = tmp_path / "index.html"
+    html.write_text(content, encoding="utf-8")
+    # 直接调用同一被测路径，确认空输出和超预算输出不能因后续图片断言而假绿。
+    with pytest.raises(AssertionError, match="300 KB"):
+        test_page_is_small_and_images_are_external((tmp_path, html))
 
 
 def test_public_page_has_no_private_styles(built):
@@ -420,7 +430,9 @@ def test_embedded_data_matches_registry_and_manifest(built):
     assert {m["id"] for m in meta["heroMotion"]} == set(PINNED_HERO_MOTION) & set(motion)
 
     plugin = json.loads((BD.CT.ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
-    assert meta["site"] == {"pkgVersion": plugin["version"], "releases": SITE_URL + "/releases"}
+    assert meta["site"] == {"pkgVersion": plugin["version"], "releases": SITE_URL + "/releases",
+                            "changelog": BD._release_history(plugin["version"])}
+    assert meta["site"]["changelog"][0]["version"] == plugin["version"]
 
 
 def test_manifest_lists_every_image_the_page_can_request(built):
@@ -1022,10 +1034,22 @@ def test_hero_github_button_install_commands_and_origin_wording(browser, built):
         assert SITE_URL in page.inner_text("#install-ask")
         assert f"git clone {SITE_URL}.git" in page.text_content("#install-git")  # 折叠在「其他装法」里，读文本不要求可见
         assert "与相关创作者无关联" in page.inner_text(".foot-note")
-        assert page.locator(".foot-links a").count() == 4
+        assert page.locator(".foot-links a").count() == 3
+        assert page.locator(".foot-links button").count() == 1
         assert page.locator("#product-version").inner_text() == "v" + meta["site"]["pkgVersion"]
-        assert page.get_attribute("#product-version", "href") == meta["site"]["releases"]
-        assert page.get_attribute("#releases-link", "href") == meta["site"]["releases"]
+        for trigger in ("#product-version", "#releases-link"):
+            before = page.url
+            assert page.get_attribute(trigger, "href") is None
+            page.click(trigger)
+            page.wait_for_selector("#release-dialog[open]")
+            assert page.url == before
+            versions = meta["site"]["changelog"]
+            assert page.locator("#release-nav [role=tab]").count() == len(versions)
+            page.locator("#release-tab-0").press("ArrowDown")
+            assert page.locator("#release-panel h3").inner_text() == "v" + versions[1]["version"]
+            page.keyboard.press("Escape")
+            assert not page.locator("#release-dialog").is_visible()
+            assert page.locator(trigger).evaluate("e => e === document.activeElement")
 
         with_origin = next(c for c in meta["cands"] if c.get("origin"))
         _open(page, f"#s={with_origin['id']}")
@@ -1352,7 +1376,9 @@ def test_missing_optional_data_has_explicit_fallbacks(browser, tmp_path, monkeyp
         assert page.locator("#github-btn .star").is_hidden()                          # 没有星数快照就只显示 GitHub
         assert page.locator("#pkg-ver-wrap").is_hidden()                              # 读不到版本就不写版本
         assert page.locator("#product-version").is_hidden()
-        assert page.get_attribute("#releases-link", "href") == SITE_URL + "/releases"
+        page.click("#releases-link")
+        assert "暂无已发布的更新记录" in page.locator("#release-panel").inner_text()
+        page.keyboard.press("Escape")
 
 
 # ---------------- 动态降级与减少动态效果（真实浏览器） ----------------

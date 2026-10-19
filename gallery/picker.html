@@ -452,7 +452,7 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .product-zh { font: 700 17px/1 var(--serif); color: var(--strong); letter-spacing: .04em; }
 .product-en { font: italic 14px/1 var(--latin); color: var(--mut); }
 .product-lockup { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
-.product-version { flex: none; padding: 4px 7px; border: 1px solid var(--line-2); border-radius: 6px; color: var(--mut); font: 11px/1.2 var(--mono); text-decoration: none; }
+.product-version { flex: none; padding: 4px 7px; border: 1px solid var(--line-2); border-radius: 6px; background: transparent; color: var(--mut); font: 11px/1.2 var(--mono); cursor: pointer; }
 .product-version:hover { color: var(--strong); border-color: var(--green); }
 .nav-links { margin-left: auto; display: flex; gap: 4px; }
 .nav-links a { padding: 6px 12px; font-size: 14px; color: var(--fg); text-decoration: none; border-radius: 999px; }
@@ -608,10 +608,45 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 .foot-links { font-size: 14px; gap: 4px 24px; }
 .foot-links a { color: var(--fg); text-decoration: none; }
 .foot-links a:hover { color: var(--strong); }
+.foot-links button { display: inline-flex; min-height: 36px; align-items: center; padding: 0; border: 0; background: transparent; color: var(--fg); font: inherit; cursor: pointer; }
+.foot-links button:hover { color: var(--strong); }
 .foot-text { display: inline-flex; min-height: 36px; align-items: center; color: var(--mut); }
 .foot-bottom { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; }
 .foot-bottom a { color: var(--mut); font-size: 12px; text-underline-offset: 3px; }
 .foot-note { margin-top: 0; font-size: 12px; }
+
+/* 更新记录随页面分发，查看历史版本不依赖外部网站。 */
+.release-dialog { width: min(820px, calc(100vw - 24px)); }
+.release-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 24px 24px 20px; border-bottom: 1px solid var(--line); }
+.release-kicker { margin: 0 0 6px; color: var(--green); font: 12px/1.5 var(--mono); }
+.release-head h2 { margin: 0; color: var(--strong); font: 700 27px/1.3 var(--serif); }
+.release-close { min-width: 44px; min-height: 44px; flex: none; }
+.release-body { display: grid; grid-template-columns: 160px minmax(0, 1fr); height: min(64dvh, 570px); }
+.release-nav { min-width: 0; overflow: auto; padding: 16px 12px; border-right: 1px solid var(--line); overscroll-behavior: contain; }
+.release-tab { display: block; width: 100%; padding: 10px 12px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--fg); text-align: left; cursor: pointer; }
+.release-tab span { display: block; color: inherit; font: 13px/1.6 var(--mono); }
+.release-tab small { display: block; color: var(--mut); font: 11px/1.5 var(--mono); white-space: nowrap; }
+.release-tab:hover { background: rgba(238,232,220,.04); }
+.release-tab[aria-selected="true"] { border-color: rgba(52,199,149,.35); background: rgba(52,199,149,.08); color: var(--strong); }
+.release-tab[aria-selected="true"] span { color: var(--green); }
+.release-panel { min-width: 0; overflow: auto; padding: 24px 28px 32px; overscroll-behavior: contain; }
+.release-panel h3 { margin: 0; color: var(--strong); font: 600 24px/1.4 var(--mono); }
+.release-date { margin: 4px 0 24px; color: var(--mut); font: 12px/1.6 var(--mono); }
+.release-notes { font-size: 14px; line-height: 1.85; overflow-wrap: anywhere; }
+.release-notes p { margin: 0 0 16px; }
+.release-notes ul, .release-notes ol { margin: 0 0 20px; padding-left: 1.4em; }
+.release-notes li { margin-bottom: 10px; }
+.release-notes h4 { margin: 24px 0 10px; color: var(--strong); font-size: 15px; }
+.release-notes pre { white-space: pre-wrap; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font: 12px/1.7 var(--mono); }
+.release-empty { grid-column: 1 / -1; margin: 0; padding: 28px; }
+@media (max-width: 600px) {
+  .release-head { padding: 18px 18px 16px; gap: 12px; }
+  .release-head h2 { font-size: 23px; }
+  .release-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); height: min(69dvh, 620px); }
+  .release-nav { display: flex; gap: 6px; padding: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .release-tab { flex: none; width: auto; min-width: 108px; }
+  .release-panel { padding: 20px 20px 26px; }
+}
 
 @media (max-width: 1080px) {
   .nav-links { display: none; }
@@ -677,7 +712,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     <span class="nav-sep" aria-hidden="true"></span>
     <div class="product-lockup">
       <a class="product" href="#top"><span class="product-zh">叁笙生图</span><span class="product-en">Sansheng Image</span></a>
-      <a class="product-version" id="product-version" href="https://github.com/sanshengai/sansheng-image/releases" aria-label="查看版本与更新日志" hidden></a>
+      <button class="product-version" id="product-version" type="button" aria-haspopup="dialog" aria-controls="release-dialog" aria-label="查看版本与更新日志" hidden></button>
     </div>
     <div class="nav-links">
       <a href="#library">画风库</a>
@@ -855,7 +890,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     </a>
     <nav class="foot-links" aria-label="页脚链接">
       <a href="https://github.com/sanshengai/sansheng-image" target="_blank" rel="noopener">GitHub</a>
-      <a id="releases-link" href="https://github.com/sanshengai/sansheng-image/releases" target="_blank" rel="noopener">更新日志</a>
+      <button id="releases-link" type="button" aria-haspopup="dialog" aria-controls="release-dialog">更新日志</button>
       <a href="/tools/github/repo/sanshengai/sansheng-image/">国内下载</a>
       <a href="/tools/image/feedback/">反馈与共建</a>
     </nav>
@@ -867,6 +902,17 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 </footer>
 
 </div>
+
+<dialog class="release-dialog" id="release-dialog" aria-labelledby="release-title">
+  <div class="release-head">
+    <div><p class="release-kicker" id="release-current"></p><h2 id="release-title">版本更新</h2></div>
+    <button class="btn btn-small release-close" id="release-close" type="button" autofocus>关闭</button>
+  </div>
+  <div class="release-body" id="release-body">
+    <div class="release-nav" id="release-nav" role="tablist" aria-label="已发布版本" aria-orientation="vertical"></div>
+    <section class="release-panel" id="release-panel" role="tabpanel" tabindex="0"></section>
+  </div>
+</dialog>
 
 <dialog id="dlg" aria-labelledby="dlg-title">
   <div class="dlg-in" id="dlg-in">
@@ -1566,6 +1612,84 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     sc.textContent = txt;
     if (!txt) sc.parentNode.style.display = 'none';
   }
+  function releaseText(text) {
+    return text.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/`([^`]+)`/g, '$1');
+  }
+  function releaseNotes(text) {
+    var box = h('div', {class: 'release-notes'}), list = null, paragraph = [], code = null;
+    function flush() {
+      if (paragraph.length) box.appendChild(h('p', {text: releaseText(paragraph.join(' '))}));
+      paragraph = []; list = null;
+    }
+    text.split('\n').forEach(function (line) {
+      if (/^\s*```/.test(line)) {
+        flush();
+        if (code !== null) { box.appendChild(h('pre', {}, [h('code', {text: code.join('\n')})])); code = null; }
+        else code = [];
+      } else if (code !== null) code.push(line);
+      else if (!line.trim()) flush();
+      else if (/^#{3,6}\s+/.test(line)) { flush(); box.appendChild(h('h4', {text: releaseText(line.replace(/^#+\s+/, ''))})); }
+      else {
+        var bullet = /^\s*(?:([-*])|\d+\.)\s+(.+)$/.exec(line);
+        if (bullet) {
+          if (paragraph.length) flush();
+          var tag = bullet[1] ? 'ul' : 'ol';
+          if (!list || list.tagName.toLowerCase() !== tag) { list = h(tag); box.appendChild(list); }
+          list.appendChild(h('li', {text: releaseText(bullet[2])}));
+        } else { if (list) list = null; paragraph.push(line.trim()); }
+      }
+    });
+    flush();
+    if (code !== null) box.appendChild(h('pre', {}, [h('code', {text: code.join('\n')})]));
+    return box;
+  }
+  function setupReleaseHistory(site, version) {
+    var dialog = $('#release-dialog'), nav = $('#release-nav'), panel = $('#release-panel'), opener = null;
+    var entries = Array.isArray(site.changelog) ? site.changelog.filter(function (r) {
+      return r && /^\d+\.\d+\.\d+$/.test(r.version) && /^\d{4}-\d{2}-\d{2}$/.test(r.date) && typeof r.notes === 'string';
+    }) : [];
+    $('#release-current').textContent = version ? '当前版本 v' + version : '叁笙生图 · 更新记录';
+    var tabs = entries.map(function (entry, index) {
+      var button = h('button', {class: 'release-tab', type: 'button', id: 'release-tab-' + index,
+        role: 'tab', 'aria-controls': 'release-panel', 'aria-selected': index === 0 ? 'true' : 'false', tabindex: index === 0 ? '0' : '-1'},
+        [h('span', {text: 'v' + entry.version}), h('small', {text: entry.date})]);
+      button.addEventListener('click', function () { select(index); });
+      button.addEventListener('keydown', function (event) {
+        var next = index;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (index + 1) % entries.length;
+        else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = (index + entries.length - 1) % entries.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = entries.length - 1;
+        else return;
+        event.preventDefault(); select(next); tabs[next].focus(); tabs[next].scrollIntoView({block: 'nearest', inline: 'nearest'});
+      });
+      nav.appendChild(button); return button;
+    });
+    function select(index) {
+      tabs.forEach(function (button, n) { button.setAttribute('aria-selected', n === index ? 'true' : 'false'); button.tabIndex = n === index ? 0 : -1; });
+      var entry = entries[index];
+      panel.replaceChildren(h('h3', {text: 'v' + entry.version}), h('p', {class: 'release-date', text: entry.date}), releaseNotes(entry.notes));
+      panel.setAttribute('aria-labelledby', tabs[index].id); panel.scrollTop = 0;
+    }
+    if (entries.length) select(0);
+    else { nav.hidden = true; panel.classList.add('release-empty'); panel.removeAttribute('aria-labelledby'); panel.textContent = '当前安装包暂无已发布的更新记录。'; }
+    function open(event) {
+      opener = event.currentTarget;
+      nav.setAttribute('aria-orientation', window.matchMedia('(max-width: 600px)').matches ? 'horizontal' : 'vertical');
+      document.documentElement.classList.add('lock'); dialog.showModal();
+    }
+    $('#product-version').addEventListener('click', open); $('#releases-link').addEventListener('click', open);
+    $('#release-close').addEventListener('click', function () { dialog.close(); });
+    dialog.addEventListener('click', function (event) {
+      if (event.target !== dialog) return;
+      var rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+    });
+    dialog.addEventListener('close', function () {
+      document.documentElement.classList.remove('lock');
+      if (opener) opener.focus({preventScroll: true});
+    });
+  }
   function fillSite(d) {
     var site = d.site || {};
     var ver = typeof site.pkgVersion === 'string' ? site.pkgVersion.trim() : '';
@@ -1576,10 +1700,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       badge.setAttribute('aria-label', '当前版本 v' + ver + '，查看更新日志');
       badge.hidden = false;
     }
-    if (typeof site.releases === 'string' && /^https:\/\/github\.com\//.test(site.releases)) {
-      $('#releases-link').href = site.releases;
-      $('#product-version').href = site.releases;
-    }
+    setupReleaseHistory(site, ver);
   }
 
   /* 画风库卡片用真实场景样图：「全部」时相邻卡片轮换不同用途，选了场景就换成该场景的样图；同题沙发猫只作最后兜底 */

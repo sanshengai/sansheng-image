@@ -328,6 +328,28 @@ def _package_version() -> str:
     return v if isinstance(v, str) and re.fullmatch(r"\d+\.\d+\.\d+", v) else ""
 
 
+def _release_history(version: str) -> list[dict]:
+    """把包内已发布记录带进页面；未发布和高于当前包的记录不展示。"""
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        return []
+    path = CT.ROOT / "CHANGELOG.md"
+    if not path.is_file():
+        return []
+    ceiling = tuple(map(int, version.split(".")))
+    entries, current = [], None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            current = None
+            match = re.fullmatch(r"## \[(\d+\.\d+\.\d+)\] -- (\d{4}-\d{2}-\d{2})", line)
+            if match and tuple(map(int, match[1].split("."))) <= ceiling:
+                current = {"version": match[1], "date": match[2], "notes": []}
+                entries.append(current)
+        elif current is not None:
+            current["notes"].append(line)
+    out = [{**entry, "notes": "\n".join(entry["notes"]).strip()} for entry in entries]
+    return sorted(out, key=lambda entry: tuple(map(int, entry["version"].split("."))), reverse=True)
+
+
 def _scene_image(sample: str, default: str, pool: list[str], have: dict[str, list[str]]) -> tuple[str, str]:
     """场景墙配图：默认画风优先，没有就用池里第一个有样图的；种类按页面 sampleKindFor 同一顺序。无图返回 ("", "")。"""
     group = next((g for g, ks in IMG_GROUP_KINDS.items() if sample.split("-")[0] in ks), None)
@@ -548,6 +570,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
                "samples": sum(not name.endswith("-anchor.webp") for name in expected_imgs)}  # 实测样图不含公版原作参考图；品牌图尚未加入
     expected_imgs.extend(hero_names)
     expected_imgs.extend(BRAND_IMAGES)  # 品牌图也是页面引用的图：官网投影检查据 manifest 核对图片目录
+    package_version = _package_version()
     meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
@@ -556,7 +579,8 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
             "heroMotion": [{"id": m["id"], "ratio": round(m["width"] / m["height"], 3)}  # 首屏近景浮图直接播放的动态版
                            for m in motion_plan.doc.get("items", []) if m["id"] in HERO_MOTION and m.get("width") and m.get("height")],
             **({"taxonomy": {k: tax[k] for k in TX.VOCAB_KEYS}} if tax else {}),
-            "site": {"pkgVersion": _package_version(), "releases": RELEASES_URL}}
+            "site": {"pkgVersion": package_version, "releases": RELEASES_URL,
+                     "changelog": _release_history(package_version)}}
     template = PICKER.read_text(encoding="utf-8")
     if template.count("__META__") != 1:
         raise ValueError(f"选择器模板里的 __META__ 占位必须恰好出现一次（现在 {template.count('__META__')} 次）")
