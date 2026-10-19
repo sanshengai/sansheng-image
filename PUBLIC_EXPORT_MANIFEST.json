@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "file_count": 387,
+  "file_count": 388,
   "files": {
     ".claude-plugin/marketplace.json": "61fee3c76c8d6fc858cd3e91237881b2914cf7590ccd651f893762278c1f244d",
     ".claude-plugin/plugin.json": "acd6e41c5cbea69c8b81d333f81abc0ae579a1dda2cd141a7b1bad873dc84acb",
@@ -10,7 +10,7 @@
     ".github/ISSUE_TEMPLATE/recommend-style.yml": "27daa8a47a66e62f0ef11d6d444740a355167892a94cc70ab763bd2eb176fb08",
     ".gitignore": "86e3dc1cff2235c60467904440b18ea6e3fc28a97c8e706fd53c0ca313d7b2e6",
     "ASSET_PROVENANCE.md": "2fe6e48d924aa644288d5c3c3d8513629d62c8d7707aa14767458555b79fbbb5",
-    "CHANGELOG.md": "66e8db2f258fe22d777e780c905670a3e1bbac0abe922fefdda2ccc971201d76",
+    "CHANGELOG.md": "5d416d3c82e110a03c2208033b1b4ef63553ff1bdc145a3a587fcdf0fd451f42",
     "CONTRIBUTING.md": "ca719f87fe23ff93c1bc27e29a517f6edf0a72e9695faa89541065f1d38d017e",
     "LICENSE": "6937e1e2b14f7cedbc3ee68c7e1012a4b1e8269cb6d28fb5e61a75ccdd260667",
     "README.md": "4a685a30c523a3e6a66567ceaa1be18e4f80bbdefd2d5d8fc03d1f464e4e938c",
@@ -379,6 +379,7 @@
     "tests/test_qa_focus.py": "7f126e1d3266401d941ce04c7232685221be354c554a6cbf2f23f9af1a1668ef",
     "tests/test_qa_review_reliability.py": "34c34d06746ce1d5006382143f55d94c9d5910fbc59886f212eb1f430bd0c6b3",
     "tests/test_qa_sheet.py": "3a85c8921740651cce558fee7cc27bf1566f9ee118ce0b92c53c0076d1206f12",
+    "tests/test_release_history.py": "834ec195f811952a13c698395c0a17fcf663b5d825fd9cbb97fc2dcbb9f22dda",
     "tests/test_replay_wake.py": "190938f3ffa12f0781275ac7d33ae927bc1771fba11f2e769ce37981b253d21e",
     "tests/test_review_binding.py": "a7958c4a75c0e06334f4299fe23eb98ba202f1ff7cbad054d98f341dc925103c",
     "tests/test_sample_generation.py": "c31a31a0cca8f54eb53176a9b16ce548a9e3de64e55afbe40ae7d18068c6634f",
