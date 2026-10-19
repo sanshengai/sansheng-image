@@ -1,0 +1,71 @@
+{
+  "examples": [
+    {
+      "name": "city-light",
+      "case_id": "L01",
+      "method": "atmosphere",
+      "model": "claude-opus-5-5",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 8,
+      "source_kind": "AI-generated experiment image",
+      "state": "research-candidate; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "8fddbbfa215741cdaf3f5b854291c7c314ac847c043394f86ca48f8b6d674bb0",
+        "assets/serif.otf": "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f",
+        "assets/source.png": "2b2eec35c950c7a1a5c08aad79d2d52cdba8a73c9a017ec218573a1ec058db83",
+        "director.json": "de99d1e3f08c38f0992f197c9c48c43fc05b6223598bb1dc2180a72cd72b9550",
+        "index.html": "1b06f0ae0e9f034e4c91411f0e83a709931d46539d84e78ddd771eb340acc62b",
+        "timeline.jpg": "cb92ff482b20354a57c1a75e465750fdff64af5692485375ad5ca6cd99a00312"
+      }
+    },
+    {
+      "name": "spring-album",
+      "case_id": "P01",
+      "method": "material",
+      "model": "claude-opus-5-5",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 8,
+      "source_kind": "AI-generated experiment image",
+      "state": "research-candidate; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "04a02ff7ffc4a00a041c370b19493e978525c310a2e68e7f56b43c5abd7b1f0d",
+        "assets/serif.otf": "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f",
+        "assets/source.png": "d7ce4c4c8892eb7049690de6324823c94fe4f48141763ad49e24f4d0f9e4c4c0",
+        "director.json": "403671f8d460546851c97a2cef03f4465c7eb51c4601ad77b9982c697fd5a808",
+        "index.html": "0e1c931afccb08b9b5047927f0b89c2ca501f85b1068cfa9cb1d9ec3d991ab26",
+        "timeline.jpg": "44dbe9856ea34d5225fbf1eb73913d7cd9e8e6c1eaa2188ba87356de1b0b7983"
+      }
+    },
+    {
+      "name": "rainwater",
+      "case_id": "E01",
+      "method": "explanation",
+      "model": "claude-opus-5-5",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 8,
+      "source_kind": "AI-generated experiment image",
+      "state": "research-candidate; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "081df31bb2066513ab9e31385a7558e466fe71ad39fed2bc1247ebcb00f411dd",
+        "assets/serif.otf": "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f",
+        "assets/source.png": "4905bb9f513077652d1fc9afedb99e8678bb076c0ec329f05225ae52f80bd157",
+        "director.json": "de5f0612c1e530f3c1f8fd5f3057b86baaee82941bb671f32355b9e2bb863378",
+        "index.html": "b4b05f88cca78b95ec8972bf9ac18ca6b33036f8c4d202e19896b25df51a0c5a",
+        "timeline.jpg": "ad999918376c5632d01557ffcd2345d6061f2b6128ec0538a442f55b20832aa1"
+      }
+    }
+  ],
+  "upstream_revision": "f17890701dd3c782fe0e0a992fb5c2c12063194d",
+  "font": {
+    "name": "Noto Serif CJK SC Bold",
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/notofonts/noto-cjk/tree/main/Serif",
+    "note": "Existing local subset, copyright Adobe 2017–2024; original font name retained in name table."
+  }
+}

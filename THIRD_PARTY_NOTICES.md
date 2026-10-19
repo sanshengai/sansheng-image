@@ -1,5 +1,9 @@
 # Third-party notices
 
+## Motion example font
+
+`examples/motion/*/assets/serif.otf` contains the same existing subset of Noto Serif CJK SC Bold. Its name table records copyright © 2017–2024 Adobe. The subset is distributed under the SIL Open Font License 1.1, reproduced in `examples/motion/FONT-LICENSE.txt`; upstream: https://github.com/notofonts/noto-cjk/tree/main/Serif. It is not covered by this repository's MIT code license. The subset SHA-256 is recorded in `examples/motion/manifest.json` and checked by the public exporter.
+
 Some style recipes, format knowledge and workflow ideas in this project are adapted
 (rewritten, not copied wholesale) from the following MIT-licensed projects. Each adapted
 file names its source in its header. Their copyright and permission notices are reproduced

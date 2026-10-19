@@ -24,6 +24,15 @@ def test_plain_public_text_is_allowed():
     scan_text("README.md", "Choose a style and export a JSON selection.".encode())
 
 
+def test_only_reviewed_example_font_bytes_are_allowed():
+    name = "examples/motion/rainwater/assets/serif.otf"
+    raw = (Path(__file__).resolve().parents[1] / name).read_bytes()
+    scan_text(name, raw)
+    for changed in (b"", raw + b"changed", ("sk-" + "A" * 30).encode()):
+        with pytest.raises(ExportError, match="字体指纹"):
+            scan_text(name, changed)
+
+
 def test_hook_pattern_definition_is_ignored_but_other_lines_are_scanned():
     scan_text(".githooks/pre-commit", ("patterns='" + "sk-" + "A" * 30 + "'\nexit 0\n").encode())
     with pytest.raises(ExportError):

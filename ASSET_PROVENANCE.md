@@ -10,6 +10,8 @@ Style names in contracts (`inspiration.names`) credit the artists, studios and w
 
 Image provenance does not replace content and visual review before reuse.
 
+The three `examples/motion/` research candidates retain AI-generated experiment images, verbatim animation HTML returned by `claude-opus-5-5`, director notes and rendered key states. `examples/motion/manifest.json` binds the actual files and common output specification. Full original image-generation receipts are not included in this bundle; the examples do not certify user adoption, platform playback or a general quality improvement. The separately licensed font retains its OFL notice. No upstream lemo-wake source code is bundled.
+
 The README previews are unedited copies of project same-topic outputs: `assets/C01-story-sample.png` is C01-q1 (SHA-256 `acc2a9767da459bd743a59bb49833f043755b7eecf810e540a6792bf7b11aee9`), and `assets/C32-infographic-sample.png` is C32-q3 (SHA-256 `f41571c36d6a6a222c63464ea2ea6c3cff0b86e42f8635a7c7db4c43c1b1277b`). They show particular successful test images, not a guarantee for a different topic or a full series.
 
 The MIT license in `LICENSE` covers the repository's original code, text, and bundled project images to the extent the contributor has rights to license them. Third-party code and text retain the notices in `THIRD_PARTY_NOTICES.md`.

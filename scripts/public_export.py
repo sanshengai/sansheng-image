@@ -30,7 +30,10 @@ PUBLIC_FILES = {
     "scripts/replay_wake.py",
 }
 PUBLIC_DIRS = ("formats/", "palettes/", "references/", "scenes/",
-               "scripts/stylebook/", "structures/", "styles/", "tests/")
+               "scripts/stylebook/", "structures/", "styles/", "tests/", "examples/motion/")
+MOTION_FONT_FILES = {f"examples/motion/{case}/assets/serif.otf"
+                     for case in ("city-light", "spring-album", "rainwater")}
+MOTION_FONT_SHA256 = "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f"
 REQUIRED = {"SKILL.md", "README.md", "LICENSE", "requirements.txt",
             "styles/anchor-provenance.json", "registry.json"}
 FORBIDDEN = re.compile(
@@ -72,6 +75,11 @@ def select(entries: list[tuple[str, str]]) -> list[str]:
 
 
 def scan_text(name: str, raw: bytes) -> None:
+    if name in MOTION_FONT_FILES:
+        # Permit only the reviewed OFL subset, not arbitrary binary-looking uploads.
+        if hashlib.sha256(raw).hexdigest() != MOTION_FONT_SHA256:
+            raise ExportError(f"公开示例字体指纹不一致：{name}")
+        return
     if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif")):
         return
     try:

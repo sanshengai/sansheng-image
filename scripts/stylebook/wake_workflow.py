@@ -20,6 +20,7 @@ SCENES = {"article": "article", "wxillus": "article", "infographic": "infographi
 CHECKS = ("motion_value", "integrity", "causality", "composition", "legibility", "loop")
 GENERATED = {"frames", "frames_loop", "stills", "render.log", "qa_sheet.jpg", "__pycache__", ".DS_Store"}
 PREVIEW_FILES = {"timeline.jpg", "materials.jpg", "inspect.json"}
+FONT_MATERIALS = {".otf", ".ttf", ".woff", ".woff2"}
 RENDER_FILES = {"motion.mp4", "motion.gif", "motion.webp", "qa.json", "replay.json", "timeline.jpg", "materials.jpg",
                 "UPSTREAM.md", "director.json"}
 
@@ -249,10 +250,20 @@ def validate_director(root: Path, data: dict) -> dict:
     return plan
 
 
+def visual_materials(root: Path, plan: dict) -> list[Path]:
+    """Keep fonts in the bound inventory, but do not pass them to Pillow's image sheet."""
+    files = [local(root, m["path"]) for m in plan["materials"]]
+    pictures = [p for p in files if p.suffix.lower() not in FONT_MATERIALS]
+    if not pictures:
+        raise R.WakeError("素材联系表至少需要原图或一张图片；字体不能代替视觉素材")
+    return pictures
+
+
 def preview(path: Path) -> dict:
     config = R.settings()
     root, data = project(path)
     plan = validate_director(root, data)
+    pictures = visual_materials(root, plan)
     before = snapshot(root, data)
     out = next_dir(root, "previews")
     out.mkdir(parents=True)
@@ -276,7 +287,7 @@ def preview(path: Path) -> dict:
           cwd=root, log=out / "render-stills.log", config=config)
     R.run(R.python_command(config, "sheet.py", out / "timeline.jpg", "--stills", out / "src", *times, "--cols", "3"),
           cwd=root, log=out / "timeline.log", config=config)
-    R.run(R.python_command(config, "sheet.py", out / "materials.jpg", *[local(root, m["path"]) for m in plan["materials"]], "--cols", "3"),
+    R.run(R.python_command(config, "sheet.py", out / "materials.jpg", *pictures, "--cols", "3"),
           cwd=root, log=out / "materials.log", config=config)
     if snapshot(root, data) != before:
         raise R.WakeError("预览期间输入或工程变化，请重新预览")

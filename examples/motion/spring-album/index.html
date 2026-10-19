@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>把春日收进相册</title>
+<style>html,body{margin:0;padding:0;background:#b3bd9a;overflow:hidden}canvas{display:block;margin:0}</style>
+</head><body><canvas id="c" width="1280" height="720"></canvas>
+<script>
+window.CFG={outW:1280,outH:720,fps:24,dur:8};
+window.READY=false;
+(function(){
+const W=1280,H=720,cv=document.getElementById('c'),g=cv.getContext('2d');
+const img=new Image();
+// 源图坐标（1080×1920）
+const CY=540,CH=840,S=H/CH,CWs=1080*S,OX=(W-CWs)/2;      // 主场景取景：整本相册+上下桌面
+const PL={x:105,y:822,w:380,h:288};   // 花枝照片（完整相纸）
+const PR={x:585,y:730,w:393,h:479};   // 树下合影（完整相纸）
+function mp(r){return{x:OX+r.x*S,y:(r.y-CY)*S,w:r.w*S,h:r.h*S};}
+const SL=mp(PL),SR=mp(PR);
+const BL={w:680,h:680*PL.h/PL.w};BL.x=640-BL.w/2;BL.y=360-BL.h/2-6;
+const BR={h:590,w:590*PR.w/PR.h};BR.x=640-BR.w/2;BR.y=360-BR.h/2-6;
+let base=null,fillL=null,fillR=null;
+function cl(x){return x<0?0:x>1?1:x}
+function ease(x){x=cl(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+function env(t,a,b,c,d){if(t<=a||t>=d)return 0;if(t<b)return ease((t-a)/(b-a));if(t<=c)return 1;return 1-ease((t-c)/(d-c));}
+function mk(w,h){const o=document.createElement('canvas');o.width=w;o.height=h;return o;}
+function build(){
+ // 桌面延展：用源图空白亚麻区域重度模糊作底，色调与原桌面一致
+ const bg=mk(W,H),b=bg.getContext('2d');
+ b.fillStyle='#b3bd9a';b.fillRect(0,0,W,H);
+ b.filter='blur(30px)';b.drawImage(img,660,1420,400,460,-120,-120,W+240,H+240);b.filter='none';
+ let s=20250412;const r=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};
+ for(let i=0;i<H;i+=2){b.fillStyle='rgba('+(r()<.5?'255,255,240':'70,85,55')+','+(0.025+r()*0.035)+')';b.fillRect(0,i,W,1);}
+ for(let i=0;i<W;i+=2){b.fillStyle='rgba('+(r()<.5?'255,255,240':'70,85,55')+','+(0.02+r()*0.025)+')';b.fillRect(i,0,1,H);}
+ // 原图相册区域，边缘羽化融入桌面
+ const cr=mk(W,H),c=cr.getContext('2d');
+ c.drawImage(img,0,CY,1080,CH,OX,0,CWs,H);
+ const m=mk(W,H),k=m.getContext('2d');
+ let gr=k.createLinearGradient(OX,0,OX+CWs,0);const f=70/CWs;
+ gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(f,'rgba(0,0,0,1)');gr.addColorStop(1-f,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,0)');
+ k.fillStyle=gr;k.fillRect(0,0,W,H);
+ k.globalCompositeOperation='lighter';
+ gr=k.createLinearGradient(OX,0,OX+CWs,0);const f2=5/CWs;
+ gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(f2,'rgba(0,0,0,1)');gr.addColorStop(1-f2,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,0)');
+ k.fillStyle=gr;k.fillRect(0,70,W,610);
+ c.globalCompositeOperation='destination-in';c.drawImage(m,0,0);
+ b.drawImage(cr,0,0);
+ const vg=b.createRadialGradient(W/2,H/2,300,W/2,H/2,820);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(40,50,30,0.16)');
+ b.fillStyle=vg;b.fillRect(0,0,W,H);
+ base=bg;
+ // 照片取走后露出的页面：取同页空白纸面柔化填充
+ fillL=slotFill(PL,105,1118,380,140);
+ fillR=slotFill(PR,655,1234,320,48);
+}
+function slotFill(p,sx,sy,sw,sh){const w=Math.round(p.w*S),h=Math.round(p.h*S),o=mk(w,h),x=o.getContext('2d');
+ x.filter='blur(4px)';x.drawImage(img,sx,sy,sw,sh,-12,-12,w+24,h+24);x.filter='none';
+ x.strokeStyle='rgba(140,125,95,0.22)';x.lineWidth=1;x.strokeRect(2.5,2.5,w-5,h-5);
+ const gr=x.createLinearGradient(0,0,0,h);gr.addColorStop(0,'rgba(120,105,80,0.07)');gr.addColorStop(1,'rgba(255,255,255,0.05)');x.fillStyle=gr;x.fillRect(0,0,w,h);
+ return o;}
+function photo(src,s,b,p,dir){if(p<=0)return;
+ const x=s.x+(b.x-s.x)*p,y=s.y+(b.y-s.y)*p-26*Math.sin(Math.PI*p),w=s.w+(b.w-s.w)*p,h=s.h+(b.h-s.h)*p;
+ const rot=dir*0.05*Math.sin(Math.PI*p),sa=cl(p*5);
+ g.save();g.translate(x+w/2,y+h/2);g.rotate(rot);
+ g.shadowColor='rgba(30,40,22,'+(0.38*sa)+')';g.shadowBlur=3+28*p;g.shadowOffsetY=2+18*p;g.shadowOffsetX=1+6*p;
+ g.fillStyle='#f4f1e8';g.fillRect(-w/2+1,-h/2+1,w-2,h-2);
+ g.shadowColor='rgba(0,0,0,0)';
+ g.drawImage(img,src.x,src.y,src.w,src.h,-w/2,-h/2,w,h);g.restore();}
+function caption(txt,a){if(a<=0)return;g.save();g.globalAlpha=a;g.font='26px S, serif';g.textAlign='right';g.textBaseline='alphabetic';
+ g.shadowColor='rgba(30,40,22,0.45)';g.shadowBlur=6;g.fillStyle='#f7f3e4';g.fillText(txt,1240,690);g.restore();}
+window.render=function(t){t=((t%8)+8)%8;if(!window.READY)return;
+ const pl=env(t,0.5,1.4,2.9,3.7),pr=env(t,3.9,4.8,6.8,7.6),fo=Math.max(pl,pr);
+ g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.drawImage(base,0,0);
+ if(pl>0)g.drawImage(fillL,SL.x,SL.y,SL.w,SL.h);
+ if(pr>0)g.drawImage(fillR,SR.x,SR.y,SR.w,SR.h);
+ if(fo>0){g.fillStyle='rgba(38,48,28,'+(0.26*fo)+')';g.fillRect(0,0,W,H);}
+ photo(PL,SL,BL,pl,-1);photo(PR,SR,BR,pr,1);
+ caption('春日花枝',cl((pl-0.7)/0.3));
+ caption('树下合影',cl((pr-0.7)/0.3));
+};
+let fontOk=false,imgOk=false;
+function check(){if(imgOk&&fontOk&&!window.READY){build();window.READY=true;window.render(0);}}
+img.onload=function(){imgOk=true;check();};img.src='assets/source.png';
+const ff=new FontFace('S',"url('assets/serif.otf')");
+ff.load().then(f=>{document.fonts.add(f);return document.fonts.ready;}).then(()=>{fontOk=true;check();}).catch(()=>{fontOk=true;check();});
+})();
+</script></body></html>

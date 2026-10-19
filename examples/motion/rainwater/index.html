@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>一滴雨的旅程</title>
+<style>html,body{margin:0;padding:0;background:#f6efe2;overflow:hidden}canvas{display:block;margin:0}</style>
+</head><body><canvas id="c" width="1280" height="720"></canvas>
+<script>
+window.READY=false;
+window.CFG={outW:1280,outH:720,fps:24,dur:8};
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const img=new Image();
+const S=0.5625,OX=90; // preview(720x1280) units -> canvas
+const LX=590,LY=150,LW=420,LH=262,LZ=1.6;
+const cl=v=>Math.max(0,Math.min(1,v));
+const sm=v=>{v=cl(v);return v*v*(3-2*v);};
+const lerp=(a,b,u)=>a+(b-a)*u;
+const STEPS=[
+ {s:0.6,e:2.3,txt:'雨落屋顶，顺着坡面流进檐沟',b:[228,338]},
+ {s:2.3,e:3.45,txt:'檐沟接住雨水，经落水管流入储水桶',b:[438,468]},
+ {s:3.45,e:4.75,txt:'雨水在桶里存下来，留作备用',b:[606,610]},
+ {s:4.75,e:6.3,txt:'打开水龙头，软管把水送进菜园',b:[668,790]}
+];
+const A=[[0.6,300,165],[1.2,300,322],[1.9,400,410],[2.3,468,390],[2.42,470,400],[2.9,470,470],[3.1,488,503],[3.3,510,524],[3.45,515,545]];
+const B=[[4.75,550,702],[5.0,572,722],[5.3,594,758],[5.6,610,800],[5.9,620,836]];
+const LENS=[[0,380,300],[1.0,360,372],[2.4,488,468],[3.6,515,585],[4.9,585,775],[6.4,585,775],[7.6,380,300],[8,380,300]];
+function keyAt(K,t){
+ if(t<=K[0][0])return [K[0][1],K[0][2]];
+ for(let i=0;i<K.length-1;i++){const a=K[i],b=K[i+1];if(t<=b[0]){let u=(t-a[0])/(b[0]-a[0]);u=(i===0&&K===A)?u*u:u;return [lerp(a[1],b[1],u),lerp(a[2],b[2],u)];}}
+ const l=K[K.length-1];return [l[1],l[2]];
+}
+function lensAt(t){
+ for(let i=0;i<LENS.length-1;i++){const a=LENS[i],b=LENS[i+1];if(t<=b[0]){const u=sm((t-a[0])/(b[0]-a[0]));return [lerp(a[1],b[1],u),lerp(a[2],b[2],u)];}}
+ return [380,300];
+}
+function fadeOut(t){return 1-sm((t-7.35)/0.55);}
+function frac(x){return x-Math.floor(x);}
+function hash(i){const s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+function drop(x,y,r,a){
+ ctx.save();ctx.globalAlpha=a;
+ ctx.beginPath();ctx.moveTo(x,y-r*1.9);
+ ctx.bezierCurveTo(x+r*0.9,y-r*0.6,x+r,y+r*0.2,x,y+r);
+ ctx.bezierCurveTo(x-r,y+r*0.2,x-r*0.9,y-r*0.6,x,y-r*1.9);
+ ctx.fillStyle='#3b8fd9';ctx.shadowColor='rgba(255,255,255,0.95)';ctx.shadowBlur=r*1.6;ctx.fill();
+ ctx.shadowBlur=0;ctx.strokeStyle='#ffffff';ctx.lineWidth=Math.max(1.2,r*0.28);ctx.stroke();
+ ctx.beginPath();ctx.arc(x-r*0.35,y-r*0.1,r*0.25,0,7);ctx.fillStyle='rgba(255,255,255,0.85)';ctx.fill();
+ ctx.restore();
+}
+function polyTrail(m,k,K,t,a){
+ if(t<K[0][0]||a<=0)return;
+ const pts=[];for(const q of K){if(q[0]<=t)pts.push(m(q[1],q[2]));}
+ const c=keyAt(K,t);pts.push(m(c[0],c[1]));
+ const w=k/S;
+ ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.globalAlpha=a*0.9;ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=6*w;
+ ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();
+ ctx.strokeStyle='rgba(52,132,214,0.9)';ctx.lineWidth=2.6*w;ctx.setLineDash([7*w,5*w]);ctx.lineDashOffset=-t*30*w;ctx.stroke();
+ ctx.restore();
+}
+function overlay(m,k,t,main){
+ const w=k/S,f=fadeOut(t);
+ // ambient rain under the clouds (integer cycles per 8s)
+ const zones=[[70,170,245,322],[200,420,165,240],[490,650,285,430]];
+ ctx.save();ctx.strokeStyle='rgba(110,155,215,0.45)';ctx.lineWidth=1.4*w;ctx.lineCap='round';
+ let n=0;for(const z of zones){for(let i=0;i<9;i++,n++){const x=lerp(z[0],z[1],hash(n));const cyc=5+Math.floor(hash(n+50)*3);const ph=frac(cyc*t/8+hash(n+99));const y=lerp(z[2],z[3],ph);const a=Math.sin(ph*Math.PI);ctx.globalAlpha=a;const p=m(x,y),q=m(x,y+9);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();}}
+ ctx.restore();
+ // trails
+ polyTrail(m,k,A,t,f);
+ if(t>=3.3){const bc=m(515,545);const ra=cl((t-3.3)/0.2)*f;
+  // barrel ripples
+  for(let i=0;i<3;i++){const ph=frac((t-3.3)/0.9+i/3);const vis=(t<4.9)?1:Math.max(0,1-(t-4.9)/0.6);
+   ctx.save();ctx.globalAlpha=ra*vis*(1-ph)*0.9;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.6*w;ctx.beginPath();ctx.ellipse(bc[0],bc[1],(6+ph*34)*w*S/0.5625*0.5625*1,(2+ph*10)*w,0,0,7);ctx.stroke();ctx.restore();}
+  // stored water glow
+  const g=sm((t-3.45)/0.4)*f*0.55;if(g>0){const c2=m(518,620);ctx.save();ctx.globalAlpha=g;const gr=ctx.createRadialGradient(c2[0],c2[1],0,c2[0],c2[1],80*w);gr.addColorStop(0,'rgba(140,200,255,0.55)');gr.addColorStop(1,'rgba(140,200,255,0)');ctx.fillStyle=gr;ctx.fillRect(c2[0]-90*w,c2[1]-90*w,180*w,180*w);ctx.restore();}
+ }
+ // tap highlight
+ if(t>4.4&&t<5.2){const p=m(548,697);const u=(t-4.4)/0.8;ctx.save();ctx.globalAlpha=Math.sin(u*Math.PI)*f;ctx.strokeStyle='#e9a23b';ctx.lineWidth=2.4*w;ctx.beginPath();ctx.arc(p[0],p[1],(8+u*12)*w,0,7);ctx.stroke();ctx.restore();}
+ polyTrail(m,k,B,t,f);
+ // garden glow + splash
+ if(t>5.85){const g=sm((t-5.9)/0.5)*f;const c3=m(560,830);ctx.save();ctx.globalAlpha=g*0.6;const gr=ctx.createRadialGradient(c3[0],c3[1],0,c3[0],c3[1],110*w);gr.addColorStop(0,'rgba(170,230,140,0.6)');gr.addColorStop(1,'rgba(170,230,140,0)');ctx.fillStyle=gr;ctx.fillRect(c3[0]-120*w,c3[1]-120*w,240*w,240*w);ctx.restore();}
+ if(t>5.9&&t<6.5){const u=(t-5.9)/0.6;for(let i=0;i<6;i++){const ang=-Math.PI*(0.15+0.7*i/5);const d=u*22;const x=620+Math.cos(ang)*d,y=838+Math.sin(ang)*d+u*u*26;const p=m(x,y);ctx.save();ctx.globalAlpha=(1-u);ctx.fillStyle='#3b8fd9';ctx.beginPath();ctx.arc(p[0],p[1],2.2*w,0,7);ctx.fill();ctx.restore();}}
+ // moving drop
+ let dp=null;
+ if(t>=0.45&&t<3.45){const p=keyAt(A,Math.max(t,0.6));dp=[p,cl((t-0.45)/0.15)];}
+ else if(t>=4.7&&t<5.95){const p=keyAt(B,Math.max(t,4.75));dp=[p,cl((t-4.7)/0.05)*cl((5.95-t)/0.05)];}
+ if(dp){const q=m(dp[0][0],dp[0][1]);drop(q[0],q[1],6.5*Math.sqrt(w),dp[1]);}
+ // badges (main only)
+ if(main){STEPS.forEach((st,i)=>{const a=cl((t-st.s)/0.3)*f;if(a<=0)return;const p=m(st.b[0],st.b[1]);ctx.save();ctx.globalAlpha=a;ctx.fillStyle='#2f6fb0';ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p[0],p[1],12,0,7);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px S, serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),p[0],p[1]+1);ctx.restore();});}
+}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+window.render=function(t){
+ t=((t%8)+8)%8;
+ ctx.setTransform(1,0,0,1,0,0);
+ ctx.fillStyle='#f6efe2';ctx.fillRect(0,0,1280,720);
+ if(!window.READY)return;
+ // main full source image, uncropped, 405x720
+ ctx.drawImage(img,0,0,1080,1920,OX,0,720*S,1280*S);
+ const mMain=(x,y)=>[OX+x*S,y*S];
+ overlay(mMain,S,t,true);
+ // lens
+ let [cx,cy]=lensAt(t);
+ const hw=LW/2/LZ,hh=LH/2/LZ;cx=Math.max(hw,Math.min(720-hw,cx));cy=Math.max(hh,Math.min(1280-hh,cy));
+ // lens frame on main
+ ctx.save();ctx.strokeStyle='rgba(47,111,176,0.75)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);rr(OX+(cx-hw)*S,(cy-hh)*S,2*hw*S,2*hh*S,6);ctx.stroke();ctx.restore();
+ // connector
+ ctx.save();ctx.strokeStyle='rgba(47,111,176,0.35)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(OX+(cx+hw)*S,(cy-hh)*S);ctx.lineTo(LX,LY);ctx.moveTo(OX+(cx+hw)*S,(cy+hh)*S);ctx.lineTo(LX,LY+LH);ctx.stroke();ctx.restore();
+ ctx.save();ctx.shadowColor='rgba(80,60,30,0.18)';ctx.shadowBlur=18;ctx.shadowOffsetY=6;rr(LX,LY,LW,LH,14);ctx.fillStyle='#fbf7ef';ctx.fill();ctx.restore();
+ ctx.save();rr(LX,LY,LW,LH,14);ctx.clip();
+ const mL=(x,y)=>[LX+LW/2+(x-cx)*LZ,LY+LH/2+(y-cy)*LZ];
+ const o=mL(0,0);ctx.drawImage(img,0,0,1080,1920,o[0],o[1],720*LZ,1280*LZ);
+ overlay(mL,LZ,t,false);
+ ctx.restore();
+ ctx.save();rr(LX,LY,LW,LH,14);ctx.strokeStyle='#2f6fb0';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+ // text
+ ctx.save();ctx.textBaseline='alphabetic';ctx.textAlign='left';
+ ctx.fillStyle='#3a3226';ctx.font='42px S, serif';ctx.fillText('一滴雨的旅程',LX,98);
+ ctx.fillStyle='#7a6c58';ctx.font='20px S, serif';ctx.fillText('屋顶接雨 → 排管入桶 → 用水浇灌',LX,130);
+ const f=fadeOut(t);
+ STEPS.forEach((st,i)=>{
+  const y=470+i*58;const on=cl((t-st.s)/0.3)*f;
+  const act=(t>=st.s&&t<st.e)?sm((t-st.s)/0.25)*sm((st.e-t)/0.25+ (i===3?0:0)):0;
+  const allHold=(t>=6.3)?1:0;
+  const a=0.32+0.68*on;
+  if(act>0){ctx.globalAlpha=act;rr(LX-12,y-30,640,44,10);ctx.fillStyle='rgba(59,143,217,0.12)';ctx.fill();ctx.fillStyle='#3b8fd9';ctx.fillRect(LX-12,y-30,5,44);}
+  ctx.globalAlpha=a;
+  ctx.fillStyle='#2f6fb0';ctx.beginPath();ctx.arc(LX+14,y-8,14,0,7);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 17px S, serif';ctx.textAlign='center';ctx.fillText(String(i+1),LX+14,y-2);
+  ctx.textAlign='left';ctx.fillStyle='#3a3226';ctx.font='25px S, serif';ctx.fillText(st.txt,LX+40,y);
+ });
+ ctx.restore();
+};
+(async function(){
+ const ff=new FontFace('S','url(assets/serif.otf)');
+ const p1=ff.load().then(f=>{document.fonts.add(f);});
+ const p2=new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src='assets/source.png';});
+ await Promise.all([p1,p2]);
+ if(img.decode){try{await img.decode();}catch(e){}}
+ await document.fonts.ready;
+ window.READY=true;
+ window.render(0);
+})();
+</script></body></html>

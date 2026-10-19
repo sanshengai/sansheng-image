@@ -184,6 +184,35 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(W.main(["init", str(self.original), "-o", str(self.base / "other"), "--purpose", "why"]), 2)
         self.assertFalse((self.base / "other").exists())
 
+    def test_preview_keeps_fonts_bound_but_out_of_image_sheet(self):
+        data, plan = self.prepare()
+        font = self.root / "src/assets/caption.OTF"
+        font.write_bytes(b"local font inventory")
+        plan["materials"].append({"path": "src/assets/caption.OTF", "motion": "fixed",
+            "observation": "A local caption font loaded before READY"})
+        R.write_json(self.root / "director.json", plan)
+        commands = []
+        def run(command, *, cwd, log, config):
+            commands.append(command)
+            if log.name == "inspect.json":
+                R.write_json(log, {"cfg": {"outW": 1280, "outH": 720,
+                    "fps": data["output"]["fps"], "dur": data["output"]["duration"]}})
+            elif log.name in {"timeline.log", "materials.log"}:
+                (log.parent / ("timeline.jpg" if log.name == "timeline.log" else "materials.jpg")).write_bytes(b"sheet")
+        with patch.object(R, "run", side_effect=run):
+            result = W.preview(self.root)
+        sheet = next(c for c in commands if str(Path(result["preview"]) / "materials.jpg") in map(str, c))
+        self.assertIn(str(self.root / "src/assets/source.png"), list(map(str, sheet)))
+        self.assertNotIn(str(font), list(map(str, sheet)))
+        proof = R.read_json(Path(result["preview"]) / "preview.json")
+        self.assertEqual(proof["snapshot"]["src"]["assets/caption.OTF"], R.sha(font))
+        # The same consumer path must reject an empty visual input, even with a real font entry.
+        plan["materials"] = [plan["materials"][-1]]
+        R.write_json(self.root / "director.json", plan)
+        with patch.object(R, "run") as tool, self.assertRaisesRegex(R.WakeError, "字体不能"):
+            W.preview(self.root)
+        tool.assert_not_called()
+
     def test_pending_and_unmodified_template_are_rejected(self):
         data = self.init()
         with self.assertRaises(R.WakeError):

@@ -2,7 +2,7 @@
 
 用户明确要“做成动的、动图、短视频版”时才进入本页。普通配图继续静态流程；已采用的静态图直接复用。用户仍只使用叁笙生图，当前 Agent 负责读图、导演、编写动作和审片，`sb.py animate wake` 负责工程、上游工具、预览、渲染和记录。它不是一键图生视频模型。
 
-先看 [历次实验与可复用判断](motion-lessons.md)。工程字段及中断恢复见 [动态工程约定](motion-project.md)。已有 HyperFrames 工程继续走 [兼容入口](motion-scenes.md)；已有 wake 工程可继续用 `scripts/replay_wake.py`。不要求用户迁移已采用作品。
+先看 [历次实验与可复用判断](motion-lessons.md)，按本图的观看目的读 [光影、相纸与解说的制作方法](motion-methods.md)，需要执行依据时查看其中链接的完整工程示例。工程字段及中断恢复见 [动态工程约定](motion-project.md)。已有 HyperFrames 工程继续走 [兼容入口](motion-scenes.md)；已有 wake 工程可继续用 `scripts/replay_wake.py`。不要求用户迁移已采用作品。
 
 ## 承接静态配图
 
