@@ -9,7 +9,7 @@
     {
       "name": "sansheng-image",
       "description": "Keep a consistent visual style across article and other static images.",
-      "version": "2.2.0",
+      "version": "2.2.1",
       "source": "./",
       "author": {
         "name": "叁笙 (sansheng)",
