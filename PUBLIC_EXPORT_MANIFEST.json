@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "file_count": 419,
+  "file_count": 421,
   "files": {
     ".claude-plugin/marketplace.json": "a509aebc572a6e9dfeff416c7c2e96d4a6e525b819a371b77a8c7344edd29137",
     ".claude-plugin/plugin.json": "7148568799641685357f2fedee726b691195394f6a701649d65b74b2b4aa2bd3",
@@ -167,6 +167,7 @@
     "scripts/stylebook/textspec.py": "0db10110f71f5e77ee58eb414a5467f934c2db7466b9b02b6ac0e6fec940216b",
     "scripts/stylebook/vendor/SOURCE.json": "6baae564b4771287f3ad1adde7a9609bf8c4820d4eff8ba7a9492b299267fbc5",
     "scripts/stylebook/vendor/cutlib.py": "e37acab57143b58923db047e67bbadbdd1e923e0b22ea51b4e36c7b28f10b5bc",
+    "scripts/stylebook/wake_handoff.py": "23ed271baa7464648c0ad9943807fadbc57a45f89b86aee68b14902343c48d13",
     "scripts/stylebook/wake_runtime.py": "69b018b464ef5e7aedbf57fcdc61c34dd554f8079cbc2750d4702f524776d068",
     "scripts/stylebook/wake_workflow.py": "f841ab6b7d9ef4657df80cb2b2385e8b5bf09deb0daa8fa2b43043cad6a08385",
     "structures/structures.json": "5102d106aa55f59ec07892a8ccf6efe58f911d157806e271c12451fc9bd64799",
@@ -388,6 +389,7 @@
     "tests/test_matrix_evidence.py": "10f5694fef5ef1fd65da78448746a87118bcbec6fd506b94f2263ef6342d226e",
     "tests/test_motion.py": "019aa6d79f03829efc8d3283bd6ef6d83c55ede9e68f578d5060b56792766f28",
     "tests/test_motion_assets.py": "0fa6be18c8a98db88bf2d4d12bdc5d4ddbfccc5d03bf3524b60ef65d546a5ec4",
+    "tests/test_motion_categories.py": "60defbca45623ebab84085ec76e7de393ae8f65ae2caf90c0ade2ccf6b1dce54",
     "tests/test_motion_dialects.py": "a25d929977b403502f0341b222bd652cdd3b8e13799904fcdc51c31ba69d2011",
     "tests/test_motion_examples.py": "3916a241dfeb41e3c8ec3ace15905a7132a6795318e0ae1738cae170f5b24053",
     "tests/test_motion_gallery.py": "ab9131d81a23cb2f3c05939c73e6a3678a44ce4aac25c6343938617490deb74f",
