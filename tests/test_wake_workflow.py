@@ -365,6 +365,35 @@ class WorkflowTests(unittest.TestCase):
             with self.assertRaises(R.WakeError):
                 W.validate_director(self.root, data)
 
+    def test_article_handoff_requires_current_review_and_preserves_real_animation(self):
+        from PIL import Image
+        from stylebook import wake_handoff as H
+        _, out, assessment, _ = self.make_candidate()
+        frames = [Image.new('RGB', (64, 36), color) for color in ['red', 'blue']]
+        frames[0].save(out / 'motion.gif', save_all=True, append_images=frames[1:], duration=[120, 240], loop=0)
+        candidate = R.read_json(out / 'candidate.json')
+        candidate['files']['motion.gif'] = R.sha(out / 'motion.gif')
+        R.write_json(out / 'candidate.json', candidate)
+        destination = self.base / 'handoff'
+        with self.assertRaises(R.WakeError):
+            H.export(self.root, out, destination, 'factual caption')
+        W.review(self.root, out, assessment)
+        with self.assertRaisesRegex(R.WakeError, '唯一命中'):
+            H.export(self.root, out, destination, '')
+        result = H.export(self.root, out, destination, 'factual caption')
+        value = R.read_json(Path(result['manifest']))
+        self.assertEqual(value['state'], 'reviewed_pending_user_adoption')
+        self.assertEqual(value['animation']['durations_ms'], [120, 240])
+        self.assertEqual(value['source']['article_sha256'], R.sha(self.article))
+        self.assertEqual(R.sha(destination / 'motion.gif'), R.sha(out / 'motion.gif'))
+        self.assertEqual(value['candidate_sha256'], R.sha(destination / 'candidate.json'))
+        self.assertEqual(result['user_adoption'], 'not-recorded')
+        with self.assertRaises(R.WakeError):
+            H.export(self.root, out, destination, 'factual caption')
+        (out / 'motion.gif').write_bytes(b'mutant')
+        with self.assertRaises(R.WakeError):
+            H.export(self.root, out, self.base / 'another-handoff', 'factual caption')
+
 
 if __name__ == "__main__":
     unittest.main()

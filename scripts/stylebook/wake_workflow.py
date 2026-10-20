@@ -522,6 +522,11 @@ def main(argv=None) -> int:
         p = sub.add_parser(command); p.add_argument("project", type=Path)
         if command == "review":
             p.add_argument("--render", type=Path, required=True); p.add_argument("--assessment", type=Path, required=True)
+    p = sub.add_parser("handoff", help="交回文章动态候选，仍须作者采用与整篇阅读")
+    p.add_argument("project", type=Path)
+    p.add_argument("--render", type=Path, required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--anchor", required=True)
     a = parser.parse_args(argv)
     try:
         if a.command == "setup":
@@ -545,6 +550,9 @@ def main(argv=None) -> int:
             result = render(a.project)
         elif a.command == "review":
             result = review(a.project, a.render, a.assessment)
+        elif a.command == "handoff":
+            from .wake_handoff import export
+            result = export(a.project, a.render, a.out, a.anchor)
         else:
             result = status(a.project)
         print(json.dumps(result, ensure_ascii=False, indent=2))

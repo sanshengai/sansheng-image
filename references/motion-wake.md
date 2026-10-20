@@ -101,6 +101,14 @@ python3 scripts/sb.py animate wake status <工程>
 
 公众号交付 GIF 及静态替代图，附回文章的准确插入位置。未经本文件的实际上传测试，平台状态保持 `untested`；旧文件在手机端正常播放的反馈不能覆盖新片。按文章节奏选择合适的一两处动态，不默认把每张配图都替换掉。继续剪辑、配音或改已有视频时遵守本 Skill 的 `sansheng-video` 交接规则。
 
+文章由 `sansheng-write` 管理时，在制作审片通过后导出自包含交接包：
+
+```sh
+python3 scripts/sb.py animate wake handoff <工程> --render <该次 renders 目录> --out <全新交接目录> --anchor "原文中的确切引用句"
+```
+
+此命令要求工程包含冻结原文，引用句唯一命中，并有当前成片至少两轮的实际审片记录。`article-media.json` 使用 `sansheng.article-motion/1` 合同，绑定原文、静态图、画风色板、GIF 时序、实际渲染候选和审片；包内含 GIF、首帧 PNG、MP4、联系表及上游署名。输出为 `reviewed_pending_user_adoption`，不会替作者采用，也不修改文章。写作端先 `prepare-article-motion`，作者明确采用后再 `adopt-article-motion`、装配与整篇阅读。临时对照或历史文章试验在独立候选目录进行。
+
 ## 来源与许可边界
 
 本包提供自主编写的编排器、检查与指令；上游代码、模板和文档保持外部依赖及原署名。lemo-wake 标注 **CC BY-NC 4.0**，其许可不因本包采用 MIT 或外部调用而改变，商用按上游要求处理。运行环境、工程来源记录和再分发均保留作者、版本、原许可及修改说明，不把上游源码复制后改标 MIT。
