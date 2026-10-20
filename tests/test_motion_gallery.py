@@ -4,6 +4,7 @@ import hashlib
 import inspect
 import json
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -101,6 +102,75 @@ def test_real_sources_have_no_candidate_leftovers_and_opaque_buttons():
     assert "rgba(5, 8, 13, .86)" not in css      # 标签与按钮底色不透明，背景浮图不会透过来
     assert html.count('href="/tools/image/motion.css"') == 1
     assert html.count('src="/tools/image/motion.js"') == 1
+
+
+def parse_in_browser_runtime(doc, href="https://sanshengai.top/tools/image/"):
+    """Run the shipped IIFE; replace only startup so no fake DOM implements its parser."""
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node is required to execute the shipped gallery parser")
+    harness = r"""
+const fs = require('fs'), vm = require('vm');
+const input = JSON.parse(fs.readFileSync(0, 'utf8'));
+const source = fs.readFileSync(input.source, 'utf8');
+const marker = '  start();\n})();';
+if (!source.endsWith(marker + '\n')) throw new Error('startup changed; update the harness');
+const context = {
+  URL, location: new URL(input.href),
+  window: {matchMedia: () => ({matches: false, addEventListener() {}})},
+  document: {addEventListener() {}},
+};
+vm.runInNewContext(source.replace(marker,
+  '  globalThis.parse = function(d) { parseCategories(d); return parseItems(d); };\n})();'), context);
+process.stdout.write(JSON.stringify(context.parse(input.doc)));
+"""
+    result = subprocess.run([node, "-e", harness], input=json.dumps({
+        "source": str(ROOT / "gallery/motion.js"), "doc": doc, "href": href,
+    }), text=True, capture_output=True, check=True)
+    return json.loads(result.stdout)
+
+
+def test_actual_browser_parser_versions_all_current_media_and_keeps_local_files_relative():
+    doc = json.loads((ROOT / "gallery/motion-data.json").read_text())
+    online = parse_in_browser_runtime(doc)
+    local = parse_in_browser_runtime(doc, "file:///tmp/gallery/index.html")
+    assert len(online) == len(local) == len(doc["items"])
+    for raw, remote, disk in zip(doc["items"], online, local):
+        for kind in ("poster", "video", "source", "gif"):
+            if not raw.get(kind):
+                assert remote[kind] is None
+                continue
+            assert remote[kind] == raw[kind] + "?v=" + raw[kind + "_sha256"]
+            assert disk[kind] == "file:///tmp/gallery/motion/" + raw[kind].removeprefix("/tools/image/motion/")
+    changed = json.loads(json.dumps(doc))
+    changed["items"][0]["video_sha256"] = "e" * 64
+    revised = parse_in_browser_runtime(changed)
+    assert revised[0]["video"] != online[0]["video"]
+    assert revised[0]["poster"] == online[0]["poster"]
+
+
+@pytest.mark.parametrize("bad_path", [
+    "https://elsewhere.example/tools/image/motion/one/share.mp4",
+    "/tools/image/motion/one/share.mp4?v=untrusted",
+    "/tools/image/motion/one/share.mp4#fragment",
+    "/tools/image/motion/one/../one/share.mp4",
+    "/tools/image/motion/one/%2e%2e/one/share.mp4",
+    "/tools/image/motion/two/share.mp4",
+])
+def test_cache_versioning_does_not_relax_real_browser_path_validation(bad_path):
+    doc = make_doc("one")
+    doc["items"][0]["video"] = bad_path
+    assert parse_in_browser_runtime(doc) == []
+
+
+def test_legacy_hashless_media_still_loads_and_invalid_hash_cannot_inject_query():
+    doc = make_doc("one")
+    doc["items"][0].pop("poster_sha256")
+    doc["items"][0]["video_sha256"] = "a" * 64 + "&redirect=https://elsewhere.example"
+    parsed = parse_in_browser_runtime(doc)
+    assert parsed[0]["poster"] == doc["items"][0]["poster"]
+    assert parsed[0]["video"] == doc["items"][0]["video"]
+    assert parse_in_browser_runtime({"items": []}) == []
 
 
 def test_picker_signature_adds_optional_motion_dir_last():

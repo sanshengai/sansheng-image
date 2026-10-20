@@ -45,8 +45,10 @@
     return u.pathname;
   }
   function str(v, min, max) { return typeof v === 'string' && v.length >= min && v.length <= max; }
-  function playbackPath(path) {
-    return location.protocol === 'file:' ? new URL('motion/' + path.slice(MEDIA_PREFIX.length), location.href).href : path;
+  function playbackPath(path, digest) {
+    if (location.protocol === 'file:') return new URL('motion/' + path.slice(MEDIA_PREFIX.length), location.href).href;
+    // 同一路径换片时让浏览器与 CDN 请求新内容；清单中的原路径仍经过严格校验。
+    return path + (typeof digest === 'string' && /^[a-f0-9]{64}$/.test(digest) ? '?v=' + digest : '');
   }
   function dim(v) { return typeof v === 'number' && isFinite(v) && Math.floor(v) === v && v >= 16 && v <= 8000; }
 
@@ -99,7 +101,7 @@
         id: o.id, title: o.title, styleCode: o.style_code || null,
         scene: o.scene, homeScene: o.homepage_scene || null, sceneLabel: o.scene_label,
         placement: o.placement || 'featured', duration: o.duration,
-        width: o.width, height: o.height, poster: playbackPath(poster), video: playbackPath(video), source: source ? playbackPath(source) : null, gif: gif ? playbackPath(gif) : null,
+        width: o.width, height: o.height, poster: playbackPath(poster, o.poster_sha256), video: playbackPath(video, o.video_sha256), source: source ? playbackPath(source, o.source_sha256) : null, gif: gif ? playbackPath(gif, o.gif_sha256) : null,
         note: (typeof o.note === 'string' ? o.note : null), category: o.category || null,
         tags: o.tags || [], context: o.context || null, sourceLabel: o.source_label || '原始静图 · 完整画幅'
       });
