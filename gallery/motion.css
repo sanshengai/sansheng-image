@@ -167,9 +167,9 @@
   .motion-filter-bar { align-items:flex-start; flex-wrap:wrap; gap:12px; }
   .motion-pause-all { font-size:12px; padding:7px 12px; }
   .motion-exhibit .motion-card { padding:0 0 14px; }
-  .motion-pair { gap:10px; }
-  .motion-arrow { display:none; }
-  .motion-source { width:28%; }
+  .motion-pair { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,3.16fr); gap:6px; }
+  .motion-arrow { display:grid; width:22px; height:22px; font-size:16px; }
+  .motion-source { width:auto; }
   .motion-source figcaption { top:4px; left:4px; right:4px; font-size:9px; padding:2px 5px; }
   .motion-caption p,.motion-category-description { font-size:13px; }
   .motion-lightbox { padding:10px; }
