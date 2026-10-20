@@ -43,7 +43,7 @@ ROLE_TEXT = {
     "product": "the real object that must appear, keep its shape and details",
     "exemplar_character": "figure-drawing exemplar only — borrow how people or animals are drawn in this style (proportions, line quality, shading, face construction); do not copy its subject, pose, clothing, hair colour, background, props or any text",
     "exemplar_graphic": "diagram-drawing exemplar only — borrow how arrows, boxes, icons and labels are drawn in this style (stroke, fill, corner treatment, spacing); do not copy its content, layout, numbers or any text",
-    "palette_swatch": "colour swatch strip — match these exact colours and their relative amounts for the whole picture; it contains no subject, no text and no layout, so take nothing from it except the colours",
+    "palette_swatch": "colour swatch strip — use these colours to guide the overall colour relationships, background, clothing and accents; preserve recognisable skin and subject colours rather than applying a global tint; it contains no subject, no text and no layout",
 }
 ROLE_TEXT_ZH = {"style": "只作画风参考，只学线条、笔触、媒介、材质、色彩倾向与整体视觉语言，不照搬其中的人物、服装、姿势、场景、构图、文字或情节",
                 "identity": "角色身份参考，保持这个角色的五官、发型、体型与标志性服装",
@@ -53,7 +53,7 @@ ROLE_TEXT_ZH = {"style": "只作画风参考，只学线条、笔触、媒介、
                 "background": "只作背景与场景参考", "product": "必须出现的真实物件，保持其外形与细节",
                 "exemplar_character": "只作人物画法范例，只借人物或动物怎么画（比例、线条、明暗、脸部构造），不照搬主体、姿势、服装、发色、背景、道具或文字",
                 "exemplar_graphic": "只作图示画法范例，只借箭头、方框、图标、标签怎么画（笔触、填色、转角、间距），不照搬内容、版式、数字或文字",
-                "palette_swatch": "色带参考，只取这些颜色和各自的大致占比；它没有主体、文字和版式，除颜色外什么都不要借"}
+                "palette_swatch": "色带只指导背景、服装、点缀及整体配色关系，保留可辨识的肤色和主体固有色，不套全图色罩；它没有主体、文字和版式"}
 MAX_REFS = 3  # 单次请求最多挂 3 张参考图：风格板、按内容命中的范例、系列母版
 EXEMPLAR_ROLE = {"character": "exemplar_character", "graphic": "exemplar_graphic"}
 
@@ -132,8 +132,14 @@ def _palette_section(contract: dict, manifest: dict) -> str | None:
     if not cols:
         return None
     listing = ", ".join(f"{c['name']} {c['hex']}" for c in cols)
-    return (f"Colour palette (use only these colours; each name goes with its hex): {listing}. "
-            "Only the colours change; keep the style's rendering technique, line work and texture unchanged.")
+    return (f"Colour palette (dominant colours and accents; each name goes with its hex): {listing}. "
+            "Compose a coherent whole: assign a dominant field, supporting colours and small accents with clear light-dark separation; "
+            "do not distribute every palette colour equally across every object or apply a global colour cast. "
+            "Preserve recognisable natural skin tones, readable food colours and other meaning-bearing subject colours; "
+            "harmonise their lighting with the chosen palette rather than painting faces green, blue or purple. "
+            "Paper, ink and necessary neutral or subject colours may remain outside the swatch. "
+            "For an explicitly monochrome or non-realistic brief, preserve its requested treatment while keeping faces and objects legible. "
+            "Only the colour composition changes; keep the style's rendering technique, line work and texture unchanged.")
 
 
 def _structure_section(manifest: dict, fmt: dict | None) -> list[str]:

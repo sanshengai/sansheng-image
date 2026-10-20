@@ -24,6 +24,13 @@ def test_plain_public_text_is_allowed():
     scan_text("README.md", "Choose a style and export a JSON selection.".encode())
 
 
+def test_reviewed_palette_selection_is_part_of_public_surface():
+    from public_export import PUBLIC_FILES
+    assert 'gallery/palette-showcase.json' in PUBLIC_FILES
+    source = Path(__file__).resolve().parents[1] / 'gallery/palette-showcase.json'
+    scan_text('gallery/palette-showcase.json', source.read_bytes())
+
+
 def test_only_reviewed_example_font_bytes_are_allowed():
     name = "examples/motion/rainwater/assets/serif.otf"
     raw = (Path(__file__).resolve().parents[1] / name).read_bytes()

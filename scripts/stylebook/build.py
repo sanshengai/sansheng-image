@@ -373,6 +373,32 @@ def _pal_ids() -> set[str]:
     return {p["id"] for p in D.palettes()["palettes"] if p["id"] not in ("orig", "brand")}
 
 
+def palette_showcase(path: Path | None = None) -> dict:
+    """客户色卡是选片记录，不是把所有换色实验自动上墙。"""
+    path = Path(path) if path else CT.ROOT / "gallery/palette-showcase.json"
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    if (not isinstance(doc, dict) or type(doc.get("schema_version")) is not int or doc["schema_version"] != 1
+            or not isinstance(doc.get("cards"), dict) or set(doc["cards"]) != _pal_ids()
+            or not isinstance(doc.get("comparisons"), list)
+            or not doc["comparisons"]
+            or any(not isinstance(code, str) or not re.fullmatch(r"C\d{2,3}", code) for code in doc["comparisons"])
+            or len(set(doc["comparisons"])) != len(doc["comparisons"])):
+        raise ValueError("色系选片记录缺失、不完整或重复")
+    for pal, rows in doc["cards"].items():
+        if not isinstance(rows, list) or not 1 <= len(rows) <= 3:
+            raise ValueError(f"色系 {pal} 须有 1..3 张已审看的非人物色卡")
+        seen = set()
+        for row in rows:
+            if (not isinstance(row, dict) or set(row) != {"code", "kind", "subject", "sha256"}
+                    or not isinstance(row.get("code"), str) or not re.fullmatch(r"C\d{2,3}", row["code"])
+                    or row.get("kind") != f"pl-{pal}" or row.get("subject") not in ("o", "i")
+                    or not isinstance(row.get("sha256"), str) or not re.fullmatch(r"[a-f0-9]{64}", row["sha256"])
+                    or row["code"] in seen):
+                raise ValueError(f"色系 {pal} 的选片记录不合法")
+            seen.add(row["code"])
+    return doc
+
+
 def _pal_kind(stem: str) -> str | None:
     """色系真图的文件名是 pl-<色系 id>；返回色系 id，不是则 None。"""
     if stem.startswith("pl-") and stem[3:] in _pal_ids():
@@ -481,6 +507,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     ratios: dict[str, float] = {}
     pal_shots: dict[str, list[dict]] = {}
     pal_compare: dict[str, dict] = {}  # 码 -> {"ratio": 原色示例比例, "pals": [有换色图的色系]}
+    palette_selection = palette_showcase()
     expected_imgs: list[str] = []  # 页面会引用的全部缩略图文件名（含公开包里没有文件的样图）
     hero_imgs: dict[tuple[str, str], Path | None] = {}
     ratios_by_kind: dict[tuple[str, str], float] = {}
@@ -516,14 +543,21 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
             expected_imgs.append(f"{code}-{kind}.webp")
             if _pal_kind(kind):  # 色系真图：只出现在「色系」页，不进画风详情的样图列表
                 topic = next((x.get("topic", "") for x in contract.get("samples", []) if _sample_kind(Path(x["file"]).stem) == kind), "")
-                pal_shots.setdefault(_pal_kind(kind), []).append({"code": code, "kind": kind, "k": PAL_SHOT_KEY.get(topic.split("·")[-1], ""), "ratio": ratio})
+                subject = PAL_SHOT_KEY.get(topic.split("·")[-1], "")
+                reviewed = next((row for row in palette_selection["cards"].get(_pal_kind(kind), [])
+                                 if row["code"] == code and row["kind"] == kind), None)
+                if reviewed is not None:
+                    if subject != reviewed["subject"] or (src.is_file() and hashlib.sha256(src.read_bytes()).hexdigest() != reviewed["sha256"]):
+                        raise ValueError(f"色系 {code}/{kind} 与已审选片不符，须重新审看登记")
+                    pal_shots.setdefault(_pal_kind(kind), []).append({"code": code, "kind": kind, "k": subject, "ratio": ratio})
                 continue
             if _pc_kind(kind):  # 换色对比图：只给详情里的对比卡用，不进样图缩略图列表
-                pc = pal_compare.setdefault(code, {"ratio": None, "pals": []})
-                if _pc_kind(kind) == "orig":
-                    pc["ratio"] = ratio
-                else:
-                    pc["pals"].append(_pc_kind(kind))
+                if code in palette_selection["comparisons"]:
+                    pc = pal_compare.setdefault(code, {"ratio": None, "pals": []})
+                    if _pc_kind(kind) == "orig":
+                        pc["ratio"] = ratio
+                    else:
+                        pc["pals"].append(_pc_kind(kind))
                 continue
             have.setdefault(code, []).append(kind)
             sample = next((x for x in contract.get("samples", []) if _sample_kind(Path(x["file"]).stem) == kind), None)
@@ -531,6 +565,10 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
                 prov.setdefault(code, {})[kind] = prov_entry(contract, sample)
             ratios.setdefault(base_kind, ratio)
             ratios_by_kind[(code, kind)] = round(ratio, 3)
+    selected = {(pid, row["code"], row["kind"]) for pid, rows in palette_selection["cards"].items() for row in rows}
+    found = {(pid, row["code"], row["kind"]) for pid, rows in pal_shots.items() for row in rows}
+    if selected != found:
+        raise ValueError(f"已审色卡缺少合同样图：{sorted(selected - found)}")
     inspiration = {}
     for s in reg["styles"]:
         cp = contract_paths.get(s["code"])

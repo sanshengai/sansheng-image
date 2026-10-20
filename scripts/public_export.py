@@ -25,6 +25,7 @@ PUBLIC_FILES = {
     "examples/content-plan-v2/article.md", "examples/content-plan-v2/plan.json",
     "examples/quickstart/manifest.json", "gallery/template.html", "gallery/picker.html", "gallery/github-meta.json",
     "gallery/motion.js", "gallery/motion.css", "gallery/motion-data.json",  # 动态展示只放源码；poster/mp4 媒体不进 Git 也不进包
+    "gallery/palette-showcase.json",  # 已审色卡与对比的公开选片合同，原始媒体仍外置
     "registry.json", "requirements-ppt.txt", "requirements-motion.txt", "requirements.txt",
     "scripts/sb.py", "scripts/first_run.py", "scripts/public_export.py", "scripts/samples_sync.py",
     "scripts/replay_wake.py",

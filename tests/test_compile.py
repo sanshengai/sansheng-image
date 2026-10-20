@@ -56,6 +56,14 @@ def test_deterministic():
     assert a.prompt == b.prompt and a.manifest_hash == b.manifest_hash
 
 
+def test_palette_guides_composition_without_dyeing_people_or_food():
+    prompt = c().prompt
+    assert 'natural skin tones' in prompt
+    assert 'readable food colours' in prompt
+    assert 'global' in prompt
+    assert 'use only these colours' not in prompt
+
+
 @pytest.mark.parametrize("already_prefixed", [False, True])
 def test_style_lock_has_one_heading_and_keeps_constraints_first(already_prefixed):
     contract = copy.deepcopy(FREE)

@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-10-20",
+  "selection": "整幅画面的主辅色、明暗、材质和语义协调；不用人物做色卡，不展示题材不明的自动追加实验。",
+  "cards": {
+    "amber": [
+      {
+        "code": "C27",
+        "kind": "pl-amber",
+        "subject": "o",
+        "sha256": "8846e4e1c449dd3cecd7633ad694405b2a08d8ef5373f104d01b8436f4c0f1ef"
+      },
+      {
+        "code": "C31",
+        "kind": "pl-amber",
+        "subject": "i",
+        "sha256": "ee79d3325324db7952e91695b88f96706df97a7b2e8b0f02ab6ee79404793d9d"
+      }
+    ],
+    "creamcoffee": [
+      {
+        "code": "C80",
+        "kind": "pl-creamcoffee",
+        "subject": "o",
+        "sha256": "7720ba6ae91fa77071bfe259ba2d7b8a75223df79ce6c90e69d2f1be89aee8b8"
+      },
+      {
+        "code": "C31",
+        "kind": "pl-creamcoffee",
+        "subject": "i",
+        "sha256": "23929e7fbe54abe9bf2952171e608a79acf2cb41e071da781c21a2d86980ca67"
+      }
+    ],
+    "earth": [
+      {
+        "code": "C80",
+        "kind": "pl-earth",
+        "subject": "o",
+        "sha256": "8bf3a1c0647e8cefcfe8a53dcab4da915b423c6d13ddf5f1b4b4989210edfb1b"
+      },
+      {
+        "code": "C31",
+        "kind": "pl-earth",
+        "subject": "i",
+        "sha256": "ff3d5314150c876bcb2b4a3e3d7e9be7f6b43ea66ed678423aac83388b38178a"
+      }
+    ],
+    "film": [
+      {
+        "code": "C80",
+        "kind": "pl-film",
+        "subject": "o",
+        "sha256": "4f81cc802d5b2e1ca29cf03f66dc108c1956172e3b5daf73951bf32bf26c5b32"
+      },
+      {
+        "code": "C34",
+        "kind": "pl-film",
+        "subject": "i",
+        "sha256": "8011e8406ba3f0e8a6d979fe3f47ad6409356b733c472bf6e031b4dfb472f0e6"
+      }
+    ],
+    "forest": [
+      {
+        "code": "C27",
+        "kind": "pl-forest",
+        "subject": "o",
+        "sha256": "c678a20285040c22fc8d9983c6a142d83cd022978710382c887a712edf2546fd"
+      },
+      {
+        "code": "C31",
+        "kind": "pl-forest",
+        "subject": "i",
+        "sha256": "abafe0ba1def7913156f347742415b184cea4762fbd0bf93b94265cdd63220f3"
+      }
+    ],
+    "indigo": [
+      {
+        "code": "C80",
+        "kind": "pl-indigo",
+        "subject": "o",
+        "sha256": "eb2d546c57ceb6b68e066d2225be0fb13be3beb3bdd9389ff68a0f3f9fcaf81a"
+      },
+      {
+        "code": "C34",
+        "kind": "pl-indigo",
+        "subject": "i",
+        "sha256": "f2059e66e6125d0bee600425bce3fa56cfb904f8d2c4303a3c5aa31787ca122e"
+      }
+    ],
+    "lilac": [
+      {
+        "code": "C82",
+        "kind": "pl-lilac",
+        "subject": "o",
+        "sha256": "9ad5393623b57496bcc914c858d0fda708ca8b36749467457bf0a53c3d1c1962"
+      },
+      {
+        "code": "C42",
+        "kind": "pl-lilac",
+        "subject": "i",
+        "sha256": "f64e34ed6a0dad0ed102ad9fb418e7e2aff69c94e171d7e79014aed779e159a8"
+      }
+    ],
+    "macaron": [
+      {
+        "code": "C82",
+        "kind": "pl-macaron",
+        "subject": "o",
+        "sha256": "84598d93cb900e540735c04f5347048453d358d955ae82d12015145e46a0b46f"
+      },
+      {
+        "code": "C42",
+        "kind": "pl-macaron",
+        "subject": "i",
+        "sha256": "da7931b5e6528c33c47147042b85375befcdbf24eb4b626b5f97d00ce789619f"
+      }
+    ],
+    "mintsoda": [
+      {
+        "code": "C82",
+        "kind": "pl-mintsoda",
+        "subject": "o",
+        "sha256": "13f2e52e93aa1439783593fd8cdabd6fbe4cc2e7df6160efdbf3a16670f38d43"
+      },
+      {
+        "code": "C42",
+        "kind": "pl-mintsoda",
+        "subject": "i",
+        "sha256": "f3ffba893e3c53ffa07b16ca5463d54eece1ef0055a87ee3ae7403af64d33e40"
+      }
+    ],
+    "mistblue": [
+      {
+        "code": "C72",
+        "kind": "pl-mistblue",
+        "subject": "o",
+        "sha256": "ab49dcef5ff0ce102486781fd842faf0309712e9ccd8b86dda70f7fdc103a812"
+      },
+      {
+        "code": "C34",
+        "kind": "pl-mistblue",
+        "subject": "i",
+        "sha256": "a8580d444ba05de4c1054c4e40b09a0ad73d1d233a2e2feb1e38e79502726de9"
+      }
+    ],
+    "mono": [
+      {
+        "code": "C80",
+        "kind": "pl-mono",
+        "subject": "o",
+        "sha256": "af5267584e0ba844f7bf8df70373b661ef0a5b2759f0f7763e8fb0d687ce14a3"
+      },
+      {
+        "code": "C35",
+        "kind": "pl-mono",
+        "subject": "i",
+        "sha256": "63552bfec90d982c25a709fb39818d8203f69c4c5a995e52083b8aab68178e30"
+      }
+    ],
+    "morandi": [
+      {
+        "code": "C72",
+        "kind": "pl-morandi",
+        "subject": "o",
+        "sha256": "3c5c95206d6ca23f599ec634433e6f57d47d21e8b5c64e6c6bb3164723e5101b"
+      },
+      {
+        "code": "C35",
+        "kind": "pl-morandi",
+        "subject": "i",
+        "sha256": "19497a6730ea5f6b01d4009578706806577b630821ecab1fc90eb532e172aa43"
+      }
+    ],
+    "neon": [
+      {
+        "code": "C82",
+        "kind": "pl-neon",
+        "subject": "o",
+        "sha256": "a12f2b68aa0e387631bcd1d5395da8b83d3eef2dae9bb3df5c359d98d4244684"
+      },
+      {
+        "code": "C34",
+        "kind": "pl-neon",
+        "subject": "i",
+        "sha256": "b3b150bdd99d8aa6d93224e66df46d26767b04b5f19e88924e169873ea5698ed"
+      }
+    ],
+    "ocean": [
+      {
+        "code": "C87",
+        "kind": "pl-ocean",
+        "subject": "o",
+        "sha256": "7a67f03fc1b34c0a1cf81067e32c966febf876936488628d03fe15396079aff6"
+      },
+      {
+        "code": "C34",
+        "kind": "pl-ocean",
+        "subject": "i",
+        "sha256": "8e2aef945e721d504e9c6fd46c96bedb5f28b8a34ec8f306750ac282197702c7"
+      }
+    ],
+    "qinglv": [
+      {
+        "code": "C27",
+        "kind": "pl-qinglv",
+        "subject": "o",
+        "sha256": "9e73372b3d37b575731b4de2a1d60f06f0bc7aaa50f865b1394272faa6c6999a"
+      },
+      {
+        "code": "C42",
+        "kind": "pl-qinglv",
+        "subject": "i",
+        "sha256": "598b735529b257875395f7a669544dc68d22e70d3e4b3641bc961a8261f1e642"
+      }
+    ],
+    "sakura": [
+      {
+        "code": "C87",
+        "kind": "pl-sakura",
+        "subject": "o",
+        "sha256": "d08d20b5d76f83a0e01937e8dda840bcd0ea6301fecbc91c718c2e7b71a2c25f"
+      },
+      {
+        "code": "C35",
+        "kind": "pl-sakura",
+        "subject": "i",
+        "sha256": "5824b2abe47a1cbf6dc5115b092dcf77cf3ece1d614de91fbb1af61afe135501"
+      }
+    ],
+    "sunset": [
+      {
+        "code": "C25",
+        "kind": "pl-sunset",
+        "subject": "o",
+        "sha256": "04353ecfb74057f226b4e421d5a11844b539dbc556f932957902ad7745c19459"
+      },
+      {
+        "code": "C42",
+        "kind": "pl-sunset",
+        "subject": "i",
+        "sha256": "eb755683d294ea62aa3ed5b4f7296d9a9193f40a0113c89d29fbf177bb84ad6d"
+      }
+    ],
+    "zhusha": [
+      {
+        "code": "C87",
+        "kind": "pl-zhusha",
+        "subject": "o",
+        "sha256": "331062c1c4b55316c0110713815009ab6d42bb112c113e6de55e4c8a805111f2"
+      },
+      {
+        "code": "C34",
+        "kind": "pl-zhusha",
+        "subject": "i",
+        "sha256": "753fa2f1ba90fb3c1e47e390bf5d1f97a17631c77ee3addd4139758127ddaf25"
+      }
+    ]
+  },
+  "comparisons": [
+    "C74",
+    "C75",
+    "C79",
+    "C80",
+    "C81",
+    "C82",
+    "C83",
+    "C87",
+    "C88",
+    "C89",
+    "C90"
+  ]
+}

@@ -340,7 +340,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .pal-card { min-width: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #0A1017; }
 .pal-bar { display: flex; height: 44px; }
 .pal-bar i { flex: 1; display: block; }
-.pal-shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 12px 0; }
+.pal-shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px 12px 0; }
 .pal-shot { min-width: 0; padding: 0; text-align: left; font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 .pal-shot .thumb { aspect-ratio: 3 / 4; }
 .pal-shot:hover .thumb { outline: 1px solid var(--line-2); }
@@ -867,7 +867,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   <section class="sec" id="palettes" aria-labelledby="palettes-title" hidden>
     <div class="wrap">
       <h2 class="sec-title" id="palettes-title" tabindex="-1">色系图鉴</h2>
-      <p class="sec-sub">每个色系都有名字和故事。下面是用它真实画出的人物、静物、信息图，点图可以看对应画风；点「用这个色系」，上面的画风库和详情里就默认用它。</p>
+      <p class="sec-sub">用山水、花卉、器物和信息图看配色：主色、点缀与留白一起考虑。点图查看画风，点「用这个色系」应用到之后的出图。</p>
       <div class="pal-groups" id="pal-groups"></div>
     </div>
   </section>
@@ -1836,7 +1836,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     applyFilter();
   }
 
-  /* ---------- 色系真图页：palShots 的消费者（每个色系三张真图，点图看对应画风的换色效果） ---------- */
+  /* ---------- 色系真图页：palShots 的消费者（只展示已审选片，点图查看对应画风） ---------- */
   function renderPalettes() {
     var sec = $('#palettes'), box = $('#pal-groups');
     var named = palettes.filter(function (p) { return p.id !== 'orig' && p.id !== 'brand' && p.colors && p.colors.length; });
@@ -2275,6 +2275,15 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       return;
     }
     var p = paletteById[e.pal], pc = palCompare[st.id];
+    if (!pc && !lo) {
+      var paletteKey = 'palette-only|' + st.id + '|' + e.pal;
+      if (box.dataset.key !== paletteKey) {
+        box.dataset.key = paletteKey; box.textContent = '';
+        box.appendChild(h('div', { class: 'cmp-brand-bar' }, (p.colors || []).map(function (x) { return swatch(x.hex); })));
+        box.appendChild(h('p', { class: 'cmp-note', text: '这组色块指导整体配色。出图时结合主体、背景和明暗重新安排，保留自然肤色与必要的主体颜色。' }));
+      }
+      return;
+    }
     var origK = pc ? 'pc-orig' : (hasImg(st, 's1') ? 's1' : sampleKindFor(st.id, useFor));
     var r = Number(pc ? pc.ratio : (ratios[baseKind(origK)] || 1)) || 1;
     var has = !!(pc && pc.pals && pc.pals.indexOf(e.pal) !== -1);

@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import math
 import os
@@ -163,7 +164,7 @@ def validate_document(doc) -> list[str]:
     if not isinstance(doc, dict):
         return ["顶层必须是对象"]
     problems: list[str] = []
-    unknown = sorted(str(k) for k in set(doc) - {"schema_version", "items", "categories", "default_category"})
+    unknown = sorted(str(k) for k in set(doc) - {"schema_version", "items", "categories", "default_category", "showcase"})
     if unknown:
         problems.append(f"顶层有不允许的字段 {unknown}")
     if not (_is_int(doc.get("schema_version")) and doc["schema_version"] == SCHEMA_VERSION):
@@ -174,6 +175,9 @@ def validate_document(doc) -> list[str]:
         return problems
     if len(items) > MAX_ITEMS:
         problems.append(f"items 最多 {MAX_ITEMS} 项（现在 {len(items)}）")
+    portrait_showcase = doc.get("showcase") == "portrait-to-landscape"
+    if "showcase" in doc and not portrait_showcase:
+        problems.append("showcase 只支持 portrait-to-landscape")
     categories: set[str] = set()
     if "categories" in doc or "default_category" in doc:
         rows = doc.get("categories")
@@ -210,6 +214,22 @@ def validate_document(doc) -> list[str]:
                 it.get("placement", "featured") == "featured" and isinstance(it.get("category"), str)}
         if doc.get("default_category") not in used:
             problems.append("默认分类须至少有一件精选作品")
+    if portrait_showcase:
+        if not categories:
+            problems.append("分类卡片作品墙须定义 categories")
+        for category in categories:
+            count = sum(isinstance(it, dict) and it.get("placement", "featured") == "featured"
+                        and it.get("category") == category for it in items)
+            if not 1 <= count <= 2:
+                problems.append(f"分类 {category} 须有 1..2 件精选作品")
+        for i, it in enumerate(items):
+            if not isinstance(it, dict) or it.get("placement", "featured") != "featured":
+                continue
+            if "source" not in it:
+                problems.append(f"items[{i}] 分类卡片作品须提供完整 9:16 原图")
+            w, h = it.get("width"), it.get("height")
+            if not (_is_int(w) and _is_int(h) and h > 0 and abs(w / h / (16 / 9) - 1) <= .01):
+                problems.append(f"items[{i}] 分类卡片动态须为 16:9")
     return problems
 
 
@@ -277,6 +297,19 @@ def read_media(doc: dict, motion_dir) -> dict[str, bytes]:
                 if _sha(raw) != it[sha_key]:
                     problems.append(f"{rel} 的 SHA-256 与清单不符")
                 else:
+                    if (doc.get("showcase") == "portrait-to-landscape"
+                            and it.get("placement", "featured") == "featured"
+                            and _field in ("source", "poster")):
+                        from PIL import Image
+                        try:
+                            with Image.open(io.BytesIO(raw)) as image:
+                                width, height = image.size
+                                image.verify()
+                            ratio = 9 / 16 if _field == "source" else 16 / 9
+                            if abs(width / height / ratio - 1) > .01:
+                                problems.append(f"{rel} 实际比例须为 {'9:16' if _field == 'source' else '16:9'}")
+                        except (OSError, ValueError, ZeroDivisionError):
+                            problems.append(f"{rel} 不是可读取的图片")
                     out[rel] = raw
     if problems:
         raise ValueError("动态媒体校验不通过：" + "；".join(problems))

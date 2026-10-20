@@ -390,10 +390,13 @@ def test_embedded_data_matches_registry_and_manifest(built):
         assert c["name"] and c["essence"] and c["tone"] and c["craft"], code
     assert not re.search(r'"id":\s*"S\d', html.read_text(encoding="utf-8"))
 
-    assert {k: {x["code"] for x in v} for k, v in meta["palShots"].items()} == shots
+    selection = BD.palette_showcase()
+    reviewed_shots = {pal: {row["code"] for row in rows} for pal, rows in selection["cards"].items()}
+    assert {k: {x["code"] for x in v} for k, v in meta["palShots"].items()} == reviewed_shots
+    assert all(reviewed_shots[pal] <= shots[pal] for pal in reviewed_shots)
     for pid, lst in meta["palShots"].items():
-        assert all(x["kind"] == f"pl-{pid}" and x["k"] in ("p", "o", "i", "") and x["ratio"] > 0 for x in lst)
-    assert {c: set(v["pals"]) for c, v in meta["palCompare"].items()} == {c: v - {"orig"} for c, v in compare.items() if "orig" in v and v - {"orig"}}
+        assert all(x["kind"] == f"pl-{pid}" and x["k"] in ("o", "i") and x["ratio"] > 0 for x in lst)
+    assert {c: set(v["pals"]) for c, v in meta["palCompare"].items()} == {c: v - {"orig"} for c, v in compare.items() if c in selection["comparisons"] and "orig" in v and v - {"orig"}}
     assert all(v["ratio"] > 0 for v in meta["palCompare"].values())
 
     want_scenes = [s["id"] for s in reg["scenes"] if not s.get("hidden") and not s.get("site_hide") and s.get("use")]

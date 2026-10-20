@@ -107,7 +107,7 @@
     return out;
   }
 
-  var items = [];
+  var items = [], categoryCards = false;
 
   /* 作品墙最多同时播放两支可见作品，其余入口仍按单支交互播放。 */
   var players = [];
@@ -372,16 +372,17 @@
     var featured = items.filter(function (it) { return it.placement === 'featured'; });
     if (categories.length && !featured.some(function (it) { return it.category === defaultCategory; })) throw new Error('empty default category');
     var options = categories.filter(function (c) { return featured.some(function (it) { return it.category === c.id; }); });
-    options.push({id: 'all', label: '全部', description: '从文章解释到光影与相册，看看每一种变化的用途。'});
+    if (!categoryCards) options.push({id: 'all', label: '全部', description: '看看不同题材怎样因变化而更容易观看和理解。'});
     var tabs = h('div', { class: 'motion-choices', role: 'tablist', 'aria-label': '动态作品分类' });
     var pause = h('button', { type: 'button', class: 'motion-pause-all', text: '全部暂停', 'aria-pressed': 'false' });
     var description = h('p', { class: 'motion-category-description', 'aria-live': 'polite' });
     var stage = h('div', { class: 'motion-exhibit motion-gallery', id: 'motion-selected', role: 'tabpanel' });
     secEl = insertSection([
-      h('p', { class: 'motion-intro', text: '让文章里的一段话，自己演一遍。也看看光影、相册与海报，怎样因变化更生动。' }),
+      h('p', { class: 'motion-intro', text: categoryCards ? '一张竖图，展开成横向动态。选一种题材，看看照片、知识和风景各自怎样动起来。' : '看看不同题材怎样动起来：沿着过程读懂知识，在光影与相册里留住一段情境。' }),
       h('div', { class: 'motion-filter-bar' }, [tabs, pause]), description, stage
     ]);
     if (!secEl) return;
+    secEl.classList.toggle('motion-category-cards', categoryCards);
     var selected = defaultCategory, current = [], buttons = [];
     function select(id, focus) {
       current.forEach(destroyPlayer); current = []; stage.textContent = '';
@@ -389,6 +390,7 @@
       featured.filter(function (it) { return id === 'all' || it.category === id; }).forEach(function (it) {
         var card = showcaseCard(it); current.push(card.player); stage.appendChild(card.node);
       });
+      stage.classList.toggle('motion-exhibit-single', current.length === 1);
       var at = options.findIndex(function (o) { return o.id === id; });
       stage.setAttribute('aria-labelledby', 'motion-category-' + at);
       description.textContent = options[at].description;
@@ -398,6 +400,13 @@
     options.forEach(function (opt, i) {
       var count = featured.filter(function (it) { return opt.id === 'all' || it.category === opt.id; }).length;
       var button = h('button', { type: 'button', role: 'tab', id: 'motion-category-' + i, 'aria-controls': 'motion-selected', 'aria-selected': 'false', tabindex: '-1', text: opt.label + ' ' + count });
+      if (categoryCards) {
+        var example = featured.find(function (it) { return it.category === opt.id; });
+        button.textContent = '';
+        button.appendChild(h('img', { src: example.poster, alt: '', loading: 'lazy' }));
+        button.appendChild(h('span', { class: 'motion-category-name', text: opt.label }));
+        button.appendChild(h('span', { class: 'motion-category-count', text: count + ' 件作品' }));
+      }
       button.setAttribute('data-category', opt.id);
       button.addEventListener('click', function () { select(opt.id, false); });
       button.addEventListener('keydown', function (e) {
@@ -573,8 +582,14 @@
 
   /* ---------- 启动 ---------- */
   function showItems(d) {
+    categoryCards = d && d.showcase === 'portrait-to-landscape';
+    if (d && Object.prototype.hasOwnProperty.call(d, 'showcase') && !categoryCards) throw new Error('showcase');
     parseCategories(d);
     items = parseItems(d);
+    if (categoryCards && (!categories.length || categories.some(function (c) {
+      var subset = items.filter(function (it) { return it.placement === 'featured' && it.category === c.id; });
+      return !subset.length || subset.length > 2 || subset.some(function (it) { return !it.source || Math.abs(it.width / it.height / (16 / 9) - 1) > .01; });
+    }))) throw new Error('portrait showcase');
     if (!items.length) throw new Error('empty');
     buildShowcase();
     if (!secEl) throw new Error('no-slot');
