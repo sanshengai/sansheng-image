@@ -225,8 +225,8 @@ def test_template_has_one_placeholder_and_no_external_or_preview_refs():
         assert bad not in html, bad
     assert _template_static_asset_violations(html) == []
     assert 'data-asset-root="img/"' in html
-    # 静态品牌与动态演示各用自己的资源，其余由 <码>-<种类> 拼出并落在 manifest 内。
-    assert set(re.findall(r"[A-Za-z0-9_-]+\.webp", html)) == {"brand-logo.webp", "logo.webp", "logo-poster.webp"}
+    # 首页从作品开始；品牌只使用独立的静态 Logo。
+    assert set(re.findall(r"[A-Za-z0-9_-]+\.webp", html)) == {"brand-logo.webp"}
 
 
 _MOTION_LINK = f'<link rel="stylesheet" href="{MOTION_CSS_HREF}">'
@@ -1001,6 +1001,29 @@ def test_locked_style_cannot_recolor_and_brand_needs_hex(browser, built):
         code = SC.find(page.inner_text("#dlg-copyline"))[0]
         assert code.endswith("-hex.1F6F8B.F4F1E8") and SC.parse(code).custom == ("#1F6F8B", "#F4F1E8")
         assert page.locator("#dlg-copy").is_enabled()
+
+
+@pytest.mark.parametrize('width', [1440, 390])
+def test_palette_categories_stick_and_switch_without_losing_cards(browser, built, width):
+    d, _ = built
+    with open_page(browser, d, width=width, height=844) as page:
+        _open(page, '#tab=palettes')
+        total = page.locator('.pal-card').count()
+        groups = page.locator('#pal-categories [data-group]').evaluate_all('xs => xs.map(x => x.dataset.group)')
+        assert {'', '甜美', '自然', '东方'} <= set(groups) and len(groups) == len(set(groups))
+        for group in ['东方', '自然', '甜美']:
+            button = page.locator(f'#pal-categories [data-group="{group}"]')
+            button.focus()
+            page.keyboard.press('Enter')
+            assert button.get_attribute('aria-pressed') == 'true'
+            assert page.locator('.pal-group:visible').count() == 1
+            assert page.locator('.pal-group:visible').get_attribute('data-group') == group
+            page.evaluate('window.scrollBy({top:240,behavior:"instant"})')
+            assert page.locator('#pal-nav').bounding_box()['y'] >= page.locator('#topnav').bounding_box()['height'] - 1
+            assert page.locator('#pal-nav').bounding_box()['y'] < 150
+        page.locator('#pal-categories [data-group=""]').click()
+        assert page.locator('.pal-card:visible').count() == total
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
 
 
 def test_palette_real_shots_page_is_consumed(browser, built):

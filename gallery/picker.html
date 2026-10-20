@@ -336,6 +336,9 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 
 /* 色系真图页：每个色系用它真实画出的人物、静物、信息图各一张（使用页面共用色块、字体与边线） */
 .pal-groups { margin-top: 32px; display: grid; gap: 44px; }
+.pal-nav { position: sticky; top: var(--nav-h); z-index: 20; margin-top: 24px; padding: 12px 0; border-block: 1px solid var(--line); background: rgba(15,21,19,.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.pal-nav .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 3px; }
+.pal-nav .chip { flex: none; }
 .pal-group-title { font: 700 24px/1.4 var(--serif); color: var(--strong); }
 .pal-group-en { margin-left: 10px; font: 13px/1.4 var(--sans); color: var(--mut); }
 .pal-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
@@ -483,6 +486,10 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 48px; align-items: center; }
 .hero-left, .hero-right { min-width: 0; }
 .hero-title { font: 700 clamp(40px, 4.2vw, 62px)/1.16 var(--serif); white-space: nowrap; color: var(--strong); letter-spacing: .01em; }
+.hero-title-accent { color: var(--green); }
+@media (min-width: 901px) {
+  .hero-grid { width: min(1440px, calc(100% - 64px)); grid-template-columns: minmax(0,38fr) minmax(0,62fr); }
+}
 .hero-scenes { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px 24px; max-width: 430px; color: var(--strong); font: 500 clamp(18px, 1.65vw, 23px)/1.65 var(--sans); }
 .hero-scenes li { white-space: nowrap; }
 .hero-reasons { margin-top: 22px; display: grid; gap: 4px; font-size: 15px; color: var(--fg); }
@@ -507,7 +514,6 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
 .slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
 .slide.is-active { opacity: 1; }
 .slide .amb:not([src]) { display: none; }
-#stage-logo { object-fit: contain; }
 /* 每张作品按原比例挂在画框里，背后是它自己放大虚化后的暗色光晕，宽图、方图、竖图放在一起都成立 */
 .slide .amb { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; filter: blur(30px) saturate(1.4) brightness(.62); }
 .slide .art {
@@ -725,7 +731,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   <div class="wrap hero-grid">
     <div class="hero-left" id="hero-left">
       <div id="title-block" class="title-block">
-        <h1 class="hero-title">给 Agent 的<br>生图 Skill</h1>
+        <h1 class="hero-title">给 Agent 的<br><span class="hero-title-accent">生图 Skill</span></h1>
         <ul class="hero-scenes" aria-label="可以用在哪些场景">
           <li>公众号封面·配图</li><li>PPT</li><li>小红书</li><li>推特配图</li><li>视频分镜</li>
         </ul>
@@ -777,7 +783,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     <div class="hero-right" id="hero-right">
       <section class="stage" id="stage" aria-roledescription="轮播" aria-label="各画风代表作">
         <div class="stage-frame" id="stage-frame">
-          <img class="slide is-active" id="stage-logo" alt="叁笙 Logo 动态展示" decoding="async">
           <noscript><p class="load-fail">需要开启 JavaScript 才能浏览画风库。</p></noscript>
           <p class="stage-name" id="stage-name"><span id="stage-label">叁笙生图</span><small id="stage-scene"></small></p>
         </div>
@@ -855,6 +860,9 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     <div class="wrap">
       <h2 class="sec-title" id="palettes-title" tabindex="-1">色系图鉴</h2>
       <p class="sec-sub">用山水、花卉、器物和信息图看配色：主色、点缀与留白一起考虑。点图查看画风，点「用这个色系」应用到之后的出图。</p>
+    </div>
+    <div class="pal-nav" id="pal-nav"><div class="wrap chips" id="pal-categories" role="group" aria-label="按色系类别浏览"></div></div>
+    <div class="wrap">
       <div class="pal-groups" id="pal-groups"></div>
     </div>
   </section>
@@ -1016,10 +1024,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     return ASSET_ROOT + p;
   }
 
-  var LOGO_SRC = assetUrl('logo.webp');
   var BRAND_LOGO_SRC = assetUrl('brand-logo.webp');
-  var POSTER_SRC = assetUrl('logo-poster.webp');
-  var LOGO_MS = 6000;
   var SLIDE_MS = 4200;
   var FALLBACK_KEYS = ['cv', 's1', 'wxi', 'xhs', 'au', 'inf', 'ppt', 'bd', 's3'];
   var MINE_KEY = 'sb-mine';                                 // 与现役 picker 同名，已有「我的默认」继续可用
@@ -1448,11 +1453,11 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   function onReduceChange() { syncLoop(); applyReduceToStage(); syncVideos(); }
   if (mqReduce.addEventListener) mqReduce.addEventListener('change', onReduceChange); else mqReduce.addListener(onReduceChange);
 
-  /* ================== 展台：Logo → 同题轮播 ================== */
-  var logoImg = $('#stage-logo'), frameEl = $('#stage-frame');
+  /* ================== 展台：作品轮播 ================== */
+  var frameEl = $('#stage-frame');
   var nameEl = $('#stage-name'), labelEl = $('#stage-label'), sceneEl = $('#stage-scene'), countEl = $('#stage-count');
   var btnPrev = $('#stage-prev'), btnNext = $('#stage-next'), btnToggle = $('#stage-toggle');
-  var slides = [{ el: logoImg, kind: 'logo', label: '叁笙生图' }];
+  var slides = [];
   var stripEl = $('#stage-strip'), stripBtns = [];
   var cur = 0, userPaused = false, stageReady = false, inView = true, timer = 0, pre = 0, heroReady = false;
 
@@ -1461,7 +1466,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   }
   function ensure(i) {
     var s = slides[i];
-    if (!s || s.kind === 'logo' || s.requested) return;
+    if (!s || s.requested) return;
     s.requested = true;
     if (s.ambSrc) s.amb.src = s.ambSrc;
     if (s.kind === 'motion') { if (!mqReduce.matches) { s.art.preload = 'auto'; s.art.src = s.src; } }   // 减少动效：只显示海报帧
@@ -1475,7 +1480,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     });
   }
   function whenReady(s, cb) {
-    if (s.kind === 'logo' || (s.kind === 'img' && s.art.complete && s.art.naturalWidth) || (s.kind === 'motion' && (mqReduce.matches || s.art.readyState >= 2))) { cb(); return; }
+    if ((s.kind === 'img' && s.art.complete && s.art.naturalWidth) || (s.kind === 'motion' && (mqReduce.matches || s.art.readyState >= 2))) { cb(); return; }
     ensure(slides.indexOf(s));
     var fired = false;
     function fin() { if (fired) return; fired = true; cb(); }
@@ -1484,8 +1489,9 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     s.art.addEventListener('error', fin, { once: true });
     setTimeout(fin, 3000);
   }
-  function autoNext(i) { return i >= slides.length - 1 ? 1 : i + 1; }
+  function autoNext(i) { return (i + 1) % slides.length; }
   function show(i, user) {
+    if (!slides.length) return;
     cur = (i + slides.length) % slides.length;
     slides.forEach(function (s, j) {
       s.el.classList.toggle('is-active', j === cur);
@@ -1494,7 +1500,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     ensure(cur);
     labelEl.textContent = slides[cur].label;
     sceneEl.textContent = slides[cur].scene || '';
-    stripBtns.forEach(function (b, j) { b.setAttribute('aria-pressed', j + 1 === cur ? 'true' : 'false'); });
+    stripBtns.forEach(function (b, j) { b.setAttribute('aria-pressed', j === cur ? 'true' : 'false'); });
     syncVideos();
     countEl.textContent = (cur + 1) + ' / ' + slides.length;
     if (user) announce('第 ' + (cur + 1) + ' 张，' + slides[cur].label);
@@ -1503,7 +1509,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   function stageSched() {
     clearTimeout(timer); clearTimeout(pre);
     if (!canAuto()) return;
-    var d = cur === 0 ? LOGO_MS : (slides[cur].dur ? Math.max(SLIDE_MS, slides[cur].dur * 1000 + 600) : SLIDE_MS), n = autoNext(cur), at = cur;
+    var d = slides[cur].dur ? Math.max(SLIDE_MS, slides[cur].dur * 1000 + 600) : SLIDE_MS, n = autoNext(cur), at = cur;
     pre = setTimeout(function () { ensure(n); }, Math.max(0, d - 1300));
     timer = setTimeout(function () {
       whenReady(slides[n], function () { if (cur === at && canAuto()) show(n, false); });
@@ -1520,20 +1526,15 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     }
   }
   function applyReduceToStage() {
-    var want = mqReduce.matches ? POSTER_SRC : LOGO_SRC;
-    if (logoImg.getAttribute('src') !== want) logoImg.src = want;
     updateToggleUI();
     stageSched();
   }
-  logoImg.addEventListener('load', onHeroReady);
-  logoImg.addEventListener('error', onHeroReady);
   function onHeroReady() {
     stageReady = true;
     heroReady = true;
     stageSched();
     maybeStartFloats();
   }
-  setTimeout(function () { if (!heroReady) onHeroReady(); }, 4000);   // 兜底：Logo 迟迟不出也不卡住后面的加载
 
   btnPrev.addEventListener('click', function () { show(cur - 1, true); });
   btnNext.addEventListener('click', function () { show(cur + 1, true); });
@@ -1575,8 +1576,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       sb.addEventListener('click', function () { show(idx, true); });
       stripEl.appendChild(sb); stripBtns.push(sb);
     });
-    countEl.textContent = '1 / ' + slides.length;
-    stageSched();
+    if (slides.length) { ensure(0); show(0, false); whenReady(slides[0], onHeroReady); }
   }
 
   /* ================== 数据与页面 ================== */
@@ -1827,19 +1827,31 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
   /* ---------- 色系真图页：palShots 的消费者（只展示已审选片，点图查看对应画风） ---------- */
   function renderPalettes() {
-    var sec = $('#palettes'), box = $('#pal-groups');
+    var sec = $('#palettes'), box = $('#pal-groups'), cats = $('#pal-categories');
     var named = palettes.filter(function (p) { return p.id !== 'orig' && p.id !== 'brand' && p.colors && p.colors.length; });
     if (!named.length) { sec.hidden = true; return; }
     sec.hidden = false;
     var groups = GROUP_ORDER.slice();
     named.forEach(function (p) { var g = p.group || '其他'; if (groups.indexOf(g) === -1) groups.push(g); });
+    function chooseGroup(group) {
+      cats.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.group === group ? 'true' : 'false'); });
+      box.querySelectorAll('.pal-group').forEach(function (el) { el.hidden = !!group && el.dataset.group !== group; });
+      var nav = $('#pal-nav');
+      window.scrollTo({ top: box.getBoundingClientRect().top + window.scrollY - $('#topnav').offsetHeight - nav.offsetHeight - 20, behavior: 'instant' });
+    }
+    function groupButton(group, label) {
+      var btn = h('button', { class: 'chip', type: 'button', 'data-group': group, 'aria-pressed': group ? 'false' : 'true', text: label });
+      btn.addEventListener('click', function () { chooseGroup(group); }); cats.appendChild(btn);
+    }
+    groupButton('', '全部色系');
     groups.forEach(function (g) {
       var list = named.filter(function (p) { return (p.group || '其他') === g; });
       if (!list.length) return;
+      groupButton(g, g);
       var title = h('h3', { class: 'pal-group-title', text: g }, GROUP_EN[g] ? [h('span', { class: 'pal-group-en', text: GROUP_EN[g] + ' · ' + list.length + ' 种' })] : [h('span', { class: 'pal-group-en', text: list.length + ' 种' })]);
       var grid = h('ul', { class: 'pal-grid' });
       list.forEach(function (p) { grid.appendChild(h('li', null, [palCard(p)])); });
-      box.appendChild(h('div', { class: 'pal-group' }, [title, grid]));
+      box.appendChild(h('div', { class: 'pal-group', 'data-group': g }, [title, grid]));
     });
   }
   function palCard(p) {

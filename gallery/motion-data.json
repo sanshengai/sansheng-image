@@ -165,7 +165,7 @@
       "style_code": null,
       "homepage_scene": null,
       "placement": "featured",
-      "note": "人物留在夜景里，街灯、楼窗、桥灯和水面依次回应。",
+      "note": "流云带动暮色变化，近灯、街道、楼窗与桥灯在前四秒亮起，水面随之回应。",
       "width": 1280,
       "height": 720,
       "duration": 12.0,
@@ -173,11 +173,11 @@
       "source": "/tools/image/motion/city-evening/source.png",
       "source_sha256": "e1ba8908c968fafea4fab4f1b8e3c4782b3d46f49d0c7fe9dd6f4429d9206cf7",
       "poster": "/tools/image/motion/city-evening/poster.png",
-      "poster_sha256": "de81e6d69bdd03eba3a70c46db453f1c4785cad303229cf0e26983a807c311ad",
+      "poster_sha256": "6a413d22b7e12750f5437cf2d377ad007ed2f1e6769db5463c4dcb1256d5471a",
       "video": "/tools/image/motion/city-evening/share.mp4",
-      "video_sha256": "050cd082ff04712b9c295c2ff528b07a3b8adf06f8fcbf84f44dbe1cf67d66be",
+      "video_sha256": "2db5f28da34c5601dfbc9bd36a8bb6bd34289d9d522054dba29c2a985cdbf4cd",
       "gif": "/tools/image/motion/city-evening/share.gif",
-      "gif_sha256": "19553a18a70f619340e001a0eaa5e8fec8c79b57463757217bcf38b0fecd3f68"
+      "gif_sha256": "ed414373f1c9c8adfae31e995b4f5704638c951e1de56047e9d53474ff3a6bb6"
     },
     {
       "id": "spring-album",
