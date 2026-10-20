@@ -161,22 +161,7 @@
 .motion-modal-controls { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding-top:12px; }
 .motion-modal-controls h3 { margin:0 auto 0 0; font:600 18px/1.5 var(--sans); }
 .motion-lightbox .motion-detail-content { max-width:70em; }
-.motion-category-cards .motion-filter-bar { align-items:flex-end; }
-.motion-category-cards .motion-choices { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; width:100%; }
-.motion-category-cards .motion-choices button { display:grid; grid-template-columns:1fr auto; gap:10px 8px; padding:8px 8px 12px; border-radius:12px; text-align:left; overflow:hidden; }
-.motion-category-cards .motion-choices img { grid-column:1/-1; display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:7px; }
-.motion-category-name { padding-left:4px; font:600 16px/1.5 var(--sans); color:var(--strong); }
-.motion-category-count { padding-right:4px; align-self:center; white-space:nowrap; font:12px/1.5 var(--sans); }
-.motion-category-cards .motion-choices button[aria-selected="true"] { background:var(--bg2,var(--bg)); box-shadow:inset 0 0 0 1px var(--green); }
-.motion-category-cards .motion-choices button[aria-selected="true"] .motion-category-name { color:var(--green); }
-.motion-category-cards .motion-filter-bar { position:relative; padding-right:132px; }
-.motion-category-cards .motion-pause-all { position:absolute; right:0; bottom:0; }
-.motion-exhibit.motion-exhibit-single { grid-template-columns:minmax(0,1fr); max-width:1320px; margin-left:auto; margin-right:auto; }
 @media(max-width:1199px) { .motion-exhibit.motion-gallery { grid-template-columns:minmax(0,1fr); } }
-@media(max-width:900px) {
-  .motion-category-cards .motion-choices { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-  .motion-category-cards .motion-filter-bar { padding-right:0; padding-bottom:48px; }
-}
 @media(max-width:640px) {
   .motion-sec .wrap { width:calc(100% - 36px); }
   .motion-filter-bar { align-items:flex-start; flex-wrap:wrap; gap:12px; }
@@ -189,7 +174,4 @@
   .motion-caption p,.motion-category-description { font-size:13px; }
   .motion-lightbox { padding:10px; }
   .motion-modal-controls h3 { width:100%; }
-  .motion-category-name { font-size:14px; }
-  .motion-category-count { font-size:10px; }
-  .motion-category-cards .motion-choices button { padding:6px 6px 9px; gap:7px 4px; }
 }

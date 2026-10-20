@@ -78,7 +78,7 @@ Slide images and optional PPTX assembly are distinct from editable slide element
 
 ## Landscape motion illustrations
 
-The customer-gallery candidate uses four category cards: portraits and group photos, visual explanations, landscape atmosphere, and albums. Each category contains one or two selected works, pairing a complete 9:16 source with a 16:9 animation. This display contract does not restrict landscape-source projects used in actual articles. Candidates, user adoption, public release, and platform checks remain separate.
+The customer gallery uses four text-only category tabs: portraits and group photos, visual explanations, landscape atmosphere, and albums. Each category contains one or two selected works, pairing a complete 9:16 source with a 16:9 animation. Desktop uses two equal-width work slots per row, including categories with a single work; narrow screens use one column. This display contract does not restrict landscape-source projects used in actual articles. Production review, user adoption, public release, and platform checks remain separate.
 
 The first batch targets illustrations inside WeChat articles and posts on X: 16:9 output, a 1280×720 master, and a silent loop whose duration follows the action and reading time. The first three selected films are “A City in Three Inks,” “How to Verify a Claim,” and “Night Unfolds from a Book,” covering a material process, a three-step explanation, and a story illustration. Film review is complete; public release and platform upload checks are recorded separately. The gallery preserves the actual source image and offers pause, replay, enlargement, GIF, and MP4 downloads.
 

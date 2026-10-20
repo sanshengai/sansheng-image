@@ -382,7 +382,6 @@
       h('div', { class: 'motion-filter-bar' }, [tabs, pause]), description, stage
     ]);
     if (!secEl) return;
-    secEl.classList.toggle('motion-category-cards', categoryCards);
     var selected = defaultCategory, current = [], buttons = [];
     function select(id, focus) {
       current.forEach(destroyPlayer); current = []; stage.textContent = '';
@@ -390,7 +389,6 @@
       featured.filter(function (it) { return id === 'all' || it.category === id; }).forEach(function (it) {
         var card = showcaseCard(it); current.push(card.player); stage.appendChild(card.node);
       });
-      stage.classList.toggle('motion-exhibit-single', current.length === 1);
       var at = options.findIndex(function (o) { return o.id === id; });
       stage.setAttribute('aria-labelledby', 'motion-category-' + at);
       description.textContent = options[at].description;
@@ -399,14 +397,7 @@
     }
     options.forEach(function (opt, i) {
       var count = featured.filter(function (it) { return opt.id === 'all' || it.category === opt.id; }).length;
-      var button = h('button', { type: 'button', role: 'tab', id: 'motion-category-' + i, 'aria-controls': 'motion-selected', 'aria-selected': 'false', tabindex: '-1', text: opt.label + ' ' + count });
-      if (categoryCards) {
-        var example = featured.find(function (it) { return it.category === opt.id; });
-        button.textContent = '';
-        button.appendChild(h('img', { src: example.poster, alt: '', loading: 'lazy' }));
-        button.appendChild(h('span', { class: 'motion-category-name', text: opt.label }));
-        button.appendChild(h('span', { class: 'motion-category-count', text: count + ' 件作品' }));
-      }
+      var button = h('button', { type: 'button', role: 'tab', id: 'motion-category-' + i, 'aria-controls': 'motion-selected', 'aria-selected': 'false', tabindex: '-1', text: categoryCards ? opt.label : opt.label + ' ' + count });
       button.setAttribute('data-category', opt.id);
       button.addEventListener('click', function () { select(opt.id, false); });
       button.addEventListener('keydown', function (e) {
