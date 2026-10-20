@@ -123,7 +123,7 @@ python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest example
 
 2026-10-19，首批三支成片的 960×540 GIF 与 1280×720 MP4 均已在 X 桌面草稿完成上传和预览，未发帖；手机端及发布后的转码结果未验证。2026-10-18，一支旧版 960×540 的《一条信息如何核验》GIF 已由用户在公众号正文手机预览中确认可正常播放、文字清楚；该反馈只绑定当时的文件，新三支仍待手机预览反馈，自动上传接口也未验证。小红书普通 GIF 图文仍未核实；本批不宣传 PPT、封面或视频关键帧的动态用途。
 
-动态版统一从 `python3 scripts/sb.py animate wake` 进入：当前 Agent 承接原文、画风与色系，先选图和备料，再设计动作、预览、渲染与审片返修。首次使用由 Agent 执行 `animate wake setup --install` 和 `animate wake doctor`，固定版本的 lemo-wake 作为独立运行依赖保存，用户仍只使用一个 Skill。输出含原图与动态紧邻对照、自动循环的审阅页；通过技术检查仍是待审候选，不能保证任意图片都适合做动画。完整步骤及实验差异见 [动态制作](./references/motion-wake.md)；[制作方法](./references/motion-methods.md) 与 [三个完整工程候选](./examples/motion/README.md) 提供光影、相纸和解说的实际参考，后者保留原图、字体、代码及关键状态，可通过同一入口复跑，用户采用另记。此路径需要 Node.js 18+、上游 Playwright/浏览器环境、uv、ffmpeg/ffprobe，**不要求 HyperFrames**；静态出图不加载它。上游代码与素材不随本包分发，CC BY-NC 4.0 等许可单独适用。已有工程仍兼容下方 HyperFrames 路径及 `scripts/replay_wake.py`。
+动态版统一从 `python3 scripts/sb.py animate wake` 进入：当前 Agent 承接原文、画风与色系，先选图和备料，再设计动作、预览、渲染与审片返修。首次使用由 Agent 执行 `animate wake setup --install` 和 `animate wake doctor`，固定版本的 lemo-wake 作为独立运行依赖保存，用户仍只使用一个 Skill。输出含原图与动态紧邻对照、自动循环的审阅页；通过技术检查仍是待审候选，不能保证任意图片都适合做动画。完整步骤及实验差异见 [动态制作](./references/motion-wake.md)；[制作方法](./references/motion-methods.md) 与 [已审工程与反例](./examples/motion/README.md) 保留原图、字体、代码及关键状态，可通过同一入口复跑；相册两版均可，雨水解说的新方法获更好评价，城灯两版均未通过并保留为反例。新工程不继承参考片的评价，发布采用另记。此路径需要 Node.js 18+、上游 Playwright/浏览器环境、uv、ffmpeg/ffprobe，**不要求 HyperFrames**；静态出图不加载它。上游代码与素材不随本包分发，CC BY-NC 4.0 等许可单独适用。已有工程仍兼容下方 HyperFrames 路径及 `scripts/replay_wake.py`。
 
 下面保留原 HyperFrames 路径的依赖和命令，已有工程可继续使用：
 

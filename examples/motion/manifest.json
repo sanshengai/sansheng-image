@@ -10,14 +10,20 @@
       "fps": 24,
       "duration": 8,
       "source_kind": "AI-generated experiment image",
-      "state": "research-candidate; user adoption not recorded",
+      "state": "reviewed-counterexample; both variants rejected",
       "files": {
-        "DIRECTOR.md": "8fddbbfa215741cdaf3f5b854291c7c314ac847c043394f86ca48f8b6d674bb0",
+        "DIRECTOR.md": "ab7a497079e9334d7153cfd38e98229676fbfa56edb31658d6655618f0719323",
         "assets/serif.otf": "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f",
         "assets/source.png": "2b2eec35c950c7a1a5c08aad79d2d52cdba8a73c9a017ec218573a1ec058db83",
         "director.json": "de99d1e3f08c38f0992f197c9c48c43fc05b6223598bb1dc2180a72cd72b9550",
         "index.html": "1b06f0ae0e9f034e4c91411f0e83a709931d46539d84e78ddd771eb340acc62b",
         "timeline.jpg": "cb92ff482b20354a57c1a75e465750fdff64af5692485375ad5ca6cd99a00312"
+      },
+      "user_review": {
+        "recorded_on": "2026-10-20",
+        "decision": "rejected",
+        "note": "人物与城市分割没有表达收益，变化几乎不可辨。",
+        "scope": "仅为本例审片结论；新工程不继承，不等于官网或平台发布采用。"
       }
     },
     {
@@ -30,7 +36,7 @@
       "fps": 24,
       "duration": 8,
       "source_kind": "AI-generated experiment image",
-      "state": "research-candidate; user adoption not recorded",
+      "state": "reviewed-reference; both variants acceptable",
       "files": {
         "DIRECTOR.md": "04a02ff7ffc4a00a041c370b19493e978525c310a2e68e7f56b43c5abd7b1f0d",
         "assets/serif.otf": "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f",
@@ -38,6 +44,12 @@
         "director.json": "403671f8d460546851c97a2cef03f4465c7eb51c4601ad77b9982c697fd5a808",
         "index.html": "0e1c931afccb08b9b5047927f0b89c2ca501f85b1068cfa9cb1d9ec3d991ab26",
         "timeline.jpg": "44dbe9856ea34d5225fbf1eb73913d7cd9e8e6c1eaa2188ba87356de1b0b7983"
+      },
+      "user_review": {
+        "recorded_on": "2026-10-20",
+        "decision": "acceptable-both-variants",
+        "note": "两版均可，差别不明显；没有证明新增方法有明显收益。",
+        "scope": "仅为本例审片结论；新工程不继承，不等于官网或平台发布采用。"
       }
     },
     {
@@ -50,7 +62,7 @@
       "fps": 24,
       "duration": 8,
       "source_kind": "AI-generated experiment image",
-      "state": "research-candidate; user adoption not recorded",
+      "state": "reviewed-reference; added-method variant preferred",
       "files": {
         "DIRECTOR.md": "081df31bb2066513ab9e31385a7558e466fe71ad39fed2bc1247ebcb00f411dd",
         "assets/serif.otf": "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f",
@@ -58,6 +70,12 @@
         "director.json": "de5f0612c1e530f3c1f8fd5f3057b86baaee82941bb671f32355b9e2bb863378",
         "index.html": "b4b05f88cca78b95ec8972bf9ac18ca6b33036f8c4d202e19896b25df51a0c5a",
         "timeline.jpg": "ad999918376c5632d01557ffcd2345d6061f2b6128ec0538a442f55b20832aa1"
+      },
+      "user_review": {
+        "recorded_on": "2026-10-20",
+        "decision": "added-method-preferred",
+        "note": "用户认为新制作方法更好，逐步解说有收益。",
+        "scope": "仅为本例审片结论；新工程不继承，不等于官网或平台发布采用。"
       }
     }
   ],
