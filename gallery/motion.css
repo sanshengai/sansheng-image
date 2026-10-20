@@ -124,3 +124,54 @@
   .motion-choices { gap:7px; }
   .motion-choices button { padding:8px 12px; font-size:12px; }
 }
+
+/* 分类作品墙：画面为主，原文与下载在展开层。 */
+.motion-sec .wrap { width:min(1760px,calc(100% - 80px)); max-width:1760px; }
+.motion-filter-bar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:24px; }
+.motion-filter-bar .motion-choices { margin:0; }
+.motion-pause-all { flex-shrink:0; appearance:none; border:1px solid var(--line); border-radius:24px; padding:10px 16px; color:var(--mut); background:var(--bg); font:500 14px/1.5 var(--sans); cursor:pointer; }
+.motion-pause-all:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+.motion-category-description { color:var(--mut); font:15px/1.8 var(--sans); margin:16px 0 0; }
+.motion-exhibit.motion-gallery { margin-top:24px; gap:32px 28px; }
+.motion-exhibit .motion-card { padding:0 0 16px; border:0; border-radius:0; }
+.motion-pair { position:relative; grid-template-columns:minmax(0,1fr) minmax(0,3.16fr); gap:8px; align-items:end; }
+.motion-source { position:relative; }
+.motion-pair-legend { display:flex; justify-content:space-between; gap:12px; margin-bottom:8px; color:var(--mut); font:12px/1.6 var(--sans); }
+.motion-legend-live::before { content:''; display:inline-block; width:6px; height:6px; margin-right:6px; border-radius:50%; background:var(--green); }
+.motion-card .motion-source figcaption { display:none; }
+.motion-source img,.motion-pair .motion-frame { border-radius:12px; }
+.motion-source figcaption { position:absolute; top:8px; left:8px; right:8px; width:fit-content; margin:0; border-radius:20px; padding:3px 8px; font:11px/1.4 var(--sans); color:var(--strong); background:var(--bg); }
+.motion-arrow { position:absolute; z-index:3; top:50%; left:24%; transform:translate(-50%,-50%); width:30px; height:30px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; background:var(--bg); color:var(--strong); font:22px/1 var(--sans); pointer-events:none; }
+.motion-pair-wide .motion-arrow { top:auto; bottom:18px; }
+.motion-caption p { font-size:14px; line-height:1.7; }
+.motion-card>.motion-caption { margin:16px 0 6px; }
+.motion-actions { gap:18px; }
+.motion-details { margin-top:10px; color:var(--mut); font:13px/1.8 var(--sans); }
+.motion-details summary { cursor:pointer; width:fit-content; }
+.motion-detail-content { padding:12px 0 4px; color:var(--mut); font:14px/1.85 var(--sans); }
+.motion-detail-content p { margin:6px 0; }
+.motion-context-title { color:var(--strong); font-weight:600; }
+.motion-detail-content blockquote { margin:12px 0; padding:4px 0 4px 16px; border-left:2px solid var(--green); }
+.motion-meta { font-size:12px; }
+.motion-downloads { display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:12px; }
+.motion-downloads a,.motion-gif-toggle { color:var(--green); }
+.motion-gif-toggle { appearance:none; border:0; background:var(--bg); padding:8px 0; font:13px/1.6 var(--sans); cursor:pointer; }
+.motion-lightbox { width:min(1280px,94vw); padding:16px 20px; overflow:auto; }
+.motion-lightbox video { width:100%; max-height:68vh; object-fit:contain; }
+.motion-modal-controls { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding-top:12px; }
+.motion-modal-controls h3 { margin:0 auto 0 0; font:600 18px/1.5 var(--sans); }
+.motion-lightbox .motion-detail-content { max-width:70em; }
+@media(max-width:1199px) { .motion-exhibit.motion-gallery { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:640px) {
+  .motion-sec .wrap { width:calc(100% - 36px); }
+  .motion-filter-bar { align-items:flex-start; flex-wrap:wrap; gap:12px; }
+  .motion-pause-all { font-size:12px; padding:7px 12px; }
+  .motion-exhibit .motion-card { padding:0 0 14px; }
+  .motion-pair { gap:10px; }
+  .motion-arrow { display:none; }
+  .motion-source { width:28%; }
+  .motion-source figcaption { top:4px; left:4px; right:4px; font-size:9px; padding:2px 5px; }
+  .motion-caption p,.motion-category-description { font-size:13px; }
+  .motion-lightbox { padding:10px; }
+  .motion-modal-controls h3 { width:100%; }
+}

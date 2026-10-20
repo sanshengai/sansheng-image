@@ -35,7 +35,8 @@ MAX_DURATION = 60
 REQUIRED_KEYS = frozenset({"id", "title", "scene", "scene_label", "width", "height", "duration",
                            "poster", "video", "poster_sha256", "video_sha256"})
 OPTIONAL_KEYS = frozenset({"style_code", "homepage_scene", "note", "placement",
-                           "source", "source_sha256", "gif", "gif_sha256"})
+                           "source", "source_sha256", "gif", "gif_sha256",
+                           "category", "tags", "context", "source_label"})
 ALLOWED_KEYS = REQUIRED_KEYS | OPTIONAL_KEYS
 
 ID_RE = re.compile(r"[A-Za-z0-9_-]{1,32}")
@@ -105,6 +106,21 @@ def _item_problems(it, where: str) -> list[str]:
             p.append(f"{where}.{key} 必须是 1..{hi} 字的非空白文本")
     if "note" in it and not _text(it["note"], 240):
         p.append(f"{where}.note 必须是 1..240 字的非空白文本")
+    if "source_label" in it and not _text(it["source_label"], 24):
+        p.append(f"{where}.source_label 必须是 1..24 字的非空白文本")
+    if "category" in it and not (isinstance(it["category"], str) and ID_RE.fullmatch(it["category"])):
+        p.append(f"{where}.category 不合法")
+    if "tags" in it:
+        tags = it["tags"]
+        if (not isinstance(tags, list) or not 1 <= len(tags) <= 4 or
+                any(not _text(t, 16) for t in tags) or len(set(t for t in tags if isinstance(t, str))) != len(tags)):
+            p.append(f"{where}.tags 必须是 1..4 个不重复的短标签")
+    if "context" in it:
+        context = it["context"]
+        limits = {"title": 100, "excerpt": 1200, "purpose": 300}
+        if (not isinstance(context, dict) or set(context) != set(limits) or
+                any(not _text(context.get(k), hi) for k, hi in limits.items())):
+            p.append(f"{where}.context 须提供 title、excerpt、purpose 三段有效文本")
     if "placement" in it and it["placement"] not in ("featured", "brand", "background"):
         p.append(f"{where}.placement 必须是 featured、brand 或 background")
     sc = it.get("style_code")
@@ -147,7 +163,7 @@ def validate_document(doc) -> list[str]:
     if not isinstance(doc, dict):
         return ["顶层必须是对象"]
     problems: list[str] = []
-    unknown = sorted(str(k) for k in set(doc) - {"schema_version", "items"})
+    unknown = sorted(str(k) for k in set(doc) - {"schema_version", "items", "categories", "default_category"})
     if unknown:
         problems.append(f"顶层有不允许的字段 {unknown}")
     if not (_is_int(doc.get("schema_version")) and doc["schema_version"] == SCHEMA_VERSION):
@@ -158,6 +174,23 @@ def validate_document(doc) -> list[str]:
         return problems
     if len(items) > MAX_ITEMS:
         problems.append(f"items 最多 {MAX_ITEMS} 项（现在 {len(items)}）")
+    categories: set[str] = set()
+    if "categories" in doc or "default_category" in doc:
+        rows = doc.get("categories")
+        if not isinstance(rows, list) or not 1 <= len(rows) <= 8:
+            problems.append("categories 必须是 1..8 项的非空数组")
+        else:
+            for i, row in enumerate(rows):
+                if (not isinstance(row, dict) or set(row) != {"id", "label", "description"} or
+                        not isinstance(row.get("id"), str) or not ID_RE.fullmatch(row["id"]) or row["id"] == "all" or
+                        not _text(row.get("label"), 20) or not _text(row.get("description"), 240)):
+                    problems.append(f"categories[{i}] 须有有效 id、label、description，id 不能为 all")
+                    continue
+                if row["id"] in categories:
+                    problems.append(f"categories[{i}].id 重复")
+                categories.add(row["id"])
+        if not isinstance(doc.get("default_category"), str) or doc["default_category"] not in categories:
+            problems.append("default_category 须指向已定义的分类")
     seen: set[str] = set()
     for i, it in enumerate(items):
         problems += _item_problems(it, f"items[{i}]")
@@ -166,6 +199,17 @@ def validate_document(doc) -> list[str]:
             if iid in seen:
                 problems.append(f"items[{i}].id 重复：{iid}")
             seen.add(iid)
+        if isinstance(it, dict):
+            category = it.get("category")
+            if category is not None and (not isinstance(category, str) or category not in categories):
+                problems.append(f"items[{i}].category 未在 categories 中定义")
+            if categories and it.get("placement", "featured") == "featured" and category is None:
+                problems.append(f"items[{i}] 精选作品缺少 category")
+    if categories:
+        used = {it.get("category") for it in items if isinstance(it, dict) and
+                it.get("placement", "featured") == "featured" and isinstance(it.get("category"), str)}
+        if doc.get("default_category") not in used:
+            problems.append("默认分类须至少有一件精选作品")
     return problems
 
 
