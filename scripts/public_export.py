@@ -18,7 +18,7 @@ PUBLIC_FILES = {
     ".claude-plugin/marketplace.json", ".claude-plugin/plugin.json",
     ".env.example", ".githooks/pre-commit", ".gitignore",
     ".github/ISSUE_TEMPLATE/bug.yml", ".github/ISSUE_TEMPLATE/recommend-style.yml",
-    "ASSET_PROVENANCE.md", "CHANGELOG.md", "CONTRIBUTING.md", "LICENSE", "README.md",
+    "ASSET_PROVENANCE.md", "BRAND.md", "CHANGELOG.md", "CONTRIBUTING.md", "LICENSE", "README.md",
     "README_EN.md", "SKILL.md", "THIRD_PARTY_NOTICES.md",
     "assets/C01-story-sample.png", "assets/C32-infographic-sample.png",
     "examples/book/plan.json", "examples/comic/plan.json",
@@ -26,6 +26,7 @@ PUBLIC_FILES = {
     "examples/quickstart/manifest.json", "gallery/template.html", "gallery/picker.html", "gallery/github-meta.json",
     "gallery/motion.js", "gallery/motion.css", "gallery/motion-data.json",  # 动态展示只放源码；poster/mp4 媒体不进 Git 也不进包
     "gallery/palette-showcase.json",  # 已审色卡与对比的公开选片合同，原始媒体仍外置
+    "gallery/brand-logo.webp",  # 产品页面使用的自有静态字标，与动态演示素材分开
     "registry.json", "requirements-ppt.txt", "requirements-motion.txt", "requirements.txt",
     "scripts/sb.py", "scripts/first_run.py", "scripts/public_export.py", "scripts/samples_sync.py",
     "scripts/replay_wake.py",

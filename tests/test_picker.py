@@ -113,7 +113,7 @@ def _synthetic_motion(base: Path) -> dict:
     items = []
     for n, item in enumerate(real["items"]):
         buf = io.BytesIO()
-        Image.new("RGB", (16, 16), (40 + n * 17 % 200, 120, 200)).save(buf, "PNG")
+        Image.new("RGB", (16, 9), (40 + n * 17 % 200, 120, 200)).save(buf, "PNG")
         poster, video = buf.getvalue(), _SYNTHETIC_VIDEO + item["id"].encode()
         idir = media / item["id"]
         idir.mkdir()
@@ -124,7 +124,8 @@ def _synthetic_motion(base: Path) -> dict:
             if field not in item:
                 continue
             extra = io.BytesIO()
-            Image.new("RGB", (16, 24), (60, 130, 170)).save(extra, "GIF" if field == "gif" else "PNG")
+            size = (16, 9) if field == "gif" else (9, 16)
+            Image.new("RGB", size, (60, 130, 170)).save(extra, "GIF" if field == "gif" else "PNG")
             raw = extra.getvalue()
             (idir / filename).write_bytes(raw)
             row[sha_key] = BD.MG._sha(raw)
@@ -224,8 +225,8 @@ def test_template_has_one_placeholder_and_no_external_or_preview_refs():
         assert bad not in html, bad
     assert _template_static_asset_violations(html) == []
     assert 'data-asset-root="img/"' in html
-    # 脚本里直接写出的图片文件名只允许品牌图两张，其余都由 <码>-<种类> 拼出并落在 manifest 内
-    assert set(re.findall(r"[A-Za-z0-9_-]+\.webp", html)) == {"logo.webp", "logo-poster.webp"}
+    # 静态品牌与动态演示各用自己的资源，其余由 <码>-<种类> 拼出并落在 manifest 内。
+    assert set(re.findall(r"[A-Za-z0-9_-]+\.webp", html)) == {"brand-logo.webp", "logo.webp", "logo-poster.webp"}
 
 
 _MOTION_LINK = f'<link rel="stylesheet" href="{MOTION_CSS_HREF}">'
@@ -413,7 +414,7 @@ def test_embedded_data_matches_registry_and_manifest(built):
     assert meta["first"] == "wxcover" and meta["kinds"] == BD.SITE_KINDS and meta["labels"] == BD.KIND_LABELS
     stars = json.loads((BD.CT.ROOT / "gallery" / "github-meta.json").read_text(encoding="utf-8")).get("stars")
     assert meta["githubStars"] == (stars if isinstance(stars, int) and not isinstance(stars, bool) and stars > 0 else "")  # 0 星不展示
-    assert meta["metrics"] == {"styles": len(cands), "scenes": len(want_scenes), "palettes": len(named), "samples": sum(n not in BD.BRAND_IMAGES and not n.endswith("-anchor.webp") and not n.startswith("hero-") for n in names)}
+    assert meta["metrics"] == {"styles": len(cands), "scenes": len(want_scenes), "palettes": len(named), "samples": sum(n not in (*BD.BRAND_IMAGES, BD.BRAND_LOGO_NAME) and not n.endswith("-anchor.webp") and not n.startswith("hero-") for n in names)}
 
     assert "featured" not in meta  # 精选 12 区已删，首屏下面直接是画风库
     # 首屏展台：人工挑的「每种画风一张代表作」，静态图有单独的清晰图并登记进 manifest；一种画风只出现一次
@@ -451,6 +452,31 @@ def test_public_package_without_brand_images_keeps_manifest_and_does_not_fake(bu
     d, _ = built
     assert not (d / "img" / "logo.webp").exists() and not (d / "img" / "logo-poster.webp").exists()
     assert {"logo.webp", "logo-poster.webp"} <= set(_manifest(d))
+    # 产品字标随包提供；缺少外置动态演示不影响真正的静态品牌入口。
+    assert (d / "img" / BD.BRAND_LOGO_NAME).read_bytes() == BD.BRAND_LOGO_PATH.read_bytes()
+    with Image.open(d / "img" / BD.BRAND_LOGO_NAME) as logo:
+        assert logo.n_frames == 1
+
+
+@pytest.mark.parametrize("invalid", ["animated", "empty"])
+def test_picker_rejects_invalid_static_brand_before_touching_output(tmp_path, monkeypatch, invalid):
+    source = tmp_path / "bad-logo.webp"
+    if invalid == "animated":
+        Image.new("RGB", (16, 8), "red").save(
+            source, format="WEBP", save_all=True,
+            append_images=[Image.new("RGB", (16, 8), "blue")], duration=100, loop=0)
+        with Image.open(source) as logo:
+            assert logo.n_frames == 2
+    else:
+        source.write_bytes(b"")
+    monkeypatch.setattr(BD, "BRAND_LOGO_PATH", source)
+    out = tmp_path / "existing"
+    out.mkdir()
+    (out / "index.html").write_text("KEEP EXISTING PAGE", encoding="utf-8")
+    with pytest.raises(ValueError, match="品牌 Logo"):
+        BD.picker(out)
+    assert (out / "index.html").read_text(encoding="utf-8") == "KEEP EXISTING PAGE"
+    assert not (out / "img").exists()
 
 
 def test_build_is_deterministic_and_does_not_touch_source(built, tmp_path):
@@ -683,14 +709,15 @@ def test_brand_uses_packaged_asset_path_and_missing_images_keep_text(browser, bu
     out = tmp_path / 'site'
     shutil.copytree(d, out)
     if has_brand:
-        for name in ('logo.webp', 'logo-poster.webp'):
-            (out / 'img' / name).write_bytes(FAKE_WEBP)
+        (out / 'img' / 'brand-logo.webp').write_bytes(FAKE_WEBP)
+    else:
+        (out / 'img' / 'brand-logo.webp').unlink()
     with open_page(browser, out) as page:
         _open(page, slash=slash)
         images = page.locator('.brand .brand-logo')
         assert images.count() == 2, '页眉、页脚都应使用同一品牌图'
         assert images.evaluate_all('xs => xs.every(i => i.complete)')
-        assert images.evaluate_all('xs => xs.every(i => new URL(i.src).pathname === "/tools/image/img/logo.webp")')
+        assert images.evaluate_all('xs => xs.every(i => new URL(i.src).pathname === "/tools/image/img/brand-logo.webp")')
         if has_brand:
             assert images.evaluate_all('xs => xs.every(i => i.naturalWidth > 0 && !i.hidden)')
             assert page.locator('.brand .brand-text').evaluate_all('xs => xs.every(x => x.hidden)')
@@ -701,6 +728,59 @@ def test_brand_uses_packaged_asset_path_and_missing_images_keep_text(browser, bu
 
 
 STUB_CLIPBOARD = "window.__copied=null;navigator.clipboard.writeText=t=>{window.__copied=t;return Promise.resolve()}"
+
+
+def _choose_detail_palette(page, palette):
+    common = page.locator(f'#dlg-pal-common [data-detail-pal="{palette}"]')
+    if common.is_visible():
+        common.click()
+    else:
+        page.click('#dlg-pal-more')
+        page.locator(f'#dlg-pal-all [data-detail-pal="{palette}"]').click()
+
+
+def test_install_copy_has_a_manual_fallback_when_clipboard_is_blocked(browser, built):
+    d, _ = built
+    with open_page(browser, d) as page:
+        _open(page)
+        page.evaluate(STUB_CLIPBOARD)
+        page.click('#install-copy')
+        assert 'npx skills add sanshengai/sansheng-image -g' in page.evaluate('window.__copied')
+        assert not page.locator('#install-panel').is_visible()
+        page.evaluate("navigator.clipboard.writeText=()=>Promise.reject(new Error('denied'));document.execCommand=()=>false")
+        page.click('#install-copy')
+        page.wait_for_selector('#install-panel', state='visible')
+        assert page.locator('#install-ask').evaluate('e=>e===document.activeElement')
+        assert 'npx skills add sanshengai/sansheng-image -g' in page.inner_text('#install-ask')
+
+
+@pytest.mark.parametrize('width', [1440, 390])
+def test_sticky_tools_and_detail_palette_keyboard_remain_reachable(browser, built, width):
+    d, html = built
+    free = next(c['id'] for c in _data(html)['cands'] if c['recolor'] == 'free')
+    with open_page(browser, d, width=width, height=844) as page:
+        _open(page)
+        page.locator('#library').scroll_into_view_if_needed()
+        page.mouse.wheel(0, 500)
+        page.wait_for_timeout(150)
+        for selector in ('#quiz-btn', '#tray-btn'):
+            box = page.locator(selector).bounding_box()
+            assert box and 0 <= box['x'] and box['x'] + box['width'] <= width
+            assert 0 <= box['y'] < 400, '向下浏览后常用操作仍在吸顶栏'
+        page.click('#tray-btn')
+        page.wait_for_selector('#tray[open]')
+        page.keyboard.press('Escape')
+        _open(page, f'#s={free}')
+        page.wait_for_selector('#dlg[open]')
+        page.click('#dlg-pal-more')
+        page.keyboard.press('Escape')
+        assert page.locator('#dlg[open]').is_visible()
+        assert not page.locator('#dlg-pal-panel').is_visible()
+        assert page.locator('#dlg-pal-more').evaluate('e=>e===document.activeElement')
+        _choose_detail_palette(page, 'zhusha')
+        assert page.input_value('#dlg-palette') == 'zhusha'
+        assert page.locator('#dlg-pal-common [data-detail-pal="zhusha"]').is_visible()
+        assert '-zhusha' in page.inner_text('#dlg-copyline')
 
 
 def _visible(page) -> set[str]:
@@ -845,7 +925,7 @@ def test_copied_code_roundtrips_defaults_and_modes(browser, built):
         _open(page, "#u=xhs")
         page.click(f"[data-style={free}] .style-card")
         page.wait_for_selector("#dlg[open]")
-        page.select_option("#dlg-palette", pal)
+        _choose_detail_palette(page, pal)
         page.click('#dlg-light button[data-v="-1"]')
         page.click('#dlg-sat button[data-v="1"]')
         line = page.inner_text("#dlg-copyline")
@@ -915,7 +995,7 @@ def test_locked_style_cannot_recolor_and_brand_needs_hex(browser, built):
         assert re.fullmatch(rf"sb2:[\w-]+/{locked}", SC.find(page.inner_text("#dlg-copyline"))[0])  # 配色固定：码里没有色系后缀
         _open(page, f"#s={free}")
         page.wait_for_selector("#dlg[open]")
-        page.select_option("#dlg-palette", "brand")
+        _choose_detail_palette(page, "brand")
         assert page.locator("#dlg-copy").is_disabled() and page.locator("#dlg-default").is_disabled()
         page.fill("#dlg-hex", "1F6F8B F4F1E8")
         code = SC.find(page.inner_text("#dlg-copyline"))[0]
@@ -947,10 +1027,10 @@ def test_palette_real_shots_page_is_consumed(browser, built):
         page.click(f'[data-usepal="{pid}"]')
         assert page.get_attribute(f'[data-usepal="{pid}"]', "aria-pressed") == "true"
         assert page.get_attribute(f'#lib-palettes .chip[data-pal="{pid}"]', "aria-pressed") == "true"
-        page.click("#pal-jump")  # 画风库标题行里的入口
-        assert page.inner_text("#palettes-title") == "色系图鉴" and page.inner_text("#pal-jump") == "色系图鉴"
+        assert page.locator('#pal-jump, #pal-entry').count() == 0
+        assert page.inner_text("#palettes-title") == "色系图鉴"
         page.evaluate("window.scrollTo(0, document.getElementById('library').offsetTop)")
-        page.click("#pal-entry")  # 吸顶栏色系行末尾的入口
+        page.click("#nav-pal")  # 唯一入口保留在全局导航
         page.wait_for_function("Math.abs(document.getElementById('palettes').getBoundingClientRect().top) < innerHeight / 2", timeout=5000)
 
 
@@ -999,6 +1079,11 @@ def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, 
     """只给精选中已登记场景的画风加角标；背景退出作品墙；减少动效时不自动加载视频。"""
     d, _ = built
     doc = json.loads(json.dumps(synthetic_motion["doc"]))
+    # 本例覆盖旧的场景角标／逐件标签兼容入口；正式分类作品墙由 motion_gallery 专项测试覆盖。
+    for key in ('showcase', 'categories', 'default_category'):
+        doc.pop(key, None)
+    for m in doc['items']:
+        m.pop('category', None)
     # 保留一条明确关联场景的合成示范，避免未准入的新作品被测试夹具错误地接进场景池。
     next(m for m in doc["items"] if m["id"] == "moving")["placement"] = "featured"
     for m in doc["items"]:
@@ -1023,18 +1108,17 @@ def test_library_motion_badges_follow_scene_and_respect_reduced_motion(browser, 
             page.wait_for_function(f"document.getElementById('lib-grid').dataset.scene === '{sid}'")
             assert page.evaluate(_MOTION_CARDS) == [], sid
         featured = [m for m in doc["items"] if m.get("placement", "featured") == "featured"]
-        assert page.locator("#motion-showcase [role='tab']").count() == len(featured)
-        assert page.locator("#motion-selected .motion-card").count() == 1
+        assert page.locator("#motion-showcase [role='tab']").count() == 1
+        assert page.locator("#motion-selected .motion-card").count() == len(featured)
         assert not page.locator("#motion-showcase .motion-brand").evaluate("e => e.open")
-        assert page.locator("#motion-selected a[download$='.gif']").count() == int("gif" in featured[0])
-        assert page.locator("#motion-selected .motion-source img[alt^='原图：']").count() == int("source" in featured[0])
-        old_video = page.locator("#motion-selected video").element_handle()
-        page.locator("#motion-showcase [role='tab']").nth(1).click()
-        assert page.locator("#motion-selected .motion-caption h3").inner_text() == featured[1]["title"]
-        assert page.locator("#motion-selected video").count() == 1
+        assert page.locator("#motion-selected a[download$='.gif']").count() == sum("gif" in m for m in featured)
+        assert page.locator("#motion-selected .motion-source img[alt^='原图：']").count() == sum("source" in m for m in featured)
+        old_video = page.locator("#motion-selected video").first.element_handle()
+        page.locator("#motion-showcase [role='tab']").first.press("Home")
+        assert page.locator("#motion-selected .motion-caption h3").first.inner_text() == featured[0]["title"]
+        assert page.locator("#motion-selected video").count() == len(featured)
         assert old_video.evaluate("v => [v.isConnected, v.getAttribute('src')]") == [False, None]
-        page.locator("#motion-showcase [role='tab']").nth(1).press("Home")
-        assert page.locator("#motion-showcase [role='tab'][aria-selected='true']").inner_text() == featured[0]["title"]
+        assert page.locator("#motion-showcase [role='tab'][aria-selected='true']").inner_text() == f"全部 {len(featured)}"
     with open_page(browser, d, reduced_motion="reduce") as page:
         page.route("**/motion-data.json", lambda route: route.fulfill(json=doc))
         _open(page, f"#u={items[0]['homepage_scene']}")
@@ -1076,7 +1160,7 @@ def test_hero_github_button_install_commands_and_origin_wording(browser, built):
         page.click("#install-btn")
         assert page.is_visible("#install-panel") and page.get_attribute("#install-btn", "aria-expanded") == "true"
         assert "npx skills add sanshengai/sansheng-image -g" in page.inner_text("#install-cmd")
-        assert SITE_URL in page.inner_text("#install-ask")
+        assert "npx skills add sanshengai/sansheng-image -g" in page.inner_text("#install-ask")
         assert f"git clone {SITE_URL}.git" in page.text_content("#install-git")  # 折叠在「其他装法」里，读文本不要求可见
         assert "与相关创作者无关联" in page.inner_text(".foot-note")
         assert page.locator(".foot-links a").count() == 3
@@ -1471,7 +1555,7 @@ CSS_PROBE = """() => {
   return {
     slide: cs(document.getElementById('stage-logo')).transitionDuration,
     thumb: cs(document.querySelector('#lib-grid .thumb img')).transitionDuration,
-    btn: cs(document.getElementById('install-btn')).transitionDuration,
+    btn: cs(document.getElementById('install-copy')).transitionDuration,
     scroll: cs(document.documentElement).scrollBehavior,
     reduce: matchMedia('(prefers-reduced-motion: reduce)').matches
   };

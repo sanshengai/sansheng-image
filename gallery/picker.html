@@ -183,12 +183,14 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .dlg-facts { margin-top: 16px; border-top: 1px solid var(--line); }
 .dlg-facts > div { display: grid; grid-template-columns: 3em 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .dlg-facts dt { color: var(--mut); }
-.dlg-pal { margin-top: 16px; display: flex; align-items: center; gap: 12px; }
-.dlg-pal label { font-size: 14px; color: var(--mut); }
-.dlg-pal select {
-  flex: 1; min-width: 0; min-height: 40px; padding: 4px 10px; font: inherit; font-size: 14px;
-  color: var(--strong); background: var(--bg); border: 1px solid var(--line-2); border-radius: 5px;
-}
+.dlg-recolor { margin-top: 8px; font-size: 13px; color: var(--mut); }
+.dlg-pal { position: relative; margin-top: 12px; }
+.dlg-pal-common { display: flex; flex-wrap: wrap; gap: 8px; }
+.dlg-pal .chip { gap: 8px; min-height: 38px; font-size: 14px; }
+.dlg-pal-more { color: var(--mut); }
+.dlg-pal-panel { position: absolute; z-index: 4; top: calc(100% + 8px); left: 0; right: 0; max-height: 280px; overflow-y: auto; padding: 14px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--panel); box-shadow: 0 16px 36px rgba(0,0,0,.4); }
+.dlg-pal-all { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.dlg-pal-all .chip { justify-content: flex-start; min-width: 0; }
 .dlg-palnote { margin-top: 8px; font-size: 13px; color: var(--mut); }
 .copy-line { margin-top: 16px; padding: 12px 14px; font-size: 15px; color: var(--strong); background: var(--bg); border: 1px solid var(--line); border-radius: 5px; user-select: all; }
 .dlg-copy { margin-top: 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
@@ -247,9 +249,9 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .install-alt p { margin: 6px 0; font-size: 13px; color: var(--fg); }
 .install-alt .install-row { margin: 6px 0; }
 
-/* 画风库标题行 + 我的默认入口 */
-.lib-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.lib-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+/* 常用操作与色系同在吸顶栏，标题行只保留标题。 */
+.lib-tools { display: flex; align-items: center; gap: 8px; flex: none; }
+.lib-tools .btn { white-space: nowrap; }
 .badge {
   display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 10px;
   background: var(--green); color: #04110B; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center;
@@ -403,8 +405,9 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   .lib-row-top { flex-wrap: wrap; row-gap: 8px; }
   .lib-row-top .chips { flex-basis: calc(100% - 2em - 12px); }
   .lib-row-top .lib-search { flex: 1 1 auto; margin-left: calc(2em + 12px); max-width: none; }
-  .lib-row-pal { display: grid; grid-template-columns: 2em minmax(0, 1fr); }
-  .lib-row-pal .pal-side { grid-column: 2; }
+  .lib-row-pal { display: grid; grid-template-columns: 2em minmax(0, 1fr) auto; }
+  .lib-row-pal .pal-side { grid-column: 3; grid-row: 1; }
+  .lib-row-pal .lib-tools { grid-column: 2 / 4; justify-content: flex-end; }
   #lib-palettes { flex-wrap: wrap; }
   #lib-palettes.is-folded { flex-wrap: nowrap; }
 }
@@ -414,7 +417,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
   .lib-row-top .lib-search { flex: 1 1 0; }          /* 搜索框和筛选按钮共享第二行，320px 也不另起一行 */
   .lib-row-pal { grid-template-columns: 2em minmax(0, 1fr) auto; }
   .lib-row-pal .pal-side { grid-column: 3; grid-row: 1; }
-  #pal-entry { display: none; }                     /* 库标题旁仍有「色系图鉴」，手机不重复占一行 */
+  .lib-row-pal .lib-tools { grid-column: 2 / 4; justify-content: flex-end; padding-bottom: 4px; }
   .lib-q { font-size: 16px; }
   .lib-tax { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
   .lib-sel { flex: 0 0 132px; font-size: 16px; padding: 4px 8px; }
@@ -472,36 +475,22 @@ body::before {                     /* 极淡的纸纹网格，只给底色一点
   min-height: calc(100vh - var(--nav-h)); min-height: calc(100svh - var(--nav-h));
   display: flex; flex-direction: column; justify-content: center;
 }
-.scroll-hint {
-  position: absolute; left: 50%; bottom: 26px; z-index: 2; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  font-size: 12px; color: var(--mut); text-decoration: none; letter-spacing: .08em;
-}
-.scroll-hint:hover { color: var(--strong); }
-.scroll-hint i { display: block; width: 1px; height: 34px; background: linear-gradient(to bottom, var(--mut), transparent); transform-origin: top; animation: hint 2.4s ease-in-out infinite; }
-@keyframes hint { 0% { transform: scaleY(0); opacity: 0; } 30% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1) translateY(14px); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .scroll-hint i { animation: none; } }
-@media (max-width: 900px) { .scroll-hint { display: none; } .hero { min-height: 0; padding-bottom: 56px; } }   /* 窄屏首屏本来就超过一屏，不需要提示 */
+@media (max-width: 900px) { .hero { min-height: 0; padding-bottom: 56px; } }
 .hero::after {                     /* 背景层在首屏底部淡出，不与下文抢 */
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0; pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--bg));
 }
 .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 48px; align-items: center; }
 .hero-left, .hero-right { min-width: 0; }
-.hero-kicker { font-size: 13px; color: var(--green); letter-spacing: .04em; }
-.hero-title { margin-top: 18px; font: 700 clamp(40px, 4.2vw, 62px)/1.16 var(--serif); white-space: nowrap; color: var(--strong); letter-spacing: .01em; }
-.hero-sub { margin-top: 22px; max-width: 30em; font: 400 18px/1.8 var(--sans); color: var(--fg); }
-.hero-en { margin-top: 8px; max-width: 34em; font: italic 16px/1.6 var(--latin); color: var(--mut); }
-
-.cmdbar {
-  margin-top: 32px; display: flex; align-items: center; gap: 12px; max-width: 520px;
-  padding: 6px 6px 6px 18px; background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px;
-}
-.cmdbar-p { font: 14px/1 var(--mono); color: var(--green); }
-.cmdbar-c { flex: 1; min-width: 0; font: 14px/1.4 var(--mono); color: var(--strong); white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
-.cmdbar-c::-webkit-scrollbar { display: none; }
-.btn-copy { flex: none; }
-.actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-title { font: 700 clamp(40px, 4.2vw, 62px)/1.16 var(--serif); white-space: nowrap; color: var(--strong); letter-spacing: .01em; }
+.hero-scenes { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px 24px; max-width: 430px; color: var(--strong); font: 500 clamp(18px, 1.65vw, 23px)/1.65 var(--sans); }
+.hero-scenes li { white-space: nowrap; }
+.hero-reasons { margin-top: 22px; display: grid; gap: 4px; font-size: 15px; color: var(--fg); }
+.hero-reasons li::before { content: ""; display: inline-block; width: 5px; height: 5px; margin: 0 11px 3px 0; border-radius: 50%; background: var(--green); }
+.actions { margin-top: 26px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.install-other { padding: 8px 0; border: 0; background: none; font: inherit; font-size: 14px; color: var(--mut); cursor: pointer; text-decoration: underline; text-underline-offset: 5px; }
+.install-other:hover { color: var(--strong); }
+.install-next { margin-top: 10px; font-size: 12px; color: var(--mut); }
 .install-panel { margin-top: 16px; max-width: 560px; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: rgba(21, 29, 26, .92); }
 .install-hint { font-size: 13px; color: var(--mut); margin-bottom: 8px; }
 .install-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -678,10 +667,9 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   .nav-sep { height: 18px; }
   .product-zh { font-size: 15px; }
   .hero-title { font-size: clamp(32px, 8.8vw, 42px); }
-  .hero-sub { font-size: 16px; }
-  .hero-en { font-size: 14px; }
-  .cmdbar { padding-left: 14px; }
-  .cmdbar-c { font-size: 12.5px; }
+  .hero-scenes { margin-top: 22px; gap: 6px 20px; font-size: 19px; }
+  .hero-reasons { margin-top: 18px; font-size: 14px; }
+  .actions { gap: 12px; margin-top: 22px; }
   .metrics { font-size: 13px; }
   .metrics b { font-size: 18px; }
   .metrics { gap: 4px 16px; }
@@ -737,20 +725,21 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   <div class="wrap hero-grid">
     <div class="hero-left" id="hero-left">
       <div id="title-block" class="title-block">
-        <p class="hero-kicker">给 Claude Code、Codex 的开源生图 Skill</p>
-        <h1 class="hero-title">给 Agent 的<br>生图 Skill。</h1>
-        <p class="hero-sub">公众号封面与配图、PPT 页面、小红书图文、X 配图、静态视频分镜首帧。选好画风，把内容交给 Agent，画出一整组风格一致的图。</p>
+        <h1 class="hero-title">给 Agent 的<br>生图 Skill</h1>
+        <ul class="hero-scenes" aria-label="可以用在哪些场景">
+          <li>公众号封面·配图</li><li>PPT</li><li>小红书</li><li>推特配图</li><li>视频分镜</li>
+        </ul>
+        <ul class="hero-reasons" aria-label="为什么使用叁笙生图">
+          <li>读懂内容，再配图</li>
+          <li>整组画风，保持一致</li>
+        </ul>
       </div>
 
-      <div class="cmdbar" id="install">
-        <span class="cmdbar-p" aria-hidden="true">$</span>
-        <code class="cmdbar-c" id="hero-cmd">npx skills add sanshengai/sansheng-image -g</code>
-        <button class="btn btn-small btn-copy" type="button" data-copy-target="hero-cmd">复制</button>
+      <div class="actions" id="install">
+        <button class="btn btn-paper" id="install-copy" type="button">复制给 Agent 安装</button>
+        <button class="install-other" id="install-btn" type="button" aria-expanded="false" aria-controls="install-panel">其他安装方式</button>
       </div>
-      <div class="actions">
-        <a class="btn btn-paper" href="#library">浏览画风与样图</a>
-        <button class="btn" id="install-btn" type="button" aria-expanded="false" aria-controls="install-panel">安装到 Agent</button>
-      </div>
+      <p class="install-next">复制安装指令，粘贴给 Claude Code、Codex 等 Agent。</p>
       <div class="install-panel" id="install-panel" hidden>
         <p class="install-hint">在终端里运行这一行（需要 Node.js），装完重开你的 AI 助手：</p>
         <div class="install-row">
@@ -759,7 +748,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
         </div>
         <p class="install-hint install-gap">不会用命令行？把这句话发给你的 AI 助手，让它替你装：</p>
         <div class="install-row">
-          <code class="cmd" id="install-ask">请从 GitHub 安装叁笙生图 Skill：https://github.com/sanshengai/sansheng-image</code>
+          <code class="cmd" id="install-ask" tabindex="-1">请帮我安装叁笙生图 Skill，执行：npx skills add sanshengai/sansheng-image -g。安装后检查是否可以使用。</code>
           <button class="btn btn-small" type="button" data-copy-target="install-ask">复制这句话</button>
         </div>
         <p class="install-small">完整出图需要 Claude Code、Codex 这类能在电脑上执行命令的 AI 助手。</p>
@@ -779,7 +768,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       </div>
 
       <p class="metrics" id="metrics">
-        <span><b data-metric="styles">—</b> 种精选画风</span>
+        <span><b data-metric="styles">—</b> 种画风可浏览</span>
         <span><b data-metric="palettes">—</b> 套有故事的色系</span>
       </p>
     </div>
@@ -801,7 +790,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       </section>
     </div>
   </div>
-  <a class="scroll-hint" href="#howto-title"><span>往下看画风库</span><i aria-hidden="true"></i></a>
 </header>
 
 <section class="howto" aria-labelledby="howto-title">
@@ -819,11 +807,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   <section class="sec lib" id="library" aria-labelledby="lib-title">
     <div class="wrap lib-head">
       <h2 class="sec-title" id="lib-title" tabindex="-1">画风库</h2>
-      <div class="lib-tools">
-        <button class="btn btn-small" id="quiz-btn" type="button" aria-haspopup="dialog">帮我挑</button>
-        <button class="btn btn-small" id="pal-jump" type="button">色系图鉴</button>
-        <button class="btn btn-small" id="tray-btn" type="button" aria-haspopup="dialog">我的默认 <span class="badge" id="tray-n">0</span></button>
-      </div>
     </div>
     <div class="lib-bar" id="lib-bar">
       <div class="wrap lib-bar-in">
@@ -841,7 +824,10 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
           <div class="chips chips-wrap is-folded" id="lib-palettes" role="group" aria-labelledby="lib-palette-label"></div>
           <div class="pal-side">
             <button class="chip chip-entry" id="pal-more" type="button" aria-expanded="false" aria-controls="lib-palettes" hidden>全部色系</button>
-            <button class="chip chip-entry" id="pal-entry" type="button" aria-label="看色系图鉴">色系图鉴</button>
+          </div>
+          <div class="lib-tools">
+            <button class="btn btn-small" id="quiz-btn" type="button" aria-haspopup="dialog">帮我挑</button>
+            <button class="btn btn-small" id="tray-btn" type="button" aria-haspopup="dialog">我的默认 <span class="badge" id="tray-n">0</span></button>
           </div>
         </div>
         <div class="lib-row" id="lib-tax-row" hidden>
@@ -940,13 +926,13 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       <p class="dlg-usenote" id="dlg-usenote"></p>
 
       <p class="dlg-h">② 色系</p>
-      <dl class="dlg-facts">
-        <div><dt>换色</dt><dd id="dlg-recolor"></dd></div>
-      </dl>
-      <div class="dlg-pal">
-        <label for="dlg-palette">色系</label>
-        <span class="sw sw-lg" id="dlg-sw" aria-hidden="true"></span>
-        <select id="dlg-palette"></select>
+      <p class="dlg-recolor" id="dlg-recolor"></p>
+      <div class="dlg-pal" id="dlg-pal">
+        <select id="dlg-palette" aria-label="当前色系" hidden></select>
+        <div class="dlg-pal-common" id="dlg-pal-common" role="group" aria-label="常用色系"></div>
+        <div class="dlg-pal-panel" id="dlg-pal-panel" hidden>
+          <div class="dlg-pal-all" id="dlg-pal-all" role="group" aria-label="全部色系"></div>
+        </div>
       </div>
       <div class="tune" id="dlg-tune" hidden>
         <div class="chips-wrap" id="dlg-light" role="group" aria-label="深浅"></div>
@@ -954,6 +940,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       </div>
       <div class="dlg-brand" id="dlg-brand" hidden>
         <input class="hex" id="dlg-hex" type="text" placeholder="品牌色 HEX，1 到 5 个，如 1F6F8B F4F1E8" aria-label="品牌色 HEX" autocomplete="off" spellcheck="false">
+        <span class="sw sw-lg" id="dlg-sw" aria-hidden="true"></span>
       </div>
       <p class="dlg-palnote" id="dlg-palnote"></p>
       <div class="cmp" id="dlg-cmp" hidden></div>
@@ -1029,6 +1016,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
   }
 
   var LOGO_SRC = assetUrl('logo.webp');
+  var BRAND_LOGO_SRC = assetUrl('brand-logo.webp');
   var POSTER_SRC = assetUrl('logo-poster.webp');
   var LOGO_MS = 6000;
   var SLIDE_MS = 4200;
@@ -1202,12 +1190,13 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     return '用叁笙生图帮我出一组' + (sc ? sc.name : '图片') + '：画风 ' + st.id + ' ' + st.name + '，色系「' + palLabel(st) + '」（' + applyCode(st, sceneId) + '）。内容是：';
   }
 
-  function copyToClipboard(text, btn, doneText) {
+  function copyToClipboard(text, btn, doneText, onFailure) {
     var orig = btn.dataset.label || btn.textContent;
     btn.dataset.label = orig;
     function done(ok) {
       btn.textContent = ok ? (doneText || '已复制') : '请手动选中复制';
       announce(ok ? '已复制' : '复制没有成功，请手动选中文字复制');
+      if (!ok && onFailure) onFailure();
       clearTimeout(btn._t);
       btn._t = setTimeout(function () { btn.textContent = orig; }, 1800);
     }
@@ -1822,7 +1811,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       b.addEventListener('click', function () { selectPalette(p.id); });
       palBox.appendChild(b);
     });
-    $('#pal-entry').addEventListener('click', function () { scrollToPalettes(true); });   // 色系行末尾：去看每个色系的故事与真图
     $('#pal-more').addEventListener('click', function () { palExpanded = !palExpanded; syncPalFold(); });
     window.addEventListener('resize', syncPalFold);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncPalFold);
@@ -2222,13 +2210,61 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     updateHint();
   }
 
-  /* 色系区：下拉、色条、深浅鲜灰、品牌色、说明、对比卡、复制句。原地更新，不重建控件，键盘焦点不丢 */
+  function closeDetailPalettes(returnFocus) {
+    var more = $('#dlg-pal-more');
+    $('#dlg-pal-panel').hidden = true;
+    if (more) {
+      more.setAttribute('aria-expanded', 'false');
+      if (returnFocus) more.focus({ preventScroll: true });
+    }
+  }
+  function buildDetailPalettes() {
+    var common = $('#dlg-pal-common'), all = $('#dlg-pal-all');
+    function chip(p) {
+      var kids = [];
+      if (p.colors && p.colors.length) kids.push(h('span', { class: 'sw', 'aria-hidden': 'true' }, p.colors.map(function (c) { return swatch(c.hex); })));
+      kids.push(p.id === 'orig' ? '样式原色' : p.name);
+      var b = h('button', { class: 'chip', type: 'button', 'data-detail-pal': p.id, 'aria-pressed': 'false' }, kids);
+      b.addEventListener('click', function () {
+        var inPanel = all.contains(b);
+        if (dlgStyle && dlgStyle.recolor !== 'locked') selectPalette(p.id);
+        closeDetailPalettes(inPanel);
+      });
+      return b;
+    }
+    palettes.forEach(function (p) { common.appendChild(chip(p)); all.appendChild(chip(p)); });
+    var more = h('button', { class: 'chip dlg-pal-more', id: 'dlg-pal-more', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'dlg-pal-panel', text: '更多色系 ▾' });
+    more.addEventListener('click', function () {
+      var panel = $('#dlg-pal-panel');
+      if (!panel.hidden) { closeDetailPalettes(false); return; }
+      panel.hidden = false; more.setAttribute('aria-expanded', 'true');
+      var selected = all.querySelector('[aria-pressed="true"]:not(:disabled)') || all.querySelector('button:not(:disabled)');
+      if (selected) { selected.focus({ preventScroll: true }); selected.scrollIntoView({ block: 'nearest' }); }
+    });
+    common.appendChild(more);
+  }
+  dlg.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && !$('#dlg-pal-panel').hidden) { ev.preventDefault(); closeDetailPalettes(true); }
+  });
+  dlg.addEventListener('click', function (ev) { if (!$('#dlg-pal').contains(ev.target)) closeDetailPalettes(false); });
+  dlg.addEventListener('close', function () { closeDetailPalettes(false); });
+
+  /* 色系值只来自 libState；色条、复制码、默认与分享共用它，不重建按钮以保留焦点。 */
   function updatePalette() {
     var st = dlgStyle; if (!st) return;
     var e = eff(st), locked = st.recolor === 'locked';
     var sel = $('#dlg-palette');
     Array.prototype.forEach.call(sel.options, function (o) { o.disabled = locked && o.value !== 'orig'; });
     sel.value = e.pal;
+    $('#dlg-pal-common').querySelectorAll('[data-detail-pal]').forEach(function (b) {
+      b.hidden = PAL_RECOMMENDED.indexOf(b.dataset.detailPal) < 0 && b.dataset.detailPal !== e.pal;
+    });
+    $('#dlg-pal').querySelectorAll('[data-detail-pal]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.detailPal === e.pal ? 'true' : 'false');
+      b.disabled = locked && b.dataset.detailPal !== 'orig';
+    });
+    $('#dlg-pal-more').disabled = locked;
+    if (locked) closeDetailPalettes(false);
     var sw = $('#dlg-sw'); sw.textContent = '';
     var colors = e.pal === 'brand' ? e.hex.map(function (x) { return '#' + x; })
       : ((paletteById[e.pal] && paletteById[e.pal].colors) || []).map(function (c) { return c.hex; });
@@ -2369,7 +2405,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     mine[sc.id] = { style: st.id, code: applyCode(st, sc.id), name: st.name };
     saveMine();
     renderMineUI();
-    var msg = '已设为「' + sc.name + '」的默认；选好几个后，点画风库右上角「我的默认」一起复制给 AI。';
+    var msg = '已设为「' + sc.name + '」的默认；选好几个后，点筛选栏里的「我的默认」一起复制给 AI。';
     $('#dlg-saved').textContent = msg;
     announce(msg);
   });
@@ -2472,7 +2508,6 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
     clearArmed = 0; b.textContent = '清空';
     mine = {}; saveMine(); renderMineUI();
   });
-  $('#pal-jump').addEventListener('click', function () { scrollToPalettes(true); });
   $('#nav-pal').addEventListener('click', function (e) { e.preventDefault(); scrollToPalettes(true); });
   var navEl = $('#topnav');
   /* 官网及本地预览只请求同源品牌图；其他站点和离线公开包保留文字字标。 */
@@ -2482,7 +2517,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
       if (!im) return;
       im.addEventListener('load', function () { im.hidden = false; if (tx) tx.hidden = true; });
       im.addEventListener('error', function () { im.hidden = true; if (tx) tx.hidden = false; });
-      im.src = LOGO_SRC;
+      im.src = BRAND_LOGO_SRC;
     });
   }
   var libBarEl = $('#lib-bar');
@@ -2582,6 +2617,13 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
   /* ---------- 安装 ---------- */
   var installBtn = $('#install-btn'), installPanel = $('#install-panel');
+  $('#install-copy').addEventListener('click', function () {
+    copyToClipboard($('#install-ask').textContent.trim(), this, '已复制，粘贴给 Agent', function () {
+      installPanel.hidden = false; installBtn.setAttribute('aria-expanded', 'true');
+      $('#install-ask').focus({ preventScroll: true });
+      $('#install-ask').scrollIntoView({ block: 'nearest' });
+    });
+  });
   installBtn.addEventListener('click', function () {
     var open = installPanel.hidden;
     installPanel.hidden = !open;
@@ -2625,6 +2667,7 @@ dialog::backdrop { background: rgba(6, 10, 9, .78); backdrop-filter: blur(4px); 
 
     var sel = $('#dlg-palette');
     palettes.forEach(function (p) { sel.appendChild(h('option', { value: p.id, text: p.id === 'orig' ? '样式原色' : p.name })); });
+    buildDetailPalettes();
     buildSegs();
     buildQuiz();
     loadMine();

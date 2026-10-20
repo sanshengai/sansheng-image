@@ -273,6 +273,8 @@ PAL_SHOT_KEY = {"人物场景": "p", "物件静物": "o", "简易信息图": "i"
 # 品牌图（展台 Logo 动图与静态海报）不是合同样图，不在 styles/ 下，也不进 Skill 分支；
 # 由调用方通过 brand_dir 参数（或环境变量）显式交给生成器，复制到 <out_dir>/img/。
 BRAND_IMAGES = ("logo.webp", "logo-poster.webp")
+BRAND_LOGO_NAME = "brand-logo.webp"
+BRAND_LOGO_PATH = CT.ROOT / "gallery" / BRAND_LOGO_NAME
 BRAND_DIR_ENV = "SANSHENG_IMAGE_BRAND_DIR"
 RELEASES_URL = "https://github.com/sanshengai/sansheng-image/releases"
 # 首屏展台轮播：宽屏 2.35:1，只放静态封面。每种画风一张，从公众号封面样图里人工挑出最能代表它的；冷暖交错排列。
@@ -317,6 +319,20 @@ def _load_brand_images(brand_dir: Path | str | None) -> dict[str, bytes]:
             raise ValueError(f"品牌图 {name} 无法解码：{p}") from error
         out[name] = raw
     return out
+
+
+def _load_brand_logo() -> bytes:
+    """产品门面的静态 Logo 与外置动态演示分开；在改写输出前拒绝空文件、动画及错误格式。"""
+    from PIL import Image, UnidentifiedImageError
+    try:
+        raw = BRAND_LOGO_PATH.read_bytes()
+        with Image.open(io.BytesIO(raw)) as image:
+            if image.format != "WEBP" or getattr(image, "n_frames", 1) != 1:
+                raise ValueError("必须是单帧 WebP")
+            image.load()
+    except (OSError, ValueError, UnidentifiedImageError) as error:
+        raise ValueError("品牌 Logo 必须是可解码的单帧 WebP") from error
+    return raw
 
 
 def _package_version() -> str:
@@ -497,6 +513,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     if problems:
         raise ValueError("注册表自检不通过：" + "；".join(problems))
     brand_bytes = _load_brand_images(brand_dir)  # 先读后清：见 _load_brand_images
+    brand_logo = _load_brand_logo()
     out_dir = Path(out_dir) if out_dir else BUILD_DIR
     motion_plan = MG.prepare(motion_dir, out_dir)  # 媒体来源与 SHA 在写任何文件之前核完；与场景的对应见下方 check_scenes
     img_dir = out_dir / "img"
@@ -608,6 +625,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
                "samples": sum(not name.endswith("-anchor.webp") for name in expected_imgs)}  # 实测样图不含公版原作参考图；品牌图尚未加入
     expected_imgs.extend(hero_names)
     expected_imgs.extend(BRAND_IMAGES)  # 品牌图也是页面引用的图：官网投影检查据 manifest 核对图片目录
+    expected_imgs.append(BRAND_LOGO_NAME)
     package_version = _package_version()
     meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
@@ -630,6 +648,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
         (img_dir / name).write_bytes(_thumb_bytes(src))
     for name, raw in brand_bytes.items():
         (img_dir / name).write_bytes(raw)
+    (img_dir / BRAND_LOGO_NAME).write_bytes(brand_logo)
     for (code, kind), src in hero_imgs.items():
         if src is not None and any(c.get("image") == f"hero-{code}-{kind}.webp" for c in carousel):
             (img_dir / f"hero-{code}-{kind}.webp").write_bytes(_thumb_bytes(src, HERO_PX, HERO_Q))
