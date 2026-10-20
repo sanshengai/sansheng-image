@@ -74,9 +74,16 @@ def test_real_source_data_passes_strict_schema():
     assert len(MG.expected_media(doc)) == sum(len(MG.item_media(it)) for it in doc["items"])
     featured = [it for it in doc["items"] if it.get("placement", "featured") == "featured"]
     assert all(it["width"] * 9 == it["height"] * 16 for it in featured)
-    # 用户否定的样板与尚未采用的候选不进入正式精选，背景轮播仍保留。
+    # 本次官网精选为四类各两件，保留 Hero 使用的背景，退役的失败样板不再分发。
     by_id = {it["id"]: it for it in doc["items"]}
-    assert all(by_id[i]["placement"] == "background" for i in ("paper-city", "travel-journal", "verify-source"))
+    assert not {"paper-city", "travel-journal", "verify-source"} & by_id.keys()
+    assert {row["id"] for row in doc["categories"]} == {"portrait", "knowledge", "landscape", "album"}
+    assert len(featured) == 8
+    for category in doc["categories"]:
+        group = [it for it in featured if it["category"] == category["id"]]
+        assert len(group) == 2
+        assert all(it.get("source_label") == "原静态图 · 9:16" and it.get("source") for it in group)
+    assert all(by_id[i]["placement"] == "background" for i in ("beach", "moving", "travel"))
     for it in doc["items"]:
         if it["homepage_scene"] is not None:
             assert it["style_code"], it["id"]

@@ -1,0 +1,77 @@
+{
+  "decision": "animate",
+  "mode": "material",
+  "why_motion": "把完整合影做成有纸台和真实折线支撑的立体纪念卡，观看开合如何牵引完整人像落定。",
+  "preserve": [
+    "三人原像素完整头发、手、衣裙、六只鞋",
+    "原片夏日肤色与草地色",
+    "一个完整相连的合影组，不拆肢体"
+  ],
+  "beats": [
+    {
+      "at": 0,
+      "event": "完整纸艺成品"
+    },
+    {
+      "at": 0.8,
+      "event": "立片先向底座收平"
+    },
+    {
+      "at": 2.5,
+      "event": "背板合成封面"
+    },
+    {
+      "at": 3.2,
+      "event": "绕后折线打开背板"
+    },
+    {
+      "at": 4.4,
+      "event": "同一人像组绕脚底折线立起"
+    },
+    {
+      "at": 6.4,
+      "event": "纸草与短句落定"
+    },
+    {
+      "at": 8.9,
+      "event": "成品停留并衔接开头"
+    }
+  ],
+  "materials": [
+    {
+      "path": "src/assets/group-local.webp",
+      "motion": "move",
+      "complete": true,
+      "observation": "已查看alpha棋盘合成，三人头发、手、裙、小腿和六只鞋完整，连作一片；脚边有少量草色，使用纸边说明材质。"
+    },
+    {
+      "path": "src/assets/plate.webp",
+      "motion": "move",
+      "complete": true,
+      "observation": "已看无人物空草地，完整树木和远山，补背景不保留重复人像。"
+    },
+    {
+      "path": "src/assets/source.webp",
+      "motion": "move",
+      "complete": true,
+      "observation": "站姿三人全身完整，作为封面完整照片。"
+    }
+  ],
+  "review_times": [
+    0,
+    0.8,
+    1.5,
+    2.5,
+    3.2,
+    3.8,
+    4.4,
+    5.2,
+    6.4,
+    8.9
+  ],
+  "loop": "9秒周期，成品停留状态相同；开合中背板和立片错开避免穿插。",
+  "limitations": [
+    "CSS3D遮挡与极值仍需实际预览检查，导演API手算不作为通过证据。",
+    "新GIF未实际上传公众号。"
+  ]
+}

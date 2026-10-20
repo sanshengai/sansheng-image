@@ -31,8 +31,10 @@ def test_reviewed_palette_selection_is_part_of_public_surface():
     scan_text('gallery/palette-showcase.json', source.read_bytes())
 
 
-def test_only_reviewed_example_font_bytes_are_allowed():
-    name = "examples/motion/rainwater/assets/serif.otf"
+@pytest.mark.parametrize("case", ["rainwater", "paper-diorama", "message-journey",
+                                  "rain-bookshop", "travel-route"])
+def test_only_reviewed_example_font_bytes_are_allowed(case):
+    name = f"examples/motion/{case}/assets/serif.otf"
     raw = (Path(__file__).resolve().parents[1] / name).read_bytes()
     scan_text(name, raw)
     for changed in (b"", raw + b"changed", ("sk-" + "A" * 30).encode()):

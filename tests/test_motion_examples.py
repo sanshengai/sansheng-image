@@ -19,10 +19,12 @@ class MotionExampleTests(unittest.TestCase):
         self.assertEqual({row["method"] for row in manifest["examples"]},
                          {"atmosphere", "material", "explanation"})
         for row in manifest["examples"]:
-            self.assertEqual((row["width"], row["height"], row["fps"], row["duration"]),
-                             (1280, 720, 24, 8))
+            self.assertEqual((row["width"], row["height"], row["fps"]),
+                             (1280, 720, 24))
+            self.assertGreater(row["duration"], 0)
+            self.assertLessEqual(row["duration"], 60)
             for name in ("index.html", "director.json", "DIRECTOR.md", "timeline.jpg",
-                         "assets/source.png", "assets/serif.otf"):
+                         row.get("source", "assets/source.png"), "assets/serif.otf"):
                 self.assertIn(name, row["files"])
             for relative, expected in row["files"].items():
                 file = EXAMPLES / row["name"] / relative
@@ -30,30 +32,31 @@ class MotionExampleTests(unittest.TestCase):
                 self.assertEqual(hashlib.sha256(file.read_bytes()).hexdigest(), expected)
 
     def test_prepare_rejects_changed_empty_and_missing_input_before_init(self):
-        # Exercise the actual consumer in a copy outside every live Skill scan tree.
-        with tempfile.TemporaryDirectory() as temp:
-            base = Path(temp)
-            source = base / "examples/motion"
-            source.mkdir(parents=True)
-            shutil.copyfile(EXAMPLES / "prepare.py", source / "prepare.py")
-            shutil.copyfile(EXAMPLES / "manifest.json", source / "manifest.json")
-            shutil.copytree(EXAMPLES / "rainwater", source / "rainwater")
-            file = source / "rainwater/assets/source.png"
-            original = file.read_bytes()
-            for value in (b"changed source", b"", None):
-                with self.subTest(value=value):
-                    if value is None:
-                        file.unlink()
-                    else:
-                        file.write_bytes(value)
-                    out = base / "output"
-                    result = subprocess.run([sys.executable, str(source / "prepare.py"),
-                                             "rainwater", "--out", str(out)],
-                                            capture_output=True, text=True)
-                    self.assertEqual(result.returncode, 2)
-                    self.assertIn("bundled input changed or missing", result.stderr)
-                    self.assertFalse(out.exists())
-                    file.write_bytes(original)
+        # Run both old PNG and new WebP input paths through the actual consumer.
+        for case, asset in (("rainwater", "source.png"), ("message-journey", "source.webp")):
+            with tempfile.TemporaryDirectory() as temp:
+                base = Path(temp)
+                source = base / "examples/motion"
+                source.mkdir(parents=True)
+                shutil.copyfile(EXAMPLES / "prepare.py", source / "prepare.py")
+                shutil.copyfile(EXAMPLES / "manifest.json", source / "manifest.json")
+                shutil.copytree(EXAMPLES / case, source / case)
+                file = source / case / "assets" / asset
+                original = file.read_bytes()
+                for value in (b"changed source", b"", None):
+                    with self.subTest(case=case, value=value):
+                        if value is None:
+                            file.unlink()
+                        else:
+                            file.write_bytes(value)
+                        out = base / "output"
+                        result = subprocess.run([sys.executable, str(source / "prepare.py"),
+                                                 case, "--out", str(out)],
+                                                capture_output=True, text=True)
+                        self.assertEqual(result.returncode, 2)
+                        self.assertIn("bundled input changed or missing", result.stderr)
+                        self.assertFalse(out.exists())
+                        file.write_bytes(original)
 
     def test_prepare_never_overwrites_existing_project(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -36,6 +36,12 @@ PUBLIC_DIRS = ("formats/", "palettes/", "references/", "scenes/",
 MOTION_FONT_FILES = {f"examples/motion/{case}/assets/serif.otf"
                      for case in ("city-light", "spring-album", "rainwater")}
 MOTION_FONT_SHA256 = "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f"
+MOTION_FONT_SHA256_BY_FILE = {name: MOTION_FONT_SHA256 for name in MOTION_FONT_FILES}
+MOTION_FONT_SHA256_BY_FILE['examples/motion/paper-diorama/assets/serif.otf'] = '5462821f060d718f687542263c5882e2bd0fd69a9c4a57e59f254c7fc92b5faa'
+MOTION_FONT_SHA256_BY_FILE['examples/motion/message-journey/assets/serif.otf'] = '07927c8f5d8306da4970138e66826ccd74d8e02c35445f108769b759fef6ed75'
+MOTION_FONT_SHA256_BY_FILE['examples/motion/rain-bookshop/assets/serif.otf'] = '09997ceb9ad252fc16c48110171edd86aca264c9a04baeaea11c938377fbb01a'
+MOTION_FONT_SHA256_BY_FILE['examples/motion/travel-route/assets/serif.otf'] = '35885fec3976367fb7ad427868d51544561e087eaae3a7a845c65a007a1810b3'
+
 REQUIRED = {"SKILL.md", "README.md", "LICENSE", "requirements.txt",
             "styles/anchor-provenance.json", "registry.json"}
 FORBIDDEN = re.compile(
@@ -77,9 +83,9 @@ def select(entries: list[tuple[str, str]]) -> list[str]:
 
 
 def scan_text(name: str, raw: bytes) -> None:
-    if name in MOTION_FONT_FILES:
+    if name in MOTION_FONT_SHA256_BY_FILE:
         # Permit only the reviewed OFL subset, not arbitrary binary-looking uploads.
-        if hashlib.sha256(raw).hexdigest() != MOTION_FONT_SHA256:
+        if hashlib.sha256(raw).hexdigest() != MOTION_FONT_SHA256_BY_FILE[name]:
             raise ExportError(f"公开示例字体指纹不一致：{name}")
         return
     if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif")):

@@ -1,0 +1,82 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}canvas{display:block}</style></head><body><canvas id="c" width="1280" height="720"></canvas><script>
+window.CFG={outW:1280,outH:720,fps:24,dur:10};window.READY=false;
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');const W=1280,H=720,S=1280/1672,D=10,TAU=Math.PI*2;
+const off=document.createElement('canvas');off.width=W;off.height=H;const oc=off.getContext('2d');
+const img=new Image();let imgOk=false,fontOk=false;
+img.onload=()=>{imgOk=true;chk()};img.onerror=()=>{if(!img._f){img._f=1;img.src='stage.webp'}};img.src='assets/stage.webp';
+try{const ff=new FontFace('FilmSerif','url(assets/serif.otf)');ff.load().then(f=>{document.fonts.add(f);fontOk=true;chk()}).catch(()=>{fontOk=true;chk()})}catch(e){fontOk=true}
+function chk(){if(imgOk&&fontOk){window.READY=true;render(0)}}
+// deterministic hash
+function hs(i,k){let x=Math.sin(i*127.1+k*311.7)*43758.5453;return x-Math.floor(x)}
+// gust: periodic envelope, peak ~4.5s; delay per layer
+function gust(t,d){const p=((t-d)%D+D)%D/D;const e=0.5-0.5*Math.cos(TAU*p);return Math.pow(e,3)}
+// precomputed integral of wind for horizontal drift (periodic part only)
+const N=480,INT={};
+function buildInt(d){const a=new Float32Array(N+1);let m=0;for(let i=0;i<N;i++)m+=gust(i*D/N,d);m/=N;let s=0;for(let i=0;i<=N;i++){a[i]=s;s+=(gust(i*D/N,d)-m)*D/N}return a}
+[1.8,3.0,3.9].forEach(d=>INT[d]=buildInt(d));
+function wint(t,d){const a=INT[d];const u=((t%D+D)%D)/D*N,i=Math.floor(u),f=u-i;return a[i]*(1-f)+a[Math.min(i+1,N)]*f}
+const P=(x,y)=>[x*S,y*S];
+const house=[[676,240],[822,30],[1290,0],[1350,140],[1530,225],[1530,725],[676,725]].map(p=>P(...p));
+const shelter=[[668,478],[1125,448],[1125,712],[668,718]].map(p=>P(...p));
+function poly(c,pts){c.moveTo(pts[0][0],pts[0][1]);for(const p of pts.slice(1))c.lineTo(p[0],p[1]);c.closePath()}
+// rain layers: fall speed so v*D is an integer multiple of span
+const LAY=[
+{n:760,d:1.8,len:9,w:.7,a:.22,fall:8,drift:2,amp:520,clip:'house',col:'200,215,235',slant:.55},
+{n:200,d:3.0,len:22,w:1,a:.32,fall:6,drift:1,amp:700,clip:'shelter',col:'215,225,240',slant:.7},
+{n:26,d:3.9,len:78,w:1.7,a:.5,fall:3,drift:1,amp:900,clip:'none',col:'230,236,245',slant:.85,gated:1}];
+function drawRain(L,t){const g=gust(t,L.d),span=H+200,spanX=W+400;
+ctx.save();ctx.beginPath();
+if(L.clip!=='none'){ctx.rect(0,0,W,H);poly(ctx,L.clip==='house'?house:shelter);ctx.clip('evenodd')}
+const ang=0.12+L.slant*g;const dx=Math.sin(ang),dy=Math.cos(ang);
+ctx.lineCap='round';ctx.strokeStyle='rgba('+L.col+','+L.a+')';ctx.lineWidth=L.w;ctx.beginPath();
+let vis=L.n;
+for(let i=0;i<L.n;i++){
+ let a=1;if(L.gated){const thr=hs(i,9);if(g<thr*0.8+0.05)continue}
+ const fy=(hs(i,1)*span+t*span*L.fall/D*(0.85+0*hs(i,2)))%span-100;
+ const fx=((hs(i,3)*spanX+t*spanX*L.drift/D+wint(t,L.d)*L.amp*(0.8+0.4*hs(i,4)))%spanX+spanX)%spanX-200+ (fy)*dx/dy;
+ const len=L.len*(0.7+0.6*hs(i,5))*(1+g*.6);
+ ctx.moveTo(fx,fy);ctx.lineTo(fx-dx*len,fy-dy*len)}
+ctx.stroke();ctx.restore()}
+// anchored drips: [x, top y, land y, period, phase]
+const DR=[[722,474,732,2.5,0],[884,467,738,10/3,.4],[1012,459,735,2,.7],[1098,452,728,5,.15],[345,332,642,10/3,.6]];
+function dripState(d,t){const [x,ty,ly,per,ph]=d;const c=((t/per+ph)%1+1)%1;const fallT=Math.sqrt(2*(ly-ty)/1600)/per;const grow=0.78;return {c,fallT,grow,per}}
+function drawDrips(t){const out=[];
+for(const d of DR){const [x,ty,ly,per,ph]=d;const s=dripState(d,t);
+ const X=x*S,TY=ty*S,LY=ly*S;
+ if(s.c<s.grow){const r=1+2.2*S*Math.pow(s.c/s.grow,1.5)*1.6;
+  ctx.fillStyle='rgba(235,225,200,.75)';ctx.beginPath();ctx.ellipse(X,TY+r*.9,r*.8,r*1.1,0,0,TAU);ctx.fill();
+  ctx.fillStyle='rgba(255,240,200,.9)';ctx.fillRect(X-r*.3,TY+r*.5,1,1)}
+ else if(s.c<s.grow+s.fallT){const tt=(s.c-s.grow)*per;const y=TY+0.5*1600*S*tt*tt;
+  ctx.strokeStyle='rgba(240,232,210,.85)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(X,y);ctx.lineTo(X,y-Math.min(14,4+tt*30));ctx.stroke()}
+ // ripples from current and previous cycles
+ for(let k=0;k<3;k++){const land=(s.grow+s.fallT);let age=(s.c-land+k)*per;if(age<0||age>2.2)continue;
+  const e=1-age/2.2;out.push({x:X,y:LY,e:e,age});
+  for(let r=0;r<2;r++){const ra=(6+age*34-r*9)*S*1.3;if(ra<=0)continue;
+   ctx.strokeStyle='rgba(255,226,170,'+(0.55*e*e*(1-r*.4))+')';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(X,LY,ra,ra*.28,0,0,TAU);ctx.stroke()}
+  if(age<0.35){for(let j=0;j<4;j++){const vx=(j-1.5)*38,vy=-70-hs(j,k)*30;const px=X+vx*age*S*1.4,py=LY+(vy*age+260*age*age)*S;
+   ctx.fillStyle='rgba(250,235,200,'+(0.8*(1-age/.35))+')';ctx.fillRect(px,py,1.6,1.6)}}}}
+return out}
+function reflection(t,rip){const y0=545,y1=720,x0=440,x1=1080;oc.clearRect(0,0,W,H);
+const sx=img.width/W;
+for(let y=y0;y<y1;y+=3){let a=0.8;for(const r of rip){const dy=(y-r.y)/38;a+=7*r.e*Math.exp(-dy*dy)}
+ const off2=a*Math.sin(y*0.21-t*TAU*1.2)+0.5*a*Math.sin(y*0.07+t*TAU*0.5);
+ oc.drawImage(img,x0*sx,y*sx,(x1-x0)*sx,3*sx,x0+off2,y,x1-x0,3)}
+oc.globalCompositeOperation='destination-in';
+const gx=oc.createLinearGradient(x0,0,x1,0);gx.addColorStop(0,'rgba(0,0,0,0)');gx.addColorStop(.15,'#000');gx.addColorStop(.85,'#000');gx.addColorStop(1,'rgba(0,0,0,0)');
+oc.fillStyle=gx;oc.fillRect(x0,y0,x1-x0,y1-y0);
+const gy=oc.createLinearGradient(0,y0,0,y1);gy.addColorStop(0,'rgba(0,0,0,0)');gy.addColorStop(.2,'#000');gy.addColorStop(1,'#000');
+oc.fillStyle=gy;oc.fillRect(x0,y0,x1-x0,y1-y0);oc.globalCompositeOperation='source-over';
+ctx.drawImage(off,0,0)}
+let lastPhase='';
+window.render=function(t){t=((t%D)+D)%D;if(!imgOk)return;
+ctx.globalAlpha=1;ctx.drawImage(img,0,0,W,H);
+drawRain(LAY[0],t);
+const g=gust(t,3.0);
+// soft gust haze in distance (no full-frame flash)
+ctx.fillStyle='rgba(150,170,200,'+(0.05*gust(t,1.8))+')';ctx.beginPath();ctx.rect(0,0,W,H);poly(ctx,house);ctx.fill('evenodd');
+const rip=drawDrips(t);reflection(t,rip);drawDrips(t);
+drawRain(LAY[1],t);drawRain(LAY[2],t);
+lastPhase=g<0.15?'calm drizzle':(gust(t,3.9)>0.4?'near gust lines':'gust building');
+window._rip=rip};
+window.FILM_DIAGNOSTICS=function(){return{phase:lastPhase,image:{x:0,y:0,w:W,h:H},houseOcclusion:house,awningShelter:shelter,drips:DR.map(d=>({x:d[0]*S,top:d[1]*S,land:d[2]*S,period:d[3]})),reflectionRegion:{x:440,y:545,w:640,h:175},ripples:window._rip||[]}};
+</script></body></html>

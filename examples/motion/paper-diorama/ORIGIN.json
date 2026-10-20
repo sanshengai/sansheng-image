@@ -1,0 +1,57 @@
+{
+  "case": "P1",
+  "model": "claude-opus-5-5",
+  "coordinator_revisions": true,
+  "original_source_sha256": "439b70840b402252897f7c32c5a0e9583254638ead46a2d3b212129be7a134b1",
+  "assets": [
+    {
+      "source_name": "group-local.png",
+      "source_sha256": "c3667d3734c4d25bffdd4d9170ff026f1fb3afac1ff328e190a89d03126d5804",
+      "file": "assets/group-local.webp",
+      "compression": "WebP quality 96; mask lossless",
+      "width": 941,
+      "height": 1672
+    },
+    {
+      "source_name": "source.png",
+      "source_sha256": "ba88ecb24289fa1e02b51fea6bd91dfdb0c7a73c362dc0ec5e5b429801bbcc94",
+      "file": "assets/source.webp",
+      "compression": "WebP quality 96; mask lossless",
+      "width": 941,
+      "height": 1672
+    },
+    {
+      "source_name": "plate.png",
+      "source_sha256": "8bbf74c29ea227ce8f8a18ec80e46c0176b091eb88294ad7d206ccb3d8d2ddb5",
+      "file": "assets/plate.webp",
+      "compression": "WebP quality 96; mask lossless",
+      "width": 941,
+      "height": 1672
+    },
+    {
+      "source_name": "group-mask.png",
+      "source_sha256": "036edde26adeaab278c2ec954f782525a4c30882d0079657a47f73d35ee95a3b",
+      "file": "assets/group-mask.webp",
+      "compression": "WebP quality 96; mask lossless",
+      "width": 941,
+      "height": 1672
+    }
+  ],
+  "review": {
+    "scope": "agent-reviewed source film; compressed bundle prepared, previewed, rendered and timeline inspected",
+    "cycles": 2,
+    "user_adoption": "not-recorded",
+    "platform": "untested",
+    "bundle_replay": {
+      "prepare": "passed",
+      "deterministic_preview": "passed",
+      "render": "passed",
+      "timeline_inspection": "passed"
+    }
+  },
+  "licenses": {
+    "code": "MIT",
+    "AI_assets": "MIT project assets",
+    "font": "SIL Open Font License 1.1"
+  }
+}

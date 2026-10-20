@@ -30,7 +30,7 @@ def main():
         if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
             parser.error(f"bundled input changed or missing: {relative}; inspect before replay")
     command = [sys.executable, str(repo / "scripts/sb.py"), "animate", "wake", "init",
-               str(source / "assets/source.png"), "--out", str(out),
+               str(source / item.get("source", "assets/source.png")), "--out", str(out),
                "--purpose", f"Replay research example: {args.example}; adoption pending",
                "--size", f"{item['width']}x{item['height']}", "--fps", str(item["fps"]),
                "--duration", str(item["duration"])]

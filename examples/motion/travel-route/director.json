@@ -1,0 +1,76 @@
+{
+  "decision": "animate",
+  "mode": "narrative",
+  "why_motion": "一枚车票沿路线抵达三个不同地点，每次对应一张完整旅行照片，再汇成同一天。",
+  "preserve": [
+    "完整照片主体与原色",
+    "动作所需的真实纸边、前后遮挡与落定"
+  ],
+  "beats": [
+    {
+      "at": 0,
+      "event": "完整场景起点"
+    },
+    {
+      "at": 1.5,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 2.4,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 3.5,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 5.8,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 7.1,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 9.3,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 10.8,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 12.3,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    },
+    {
+      "at": 12.95,
+      "event": "检视实际动作；详细时序见DIRECTOR.md"
+    }
+  ],
+  "materials": [
+    {
+      "path": "src/assets/source.webp",
+      "motion": "move",
+      "complete": true,
+      "observation": "已看新9:16源图：车站电车、小巷、夕阳海边三张完整互不覆盖的照片，白框皆在画内。"
+    }
+  ],
+  "review_times": [
+    0,
+    1.5,
+    2.4,
+    3.5,
+    5.8,
+    7.1,
+    9.3,
+    10.8,
+    12.3,
+    12.95
+  ],
+  "loop": "13.0秒绝对时间周期，末尾复位；实际检查首尾和物件完整性。",
+  "limitations": [
+    "素材裁切、角度、遮挡和完整性以实际预览为准，不以API导演手算当证据。",
+    "本片尚未实际上传平台。"
+  ]
+}

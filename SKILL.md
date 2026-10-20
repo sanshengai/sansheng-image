@@ -38,7 +38,7 @@ python3 scripts/sb.py make brief.json -o 新目录
 - 固定人物或连续故事：读 [consistency.md](references/consistency.md)，复用已确认身份参考；服装和姿势来自本张剧情。
 - 用户用语言换色、修改构图或某张：读 [selection.md](references/selection.md)，改本次选择和内容；结构与事实仍来自原文。
 - 用户要求“以后都这样”、查看或忘记偏好：读 [preferences.md](references/preferences.md)。一次性改选不自动变成长期设置。成长飞轮由脚本自动记录，连续 3 个任务同向才问一次、确认才改默认，见 [flywheel.md](references/flywheel.md)；用户采用某组图后执行 `sb.py accept`。
-- 用户明确要动态版（“做成动的”“动图”“短视频版”）才读 [原图到动态](references/motion-wake.md)，由本 Skill 接手选图、备料、导演、制作、审片返修与交付，统一入口为 `sb.py animate wake`。复用已采用的图、真实原文、画风与色系，不让用户先写 HTML 或再调用另一个 Skill；缺图才沿上述静态流程补图。先验证素材能否承担动作，再确定编排；允许有明确观看价值的氛围、叙事、知识过程与媒材表现，不为大动作硬拆人物或物件。上游 lemo-wake 工具及指引固定版本、作为独立运行依赖保存，其许可单独适用；首次配置由当前 Agent 处理。静态默认不变，PPT 与音乐封面仍出静态图。已有 HyperFrames 工程继续按 [兼容动态流程](references/motion-scenes.md)，旧局部动效见 [motion.md](references/motion.md)，不为迁移入口重做已有工程。技术导出、制作审片、用户采用和平台试发分别记账。
+- 用户明确要动态版（“做成动的”“动图”“短视频版”）才读 [原图到动态](references/motion-wake.md)，由本 Skill 接手选图、备料、导演、制作、审片返修与交付，统一入口为 `sb.py animate wake`。复用已采用的图、真实原文、画风与色系，不让用户先写 HTML 或再调用另一个 Skill；缺图才沿上述静态流程补图。先验证素材能否承担动作，再确定编排；可按需复跑动态手册链接的纸艺合影、文章留言、雨街和旅行路线示例，重新适配本图锚点，不直接套坐标；允许有明确观看价值的氛围、叙事、知识过程与媒材表现，不为大动作硬拆人物或物件。上游 lemo-wake 工具及指引固定版本、作为独立运行依赖保存，其许可单独适用；首次配置由当前 Agent 处理。静态默认不变，PPT 与音乐封面仍出静态图。已有 HyperFrames 工程继续按 [兼容动态流程](references/motion-scenes.md)，旧局部动效见 [motion.md](references/motion.md)，不为迁移入口重做已有工程。技术导出、制作审片、用户采用和平台试发分别记账。
 - 维护合同、准入、矩阵或画廊才读 [matrix.md](references/matrix.md)。平台尺寸读 [formats.md](references/formats.md)。PPT 静态图可以生成；整套 PPT 文件另走现有组装工具及其运行环境验收。
 
 ## 五条硬规则

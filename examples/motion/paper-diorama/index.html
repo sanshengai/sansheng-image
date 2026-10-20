@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8"><title>把这次相聚，好好收着</title>
+<style>
+@font-face{font-family:S;src:url(assets/serif.otf);}
+html,body{margin:0;background:#dfe5d9;overflow:hidden}
+#stage{position:relative;width:1280px;height:720px;overflow:hidden;perspective:1500px;perspective-origin:780px 320px;
+ background-color:#e3e8dd;
+ background-image:radial-gradient(ellipse at 18% 8%,rgba(255,244,214,.75),rgba(255,244,214,0) 55%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+#world{position:absolute;left:0;top:0;transform-style:preserve-3d}
+#inner{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.p{position:absolute;left:0;top:0;transform-origin:50% 100%;transform-style:preserve-3d}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+#base{background:#f6f2e8;box-shadow:inset 0 0 0 2px #e6dfcf}
+#base .g{position:absolute;inset:14px;background:url(assets/plate.webp) 50% 96%/100% auto;filter:saturate(.85) brightness(1.04)}
+#base .sh{position:absolute;inset:0;background:linear-gradient(to top,rgba(40,50,30,.45),rgba(40,50,30,0));opacity:0}
+#desk{background:radial-gradient(ellipse at 50% 50%,rgba(60,66,48,.32),rgba(60,66,48,0) 70%)}
+#front{background:#f8f4ea;padding:12px;box-sizing:border-box}
+#front .ph{position:absolute;inset:12px;background:url(assets/plate.webp) 50% 41%/100% auto;filter:saturate(.88) sepia(.06)}
+#front .dk{position:absolute;inset:0;background:#2a3020;opacity:0}
+#back{transform:rotateX(180deg);background:#f3eee2;box-shadow:inset 0 0 0 2px #e2d9c6}
+#back .cp{position:absolute;left:250px;top:46px;width:260px;height:300px;background:#fff;box-shadow:0 2px 6px rgba(70,60,40,.25)}
+#back .cp div{position:absolute;inset:10px;background:url(assets/source.webp) 50% 62%/120% auto}
+#back .ct{position:absolute;left:0;right:0;top:362px;text-align:center;font:30px S;color:#6b5a44;letter-spacing:6px}
+#back .lt{position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,250,235,.25),rgba(60,50,30,.12))}
+#fig .img{position:absolute;left:8px;top:6px;width:346px;height:407px;background:url(assets/group-local.webp) -67px -233.5px/470.5px 836px no-repeat;
+ filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 1px 1px rgba(60,50,30,.35))}
+#fig .tab{position:absolute;left:30px;right:30px;bottom:0;height:6px;background:#fbf8f0;border-radius:2px}
+.strut{background:linear-gradient(#fbf8f0,#e9e2d2);box-shadow:inset 0 0 0 1px #d8cfba}
+.fs{background:linear-gradient(to top,rgba(40,48,28,.5),rgba(40,48,28,0))}
+.fl{background-size:100% 100%;filter:drop-shadow(0 1px 1px rgba(60,50,30,.3))}
+#txt{position:absolute;left:70px;top:236px;width:330px;font-family:S;color:#4d4434}
+#txt h1{margin:0;font-size:50px;line-height:68px;font-weight:700;letter-spacing:2px}
+#txt p{margin:18px 0 0;font-size:24px;color:#7c6d55;letter-spacing:3px}
+#seal{position:absolute;left:300px;top:380px;width:58px;height:58px;border:3px solid #b8463a;border-radius:6px;color:#b8463a;font:36px/58px S;text-align:center;box-sizing:border-box;line-height:52px}
+</style></head><body>
+<div id="stage">
+ <div id="world"><div id="inner">
+  <div id="desk" class="p"></div>
+  <div id="base" class="p"><div class="g"></div><div class="sh"></div></div>
+  <div id="fsh" class="p fs"></div>
+  <div id="s1a" class="p strut"></div><div id="s1b" class="p strut"></div>
+  <div id="s2a" class="p strut"></div><div id="s2b" class="p strut"></div>
+  <div id="fig" class="p"><div class="tab"></div><div class="img"></div></div>
+  <div id="f0" class="p fl"></div><div id="f1" class="p fl"></div><div id="f2" class="p fl"></div><div id="f3" class="p fl"></div>
+  <div id="panel" class="p">
+   <div id="front" class="face"><div class="ph"></div><div class="dk"></div></div>
+   <div id="back" class="face"><div class="cp"><div></div></div><div class="ct">夏日草地 · 三人合影</div><div class="lt"></div></div>
+  </div>
+ </div></div>
+ <div id="txt"><h1>把这次相聚，<br>好好收着</h1><p>夏日相聚</p></div>
+ <div id="seal">存</div>
+</div>
+<script>
+window.CFG={outW:1280,outH:720,fps:24,dur:9};
+const W=760,D=440,H=440,Z0=420,FH=413,FW=362,S=120,L=90;
+const $=id=>document.getElementById(id);
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const sm=x=>{x=cl(x,0,1);return x*x*(3-2*x)};
+const seg=(t,a,b)=>sm((t-a)/(b-a));
+const back=x=>{x=cl(x,0,1);const u=x-1;return 1+1.6*u*u*u+0.6*u*u};
+function flower(c1,c2,h){
+ const s=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 ${h}'><path d='M40 ${h} C38 ${h*.6} 44 ${h*.45} 40 34' stroke='#fff' stroke-width='7' fill='none'/><path d='M40 ${h} C38 ${h*.6} 44 ${h*.45} 40 34' stroke='#7f9a5a' stroke-width='3.5' fill='none'/><path d='M40 ${h*.7} q-26 -6 -30 -24 q22 2 30 20z' fill='#93ad6b' stroke='#fff' stroke-width='2.5'/><path d='M41 ${h*.58} q24 -4 28 -22 q-20 2 -28 18z' fill='#a3bb79' stroke='#fff' stroke-width='2.5'/>`+
+ [0,72,144,216,288].map(r=>`<ellipse cx='40' cy='18' rx='9' ry='15' fill='${c1}' stroke='#fff' stroke-width='2' transform='rotate(${r} 40 32)'/>`).join('')+
+ `<circle cx='40' cy='32' r='7' fill='${c2}' stroke='#fff' stroke-width='2'/></svg>`;
+ return 'url("data:image/svg+xml,'+encodeURIComponent(s)+'")';}
+const FL=[{x:-318,z:410,h:150,w:74,c:['#f3d9c6','#d99a5b']},{x:-250,z:428,h:108,w:58,c:['#fbf3e3','#e0b452']},
+          {x:252,z:426,h:128,w:64,c:['#e9b9ad','#c9784f']},{x:322,z:408,h:96,w:54,c:['#fbf3e3','#d9a24a']}];
+FL.forEach((f,i)=>{$('f'+i).style.backgroundImage=flower(f.c[0],f.c[1],Math.round(80*f.h/f.w))});
+function place(el,x,A,B,w,len){
+ const dy=B.y-A.y,dz=B.z-A.z,h=len||Math.hypot(dy,dz),th=Math.atan2(-dz,-dy);
+ el.style.width=w+'px';el.style.height=h+'px';
+ el.style.transform=`translate3d(${x-w/2}px,${A.y-h}px,${A.z}px) rotateX(${th}rad)`;}
+const rad=d=>d*Math.PI/180;
+function state(t){
+ t=((t%9)+9)%9;
+ let a=0; if(t>=1.7&&t<2.5)a=90*seg(t,1.7,2.5); else if(t>=2.5&&t<3.2)a=90; else if(t>=3.2&&t<4.3)a=90*(1-seg(t,3.2,4.3));
+ let b=0; if(t>=1.0&&t<1.8)b=90*seg(t,1.0,1.8); else if(t>=1.8&&t<4.0)b=90; else if(t>=4.0&&t<5.2)b=90*(1-back((t-4)/1.2));
+ const fl=FL.map((f,i)=>{const c0=0.8+0.07*i,r0=4.8+0.18*i;
+  if(t>=c0&&t<c0+0.5)return 90*seg(t,c0,c0+0.5); if(t>=c0+0.5&&t<r0)return 90; if(t>=r0&&t<r0+0.8)return 90*(1-back((t-r0)/0.8)); return 0;});
+ const tx=t<0.8?1:t<1.3?1-seg(t,0.8,1.3):t<5.6?0:seg(t,5.6,6.4);
+ const st=t<0.8?1:t<1.3?1-seg(t,0.8,1.3):t<6.3?0:seg(t,6.3,6.8);
+ const phase=t<0.8?'成品停留':t<1.7?'花草与立片收折':t<2.5?'背板合拢':t<3.2?'封面停拍':t<4.3?'卡片打开':t<5.2?'合影立片立起':t<6.0?'纸艺花草带起':t<6.8?'短句与印章':'成品停留';
+ return {t,a,b,fl,tx,st,phase};}
+let CUR=null;
+window.render=async function(t){
+ const s=state(t);CUR=s;const k=s.a/90;
+ const rx=-20-11*sm(k), ry=-8+6*sm(k);
+ $('world').style.transform=`translate3d(782px,${478-10*sm(k)}px,-300px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+ $('inner').style.transform='translate3d(0,0,-220px)';
+ place($('desk'),0,{y:2,z:-40},{y:2,z:D+60},W+120);
+ place($('base'),0,{y:0,z:0},{y:0,z:D},W);
+ $('base').querySelector('.sh').style.opacity=(0.5*Math.sin(rad(s.a))).toFixed(3);
+ // panel: hinge at back, a=0 upright, a=90 lying on base (cover up)
+ const pa=rad(s.a);
+ place($('panel'),0,{y:-6,z:0},{y:-6-H*Math.cos(pa),z:H*Math.sin(pa)},W,H);
+ $('front').querySelector('.dk').style.opacity=(0.35*k).toFixed(3);
+ // figure: hinge = foot line on base at Z0; b=90 lies back toward hinge
+ const fb=rad(s.b),F={y:-3,z:Z0};
+ place($('fig'),0,F,{y:F.y-FH*Math.cos(fb),z:F.z-FH*Math.sin(fb)},FW,FH);
+ // contact shadow, falls back-right from foot line
+ const up=Math.max(0,Math.cos(fb));
+ place($('fsh'),14,{y:-0.5,z:Z0},{y:-0.5,z:Z0-70*up-1},FW-20);
+ $('fsh').style.opacity=(0.55*up).toFixed(3);
+ // accordion struts: base anchor Q=(0,Z0-S), figure anchor P at height S on figure back
+ const P={y:F.y-S*Math.cos(fb),z:F.z-S*Math.sin(fb)},Q={y:-1,z:Z0-S};
+ let dy=P.y-Q.y,dz=P.z-Q.z,d=Math.hypot(dy,dz)||1e-6;d=Math.min(d,2*L-0.01);
+ const uy=dy/d,uz=dz/d,hk=Math.sqrt(Math.max(0,L*L-d*d/4));
+ let n1={y:-uz,z:uy}; if(n1.z<0)n1={y:uz,z:-uy};
+ const K={y:Math.min(-1,(Q.y+P.y)/2+n1.y*hk),z:(Q.z+P.z)/2+n1.z*hk};
+ [[-112,'s1'],[112,'s2']].forEach(([x,id])=>{place($(id+'a'),x,Q,K,34,L);place($(id+'b'),x,K,P,34,L);});
+ FL.forEach((f,i)=>{const r=rad(s.fl[i]),A={y:-2,z:f.z};place($('f'+i),f.x,A,{y:A.y-f.h*Math.cos(r),z:A.z-f.h*Math.sin(r)},f.w,f.h);});
+ $('txt').style.opacity=s.tx.toFixed(3);$('txt').style.transform=`translateY(${(1-s.tx)*14}px)`;
+ const sp=s.st;$('seal').style.opacity=sp.toFixed(3);$('seal').style.transform=`rotate(-8deg) scale(${1+0.35*(1-sp)})`;
+ await new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(done)));
+};
+window.FILM_DIAGNOSTICS=function(){
+ const r=id=>{const b=$(id).getBoundingClientRect();return {x:Math.round(b.left),y:Math.round(b.top),w:Math.round(b.width),h:Math.round(b.height)}};
+ return {phase:CUR&&CUR.phase,t:CUR&&CUR.t,panelDeg:CUR&&CUR.a,figureDeg:CUR&&CUR.b,flowers:CUR&&CUR.fl,
+  figure:r('fig'),figureImage:r(document.querySelector('#fig .img')?'fig':'fig'),panel:r('panel'),base:r('base'),text:r('txt'),seal:r('seal')};
+};
+window.READY=false;
+const allImages=new Set(['assets/source.webp','assets/plate.webp','assets/group-local.webp']);
+for(const el of document.querySelectorAll('*')){const bg=getComputedStyle(el).backgroundImage;for(const m of bg.matchAll(/url\("([^"]+)"\)/g)){if(m[1])allImages.add(m[1]);}}
+const imgs=[...allImages].map(src=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>i.decode().then(res,rej);i.onerror=()=>rej(Error('Image failed: '+src));i.src=src;}));
+const font=new FontFace('S','url(assets/serif.otf)').load().then(async f=>{document.fonts.add(f);await document.fonts.load('700 48px S');await document.fonts.ready;});
+Promise.all([...imgs,font]).then(()=>{window.render(0);requestAnimationFrame(()=>requestAnimationFrame(()=>{window.READY=true;}));});
+window.render(0);
+</script></body></html>

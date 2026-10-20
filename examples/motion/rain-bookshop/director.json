@@ -1,0 +1,61 @@
+{
+  "decision": "animate",
+  "mode": "atmosphere",
+  "why_motion": "阵风改变分层雨帘，檐滴落地触发水环与对应暖光倒影扰动。",
+  "preserve": [
+    "完整连续书店与门窗",
+    "暖灯、湿地与雨夜原色"
+  ],
+  "beats": [
+    {
+      "at": 0,
+      "event": "完整全景初态"
+    },
+    {
+      "at": 1.9,
+      "event": "检视动作状态；完整时序见同工程DIRECTOR.md"
+    },
+    {
+      "at": 3.1,
+      "event": "检视动作状态；完整时序见同工程DIRECTOR.md"
+    },
+    {
+      "at": 4.3,
+      "event": "检视动作状态；完整时序见同工程DIRECTOR.md"
+    },
+    {
+      "at": 5.7,
+      "event": "检视动作状态；完整时序见同工程DIRECTOR.md"
+    },
+    {
+      "at": 7.5,
+      "event": "检视动作状态；完整时序见同工程DIRECTOR.md"
+    },
+    {
+      "at": 9.95,
+      "event": "检视动作状态；完整时序见同工程DIRECTOR.md"
+    }
+  ],
+  "materials": [
+    {
+      "path": "src/assets/stage.webp",
+      "motion": "fixed",
+      "complete": true,
+      "observation": "已看完整横向雨夜书店，棚下门窗、街道、地面水洼连续，图中没有待移动的不完整人物或物件。"
+    }
+  ],
+  "review_times": [
+    0,
+    1.9,
+    3.1,
+    4.3,
+    5.7,
+    7.5,
+    9.95
+  ],
+  "loop": "10.0秒绝对时间周期，按实际首尾检查。",
+  "limitations": [
+    "坐标、遮挡、文字与颜色必须由真实预览审查；API导演说明不当作视觉通过。",
+    "新成片尚未平台上传测试。"
+  ]
+}

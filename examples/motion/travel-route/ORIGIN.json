@@ -1,0 +1,33 @@
+{
+  "case": "A2",
+  "model": "claude-opus-5-5",
+  "coordinator_revisions": true,
+  "original_source_sha256": "1166ff142e539be0dddbec8b65573da0152c3a8a06427bdca842f00d6f3b0a2d",
+  "assets": [
+    {
+      "source_name": "source.png",
+      "source_sha256": "1eaa1c5036ecdf2f070af16314755079747a68d23e03066367cfa1b9d8bca012",
+      "file": "assets/source.webp",
+      "compression": "WebP quality 96; mask lossless",
+      "width": 941,
+      "height": 1672
+    }
+  ],
+  "review": {
+    "scope": "agent-reviewed source film; compressed bundle prepared, previewed, rendered and timeline inspected",
+    "cycles": 2,
+    "user_adoption": "not-recorded",
+    "platform": "untested",
+    "bundle_replay": {
+      "prepare": "passed",
+      "deterministic_preview": "passed",
+      "render": "passed",
+      "timeline_inspection": "passed"
+    }
+  },
+  "licenses": {
+    "code": "MIT",
+    "AI_assets": "MIT project assets",
+    "font": "SIL Open Font License 1.1"
+  }
+}

@@ -77,6 +77,99 @@
         "note": "用户认为新制作方法更好，逐步解说有收益。",
         "scope": "仅为本例审片结论；新工程不继承，不等于官网或平台发布采用。"
       }
+    },
+    {
+      "name": "paper-diorama",
+      "case_id": "P1",
+      "method": "material",
+      "model": "claude-opus-5-5 plus coordinator revisions",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 9,
+      "source": "assets/source.webp",
+      "source_kind": "AI-generated own material; compressed derivative",
+      "state": "agent-reviewed-reference; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "051e4e90c7c197ac3ca643c469fe0e4f035db16b54e0b6a87b5f56f8a1f00a82",
+        "ORIGIN.json": "242b3516428da6e9fb384a8d52b5f964ab4741bff0edfef4fc4407aa1f87806d",
+        "assets/group-local.webp": "3eb453d26488f7f04a6268758eef6d11989a42d630c18038ad443e9917d20ed3",
+        "assets/group-mask.webp": "3b655df17c5b4aca1845bad650f0210657af234b3880d18dc94514794bc5bae4",
+        "assets/plate.webp": "da6616fbb12bd4a716b95a427826e3dc9585f5f630785c4e271f085c9aa42bde",
+        "assets/serif.otf": "5462821f060d718f687542263c5882e2bd0fd69a9c4a57e59f254c7fc92b5faa",
+        "assets/source.webp": "c0c22c214e6bc507bae353313a0ab53858cb0244e4cc1bed3b8f612fef4964aa",
+        "director.json": "27c5c89db4e462f84a18acb6a078348b89b93090f7b0f80116327aaf5835fc97",
+        "index.html": "b17268a24837c9cede1d156f882bd715c209eb220b69046a7c8e11650d9c424c",
+        "timeline.jpg": "d64effd7862f90557054eee1109c409bf3b70c37fccd336f199d887497caf52f"
+      }
+    },
+    {
+      "name": "message-journey",
+      "case_id": "K1",
+      "method": "explanation",
+      "model": "claude-opus-5-5 plus coordinator revisions",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 16,
+      "source": "assets/source.webp",
+      "source_kind": "AI-generated own material; compressed derivative",
+      "state": "agent-reviewed-reference; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "b29a7fa36a806d7bdadcf4b9105fbfa1a12ecc366905181a0249f3199827d50b",
+        "ORIGIN.json": "7f4b94e20c096690570168609dcb2460f8bcf1db3724add270e42afac9e4bee6",
+        "assets/serif.otf": "07927c8f5d8306da4970138e66826ccd74d8e02c35445f108769b759fef6ed75",
+        "assets/source.webp": "3eb791e53dc321facf749be63298e2abe0ea959438eb169e1dce80cbe7c39b0e",
+        "assets/stage-empty.webp": "ac32aaebb3218ec02ff57811288b3f391d3b44450460123d2fadaa59140b5947",
+        "director.json": "db4d338538a62ff2957cadd969f311c772b090fa9085bf61aed29bcd24aefc3f",
+        "index.html": "21e10f5dcb330e0de56d09729036c7c2d4013570392602ae13f9dc0b9f6b41a0",
+        "timeline.jpg": "80e4e84c2b1a7b54e33e7f06da06ef05847da2683e6687a17ca93039473f49f6"
+      }
+    },
+    {
+      "name": "rain-bookshop",
+      "case_id": "L1",
+      "method": "atmosphere",
+      "model": "claude-opus-5-5 plus coordinator revisions",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 10,
+      "source": "assets/source.webp",
+      "source_kind": "AI-generated own material; compressed derivative",
+      "state": "agent-reviewed-reference; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "ec6861c05f7587fd482aa4196d4cc8d778ffb13e279ab5ae70b7955b7ee0a1c5",
+        "ORIGIN.json": "83766a5333e4deb5b6f8501fe15effe6930440e2a462ea79a23605f8c2f99ef6",
+        "assets/serif.otf": "09997ceb9ad252fc16c48110171edd86aca264c9a04baeaea11c938377fbb01a",
+        "assets/source.webp": "b441f19f7c62494be3d5a055f0b068e99711bbe9ab90276fae14bfbe4114c09d",
+        "assets/stage.webp": "d955f3fd44e162d64d95139bb15fd866dfac73d60975331e10b1cc0c75c01f26",
+        "director.json": "4d1b73ad61066f90285c0339b6f0fab528d128c52b8d642f0095ba6f3ac70ecd",
+        "index.html": "1372e82ea8432fabb6f98b3a5337ca6532db18f6ec1ae0def59d587c635aadc2",
+        "timeline.jpg": "56ce7d91bf1db8dc1583cb103c691372b9aab513e2c06a0fb6f35b96d1ceb12d"
+      }
+    },
+    {
+      "name": "travel-route",
+      "case_id": "A2",
+      "method": "material",
+      "model": "claude-opus-5-5 plus coordinator revisions",
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "duration": 13,
+      "source": "assets/source.webp",
+      "source_kind": "AI-generated own material; compressed derivative",
+      "state": "agent-reviewed-reference; user adoption not recorded",
+      "files": {
+        "DIRECTOR.md": "468438fb131904e9b1fb3ee98e986e689709804d118bc78de649c5d402717d5e",
+        "ORIGIN.json": "878222065bd57b11ee8f00cfcbfc14b97805654bb7f6c26e4d5988eebf2eadd5",
+        "assets/serif.otf": "35885fec3976367fb7ad427868d51544561e087eaae3a7a845c65a007a1810b3",
+        "assets/source.webp": "d8512ef73d81edaf01d8a74e9a2594bbfabcda7f0933ad2c62e5233e5ba16ba1",
+        "director.json": "563366f5d545d775c42a7a03bb12cde68a6f256310390d01853e72c46236718f",
+        "index.html": "5a7f045066e7fc05115f4d5546bdb35ef47b3ef12b1a283ef2b748cee41bea0f",
+        "timeline.jpg": "3d039a6a60fddffb7fd1412153c28de3bbcaa104014bc5e9122e759e439a3801"
+      }
     }
   ],
   "upstream_revision": "f17890701dd3c782fe0e0a992fb5c2c12063194d",
@@ -84,6 +177,6 @@
     "name": "Noto Serif CJK SC Bold",
     "license": "SIL Open Font License 1.1",
     "source": "https://github.com/notofonts/noto-cjk/tree/main/Serif",
-    "note": "Existing local subset, copyright Adobe 2017–2024; original font name retained in name table."
+    "note": "Historical and current per-film OFL subsets; current films check actual glyph coverage before rendering."
   }
 }
