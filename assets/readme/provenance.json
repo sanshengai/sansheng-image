@@ -111,18 +111,18 @@
       ]
     },
     {
-      "file": "article-motion.gif",
-      "sha256": "1f5d5cbac5450ddeebad1eca6a91df9c79a8ade0b1bc075249b05b59e33c7d4c",
-      "bytes": 3058831,
+      "file": "article-motion.webp",
+      "sha256": "86c93960233b94a000c0beca826ce72fdb48fb8add1c42783039e5a3260b4788",
+      "bytes": 46362,
       "size": [
         960,
         540
       ],
-      "processing": "unaltered copy",
+      "processing": "resized official motion poster; full GIF linked on the website",
       "sources": [
         {
-          "file": "@website/motion/article-message/share.gif",
-          "sha256": "1f5d5cbac5450ddeebad1eca6a91df9c79a8ade0b1bc075249b05b59e33c7d4c"
+          "file": "@website/motion/article-message/poster.png",
+          "sha256": "c5b840cca96cd58a441e37fade5b74fccf5ec9a175a53ee803f3c270451e2357"
         }
       ]
     }

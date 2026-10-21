@@ -25,7 +25,7 @@ The original README preview files remain unedited copies of project same-topic o
 | `article-explainer.webp` | Resized C32-q3 | Single successful explanation image. |
 | `xiaohongshu-series.webp` | C27 afternoon-tea pages 1, 2 and 6 | Selected cover, overview and closing checklist; not a new consumer-validation result. |
 | `ppt-pages.webp` | C42 slide pages 2, 3 and 5 | Selected image-based agenda, explanation and data-comparison pages; no editable-element claim. |
-| `article-motion.gif` | Unchanged website `article-message/share.gif` | The project's AI-generated clay-style message-journey film. Production/browser reviewed; no individual platform phone-preview result for this exact file. |
+| `article-motion.webp` | Resized website `article-message/poster.png`; full GIF linked on the website | The project's AI-generated clay-style message-journey film. Production/browser reviewed; no individual platform phone-preview result for this exact file. |
 
 The displayed motion film retains the font notice above. Project-authored media do not relicense external lemo-wake tools or assets: the optional upstream workflow keeps its separate CC BY-NC 4.0 and applicable asset licenses, as described in `THIRD_PARTY_NOTICES.md`.
 

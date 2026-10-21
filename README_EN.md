@@ -64,9 +64,9 @@ The [visual gallery](https://sanshengai.top/tools/image/) also has comics, pictu
 
 For a process explanation, follow one message through receipt, a classification suggestion, program checks and a human handoff. Motion has a purpose beyond making objects enter the scene.
 
-[![Motion explanation: a message travels through receipt, classification, checks and a human handoff](./assets/readme/article-motion.gif)](https://sanshengai.top/tools/image/#motion-showcase)
+[![Motion explanation: a message travels through receipt, classification, checks and a human handoff](./assets/readme/article-motion.webp)](https://sanshengai.top/tools/image/motion/article-message/share.gif)
 
-<sub>“How a message moves through the process” · the same GIF as the website. Click to compare the source and widescreen motion. The program checks shown validate format and allowed ranges, not classification correctness.</sub>
+<sub>“How a message moves through the process” · click the poster to play the complete website GIF. The program checks shown validate format and allowed ranges, not classification correctness.</sub>
 
 The gallery has four categories, **portraits and groups, visual explanations, landscape atmosphere, and albums**, with two works each. It pairs a 9:16 source with a 16:9 animation. Still output remains the default; motion is opt-in, and actual projects may retain an existing landscape source.
 

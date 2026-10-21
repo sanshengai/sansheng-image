@@ -64,9 +64,9 @@
 
 当一段内容需要解释过程，可以让同一条信息依次经历接收、分类建议、程序核对和人工接手。动效服务于理解，而不是让所有元素都跳进来。
 
-[![动态讲解：同一条留言经过接收、有限分类、核对与人工接手](./assets/readme/article-motion.gif)](https://sanshengai.top/tools/image/#motion-showcase)
+[![动态讲解：同一条留言经过接收、有限分类、核对与人工接手](./assets/readme/article-motion.webp)](https://sanshengai.top/tools/image/motion/article-message/share.gif)
 
-<sub>《一条留言怎样走完》· 官网同款 GIF，点图查看原图与横向动态对照。演示中的程序核对只检查格式与范围，不保证分类正确。</sub>
+<sub>《一条留言怎样走完》· 点图播放官网完整 GIF。演示中的程序核对只检查格式与范围，不保证分类正确。</sub>
 
 作品墙按 **人像合影、知识图解、风景意境、相册手账** 四类展示，每类两件，以 9:16 原图与 16:9 动态紧邻对照。静态图是默认输出，明确要求动态版才开启；实际制作可沿用已有横向原图。
 

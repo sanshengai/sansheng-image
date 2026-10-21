@@ -23,7 +23,7 @@ PUBLIC_FILES = {
     "assets/C01-story-sample.png", "assets/C32-infographic-sample.png",
     "assets/readme/gallery-entry.webp", "assets/readme/article-story.webp",
     "assets/readme/article-explainer.webp", "assets/readme/xiaohongshu-series.webp",
-    "assets/readme/ppt-pages.webp", "assets/readme/article-motion.gif",
+    "assets/readme/ppt-pages.webp", "assets/readme/article-motion.webp",
     "assets/readme/provenance.json",
     "examples/book/plan.json", "examples/comic/plan.json",
     "examples/content-plan-v2/article.md", "examples/content-plan-v2/plan.json",
