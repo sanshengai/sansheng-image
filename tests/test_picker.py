@@ -702,6 +702,46 @@ def _open(page, frag="", slash=""):
     page.wait_for_load_state("networkidle")
 
 
+@pytest.mark.parametrize('width', [1440, 1989, 390])
+def test_hero_aligns_with_nav_and_benefit_rows_remain_readable(browser, built, width):
+    d, _ = built
+    with open_page(browser, d, width=width) as page:
+        _open(page)
+        nav = page.locator('.topnav-in').bounding_box()
+        hero = page.locator('.hero-grid').bounding_box()
+        assert abs(hero['x'] - nav['x']) < 1
+        assert abs(hero['width'] - nav['width']) < 1
+        if width > 900:
+            stage = page.locator('#stage').bounding_box()
+            assert abs(stage['width'] - (hero['width'] - 48) * .56) < 1
+            assert abs(stage['x'] + stage['width'] - nav['x'] - nav['width']) < 1
+            heading = page.locator('.hero-title').bounding_box()
+            left = page.locator('#hero-left').bounding_box()
+            assert abs(heading['width'] - hero['width']) < 1
+            assert heading['y'] + heading['height'] < min(left['y'], stage['y'])
+            lead = page.locator('.hero-title-lead').bounding_box()
+            accent = page.locator('.hero-title-accent').bounding_box()
+            assert lead['x'] + lead['width'] < accent['x']
+            assert max(lead['y'], accent['y']) < min(lead['y'] + lead['height'], accent['y'] + accent['height'])
+        assert page.locator('#top h1').count() == 1
+        assert page.locator('.hero-scenes, .hero-reasons').count() == 0
+        labels = page.locator('.hero-benefit-label')
+        assert len(labels.all_text_contents()) == 4
+        assert all(len(text) == 3 for text in labels.all_text_contents())
+        assert page.locator('.hero-benefits li').evaluate_all('''rows => rows.every(row => {
+            const label = row.querySelector('.hero-benefit-label');
+            const copy = row.querySelector('.hero-benefit-copy');
+            const a = label.getBoundingClientRect(), b = copy.getBoundingClientRect();
+            const labelStyle = getComputedStyle(label), copyStyle = getComputedStyle(copy);
+            const diff = parseFloat(labelStyle.fontSize) - parseFloat(copyStyle.fontSize);
+            return a.right < b.left && diff >= 2 && diff <= 4
+                && labelStyle.color === 'rgb(52, 199, 149)'
+                && copyStyle.color !== labelStyle.color
+                && copy.scrollWidth <= copy.clientWidth + 1;
+        })''')
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+
+
 @pytest.mark.parametrize('slash', ['', '/'])
 @pytest.mark.parametrize('has_brand', [True, False], ids=['brand-image', 'text-fallback'])
 def test_brand_uses_packaged_asset_path_and_missing_images_keep_text(browser, built, tmp_path, slash, has_brand):
