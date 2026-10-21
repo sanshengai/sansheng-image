@@ -2,155 +2,148 @@
 
 **中文** | [English](./README_EN.md)
 
-**给 Agent 的生图 Skill。** 叁笙生图是给 Claude Code、Codex 等 Agent 使用的开源生图 Skill。把文章或想法交给 Agent，选好画风，画出一整组风格一致的图。
+**给 Agent 的生图 Skill。** 把文章或想法交给 Claude Code、Codex 等 Agent，读懂内容，选定画风，画出一整组风格一致的图。
 
-公众号封面与插图、小红书图文、X 配图、PPT 页面、信息图和视频分镜首帧，都可以从这里开始。视频分镜产出的是静态图片；实际出图使用当前 Agent 的生图能力、你配置的图像服务，或将编译好的提示词交给其他工具。各用途的验证进展见下方能力边界。
+<p align="center">
+  <a href="https://sanshengai.top/tools/image/">
+    <img src="./assets/readme/gallery-entry.webp" width="100%" alt="打开叁笙生图视觉看板：浏览彩铅、丝网印、水墨、木版画等 81 种画风与 18 套色系">
+  </a>
+</p>
 
-[浏览画风与样图](https://sanshengai.top/tools/image/) · [安装到 Agent](#安装) · [版本与更新](https://github.com/sanshengai/sansheng-image/releases)
+<h3 align="center"><a href="https://sanshengai.top/tools/image/">进入视觉看板，挑画风与色系 →</a></h3>
 
-例如，可以直接告诉 Agent：“给这篇公众号文章做一张封面和三张插图，使用同一种画风。”
+<p align="center">按用途看样图 → 选择画风与色系 → 复制指令给 Agent</p>
 
-> 当前为公开 beta：81 种公开画风合同、18 个命名色系可供浏览，正式准入目前为 8 款。安装包不含官网样图库，具体可用范围见 [能力边界](#能力边界)。
+<p align="center"><a href="#三步开始">安装与试用</a> · <a href="#看实际效果">静态样图</a> · <a href="#让文章里的一段话动起来">动态演示</a> · <a href="./CHANGELOG.md">更新日志</a></p>
 
-## 先看产出
+> 公开 beta：81 种画风可浏览，18 套命名色系可选；其中 C91–C98 共 8 款已正式准入。可浏览、可编译与通过实际用途验收是不同状态，详见 [能力边界](#当前能力与边界)。
 
-| 使用场景 | 实际生成的图片 | 画风与验证范围 |
-|---|---|---|
-| 文章叙事插图 | ![C01 家庭场景测试图](./assets/C01-story-sample.png) | C01 暖光手绘动画，单张成功样本 |
-| 知识解释与信息图 | ![C32 番茄工作法信息图测试图](./assets/C32-infographic-sample.png) | C32 旧纸技术简报，单张成功样本 |
+<!-- PROMO_VIDEO:START -->
+<!-- 宣传视频固定插入位：成片完成后，在这对标记之间加入标题、真实封面与播放链接；上线前保持隐藏。 -->
+<!-- PROMO_VIDEO:END -->
 
-这两张图分别来自同题测试，不代表同一画风的整组跨用途已通过。参考图与预览图的来源、哈希和范围见 [ASSET_PROVENANCE.md](./ASSET_PROVENANCE.md)。
+## 为什么用它
 
-需要短剧或视频的分镜时，官网「AI 短剧分镜」用途下有 10 个画风，每个画风各 4 张样图：一张角色三视图（正、侧、背加三种表情），两张竖屏 9:16 镜头（中景与特写），一张横屏 16:9 电影感远景。分镜只出每个镜头的静态首帧，人物靠三视图跨镜头固定，运动交给视频模型。做法见 [references/scenes/storyboard.md](./references/scenes/storyboard.md)。
+- **懂内容**：先读上下文，找出值得画的场景、步骤、对比与关系，把重点画进图里。
+- **多面手**：公众号 / X 封面与配图、小红书、PPT、信息图、漫画、绘本、视频分镜，沿用同一套选图与出图流程。
+- **风格准**：画风有专有提示词和参考图；同一系列锁定画风，构图随每一段内容变化。
+- **好色彩**：用有名字、有故事的色系确定主色、点缀与留白；换色仍须尊重画风本身的配色规则。
 
-## 安装
+## 看实际效果
 
-推荐从 GitHub 安装：
+### 文章插图与知识解释
+
+人物叙事可以用一幅场景承接情绪；解释方法则用步骤、对比和关系。表达结构由内容决定。
+
+<p>
+  <a href="https://sanshengai.top/tools/image/#u=wxillus&s=C01"><img src="./assets/readme/article-story.webp" width="49%" alt="C01 暖光手绘动画：祖孙一起包饺子的文章叙事插图"></a>
+  <a href="https://sanshengai.top/tools/image/#u=info&s=C32"><img src="./assets/readme/article-explainer.webp" width="49%" alt="C32 旧纸技术简报：番茄工作法的步骤与关系信息图"></a>
+</p>
+
+<sub>左：C01 暖光手绘动画；右：C32 旧纸技术简报。均为实际生成的单张样图。</sub>
+
+### 小红书：从封面到收尾
+
+同一种纸雕语言，贯穿封面、内容页和收尾清单。下图选自「一桌下午茶」六页样图中的三页。
+
+[![C27 纸雕层叠：小红书封面、内容页与采购清单三页选样](./assets/readme/xiaohongshu-series.webp)](https://sanshengai.top/tools/image/#u=xhs&s=C27)
+
+<sub>C27 纸雕层叠 ·「一桌下午茶」六页选三。点图可在看板中查看完整样图。</sub>
+
+### PPT：同一种画风，不同页型
+
+目录页、图解页、数据页分别组织信息；画面风格保持一致。
+
+[![C42 清透扁平：PPT 目录、光散射图解与数据比较三个页型](./assets/readme/ppt-pages.webp)](https://sanshengai.top/tools/image/#u=ppt&s=C42)
+
+<sub>C42 清透扁平 · 图像式 PPT 选页。整页输出为图片，可选组装为 PPTX；页内元素不是可编辑对象，中文显示需在目标软件核对。</sub>
+
+漫画、绘本、音乐封面与视频分镜等样图，也可以在 [视觉看板](https://sanshengai.top/tools/image/) 按用途查看。分镜产出为静态首帧，不生成完整视频。
+
+## 让文章里的一段话，动起来
+
+当一段内容需要解释过程，可以让同一条信息依次经历接收、分类建议、程序核对和人工接手。动效服务于理解，而不是让所有元素都跳进来。
+
+[![动态讲解：同一条留言经过接收、有限分类、核对与人工接手](./assets/readme/article-motion.gif)](https://sanshengai.top/tools/image/#motion-showcase)
+
+<sub>《一条留言怎样走完》· 官网同款 GIF，点图查看原图与横向动态对照。演示中的程序核对只检查格式与范围，不保证分类正确。</sub>
+
+作品墙按 **人像合影、知识图解、风景意境、相册手账** 四类展示，每类两件，以 9:16 原图与 16:9 动态紧邻对照。静态图是默认输出，明确要求动态版才开启；实际制作可沿用已有横向原图。
+
+动态统一从 `python3 scripts/sb.py animate wake` 进入：继承原文、画风与色系，先判断图是否适合动，再备料、编排、预览与审片。首次环境由 Agent 按 [动态手册](./references/motion-wake.md) 配置，用户保持一个 Skill 入口。上游 lemo-wake 作为外部依赖，其 **CC BY-NC 4.0** 与相关素材许可单独适用。
+
+## 三步开始
+
+### 1. 安装到 Agent
 
 ```bash
 npx skills add sanshengai/sansheng-image -g
 ```
 
-需要电脑里有 Node.js 和 Python 3.10+，并使用 Claude Code、Codex 这类能执行本机命令的 AI 助手。不会用命令行，可把仓库链接交给 AI 助手，请它替你安装。
+需要 Node.js、Python 3.10+，以及能执行本机命令的 Agent。也可以把仓库链接交给 AI 助手，请它替你安装。[手动安装与环境检查](./USAGE.md#安装与环境检查)。
 
-手动安装时，克隆公开仓并让 Agent 的 Skill 目录指向整个仓目录；Claude Code 也可通过仓内 `.claude-plugin/marketplace.json` 安装。建议在虚拟环境运行：
+### 2. 去看板，选一套喜欢的视觉
 
-```bash
-git clone --depth 1 https://github.com/sanshengai/sansheng-image.git
-cd sansheng-image
-python3 -m venv .venv
-. .venv/bin/activate
-python3 scripts/sb.py doctor
+在上方看板入口中选用途、画风与色系，复制一行 `sb2:` 选择码交给 Agent。只用这一次，或保存为浏览器内的默认选择，都可以。
+
+### 3. 交给它一段真实内容
+
+```text
+给这篇文章做一张封面和三张插图。
+沿用刚才选定的画风与色系，先给我配图计划，再逐张出图。
 ```
 
-首次运行会检查基础依赖，缺少时由当前 Python 自动安装；失败会说明手动安装方法。首次成功完成整组图片后会提示一次 GitHub 点星，随后不再提示。
+实际成图需要宿主内置生图工具或已配置的图像服务；Codex 内置工具使用其订阅额度，外部服务按各自规则计费。仅编译提示词不会自动产生图片。
 
-推荐用 `--depth 1` 浅克隆：现在仓库本身不含样图，浅克隆与完整克隆的差别只在历史，完整克隆会带上历史里的旧样图，体积大得多；出图只用合同与锚点，不读样图。
+<details>
+<summary>想先检查提示词与尺寸，不调用生图服务</summary>
 
-参与修改时运行 `git config core.hooksPath .githooks` 启用提交前脱敏检查。PPTX 组装另需 `python3 -m pip install -r requirements-ppt.txt`。
-
-**维护者：样图不进仓库。** 只给人在官网选择器里看的样图（`styles/*/samples/`）只放在本机和官网，已写入 `.gitignore`；合同里登记的文件名与宽高比保留，选择器没有样图文件时按登记重建。新样图入库后运行 `python3 scripts/samples_sync.py status`（对比合同登记，并报告哪些样图是用旧修订生成、待重出的）和 `python3 scripts/samples_sync.py backup --dest <仓库外目录>`（只增不删的备份）；换机器用 `restore --src <备份目录>` 还原。2026-10-13 起登记的样图必须在合同里带 `generation` 生成记录（出图时的合同修订、提示词指纹、第几次出图、从几张中挑、是否后期编辑），选择器据此标注；更早的样图标为「历史样图」。锚点图（`styles/<码>/anchor.*`）和出图用的范例图不在 `samples/` 下，仍随仓库。
-
-## 日常轻量入口
-
-现在可用四项逐图计划交给 `python3 scripts/sb.py make brief.json -o 新目录`；内置工具先 `--prepare`，实际成图用 `--prepared` 与 `--import-results` 导回。计划格式和来源绑定见 [轻量出图](references/quick.md)。Skill 接收端和本地选择器均支持 `sb2`；2026-10-16 已实际核验官网的配图筛选、C91 搜索与复制，完整选择码在轻量 brief 中放入 `code` 字段。
-
-教材新增 `tb-vocab`（单词参考图）和 `tb-grammar`（语法情景图）。单词图默认无字；传一个单词时预留底部标签带，生成后程序排字。其他精确标签可给 overlay 位置配置。单词数量、人物文化、动作和画风仍须看实际图，教材用途尚未正式验收。自动成长事件已实现，长期有效性尚未验证。
-
-## 十分钟试用
-
-先编译仓内的虚构示例，检查画风、尺寸和完整提示词：
+在仓库目录运行：
 
 ```bash
 python3 scripts/sb.py compile examples/quickstart/manifest.json --json
 ```
 
-若当前 Agent 有内置生图工具，按 [生图路由](./references/backends.md) 将编译结果里的完整 `prompt` 和参考图交给它。若使用外部图像服务，把密钥放在本机环境变量或运行 `python3 scripts/sb.py setup --env-template` 后自行填写本机配置文件；不要把密钥发给 Agent，也不要提交到仓库。然后运行：
+这个虚构示例会列出画风、尺寸、完整提示词和参考图。后续出图与独立看图检查见 [使用指南](./USAGE.md#第一次编译与出图)。
 
-```bash
-python3 scripts/sb.py setup
-python3 scripts/sb.py generate examples/quickstart/manifest.json -o /tmp/stylebook-first.png
-python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest examples/quickstart/manifest.json
-```
+</details>
 
-没有图像服务时，`python3 scripts/sb.py inbox examples/quickstart/manifest.json -d /tmp/stylebook-inbox` 会生成可交给其他生图工具的任务包。真实服务调用可能收费；`doctor --deep` 会发起测试图请求。
+## 当前能力与边界
 
-`qa` 需要可用的独立看图模型，或另外提供可追溯的复核记录；缺少复核者时不能把像素检查结果当作整张通过。
-
-独立复核（`plan-review` 配图计划复核、`qa` 看图）有三个后端可选：火山方舟 Coding Plan（默认）、火山方舟 Agent Plan、本机已登录的 Claude Code（`claude_cli`，不需要 Ark Key）。选择方式、各自需要的环境变量和适用场景见 [后端说明「独立复核后端」](./references/backends.md)；没有任何一个可用时，计划复核会停下并告诉你怎么配，不会把没复核的结果当作通过。
-
-## 它怎样决定一张图
-
-1. **先理解任务和原文**：分清封面、解释、比较、步骤、人物叙事等用途；为每个位置摘出原文依据、关键关系和需要出现的短文字。没有根据的数字和结论不能补编。
-2. **再锁定系列画风和色调**：本次明确选择高于项目锁定、长期偏好和出厂默认。一个系列只用一种样式；允许换色的样式才接受色调调整。
-3. **逐张决定表达结构**：同一篇文章可以有主体场景、流程图和对比图。结构取决于该段内容，不能因为用户喜欢人物画就把数字关系都画成人物。
-4. **编译、生成、逐张检查**：提示词保留风格合同；出图后核对事实、关系、文字、裁切和整组一致性。失败图与返修记录不冒充准入。
-
-用户可以说“以后文章配图用 C01”“这张改成对比图”“整组颜色更柔和”。一次性改图只改当前任务；明确的长期设置保存在本机，可查看、撤销和忘记。系统只在三个独立任务里观察到一致的主动改选时提高推荐排序，不会从沉默或自动打分推断喜好。
-
-## 选画风、手动调整与记忆
-
-- `python3 scripts/sb.py style-for wxillus`：查看公众号插图的当前默认、候选、选择来源及画风准入状态。当前出厂默认 C24（公众号插图／表情包）、C31（小红书）、C40（信息图）、C30（公众号封面）仍待正式准入；默认能出图不代表成图已通过验收。
-- 官网选择器 <https://sanshengai.top/tools/image/>：先逛 81 种画风（每种标原作出处），按用途筛选并换成该用途最需要看的样图——封面看「标题写在图上」、文章插图看「概括图」、小红书看一组 3:4 知识卡、PPT 看三页、竖版信息图、漫画有四格 / 日漫标准页 / 日漫大格页 / 长条漫四种版式；每个风格都配了贴合它气质的主题，点开能按组看整套图；点开一种画风，选用途和色彩，再选「设为我的默认」（记在浏览器里，攒几个后一次复制给 Agent）或「只用这一次」（直接复制一行 `sb2:` 码）。「看色卡」里是 18 个有名字、有故事的色系。本地用 `python3 scripts/sb.py build --gallery` 生成同一份页面（`gallery/build/index.html` 加 `img/`，请在 `gallery/build/` 里起一个静态服务器打开，色调示意需要同源）；`--advanced` 生成旧的完整画廊（内嵌全部样图、含偏好页与选择 JSON 往返）。
-- `python3 scripts/sb.py preferences set --scene wxillus --field style --value C01`：设置以后公众号插图的默认画风；`preferences show`、`clear`、`undo`、`forget` 管理记录。详见 [偏好规则](./references/preferences.md)。
-- 对整篇文章，先写内容计划并用 `sb.py plan` 检查位置、依据和关系，再使用 `sb.py batch` 或逐张编译。规则见 [内容规划](./references/planning.md)；[合成示例](./examples/content-plan-v2/plan.json)演示计划形状，其中 C31 仍是待准入样式。
-
-## 能力边界
-
-| 功能 | 当前状态 |
+| 能做什么 | 怎样理解它的当前状态 |
 |---|---|
-| 81 种公开画风合同、色调规则、内容结构编译 | 本机可调用；C95/C96/C98/C93/C91/C92/C94/C97当前准入，其余73款待准入；新款未发版，实际用途须另验 |
-| 文章内容规划、单张和批量出图、局部返修、质量记录 | 本地可用；配套写作 Skill 已接管出图与排版 |
-| 本地画廊与选择 JSON 往返、可撤销的本地偏好 | 已实现；真实长期学习效果仍需连续使用验证 |
-| PPT、小红书、信息图、漫画、绘本、音频封面、表情包 | 有实现和旧样例；完整实际消费者验收按格式逐项推进，PPT 中文渲染尚需在目标软件核对 |
-| 官网选择器（逛画风 → 选用途与色彩 → 设为默认 / 只用一次，复制一行 sb2 码）、按用途的样图、18 个命名色系 | 本地候选有此前的浏览器行为检查；2026-10-16 实际官网显示 81 款，配图筛选、C91 搜索与 sb2 复制通过。本轮已验证色系展开、收起、选中项保留和窄屏无横向溢出；正式发布状态以 Release 为准。正式准入仍以上方 8 款为准，不能由页面可选推定 |
-| AI 短剧分镜 | 出静态首帧，运动只写成文字；当前会话用 `board --prepare`，见分镜手册。已做两镜跨画幅探索，角色、持物基本接续；光源仍有偏差，不保证跨镜头一致，不出视频 |
-| Codex 订阅额度出图（默认）、按张付费服务（显式备用） | 可用；Codex 单张约 45–100 秒，比中转服务慢，但不额外花钱 |
-| 成长飞轮（自动记录选择 / 采用 / 返修，同向 3 个任务问一次） | 已实现；长期效果仍需连续使用验证 |
-| 横版动态插图（公众号正文与 X） | 当前作品墙八件已完成制作审片与两轮浏览器播放；历史三支成片通过 X 桌面草稿上传预览，旧版单支 GIF 通过公众号手机预览。本批八件尚未逐件完成平台验证。不推及自动发布接口；小红书 GIF 图文路线尚未核实；PPT、封面和静态视频首帧不属于本批动态用途 |
-| 统一动态制作 `animate wake` | 已接通固定上游环境、备料、确定性预览、导出及返修记录；已完成真实工程和静态编译继承回归。新图仍逐片制作与审片，不因接入而自动达到画廊质量 |
-| 跨设备记忆同步、完整视频制作、Logo | 当前未提供 |
+| 浏览与编译画风 | 81 种公开画风合同；C91–C98 已正式准入，其余 73 款待准入。看板可选不等于任意用途、色系均已验收。 |
+| 从文章规划配图 | 支持原文依据、逐图结构、单张 / 批量生成、局部返修和质量记录；事实、文字、裁切与整组效果仍需看实际成图。 |
+| 小红书、信息图、漫画、绘本、音频封面等 | 可制作并查看样图；发布前仍需在目标平台检查文字、裁切和整组效果。 |
+| PPT | 整页为图片，可选组装为 PPTX；不承诺页内元素可编辑。 |
+| 视频分镜 | 静态首帧与运动文字说明；角色、光线与跨镜头一致性逐组检查，不生成完整视频。 |
+| 动态插图 | 官网八件完成制作审片与浏览器播放；历史单支 GIF 有公众号手机反馈，历史三支有 X 桌面草稿预览。结论只绑定当时文件，不推及本批全部作品或自动上传接口；小红书 GIF 图文尚未核实。 |
+| 偏好与记忆 | 明确设置存本机，可查看、撤销与忘记；长期推荐效果仍需连续使用验证，不提供跨设备同步。 |
 
-当前准入为 C91–C98 共 8 款；场景覆盖 344 项、配色覆盖 108 项完成，原始失败题、返修链和限制保留。其余 73 款仍待准入，画廊可选不等于实际用途已经验收。
+出厂默认 C24（公众号插图 / 表情包）、C31（小红书）、C40（信息图）、C30（公众号封面）仍待正式准入。默认推荐、网页可选和正式准入分别记录；也可以自行明确选择画风。
 
-两种私有画风及其默认值不在公开包中。个人记忆默认留在 `~/.config/sansheng-image/profile/`，可用 `SANSHENG_IMAGE_PROFILE` 指向自己的私有目录；显式指定的目录若不存在，本次不读取默认私有目录。图像服务适配的实测范围见 [后端说明](./references/backends.md)；未实测的适配器不会写成已验收。
+安装包包含画风合同、参考锚点与少量 README 展示图，**不含官网完整样图库**。样图来源与验证范围见 [图片来源](./ASSET_PROVENANCE.md)；生图服务的实测范围见 [后端说明](./references/backends.md)。
 
-本地重建候选的验证范围、发布余项与停止条件见 [本轮收口记录](references/release-readiness.md)。历史候选记录不代替当前 Release、设备验证或用户采用。
+## 文档与进阶用法
 
-## 横版动态插图
+| 想做的事 | 去哪里看 |
+|---|---|
+| 安装、环境检查、第一次出图 | [使用指南](./USAGE.md) |
+| 用一个轻量计划逐张出图 | [轻量出图](./references/quick.md) |
+| 从原文规划整篇文章的插图 | [内容规划](./references/planning.md) |
+| 接入图像服务与独立看图复核 | [生图与复核后端](./references/backends.md) |
+| 换色、改构图、保存或撤销偏好 | [选择与修改](./references/selection.md) · [本地偏好](./references/preferences.md) |
+| 漫画、绘本与固定人物 | [人物一致性](./references/consistency.md) |
+| 视频静态分镜 | [分镜手册](./references/scenes/storyboard.md) |
+| 制作动态、查看工程与反例 | [动态制作](./references/motion-wake.md) · [已审工程](./examples/motion/README.md) |
+| 维护样图、README 媒体与视频插入位 | [维护指南](./MAINTAINERS.md) |
 
-公众号正文从真实文章中选择值得解释的一段，制作过程演绎、对比选择或概念关系；同篇先试一两张，每张各有用途。面向客户的作品墙按**人像合影、知识图解、风景意境、相册手账**组织，当前每类两件，用纯文字标签切换。桌面统一一排两个作品位，单件分类也不放大；原图统一 9:16，动态统一 16:9，紧邻对照，窄屏改为单列。这一展示规则不限制日常制作使用横向原图。有文章来源的作品可展开读原文，下载 GIF 与静态备用图。制作审片、作者采用和手机平台验证分别记录。
+## 更新、贡献与许可
 
-第一批以公众号正文和 X 配图为目标，结果统一为 16:9，制作母版 1280×720，时长按动作与阅读需要确定，无声循环；保留完整原图，网页提供暂停、重播、放大及格式明确的下载。首批精选为《一座城，三次落色》《一条信息如何核验》《书页生夜》，分别展示画材过程、三步解说和故事插图。它们已完成成片审阅，公开上线与平台上传验证分别记录。
+[更新日志](./CHANGELOG.md) · [GitHub Releases](https://github.com/sanshengai/sansheng-image/releases) · [参与贡献](./CONTRIBUTING.md)
 
-2026-10-19，首批三支成片的 960×540 GIF 与 1280×720 MP4 均已在 X 桌面草稿完成上传和预览，未发帖；手机端及发布后的转码结果未验证。2026-10-18，一支旧版 960×540 的《一条信息如何核验》GIF 已由用户在公众号正文手机预览中确认可正常播放、文字清楚；该反馈只绑定当时的文件，新三支仍待手机预览反馈，自动上传接口也未验证。小红书普通 GIF 图文仍未核实；本批不宣传 PPT、封面或视频关键帧的动态用途。
+推荐画风、报告问题可使用仓库 Issue 模板；代码与文档改进欢迎 Pull Request。网站投稿入口尚未上线。
 
-动态版统一从 `python3 scripts/sb.py animate wake` 进入：当前 Agent 承接原文、画风与色系，先选图和备料，再设计动作、预览、渲染与审片返修。首次使用由 Agent 执行 `animate wake setup --install` 和 `animate wake doctor`，固定版本的 lemo-wake 作为独立运行依赖保存，用户仍只使用一个 Skill。输出含原图与动态紧邻对照、自动循环的审阅页；通过技术检查仍是待审候选，不能保证任意图片都适合做动画。完整步骤及实验差异见 [动态制作](./references/motion-wake.md)；[制作方法](./references/motion-methods.md) 与 [已审工程与反例](./examples/motion/README.md) 保留原图、字体、代码及关键状态，可通过同一入口复跑；历史相册两版均可，雨水解说的新方法获更好评价，城灯两版均未通过并保留为反例；新增完整合影纸台、留言流程、雨夜书店和旅行路线四个经制作审片的复跑工程，尚未记录用户采用或平台上传。新工程不继承参考片的评价，发布采用另记。此路径需要 Node.js 18+、上游 Playwright/浏览器环境、uv、ffmpeg/ffprobe，**不要求 HyperFrames**；静态出图不加载它。上游代码与素材不随本包分发，CC BY-NC 4.0 等许可单独适用。已有工程仍兼容下方 HyperFrames 路径及 `scripts/replay_wake.py`。
+原始代码与项目自有内容采用 [MIT License](./LICENSE)。第三方代码、字体、参考图和可选动态依赖保留各自许可，详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
 
-下面保留原 HyperFrames 路径的依赖和命令，已有工程可继续使用：
-
-- 只在你明确要动态版时使用，且必须先有同一内容的静态版。流程与正反例见 [动态场景](./references/motion-scenes.md)。
-- 额外依赖（静态出图不需要）：Python 侧 `python3 -m pip install -r requirements-motion.txt`（只有 numpy，Pillow 已是基线依赖）；其余由你自行安装：Node.js 22 或更新、HyperFrames 0.8.140、ffmpeg 与 ffprobe、本机 Chrome 或 chrome-headless-shell。缺哪一项 `python3 scripts/sb.py animate doctor --hyperframes-cli <hyperframes.mjs 的绝对路径>` 会逐条指出，封装不会自动下载。
-- 命令：`python3 scripts/sb.py animate doctor|plan|render|qa ...`。`doctor` 不读输入；`plan` 只读预演，不创建文件；`render` 与 `qa` 需要 manifest；`render` 的输出目录必须尚不存在，`qa` 使用该次已渲染的现有输出目录。均不覆盖已有文件，也不写进输入工程。
-- 只接受 `brand`（原创品牌动态示范）/ `article` / `infographic` / `xiaohongshu` 四种 scene；其他 scene 与 PPT、音乐封面格式一律拒绝。
-- 渲染在本机完成，不联网、不调用付费出图服务；静态图与分件图仍按原有方式出图，有内置生图工具时先 `--prepare`、用当前会话的内置工具出图、再 `--import-results`。分件抠图只用项目自带的颜色键代码，不调用系统自带的 Vision 工具，也没有自动 Vision 回退。
-- 许可：HyperFrames 为 Apache 2.0 的外部运行依赖，不随本仓分发；颜色键模块 `cutlib` 是本项目原创的 MIT 代码。详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
-- 本地测试：`python3 -m pytest tests -q`。真实渲染的可选测试读取环境变量 `HYPERFRAMES_CLI`（或项目自装的 `node_modules`），缺工具会明确跳过。真实动画测试还需本地 GSAP，可用 `GSAP_JS_PATH` 指定 `gsap.min.js`；不会从 CDN 下载。
-
-## 参与贡献
-
-详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
-
-- 推荐画风：使用仓库的「推荐画风」Issue 模板。
-- 报问题：使用「报问题」Issue 模板。
-- 代码或文档改进：提交 Pull Request。
-
-网站投稿入口随共建功能上线，目前尚待上线；当前请使用 GitHub Issue 或 PR。
-
-## 更新、致谢与许可
-
-变更见 [CHANGELOG.md](./CHANGELOG.md)。风格描述、排版思路和工作流参考过 [threerocks/hand-drawn-styles](https://github.com/threerocks/hand-drawn-styles)、[JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) 与 [yang0/handraw-style](https://github.com/yang0/handraw-style)；具体改写范围和许可原文见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。感谢这些作者公开方法与代码。
-
-本仓采用 [MIT License](./LICENSE)。维护者：叁笙（sansheng）。
-
-维护者构建首页时，可用 `SANSHENG_IMAGE_BRAND_DIR=<品牌图片目录> python3 scripts/sb.py build --gallery` 提供 `logo.webp` 与 `logo-poster.webp`。两张图必须是可解码的 WebP；不指定目录时只登记图片清单，品牌图与画风样图都需由网站部署方提供。
+感谢 [threerocks/hand-drawn-styles](https://github.com/threerocks/hand-drawn-styles)、[JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills)、[yang0/handraw-style](https://github.com/yang0/handraw-style) 与 [Lemomo/lemo-wake](https://github.com/lemomo-ai/lemo-wake) 公开方法与代码。画风参考不代表与相关创作者有合作或背书关系。维护者：叁笙（sansheng）。

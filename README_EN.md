@@ -1,107 +1,150 @@
-# 叁笙生图 · Sansheng Image
+# Sansheng Image · 叁笙生图
 
 [中文](./README.md) | **English**
 
-**An image-generation Skill for your Agent.** Sansheng Image is an open-source Skill for Claude Code, Codex, and other Agents. Give your Agent an article or an idea, choose a style, and create a consistent set of images.
+**An image Skill for Agents.** Give Claude Code, Codex, or another Agent your article or idea, choose a visual style, and create a series of images in that style.
 
-Use it for WeChat article covers and illustrations, Xiaohongshu image posts, X images, slide images, infographics, and static storyboard frames. Images are generated with your Agent’s image tool, a configured image service, or an external tool using the compiled prompts. Validation varies by style and use case; see the capability boundaries below.
+<p align="center">
+  <a href="https://sanshengai.top/tools/image/">
+    <img src="./assets/readme/gallery-entry.webp" width="100%" alt="Open the visual gallery: browse 81 styles and 18 named palettes, with real pencil, screen-print, ink and woodblock examples">
+  </a>
+</p>
 
-[Explore styles and samples](https://sanshengai.top/tools/image/) · [Install](#install-and-try) · [Releases](https://github.com/sanshengai/sansheng-image/releases)
+<h3 align="center"><a href="https://sanshengai.top/tools/image/">Open the visual gallery: choose a style and palette →</a></h3>
 
-Try asking your Agent: “Create a cover and three illustrations for this article, using one consistent style.”
+<p align="center">Browse examples by use → choose a style and palette → copy an instruction to your Agent</p>
 
-> Public beta: browse 81 public style contracts and 18 named palettes. Eight styles currently pass admission. Installation packages exclude the website sample library; see the capability boundaries for validation scope.
+<p align="center"><a href="#start-in-three-steps">Install and try</a> · <a href="#see-the-outputs">Still examples</a> · <a href="#let-a-paragraph-explain-itself-in-motion">Motion demo</a> · <a href="./CHANGELOG.md">Changelog</a></p>
 
-## Preview
+> Public beta: 81 styles can be browsed and 18 named palettes selected. Eight styles, C91–C98, currently pass formal admission. Browsing, prompt compilation, and validation for an actual use are different states. See [capability boundaries](#current-capabilities-and-boundaries).
 
-| Use and style | Real single-image test output |
-|---|---|
-| Article illustration · C01 warm hand-painted animation | ![C01 story image](./assets/C01-story-sample.png) |
-| Explanatory infographic · C32 aged-paper technical briefing | ![C32 infographic](./assets/C32-infographic-sample.png) |
+<!-- PROMO_VIDEO:START -->
+<!-- Reserved for the promotional film: insert its heading, real poster and playback link between these markers when ready. Keep hidden until then. -->
+<!-- PROMO_VIDEO:END -->
 
-These images show two separate successful tests, not a validated cross-format series. File hashes and known generation routes are documented in [ASSET_PROVENANCE.md](./ASSET_PROVENANCE.md).
+## Why use it
 
-## Install and try
+- **Content first**: read the source, identify scenes, steps, comparisons and relationships, then decide what to draw.
+- **One workflow, many uses**: article and X covers/illustrations, Xiaohongshu cards, slides, infographics, comics, picture books and storyboard stills.
+- **A defined style**: dedicated prompts and reference images guide the look; a series keeps its style while each composition follows its own content.
+- **Palettes with character**: named palettes guide dominant colors, accents and negative space while respecting each style's recoloring rules.
 
-Install from GitHub with `npx skills add sanshengai/sansheng-image -g` (Node.js required), then restart your AI assistant. Use an assistant such as Claude Code or Codex that can run commands on your computer. Python 3.10+ is required.
+## See the outputs
 
-For manual installation, clone the repository and link it into your Agent's skill directory. The repository also includes a Claude Code plugin manifest:
+### Article illustrations and visual explanations
+
+A character scene can carry a narrative; steps and relationships can explain a method. The content determines the structure.
+
+<p>
+  <a href="https://sanshengai.top/tools/image/#u=wxillus&s=C01"><img src="./assets/readme/article-story.webp" width="49%" alt="C01 warm hand-painted animation: a grandmother and child making dumplings"></a>
+  <a href="https://sanshengai.top/tools/image/#u=info&s=C32"><img src="./assets/readme/article-explainer.webp" width="49%" alt="C32 aged-paper technical briefing: a Pomodoro technique infographic"></a>
+</p>
+
+<sub>Left: C01 Warm Hand-painted Animation. Right: C32 Aged-paper Technical Briefing. Both are actual generated single-image examples.</sub>
+
+### Xiaohongshu: from cover to closing checklist
+
+The same paper-sculpture treatment across a cover, an overview and a closing checklist, selected from a six-page afternoon-tea example.
+
+[![C27 layered paper sculpture: three Xiaohongshu sample pages](./assets/readme/xiaohongshu-series.webp)](https://sanshengai.top/tools/image/#u=xhs&s=C27)
+
+<sub>C27 Layered Paper Sculpture · three pages from the six-page afternoon-tea example. Click to browse the complete set.</sub>
+
+### Slides: one style, different page structures
+
+An agenda, an explanation and a data comparison organize different information while keeping the same visual style.
+
+[![C42 airy flat vector: agenda, light-scattering explanation and data comparison slides](./assets/readme/ppt-pages.webp)](https://sanshengai.top/tools/image/#u=ppt&s=C42)
+
+<sub>C42 Airy Flat Vector · selected image-based slides. Optional PPTX assembly does not make page elements editable; check Chinese rendering in the target presentation app.</sub>
+
+The [visual gallery](https://sanshengai.top/tools/image/) also has comics, picture books, audio covers and storyboard examples. Storyboards produce static first frames, not complete videos.
+
+## Let a paragraph explain itself in motion
+
+For a process explanation, follow one message through receipt, a classification suggestion, program checks and a human handoff. Motion has a purpose beyond making objects enter the scene.
+
+[![Motion explanation: a message travels through receipt, classification, checks and a human handoff](./assets/readme/article-motion.gif)](https://sanshengai.top/tools/image/#motion-showcase)
+
+<sub>“How a message moves through the process” · the same GIF as the website. Click to compare the source and widescreen motion. The program checks shown validate format and allowed ranges, not classification correctness.</sub>
+
+The gallery has four categories, **portraits and groups, visual explanations, landscape atmosphere, and albums**, with two works each. It pairs a 9:16 source with a 16:9 animation. Still output remains the default; motion is opt-in, and actual projects may retain an existing landscape source.
+
+Use `python3 scripts/sb.py animate wake`: inherit the article, style and palette, assess whether the material suits motion, then prepare, direct, preview and review. The Agent sets up the environment using the [motion guide](./references/motion-wake.md); users keep one Skill entry. External lemo-wake code and related assets retain their own licenses, including **CC BY-NC 4.0**.
+
+## Start in three steps
+
+### 1. Install into your Agent
 
 ```bash
-git clone --depth 1 https://github.com/sanshengai/sansheng-image.git
-cd sansheng-image
-python3 -m venv .venv
-. .venv/bin/activate
-python3 scripts/sb.py doctor
+npx skills add sanshengai/sansheng-image -g
+```
+
+Requires Node.js, Python 3.10+, and an Agent that can run local commands. You can also give the repository URL to your Agent and ask it to install. [Manual installation and setup](./USAGE.md#安装与环境检查) (Chinese).
+
+### 2. Choose your visuals in the gallery
+
+Choose a use, style and palette, then copy one `sb2:` selection code to the Agent. Use it once or save a browser-local default.
+
+### 3. Give it real source material
+
+```text
+Make one cover and three illustrations for this article.
+Keep the style and palette I selected. Show me the illustration plan first,
+then generate the images one by one.
+```
+
+Actual generation requires the host Agent's image tool or a configured image service. Codex's built-in tool uses its subscription allowance; external providers follow their own billing. Compiling a prompt alone does not produce an image.
+
+<details>
+<summary>Inspect a prompt and its dimensions before calling an image service</summary>
+
+Run in the repository:
+
+```bash
 python3 scripts/sb.py compile examples/quickstart/manifest.json --json
 ```
 
-A shallow clone (`--depth 1`) is recommended: the repository no longer contains sample images, so the only difference from a full clone is history, and a full clone also downloads the old sample images kept there; image generation only needs the contracts and anchors.
+This synthetic example prints the style, dimensions, full prompt and references. Generation and independent visual review are covered in the [usage guide](./USAGE.md#第一次编译与出图) (Chinese).
 
-Contributors should run `git config core.hooksPath .githooks` to enable the staged-file redaction guard.
+</details>
 
-**Maintainers: sample images are not in the repository.** Gallery-only images (`styles/*/samples/`) live only on the maintainer's machine and the website and are in `.gitignore`; contract registrations (file names and ratios) stay, and the selector rebuilds from them when the files are absent. After adding samples run `python3 scripts/samples_sync.py status` (compare with contract registrations and list samples generated under an older contract revision) and `python3 scripts/samples_sync.py backup --dest <dir outside the repo>` (add-only backup); use `restore --src <backup dir>` on a new machine. Samples registered from 2026-10-13 on must carry a `generation` record in the contract (contract revision at generation time, prompt fingerprint, attempt number, how many candidates it was picked from, whether it was edited); the selector labels samples from it, and older ones are shown as historical. Anchor images (`styles/<code>/anchor.*`) and exemplar images used for generation are not under `samples/` and stay in the repository.
+## Current capabilities and boundaries
 
-For an Agent with a built-in image generator, pass the full compiled `prompt` and any listed references to that tool. For an external image provider, configure credentials locally with `python3 scripts/sb.py setup --env-template` and then:
+| Capability | Current scope |
+|---|---|
+| Browse and compile styles | 81 public contracts; C91–C98 pass formal admission, the other 73 remain pending. A gallery choice is not validation for every use or palette. |
+| Plan illustrations from an article | Source grounding, per-image structures, single/batch generation, local revisions and quality records. Check facts, text, cropping and series consistency in actual images. |
+| Xiaohongshu, infographics, comics, books and audio covers | Creation workflows and samples are available. Check text, cropping and the complete series on the target platform before publishing. |
+| Slides | Image pages and optional PPTX assembly; no editable page-element promise. |
+| Storyboards | Static first frames and written motion notes. Check characters, light and continuity per project; no complete video generation. |
+| Motion illustrations | Eight gallery works passed production review and browser playback. An older single GIF has WeChat phone feedback; three earlier films have X desktop-draft previews. Those results apply only to the files tested, not every current work or automatic-upload APIs. Ordinary Xiaohongshu GIF image posts remain unverified. |
+| Preferences | Explicit local settings can be viewed, undone and forgotten. Long-term ranking effects still need continuous use; no cross-device sync. |
 
-```bash
-python3 scripts/sb.py setup
-python3 scripts/sb.py generate examples/quickstart/manifest.json -o /tmp/stylebook-first.png
-python3 scripts/sb.py qa /tmp/stylebook-first.png --style C32 --manifest examples/quickstart/manifest.json
-```
+Factory defaults C24 (article illustrations/stickers), C31 (Xiaohongshu), C40 (infographics) and C30 (article covers) remain pending admission. Defaults, gallery availability and formal admission are recorded separately; explicit choices are supported.
 
-The QA command requires a working independent vision reviewer, or a separately supplied review record. A missing reviewer is not a passing result. If no generator is configured, `python3 scripts/sb.py inbox examples/quickstart/manifest.json -d /tmp/stylebook-inbox` makes a portable prompt package. `doctor --deep` makes real provider calls and may incur charges. PPTX assembly needs the optional `requirements-ppt.txt` dependencies.
+The install package includes contracts, reference anchors and a few README previews, **not the complete website sample library**. See [image provenance](./ASSET_PROVENANCE.md) and [tested backend scope](./references/backends.md).
 
-## How decisions are made
+## Documentation
 
-1. Read the task and source text; extract evidence, relationships, and only the short labels needed in an image.
-2. Select one style for the series. An explicit choice wins over a project lock, saved preference, or factory default. Palette changes must respect each style's recoloring rule.
-3. Choose a scene, flow, comparison, or other structure **per image** according to its content. A preference for character art must not turn a numerical comparison into an unrelated portrait.
-4. Compile, generate, and inspect the actual output. Failed or repaired images remain in the record and do not automatically count as style admission.
+| Task | Guide |
+|---|---|
+| Install, check the environment, generate a first image | [Usage guide](./USAGE.md) (Chinese) |
+| Lightweight image plans | [Quick workflow](./references/quick.md) |
+| Plan an article's illustrations | [Planning](./references/planning.md) |
+| Image services and independent visual review | [Backends](./references/backends.md) |
+| Selection changes and reversible preferences | [Selection](./references/selection.md) · [Preferences](./references/preferences.md) |
+| Comics, books and recurring characters | [Consistency](./references/consistency.md) |
+| Static storyboard frames | [Storyboard guide](./references/scenes/storyboard.md) |
+| Motion projects and reviewed counterexamples | [Motion workflow](./references/motion-wake.md) · [Examples](./examples/motion/README.md) |
+| Gallery media and the film insertion point | [Maintainer guide](./MAINTAINERS.md) (Chinese) |
 
-Temporary edits affect only the current task. Explicit long-term preferences live in a local file and can be viewed, undone, or forgotten. Observed preferences only improve ranking after consistent active choices in three independent tasks; silence and automatic scores are not used to infer taste.
+## Updates, contributions and licenses
 
-## Choose and adjust
+[Changelog](./CHANGELOG.md) · [GitHub Releases](https://github.com/sanshengai/sansheng-image/releases) · [Contributing](./CONTRIBUTING.md)
 
-- `python3 scripts/sb.py style-for wxillus` shows the article illustration default and why it was selected.
-- `python3 scripts/sb.py build --gallery` creates the offline selector at `gallery/build/index.html`. It exports versioned selection JSON that the Agent can parse. The public selector is live at https://sanshengai.top/tools/image/ (pick a use, a style and a palette, then copy one `sb2:` line for the Agent). Serve `gallery/build/` over a local static server to use the same page offline (`img/` holds lazily loaded samples); `--advanced` builds the old all-in-one gallery.
-- `python3 scripts/sb.py preferences set --scene wxillus --field style --value C01` saves a style preference. See [preference controls](./references/preferences.md).
-- For an article, create a source-grounded plan and run `sb.py plan` before generating. See [planning rules](./references/planning.md) and the [synthetic plan](./examples/content-plan-v2/plan.json); its C31 style remains pending admission.
+Use the issue templates to recommend a style or report a problem, and pull requests for code or documentation. Website submission is not live yet.
 
-Private styles and personal memory are excluded from the public package. Local memory defaults to `~/.config/sansheng-image/profile/` and can be relocated with `SANSHENG_IMAGE_PROFILE`. Provider support and its verified limits are listed in [backends.md](./references/backends.md).
+Original code and project-owned content use the [MIT License](./LICENSE). Third-party code, fonts, reference images and optional motion dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
 
-## Capability boundaries
-
-The 81 public style contracts and 18 named palettes are browsing and compilation choices. Only C91–C98 currently pass style admission; the other 73 remain pending. A successful single image does not establish reliable output across every scene or palette.
-
-Slide images and optional PPTX assembly are distinct from editable slide elements; Chinese rendering still needs checking in the target presentation app. Storyboard output consists of static first frames and written motion instructions. Image generation requires an available Agent image tool or a configured service; a compiled prompt alone is not a generated image.
-
-## Landscape motion illustrations
-
-The customer gallery uses four text-only category tabs: portraits and group photos, visual explanations, landscape atmosphere, and albums. Each category currently contains two selected works, pairing a complete 9:16 source with a 16:9 animation. Desktop uses two equal-width work slots per row, including categories with a single work; narrow screens use one column. This display contract does not restrict landscape-source projects used in actual articles. Production review, user adoption, public release, and platform checks remain separate.
-
-The first batch targets illustrations inside WeChat articles and posts on X: 16:9 output, a 1280×720 master, and a silent loop whose duration follows the action and reading time. The current eight works cover supported paper scenes, camera printing, a continuous message journey, a four-stage article argument, rain and light interactions, and complete photographs linked to an album or a route. Each film passed production review and two browser playback loops; individual WeChat phone-preview tests for this batch are still pending. The gallery preserves the actual source image and offers pause, replay, enlargement, GIF, and MP4 downloads.
-
-On 2026-10-19, all three selected films were uploaded and previewed as 960×540 GIFs and 1280×720 MP4s in X desktop drafts, without posting. Mobile playback and post-publication transcoding remain unverified. On 2026-10-18, a user confirmed that an earlier 960×540 GIF, “How to verify a claim,” played correctly with clear text in a WeChat article phone preview. That feedback applies only to the file tested then; phone-preview feedback for the three new films and automated article upload remain pending. Ordinary animated-GIF image posts on Xiaohongshu remain unverified. Slides, covers, and static video storyboard frames are outside this motion batch.
-
-Use `python3 scripts/sb.py animate wake` for the opt-in motion workflow: the current Agent inherits article, style and palette, checks materials, directs the action, then previews, renders and reviews it. The Agent runs `animate wake setup --install` and `animate wake doctor` once; a pinned lemo-wake runtime lives outside Skill discovery, so users keep one Skill entry. Each render includes a side-by-side source/looping-film review page and an append-only review record. Technical success remains a candidate, not a guarantee that every image is suitable for animation. See [motion-wake.md](./references/motion-wake.md) for the workflow and experiment findings, [production methods](./references/motion-methods.md) for atmosphere, paper and explanation, and [reviewed examples and a rejected counterexample](./examples/motion/README.md) for complete assets, code and key states. The user found both album variants acceptable and preferred the added-method rainwater explanation; both city-light variants were rejected. Four newer production-reviewed replay projects cover a paper diorama, a message journey, a rain bookshop, and a travel route. Their code, assets, font subsets, director notes, and fingerprints are bundled; user adoption and platform uploads remain unrecorded. Judgments on earlier films do not transfer to new projects or authorize publication. This path needs Node.js 18+, upstream Playwright/browser setup, uv and ffmpeg/ffprobe, but not HyperFrames; still-image work does not load it. Upstream code/assets are not bundled, and their CC BY-NC 4.0 and other applicable licenses remain separate. Existing HyperFrames projects and `scripts/replay_wake.py` remain compatible.
-
-Motion is opt-in; the default output remains a still image. The older `sb.py animate` route has its own [scene contracts](./references/motion-scenes.md) (Chinese). A scene name describes a composition contract, not proof of platform upload support. Brand animation is a separate demonstration.
-
-For `sb.py animate`, install `requirements-motion.txt` (numpy; Pillow is already a baseline dependency), Node.js 22+, HyperFrames 0.8.140, ffmpeg/ffprobe and a local browser. `python3 scripts/sb.py animate doctor` checks them without downloading tools. HyperFrames is an external Apache 2.0 dependency and is not bundled. The original MIT `cutlib` color-key module does not call macOS Vision or provide an automatic Vision fallback. Select on the desktop website and copy the instruction into the Skill; platform upload compatibility remains unverified.
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) (written in Chinese).
-
-- Recommend a style: use the "推荐画风" (recommend a style) issue template.
-- Report a problem: use the "报问题" (bug report) issue template.
-- Code or documentation changes: open a pull request.
-
-Website submission is not live yet and will arrive with the contribution feature; for now please use a GitHub issue or pull request.
-
-## Credits and license
-
-See [CHANGELOG.md](./CHANGELOG.md), [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md), and [MIT LICENSE](./LICENSE). Style and workflow ideas were adapted from [threerocks/hand-drawn-styles](https://github.com/threerocks/hand-drawn-styles), [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills), and [yang0/handraw-style](https://github.com/yang0/handraw-style). Maintained by 叁笙 (sansheng).
-
-Maintainers may set `SANSHENG_IMAGE_BRAND_DIR=<brand-image-directory>` when running `python3 scripts/sb.py build --gallery` to supply `logo.webp` and `logo-poster.webp`. Both must be decodable WebP files. Without this input, the builder only lists their filenames; website deployments supply brand and gallery images separately.
+Thanks to [threerocks/hand-drawn-styles](https://github.com/threerocks/hand-drawn-styles), [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills), [yang0/handraw-style](https://github.com/yang0/handraw-style) and [Lemomo/lemo-wake](https://github.com/lemomo-ai/lemo-wake) for their methods and code. Style references imply no affiliation or endorsement. Maintained by 叁笙 (sansheng).

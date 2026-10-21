@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "description": "Selected real project outputs for README display; not the full gallery or new generation evidence.",
+  "assets": [
+    {
+      "file": "gallery-entry.webp",
+      "sha256": "bb90fbac2566b850475135aade6036c0434296cb96d2ea8aee3ccb03b7af7575",
+      "bytes": 159272,
+      "size": [
+        1440,
+        584
+      ],
+      "processing": "layout and/or resize; no content retouching",
+      "sources": [
+        {
+          "file": "styles/C30/samples/cv-hd.webp",
+          "sha256": "8a6762e403c018ac24813bfcb3ea2ac1a2e38101a7477a715d99b105b1496494"
+        },
+        {
+          "file": "styles/C74/samples/cv-hd.webp",
+          "sha256": "398905376f4eb263d8b8ba7ae9507ec67c665e7fdf0dc53cad5bc8c00f78e093"
+        },
+        {
+          "file": "styles/C19/samples/cv.webp",
+          "sha256": "837a7ccf46dcbe13824fe81d3d437abf9e2b0b4a3a2e017c54189a16e6395c73"
+        },
+        {
+          "file": "styles/C91/samples/cv-wave22.png",
+          "sha256": "50b411dd1a44895bb97e18dcad3de19084f4e6ed8f17e8670f82462ae657c5fa"
+        }
+      ]
+    },
+    {
+      "file": "xiaohongshu-series.webp",
+      "sha256": "45fd16a2ff6c7a9b1de7c360e26e417a2a34793c7abcde5bf508e1f19ac9c689",
+      "bytes": 128938,
+      "size": [
+        1200,
+        587
+      ],
+      "processing": "layout and/or resize; no content retouching",
+      "sources": [
+        {
+          "file": "gallery/build/img/C27-xhs.webp",
+          "sha256": "9d7332b0e086914b3652bc573381b2040016f751a58a591a2d0a824f77d8461e"
+        },
+        {
+          "file": "gallery/build/img/C27-xhs-2.webp",
+          "sha256": "86ef9c5afcf49065d9bedaa76f9ff5b01776e5e93925139adfa093bff489c443"
+        },
+        {
+          "file": "gallery/build/img/C27-xhs-6.webp",
+          "sha256": "996fdf82c19b1b1cc418526217f8ddc10d9b73336d4d1377a787ac5d24dfe55b"
+        }
+      ]
+    },
+    {
+      "file": "ppt-pages.webp",
+      "sha256": "073a5f76f11e7b09f4be8706210dc04b08b930269c8c36a36e2062711c2de619",
+      "bytes": 56936,
+      "size": [
+        1200,
+        303
+      ],
+      "processing": "layout and/or resize; no content retouching",
+      "sources": [
+        {
+          "file": "gallery/build/img/C42-ppt-2.webp",
+          "sha256": "bfe0f8b746bfbd33164a024793f49b1b98c686226114af55be29780258d37ca2"
+        },
+        {
+          "file": "gallery/build/img/C42-ppt-3.webp",
+          "sha256": "e4ff75759e39e18a64ba3d502b17c87d1ae4d0394d23bab4d3f7e6d41f2e0d75"
+        },
+        {
+          "file": "gallery/build/img/C42-ppt-5.webp",
+          "sha256": "5104782ba90117e5556fb5d81f0d3730947729896519d0ace8084377acd3a6fc"
+        }
+      ]
+    },
+    {
+      "file": "article-story.webp",
+      "sha256": "033241809cfef10fce6d98bbb54fbb6e23016b6c52dfed8aa94d65e6cf0242f1",
+      "bytes": 93870,
+      "size": [
+        720,
+        720
+      ],
+      "processing": "layout and/or resize; no content retouching",
+      "sources": [
+        {
+          "file": "assets/C01-story-sample.png",
+          "sha256": "acc2a9767da459bd743a59bb49833f043755b7eecf810e540a6792bf7b11aee9"
+        }
+      ]
+    },
+    {
+      "file": "article-explainer.webp",
+      "sha256": "f87b28e630962c4591d71311901e56a0444a144d28c876836db66bb47aee3fae",
+      "bytes": 99544,
+      "size": [
+        720,
+        720
+      ],
+      "processing": "layout and/or resize; no content retouching",
+      "sources": [
+        {
+          "file": "assets/C32-infographic-sample.png",
+          "sha256": "f41571c36d6a6a222c63464ea2ea6c3cff0b86e42f8635a7c7db4c43c1b1277b"
+        }
+      ]
+    },
+    {
+      "file": "article-motion.gif",
+      "sha256": "1f5d5cbac5450ddeebad1eca6a91df9c79a8ade0b1bc075249b05b59e33c7d4c",
+      "bytes": 3058831,
+      "size": [
+        960,
+        540
+      ],
+      "processing": "unaltered copy",
+      "sources": [
+        {
+          "file": "@website/motion/article-message/share.gif",
+          "sha256": "1f5d5cbac5450ddeebad1eca6a91df9c79a8ade0b1bc075249b05b59e33c7d4c"
+        }
+      ]
+    }
+  ]
+}
