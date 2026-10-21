@@ -46,6 +46,7 @@ FAKE_WEBP = _webp_buffer.getvalue()
 DATA_RE = re.compile(r'<script id="page-data" type="application/json">(.*?)</script>', re.S)
 
 SITE_URL = "https://github.com/sanshengai/sansheng-image"
+GRID_TEXTURE = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'56\' height=\'56\' viewBox=\'0 0 56 56\'%3E%3Cpath d=\'M.6 0V56M0 .6H56\' fill=\'none\' stroke=\'%23EEE8DC\' stroke-opacity=\'.065\' stroke-width=\'1.2\' stroke-linecap=\'butt\' stroke-dasharray=\'2 5\'/%3E%3C/svg%3E")'
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -221,8 +222,11 @@ def _template_static_asset_violations(html: str) -> list[str]:
 def test_template_has_one_placeholder_and_no_external_or_preview_refs():
     html = TEMPLATE.read_text(encoding="utf-8")
     assert html.count("__META__") == 1
+    # One fixed, inline SVG texture is local; every other URL/data image remains forbidden.
+    assert html.count(GRID_TEXTURE) == 1
+    asset_checked_html = html.replace(GRID_TEXTURE, "")
     for bad in ("homepage-", "data-url", "fetch(", "../", "url(", "@import", "data:image", "<img src="):
-        assert bad not in html, bad
+        assert bad not in asset_checked_html, bad
     assert _template_static_asset_violations(html) == []
     assert 'data-asset-root="img/"' in html
     # 首页从作品开始；品牌只使用独立的静态 Logo。
@@ -302,7 +306,7 @@ def test_page_is_small_and_images_are_external(built):
     # 包内完整版本记录随页面分发，保留 300 KB 文本预算；图片仍必须外链。
     assert 0 < html.stat().st_size < 300_000, "页面本体应只含文字与数据，且不超过 300 KB"
     assert len(list((d / "img").glob("*.webp"))) >= 57 * 3
-    assert "data:image" not in html.read_text(encoding="utf-8")
+    assert "data:image" not in html.read_text(encoding="utf-8").replace(GRID_TEXTURE, "")
 
 
 @pytest.mark.parametrize("content", ["", "x" * 300_000], ids=["empty", "oversized"])
@@ -717,12 +721,13 @@ def test_hero_aligns_with_nav_and_benefit_rows_remain_readable(browser, built, w
             assert abs(stage['x'] + stage['width'] - nav['x'] - nav['width']) < 1
             heading = page.locator('.hero-title').bounding_box()
             left = page.locator('#hero-left').bounding_box()
-            assert abs(heading['width'] - hero['width']) < 1
-            assert heading['y'] + heading['height'] < min(left['y'], stage['y'])
+            assert abs(heading['width'] - left['width']) < 1
+            assert abs(heading['x'] - left['x']) < 1
+            assert heading['x'] + heading['width'] < stage['x']
             lead = page.locator('.hero-title-lead').bounding_box()
             accent = page.locator('.hero-title-accent').bounding_box()
-            assert lead['x'] + lead['width'] < accent['x']
-            assert max(lead['y'], accent['y']) < min(lead['y'] + lead['height'], accent['y'] + accent['height'])
+            assert lead['y'] + lead['height'] < accent['y']
+            assert accent['height'] > 2 * lead['height']
         assert page.locator('#top h1').count() == 1
         assert page.locator('.hero-scenes, .hero-reasons').count() == 0
         labels = page.locator('.hero-benefit-label')
