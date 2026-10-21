@@ -56,6 +56,29 @@ def _manifest(path: str) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+def cmd_catalog(a) -> int:
+    from stylebook.sample_catalog import build, select
+    root = Path(a.root).resolve() if a.root else Path(__file__).resolve().parents[1]
+    result = build(root, a.relations, a.motion_root, a.style, a.previous)
+    aspect = None
+    if a.aspect:
+        w, h = map(float, a.aspect.split(":"))
+        if w <= 0 or h <= 0:
+            raise ValueError("aspect must be positive W:H")
+        aspect = w / h
+    result["assets"] = select(result, a.purpose, aspect, a.group)
+    selected_ids = {asset["id"] for asset in result["assets"]}
+    result["groups"] = [group for group in result["groups"] if set(group["members"]).issubset(selected_ids)]
+    result["filters"] = {"purpose": a.purpose, "aspect": a.aspect, "group": a.group, "styles": a.style}
+    target = Path(a.out)
+    if target.exists():
+        raise ValueError("catalog output exists; choose a new revision")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
+    print(json.dumps({"out": str(target.resolve()), "assets": len(result["assets"]), "groups": len(result["groups"])}))
+    return 0
+
+
 def cmd_compile(a) -> int:
     c = CP.compile_manifest(_manifest(a.manifest))
     print(json.dumps(c.to_dict(), ensure_ascii=False, indent=2) if a.json else c.prompt)
@@ -758,10 +781,15 @@ def cmd_pptx(a) -> int:
 def main(argv=None) -> int:
     actual_argv = sys.argv[1:] if argv is None else argv
     # 动态与分件入口只检查现有环境，绝不沿用静态入口的自动 pip 安装。
-    if (not actual_argv or actual_argv[0] not in {"animate", "layers"}) and FR.ensure_dependencies(actual_argv):
+    if (not actual_argv or actual_argv[0] not in {"animate", "layers", "catalog"}) and FR.ensure_dependencies(actual_argv):
         return 2
     ap = argparse.ArgumentParser(prog="sb", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("catalog", help="从登记样图导出项目素材目录，不出图、不联网、不安装依赖")
+    p.add_argument("-o", "--out", required=True); p.add_argument("--root")
+    p.add_argument("--style", action="append"); p.add_argument("--relations"); p.add_argument("--motion-root")
+    p.add_argument("--purpose"); p.add_argument("--aspect"); p.add_argument("--group"); p.add_argument("--previous")
+    p.set_defaults(fn=cmd_catalog)
     p = sub.add_parser("compile"); p.add_argument("manifest"); p.add_argument("--json", action="store_true"); p.set_defaults(fn=cmd_compile)
     p = sub.add_parser("cover-flow"); p.add_argument("manifest"); p.set_defaults(fn=cmd_cover_flow)
     p = sub.add_parser("cover-check"); p.add_argument("image"); p.add_argument("--style", required=True); p.set_defaults(fn=cmd_cover_check)
