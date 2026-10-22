@@ -681,6 +681,9 @@ def review_prompt(contract: dict, expected_text: list[str] | None, text_mode: st
                   "这里的 no larger than the headline 指字高不超过中文主标题、视觉权重更低；"
                   "英文是一整行，可以比中文标题行更宽，也可以延伸到右侧拼贴下方。",
                   "纯白字以 8%–14% 不透明度叠在深炭底色上会呈灰色；不要仅因合成后的字呈灰色就判不是白字。",
+                  "不透明度是源图层参数，合成 PNG 无法唯一反推。8%–14% 是制作参考，不得凭主观估计的百分比判失败；验收实际字高与视觉权重。",
+                  "behind 描述次要背景层级，不强制与中文笔画交叠；若本次明确任务要求英文放在标题上方并避让，按该位置要求检查，不能反过来要求遮住英文。",
+                  "低对比装饰可以在原尺寸辨认；仅仅能看清英文不等于抢过主标题。具体指出与主标题比较的字高、对比或缩略图首要焦点。",
                   "若字高超过主标题、对比度抢过主标题、或缩略图第一眼落在英文上，仍须判不合格。"]
     expectation = contract.get("_content_expectation")
     content_parts = [p for p in contract.get("_content_parts") or [] if isinstance(p, dict) and p.get("text")]

@@ -369,6 +369,9 @@ def test_ghost_review_guidance_uses_cap_height_and_visual_weight(tmp_path):
     assert "no larger than the headline 指字高" in prompt
     assert "可以比中文标题行更宽" in prompt
     assert "缩略图第一眼落在英文上" in prompt
+    assert "合成 PNG 无法唯一反推" in prompt
+    assert "不强制与中文笔画交叠" in prompt
+    assert "验收实际字高与视觉权重" in prompt
     assert "英文 ghost 层的验收口径" not in review_prompt(K, [], "none")
     oversized = {"must_see": [{"item": c["qa"]["must_see"][0], "ok": False,
                                 "why": "英文 ghost 字高超过中文主标题"}],
@@ -667,3 +670,16 @@ exit 1
     with pytest.raises(reviewer.ReviewerAuthUnavailable, match="订阅访问被禁用"):
         reviewer.review(_img(tmp_path, (230, 230, 230)), K, [], "none")
     assert calls.read_text().splitlines() == ["called"]
+
+
+@pytest.mark.parametrize("reason", ["英文字高超过中文标题", "英文对比抢过主标题", "缩略图第一眼落在英文上"])
+def test_ghost_visual_failure_cannot_be_waived_by_opacity_guidance(tmp_path, reason):
+    item = "one subdued uppercase English ghost line behind the headline, white at roughly 8%-14% opacity, no larger than the headline, over a low-contrast abstract background"
+    c = {**K, "qa": {**K["qa"], "must_see": [item]}}
+    rv = {"must_see": [{"item": item, "ok": True, "why": "小字低对比"}],
+          "must_not_see": _rv()["must_not_see"], "transcribed_text": []}
+    image = _img(tmp_path, (240, 240, 235))
+    assert judge(image, c, rv, [], "none").passed
+    rv["must_see"][0].update(ok=False, why=reason)
+    assert not judge(image, c, rv, [], "none").passed
+    assert not judge(image, c, {}, [], "none").passed

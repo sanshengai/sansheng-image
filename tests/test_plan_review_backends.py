@@ -470,3 +470,11 @@ def test_error_snippet_never_echoes_the_api_key(monkeypatch):
     monkeypatch.setenv("ARK_CODING_PLAN_API_KEY", "ark-secret-1234567890")
     text = coding_plan.snippet('{"error":"bad header Authorization: Bearer ark-secret-1234567890 and Bearer zzzzzzzzzzzz"}')
     assert "ark-secret-1234567890" not in text and "zzzzzzzzzzzz" not in text and "***" in text
+
+
+def test_text_placement_repetition_is_not_a_content_failure_but_conflict_remains():
+    from stylebook.plan import PLANNING_RULE_ITEMS
+    rule = dict(PLANNING_RULE_ITEMS)["title_text"]
+    assert "text.items 是上图文字的权威清单" in rule
+    assert "完全一致" in rule and "不据此否定内容或形式" in rule
+    assert "清单之外的新文字" in rule and "仍须拒绝" in rule
