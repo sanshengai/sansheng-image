@@ -456,6 +456,11 @@ def judge(image: Path, contract: dict, review: dict | None, expected_text: list[
     square_preview = contract.get("_square_crop_expectation")
     if (square_required or square_preview) and (not square_preview or not Path(square_preview).is_file()):
         problems.append("缺少实际导出图的居中方形裁切预览")
+    span_min = (contract.get("qa") or {}).get("wide_content_span_min")
+    if span_min is not None:
+        span_check = check_wide_content_span(image, float(span_min))
+        px["wide_content_span"] = span_check
+        problems.extend(span_check["problems"])
     min_margin = (contract.get("qa") or {}).get("center_square_margin_min")
     if min_margin is not None and square_preview and Path(square_preview).is_file():
         from ..cover_flow import check_square_master
@@ -985,3 +990,24 @@ def write_report(verdicts: list[Verdict], out: Path) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps([v.to_dict() for v in verdicts], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return out
+
+
+def check_wide_content_span(image: Path, minimum: float) -> dict:
+    """Reject blank or central-lockup dark banners; ignore footer logos and sparse noise.
+
+    This checks occupation only. Semantic review still checks headline/hero hierarchy.
+    """
+    from PIL import Image
+    with Image.open(image) as source:
+        im = source.convert("RGB")
+        w, h = im.size
+        region = im.crop((0, int(h * .08), w, int(h * .85)))
+        pixels = region.load()
+        columns = [x for x in range(w)
+                   if sum(max(pixels[x, y]) > 100 for y in range(region.height))
+                   >= max(2, int(region.height * .03))]
+    span = (columns[-1] - columns[0] + 1) / w if columns else 0.0
+    problems = []
+    if w / h < 2 or not columns or span < minimum:
+        problems.append(f"宽幅品牌构图内容跨度 {span:.1%}，需至少 {minimum:.0%}；拒绝空图及中央小图加两侧空翼")
+    return {"span": span, "minimum": minimum, "passed": not problems, "problems": problems}

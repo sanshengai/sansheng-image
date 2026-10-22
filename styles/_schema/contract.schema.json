@@ -222,27 +222,55 @@
         "required_text_roles": {
           "type": "array",
           "uniqueItems": true,
-          "items": {"type": "string", "minLength": 1},
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "description": "本画风要求画面里出现的文字角色（如 ghost）。图里有字（native / hybrid / overlay 且给了 text.items）时，清单缺这些角色就在编译期报错；无字档不检查"
         },
         "optional_text_roles": {
           "type": "array",
           "uniqueItems": true,
-          "items": {"type": "string", "minLength": 1},
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "description": "本画风可以出现、但清单不给也成立的文字角色"
         },
         "role_styles": {
           "type": "object",
-          "additionalProperties": {"type": "string", "minLength": 20},
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 20
+          },
           "description": "按文字角色写的呈现方式；只有清单真的给了该角色的文字才附进提示词。键必须是 required_text_roles 或 optional_text_roles 里的角色"
         },
         "layout": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "text_zone": {"enum": ["left", "right", "top", "bottom"], "description": "文字区在画面哪一侧"},
-            "hero_zone": {"enum": ["left", "right", "top", "bottom"], "description": "主体区在画面哪一侧"},
-            "wide_canvas_only": {"type": "boolean", "description": "true 表示版式必须用到整幅宽画布，经不起居中方形裁切；与带 center_square 安全区的格式同用时编译直接报错"}
+            "text_zone": {
+              "enum": [
+                "left",
+                "right",
+                "top",
+                "bottom"
+              ],
+              "description": "文字区在画面哪一侧"
+            },
+            "hero_zone": {
+              "enum": [
+                "left",
+                "right",
+                "top",
+                "bottom"
+              ],
+              "description": "主体区在画面哪一侧"
+            },
+            "wide_canvas_only": {
+              "type": "boolean",
+              "description": "true 表示版式必须用到整幅宽画布，经不起居中方形裁切；与带 center_square 安全区的格式同用时编译直接报错"
+            }
           },
           "description": "机器可读的版式声明：配方正文只写分区，不靠英文方位词去猜"
         }
@@ -472,6 +500,12 @@
             "type": "string"
           },
           "description": "只在图里有文字时才检查的条目（必须是 must_see 或 must_not_see 中的原文）"
+        },
+        "wide_content_span_min": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 0.95,
+          "description": "深色宽幅品牌封面的可见内容跨度下限，排除底部水印；空图和中央小图必须拒绝，语义仍独立看图"
         }
       }
     },
@@ -699,14 +733,38 @@
           "generation": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["revision", "prompt_sha256", "attempts", "picked_from"],
+            "required": [
+              "revision",
+              "prompt_sha256",
+              "attempts",
+              "picked_from"
+            ],
             "description": "样图生成记录。2026-10-13 起登记的样图必须带；没有的是「历史样图」（未记录挑选）",
             "properties": {
-              "revision": {"type": "integer", "minimum": 1, "description": "出图时该画风合同的修订号；小于当前修订即「待重出」"},
-              "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "生图提示词正文（不含调用工具的包装指令）的 sha256，UTF-8"},
-              "attempts": {"type": "integer", "minimum": 1, "description": "第几次出图得到这张（含失败重试）"},
-              "picked_from": {"type": "integer", "minimum": 1, "description": "从几张合格图里挑出这张；1 即单次出图、未挑选"},
-              "edited": {"type": "boolean", "description": "是否经过后期编辑（裁切、修字、局部重绘）"}
+              "revision": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "出图时该画风合同的修订号；小于当前修订即「待重出」"
+              },
+              "prompt_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$",
+                "description": "生图提示词正文（不含调用工具的包装指令）的 sha256，UTF-8"
+              },
+              "attempts": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "第几次出图得到这张（含失败重试）"
+              },
+              "picked_from": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "从几张合格图里挑出这张；1 即单次出图、未挑选"
+              },
+              "edited": {
+                "type": "boolean",
+                "description": "是否经过后期编辑（裁切、修字、局部重绘）"
+              }
             }
           }
         }

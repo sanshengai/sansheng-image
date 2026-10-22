@@ -718,6 +718,31 @@
       "alt_ratio": "2:3",
       "density_max": "balanced",
       "compose": "One portrait manga page with six panels of clearly different sizes and shapes, thin black borders and white gutters. Top: one wide establishing panel across the full width. Middle: a tall narrow panel on the left; on the right two panels split by a slanted dividing line tilted about 12 degrees, and the character in the upper one breaks out of the frame, hair and an arm overlapping the gutter. Bottom: a small square reaction close-up at lower left and a large panel at lower right that bleeds off the right and bottom page edges with no border, carrying the emotional peak. Every panel uses a different shot size or angle and the light changes with the time of day."
+    },
+    {
+      "id": "wechat-cover-brand-wide",
+      "zh": "公众号品牌宽幅封面（独立方形版）",
+      "family": "单张封面",
+      "ratio": "2.35:1",
+      "export_px": [
+        1880,
+        800
+      ],
+      "thumbnail_px": 360,
+      "safe_zone": {
+        "note": "品牌宽幅原构图；方形缩略版本需单独适配，不保证居中方裁保留完整标题。"
+      },
+      "text": {
+        "default": "native",
+        "title_max_chars": 14
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "作者已确认的宽幅品牌封面合同",
+      "density_max": "sparse",
+      "compose": "Wide editorial banner. Use the entire landscape canvas: large left typography, a substantial right hero, an airy gutter and 8 percent outer margins. Do not compress the design into a central square."
     }
   ],
   "note": "density_max：该格式一张图允许的最高信息密度（sparse 1–2 点 / balanced 3–4 点 / dense 5–8 点），手机上小图放不下更多要点。"

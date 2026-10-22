@@ -50,6 +50,8 @@ def compile_flow(manifest: dict) -> dict:
     if manifest.get("aspect") not in (None, "2.35:1"):
         raise CP.CompileError("封面方形优先流程的最终画幅须为 2.35:1")
     contract = CT.load(manifest["style"])
+    if contract.get("recipe", {}).get("layout", {}).get("wide_canvas_only"):
+        raise CP.CompileError("此修订使用完整宽幅品牌构图，不能进入方形母版扩图；使用 wechat-cover-brand-wide")
     if contract["code"] != "S02" or contract["revision"] < 3:
         raise CP.CompileError("封面方形优先流程目前只支持已修订画幅合同的 S02@r3 及后续版本")
     if "exact 2.35:1 landscape" in contract["recipe"]["positive"]:
