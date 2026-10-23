@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 import re
@@ -20,6 +21,7 @@ import subprocess
 import tempfile
 import urllib.error
 import urllib.request
+from urllib.parse import unquote, urlsplit
 from pathlib import Path
 
 from .. import plan as PL
@@ -131,6 +133,54 @@ def _format_section(plan: dict) -> str:
             + json.dumps(example, ensure_ascii=False, indent=1) + "\n" + "\n".join(f"- {x}" for x in rules))
 
 
+def existing_visual_context(plan: dict, article: Path) -> dict:
+    """Inventory inline Markdown references, not a pixel or image-validity review.
+
+    Adapters freezing source elsewhere must supply source.asset_base explicitly.
+    Missing/unreadable/remote paths are evidence gaps, never usable image claims.
+    """
+    article = Path(article)
+    source = plan.get("source") or {}
+    base_value = source.get("asset_base") if isinstance(source, dict) else None
+    base = Path(base_value) if base_value else article.parent
+    if base_value and not base.is_absolute():
+        base = article.parent / base
+    base = base.resolve()
+    result = {"scope": "markdown_inline_image_references", "pixel_reviewed": False,
+              "asset_base": str(base), "source_status": "readable", "references": []}
+    try:
+        text = article.read_text(encoding="utf-8")
+    except (OSError, UnicodeError):
+        result["source_status"] = "unreadable"
+        result["reference_count"] = None
+        return result
+    pattern = r'!\[([^\]\n]*)\]\((<[^>\n]+>|[^)\n]+)\)'
+    for index, match in enumerate(re.finditer(pattern, text), 1):
+        raw_target = match.group(2)
+        target = raw_target[1:-1] if raw_target.startswith("<") else re.split(r'\s+[\"\']', raw_target, maxsplit=1)[0].strip()
+        row = {"id": f"existing-{index:02d}", "alt": match.group(1), "path": target,
+               "raw_reference": match.group(0), "line": text.count("\n", 0, match.start()) + 1,
+               "pixel_reviewed": False}
+        parsed = urlsplit(target)
+        if parsed.scheme or parsed.netloc:
+            row["status"] = "remote_or_scheme_unverified"
+        else:
+            path = (base / unquote(parsed.path)).resolve()
+            row["resolved_path"] = str(path)
+            if not path.is_relative_to(base):
+                row["status"] = "outside_asset_base"
+            else:
+                try:
+                    data = path.read_bytes()
+                    row.update(status="local_bytes_verified" if data else "empty_file",
+                               bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+                except (OSError, ValueError):
+                    row["status"] = "missing_or_unreadable"
+        result["references"].append(row)
+    result["reference_count"] = len(result["references"])
+    return result
+
+
 def prompt(plan: dict, article: Path, mode: str = "read_tool", *, gaps: list[str] | None = None) -> str:
     """完整提示词由代码生成。
 
@@ -166,7 +216,17 @@ def prompt(plan: dict, article: Path, mode: str = "read_tool", *, gaps: list[str
         *_item_lines(),
         f"reasonable=false 时，why 写具体哪项不成立、应该怎么改。先独立提炼全文 2–5 个核心论点、关键机制、结论／行动建议和最具体操作（判别要点 {PL.rule_no('core_points', 'final_check')}），再检查每项是否已有能解决同一阅读问题的视觉、计划配图，或文字已经足够清楚。missed_positions 列出尚未覆盖且有明确独立视觉增益的核心项；每条引用原文，说明现有表格／截图／清单为什么仍不足，以及应补出的关系、分叉或边界。只属可选美化的建议放 notes，不计入 missed_positions。没有必配漏项就输出空数组。",
         "",
-        "计划：",
+        "## 作者明确的编辑约束（按原话保留，不把它当作自动通过授权）",
+        json.dumps(plan.get("editorial_constraints", {}), ensure_ascii=False, indent=1),
+        "## 原文已有图片引用（机器抽取；不是看过像素后的质量鉴定）",
+        json.dumps(existing_visual_context(plan, article), ensure_ascii=False, indent=1),
+        "上表只统计 Markdown 内联图片引用，可能包含视频封面，不代表全文全部媒体。"
+        "local_bytes_verified 只说明本地文件字节存在且有摘要，不代表图像内容、可读性或覆盖论点已经验证；"
+        "缺文件、空文件、远程未核实或越界路径不能算作可用图片。没有看过像素时不得声称已经看图。",
+        "下方 items 仅列本轮新增生成图片；items=[] 意味着不新增生成图，不等于全文没有图片。"
+        "核对作者要求及原文已有视觉覆盖；仍可指出确有独立阅读增益的必要漏项，但须说明已有图文为何不足，"
+        "不能仅以新增图片为零、或让短句更好记为理由硬性要求配图。可选美化放 notes，不能冒充 missed_positions。",
+        "本轮新增生成图片计划：",
         json.dumps(rows, ensure_ascii=False, indent=1),
         "",
         "计划员逐项覆盖判断（只当作待核对主张；请自己从原文重新提炼，不要直接采信 text_sufficient 或 existing_visual）：",

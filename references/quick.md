@@ -51,7 +51,7 @@ Agent 看总览并按需打开原图：字是否准确、主体与关系有无�
 python3 scripts/sb.py make brief.json -o 新目录 --prepare
 ```
 
-这一步不调用外部服务，输出状态 `pending_host`。按 `prepared.json` 的每个任务，将完整 `compiled.prompt` 和全部 `compiled.references[].path` 交给内置工具，不再改写锁定层。保存内置工具原图及实际调用参数，以 `--prepared prepared.json --import-results host-results.json -o 新目录` 导回。记录格式见下例。未知底层模型和费用保持 `null`；`seconds` 是工具调用实测耗时，可为 `null`。导回报告的总耗时只涵盖导回和导出，完整流程应另行计时。
+这一步不调用外部服务，输出状态 `pending_host`。按 `prepared.json` 的每个任务，将完整 `compiled.prompt` 和全部 `compiled.references[].path` 交给内置工具，不再改写锁定层。保存内置工具原图及实际调用参数，以 `python3 scripts/sb.py make brief.json --prepared prepared.json --import-results host-results.json -o 新目录` 导回；保留原 brief 参数，并使用准备步骤实际输出的 prepared 路径。记录格式见下例。未知底层模型和费用保持 `null`；`seconds` 是工具调用实测耗时，可为 `null`。导回报告的总耗时只涵盖导回和导出，完整流程应另行计时。
 
 ```json
 {
