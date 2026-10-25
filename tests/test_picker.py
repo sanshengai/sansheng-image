@@ -1614,14 +1614,13 @@ SKY_HASH = """(() => {
 })()"""
 STAGE_STATE = """() => ({
   count: document.getElementById('stage-count').textContent,
-  active: [...document.querySelectorAll('#stage-frame .slide.is-active')].map(e => e.id || e.alt),
-  toggle: [document.getElementById('stage-toggle').disabled, document.getElementById('stage-toggle').textContent],
-  logo: document.getElementById('stage-logo').getAttribute('src')
+  active: [...document.querySelectorAll('#stage-frame .slide.is-active .art')].map(e => ({tag: e.tagName, src: e.getAttribute('src'), alt: e.getAttribute('alt'), paused: e.tagName === 'VIDEO' ? e.paused : null})),
+  toggle: [document.getElementById('stage-toggle').disabled, document.getElementById('stage-toggle').textContent]
 })"""
 CSS_PROBE = """() => {
   const cs = (e) => getComputedStyle(e);
   return {
-    slide: cs(document.getElementById('stage-logo')).transitionDuration,
+    slide: cs(document.querySelector('#stage-frame .slide.is-active')).transitionDuration,
     thumb: cs(document.querySelector('#lib-grid .thumb img')).transitionDuration,
     btn: cs(document.getElementById('install-copy')).transitionDuration,
     scroll: cs(document.documentElement).scrollBehavior,
@@ -1663,7 +1662,7 @@ def test_page_works_without_animation_frame_and_intersection_observer(browser, b
         # 展台手动切换可用
         if meta["carousel"]:
             page.click("#stage-next")
-            assert page.inner_text("#stage-count") == f"2 / {1 + len(meta['carousel'])}"
+            assert page.inner_text("#stage-count") == f"2 / {len(meta['carousel'])}"
         # 搜索可用
         tok = cands[0]["tone"][0]
         page.fill("#lib-q", tok)
@@ -1690,7 +1689,9 @@ def test_motion_is_alive_without_reduce_preference(browser, built):
         assert css["reduce"] is False and css["scroll"] == "smooth"
         assert _longest(css["slide"]) > 0 and _longest(css["thumb"]) > 0 and _longest(css["btn"]) > 0, css
         state = page.evaluate(STAGE_STATE)
-        assert state["toggle"] == [False, "暂停"] and state["logo"].endswith("/logo.webp"), state
+        assert state["toggle"] == [False, "暂停"], state
+        assert len(state["active"]) == 1 and state["active"][0]["tag"] == "IMG", state
+        assert state["active"][0]["src"].endswith(meta["carousel"][0]["image"]), state
         loaded = page.eval_on_selector_all("#lib-grid img", "e=>e.filter(i=>i.getAttribute('src')).length")
         assert loaded < len(meta["cands"]), "有 IntersectionObserver 时画风库图片应该按需加载"
         _wait_floats_settled(page)
@@ -1713,9 +1714,10 @@ def test_reduced_motion_freezes_stage_background_and_transitions(browser, built)
         _wait_floats_settled(page)
         stage0, styles0, sky0 = page.evaluate(STAGE_STATE), page.evaluate(FLOAT_STYLES), page.evaluate(SKY_HASH)
         assert stage0["toggle"] == [True, "播放"], stage0               # 自动切换按系统设置关闭
-        assert stage0["logo"].endswith("/logo-poster.webp"), stage0      # 展台用静态海报，不放动画
+        assert len(stage0["active"]) == 1 and stage0["active"][0]["tag"] == "IMG", stage0  # 首张为静态样图，不再使用动画 Logo
+        assert stage0["active"][0]["src"].endswith(meta["carousel"][0]["image"]), stage0
         assert stage0["count"].startswith("1 /") and any(s.split("|")[0] for s in styles0), "浮图应已就位（静止，不是不存在）"
-        # 比 Logo 展示时长（6 秒）更久：位置、状态、画布都不能变
+        # 超过一轮作品自动切换间隔：位置、状态、画布都不能变
         page.wait_for_timeout(7000)
         stage1, styles1, sky1 = page.evaluate(STAGE_STATE), page.evaluate(FLOAT_STYLES), page.evaluate(SKY_HASH)
         assert stage1 == stage0, (stage0, stage1)
@@ -1725,7 +1727,7 @@ def test_reduced_motion_freezes_stage_background_and_transitions(browser, built)
         # 手动切换仍然可用（只是不自动播）
         if meta["carousel"]:
             page.click("#stage-next")
-            assert page.inner_text("#stage-count") == f"2 / {1 + len(meta['carousel'])}"
+            assert page.inner_text("#stage-count") == f"2 / {len(meta['carousel'])}"
 
 
 @pytest.mark.parametrize("canvas_mode", ["null", "throw"])

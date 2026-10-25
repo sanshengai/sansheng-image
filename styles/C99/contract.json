@@ -1,0 +1,229 @@
+{
+  "code": "C99",
+  "revision": 1,
+  "name": {
+    "zh": "新中式细线设色",
+    "en": "Contemporary Chinese Fine-Line Colour"
+  },
+  "family": "中国风",
+  "fit": [
+    "封面",
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "细线设色装饰插画",
+    "density": "细节丰富"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "Original technique specification; visual inspiration: 牙仔⇌ https://x.com/yang02010/status/2113997366433083426",
+    "license": "original",
+    "notes": "根据公开展示的画面特征独立编写通用画法；不复制推文配方全文，不随包分发原帖图片。原帖许可未声明。"
+  },
+  "essence": [
+    "细线准确刻画建筑与花木",
+    "矿物设色与温润纸感",
+    "连贯景深、大片留白与局部精细相平衡"
+  ],
+  "recipe": {
+    "positive": "Contemporary Chinese fine-line colour illustration on smooth warm paper. Construct a coherent inhabited scene with slender, clean ink contours, precisely drawn architecture and botanical silhouettes, and matte mineral-colour planes. Use a moderately elevated viewpoint with readable foreground, middle ground and distant layers; pathways, rooflines or water connect the spaces without collage seams. Large quiet shapes and continuous open areas balance concentrated detail around the focal subject; simplify distant forms rather than filling every surface with ornament. A restrained blue-green, warm ochre and cream palette may carry small vermilion accents; luminous warm windows can contrast with cool water, without photographic bloom. Keep human skin naturally warm and faces delicately drawn, never tinted green by the palette. Preserve the actual subject, era, clothing and objects in the brief: this rendering language also works for contemporary life, and does not automatically add ancient costumes, pagodas, lanterns, mountains or flowers. Fine painted contours and gently layered opaque colour, not flat vector iconography, heavy ink wash, anime, 3D, oil impasto or distressed vintage noise. Depth comes from scale, overlap and selective contrast; the finish remains an elegant illustration, not a photograph.",
+    "text_mode": [
+      "native",
+      "overlay",
+      "none"
+    ],
+    "text_style": "Use only the requested exact text. A short Chinese title may use elegant brush lettering on a quiet uninterrupted contrasting area; small labels use clear regular lettering. No invented inscriptions, seal characters, slogans or decorative pseudo-text."
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "细而清楚的轮廓与哑光设色",
+      "主体清晰，远景细节和对比适度降低",
+      "空间连贯，人物肤色与实际物件颜色自然"
+    ],
+    "must_not_see": [
+      "照片、3D、粗黑动漫轮廓",
+      "满屏等密度纹样、脏旧噪点",
+      "未请求的古装、亭台或伪文字"
+    ]
+  },
+  "evidence": {
+    "admission": "pending",
+    "model": "Codex 内置生图；工具未披露底层模型",
+    "date": "2026-10-25",
+    "notes": "9张跨题材展示样图通过独立目检；黄昏、水岸、花木仍偏多，现代工作室人物略带日系插画感，不声明题材隔离充分。正式八题矩阵、同词三次稳定性和独立双评尚未完成，保持pending。茶器图只作静物样图，未达到音乐发行封面3000像素要求，不声明音乐用途。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-10-25",
+      "note": "独立编写细线设色配方，开始跨用途样图验证。"
+    }
+  ],
+  "uses": [
+    "封面",
+    "文章插图",
+    "小红书"
+  ],
+  "renderer": "codex",
+  "motion_dialect": {
+    "language": "在完整场景内编排光源、倒影、水纹和风的呼应；保留细线边缘，变化明确但不破坏空间。",
+    "primitives": [
+      "keyframes",
+      "easing",
+      "particles",
+      "loop"
+    ],
+    "safety": "人物和建筑保持完整；水面效果只在真实水域，灯光只落在实际光源；不把细碎花木硬切片弹入，不用全图压黑替代夜色。"
+  },
+  "samples": [
+    {
+      "topic": "竖版插图·庭院初灯",
+      "file": "samples/wxt.webp",
+      "source_sha256": "0e94442efc1488fb0491f083ac703ca18e51248507829ac918f4e8bc2ec6ac41",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 0.562799043062201,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "e80852081152cf54a0178568fde75cbb8ad46535881ca3b7413a75f044ee14c7",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "横版插图·庭院初灯",
+      "file": "samples/wxi.webp",
+      "source_sha256": "4e49ad12df4d6babaeb4a4394f76b766315e5ec0221d87fd4d5e3079c1c910a8",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 1.7768331562167907,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "f08b3e423616e70dc70246fcf88e06f3c819456242c0ea04d13e54ada4844076",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "公众号封面·留一晚给江南",
+      "file": "samples/cv.webp",
+      "source_sha256": "4ebf55970c532661c105f6928fc0174075b0425438935c2f2d20e431d1149847",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 2.3390243902439023,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "4746fae4c1295ed797e299444346b5fb0d8de498c4034faa820186ff7ee0d809",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "竖版插图·窗前工作",
+      "file": "samples/wxt-2.webp",
+      "source_sha256": "1bd631554d5fe0c7c92b039a78230d004f75655276098fde384f88e34279bdcb",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 0.562799043062201,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "f9febf0f387d6e8757fc3e1db205a3fbbe6c4f98a7623889cd51ac434a0d47ad",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "静物·一盏茶的时间",
+      "file": "samples/s2.webp",
+      "source_sha256": "c2e876fe61675d6774cc3746b1f4b6219c942fcfd88c75fd67c732af12c502c3",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 1.0,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "d03c23f0598db6bb0381d1544d4a2f6aa4c030c4862156929a28b0edbd4dac9f",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "小红书·城市里的慢生活",
+      "file": "samples/xhs.webp",
+      "source_sha256": "5a232a172341090ae4391d91708fc6841343ed7dd531f8d5a10ce71e8e983ab9",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "9f0b00d7ef1480fdeeeacf8973e0875601a6f0c94527310420e45bb252f440ff",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "横版插图·祖孙浇花",
+      "file": "samples/wxi-2.webp",
+      "source_sha256": "eb89064563cb5b20f6a9baab41263c05dc1f6d17b71d024909907feaa9e9b84d",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 1.7768331562167907,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "668263d494b29064a648314b42f54955d6bba9ddfe547a9c1fab0919e6e22357",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "推特单图·雨后花园",
+      "file": "samples/wxx.webp",
+      "source_sha256": "c1f34b2c6047fee08ef6f2a7fd615ca61979379e9755d0f017c6020178a97fbc",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 1.7768331562167907,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "867c1ec1d6ce4201109ff717ae7f6ebb4a37a31c0a0ae798bcce6c4d5000899c",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "竖版插图·山间阅读",
+      "file": "samples/wxt-3.webp",
+      "source_sha256": "62b73ee1127e677642fea11bc6930e3999e06a48940383ef6679d35495f8a9ac",
+      "renderer": "codex-builtin",
+      "date": "2026-10-25",
+      "ratio": 0.562799043062201,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "6f61cfc2576150a9c47c030518479143a1e70de206fe76235a07c2219ad18fee",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    }
+  ],
+  "anchor": {
+    "file": "anchor.webp",
+    "sha256": "a25596ba9f7b760d078339ee84d79a57db2037af55111a873dc3ff392ac418b2",
+    "enabled": true,
+    "isolation": "Reference only the fine-line drawing, matte painted colour, paper finish and coherent spatial depth. Do not copy any person, pavilion, bridge, flowers, water, light sources or composition unless the current brief explicitly asks for them. Exact subjects, era, quantities and text come from the current brief.",
+    "origin": {
+      "repo": "sanshengai/sansheng-image",
+      "item": "project technique study C99",
+      "license": "MIT"
+    }
+  }
+}

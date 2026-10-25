@@ -26,7 +26,7 @@ def test_errors_become_chinese_messages(tmp_path, capsys, monkeypatch):
     assert sb.main(["compile", str(bad)]) == 2
     assert "JSON 格式有误" in capsys.readouterr().err
     m = tmp_path / "m.json"
-    m.write_text(json.dumps({"style": "C99", "content": {"subject": "x"}}), encoding="utf-8")
+    m.write_text(json.dumps({"style": "C999", "content": {"subject": "x"}}), encoding="utf-8")
     assert sb.main(["compile", str(m)]) == 2
     assert "找不到" in capsys.readouterr().err
 

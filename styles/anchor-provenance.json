@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "scope": "Public style reference images: MIT-licensed upstream samples and project-made technique references; not style admission or use-case approval",
-  "expected_count": 77,
+  "expected_count": 78,
   "anchors": [
     {
       "style": "C01",
@@ -965,6 +965,17 @@
       },
       "derivation": "project-generated technique reference with the Codex built-in image tool; original bytes retained",
       "note": "technique reference only; admission and use-case validation recorded separately"
+    },
+    {
+      "style": "C99",
+      "sha256": "a25596ba9f7b760d078339ee84d79a57db2037af55111a873dc3ff392ac418b2",
+      "origin": {
+        "repo": "sanshengai/sansheng-image",
+        "item": "project technique study C99",
+        "license": "MIT"
+      },
+      "derivation": "project-generated scene technique study; full-resolution WebP quality 80 packaging derivative, no crop or retouch; original PNG sha256 0e94442efc1488fb0491f083ac703ca18e51248507829ac918f4e8bc2ec6ac41",
+      "note": "visual inspiration credited to public X post; source post images are not redistributed; formal admission remains pending"
     }
   ]
 }

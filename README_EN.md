@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://sanshengai.top/tools/image/">
-    <img src="./assets/readme/gallery-entry.webp" width="100%" alt="Open the visual gallery: browse 81 styles and 18 named palettes, with real pencil, screen-print, ink and woodblock examples">
+    <img src="./assets/readme/gallery-entry.webp" width="100%" alt="Open the visual gallery: browse 82 styles and 18 named palettes, with real pencil, screen-print, ink and woodblock examples">
   </a>
 </p>
 
@@ -16,7 +16,7 @@
 
 <p align="center"><a href="#start-in-three-steps">Install and try</a> · <a href="#see-the-outputs">Still examples</a> · <a href="#let-a-paragraph-explain-itself-in-motion">Motion demo</a> · <a href="./CHANGELOG.md">Changelog</a></p>
 
-> Public beta: 81 styles can be browsed and 18 named palettes selected. Eight styles, C91–C98, currently pass formal admission. Browsing, prompt compilation, and validation for an actual use are different states. See [capability boundaries](#current-capabilities-and-boundaries).
+> Public beta: 82 styles can be browsed and 18 named palettes selected. Eight styles, C91–C98, currently pass formal admission. Browsing, prompt compilation, and validation for an actual use are different states. See [capability boundaries](#current-capabilities-and-boundaries).
 
 <!-- PROMO_VIDEO:START -->
 <!-- Reserved for the promotional film: insert its heading, real poster and playback link between these markers when ready. Keep hidden until then. -->
@@ -113,7 +113,7 @@ This synthetic example prints the style, dimensions, full prompt and references.
 
 | Capability | Current scope |
 |---|---|
-| Browse and compile styles | 81 public contracts; C91–C98 pass formal admission, the other 73 remain pending. A gallery choice is not validation for every use or palette. |
+| Browse and compile styles | 82 public contracts; C91–C98 pass formal admission, the other 74 remain pending. A gallery choice is not validation for every use or palette. |
 | Plan illustrations from an article | Source grounding, per-image structures, single/batch generation, local revisions and quality records. Check facts, text, cropping and series consistency in actual images. |
 | Xiaohongshu, infographics, comics, books and audio covers | Creation workflows and samples are available. Check text, cropping and the complete series on the target platform before publishing. |
 | Slides | Image pages and optional PPTX assembly; no editable page-element promise. |

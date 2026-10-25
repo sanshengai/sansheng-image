@@ -2617,6 +2617,36 @@
       ],
       "craft": "有机曲线装饰",
       "recolor": "free"
+    },
+    {
+      "code": "C99",
+      "zh": "新中式细线设色",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "fit": [
+        "封面",
+        "讲故事"
+      ],
+      "uses": [
+        "封面",
+        "文章插图",
+        "小红书"
+      ],
+      "names": [],
+      "origin": "Original technique specification; inspiration credited in contract",
+      "status": "contract",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "手绘插画",
+      "recolor": "free"
     }
   ],
   "taxonomy": {

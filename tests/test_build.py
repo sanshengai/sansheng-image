@@ -83,7 +83,7 @@ def test_check_catches_mismatches(profile):
     bad["removed"] = [{"code": bad["styles"][0]["code"]}]
     assert any("已去掉" in p for p in BD.check(bad))
     bad = copy.deepcopy(reg)
-    bad["styles"].append(dict(bad["styles"][0], code="C99", has_contract=True))
+    bad["styles"].append(dict(bad["styles"][0], code="C999", has_contract=True))
     assert any("找不到合同文件" in p for p in BD.check(bad))
 
 
