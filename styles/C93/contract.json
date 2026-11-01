@@ -1,11 +1,11 @@
 {
   "code": "C93",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "年画木版敷彩",
     "en": "New Year Print Woodblock Colouring"
   },
-  "family": "国风传统",
+  "family": "国风 · 东方",
   "fit": [
     "讲故事"
   ],
@@ -101,6 +101,12 @@
       "revision": 3,
       "date": "2026-11-01",
       "note": "海报试图通过：用途加海报，登记推荐版式 axis、sky-title",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
       "samples_unaffected": true
     }
   ],

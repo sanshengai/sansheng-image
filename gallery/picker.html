@@ -2335,7 +2335,7 @@ body::before {
     }
     var shown = 0, gridEl = $('#lib-grid');
     var lis = styles.map(function (st) { return gridEl.querySelector('li[data-style="' + st.id + '"]'); }).filter(Boolean);
-    var guofeng = libState.family === '国风传统' ? ['C100', 'C101', 'C102'] : [];   // 选了「国风传统」分类时，海报三套国风画风排前面
+    var guofeng = libState.family === '国风 · 东方' ? ['C100', 'C101', 'C102'] : [];   // 选了「国风 · 东方」分类时，海报三套国风画风排前面
     function gf(li) { var k = guofeng.indexOf(li.dataset.style); return k === -1 ? 99 : k; }
     if (sc) lis = lis.map(function (li, i) { return [li, order[li.dataset.style] != null ? order[li.dataset.style] : 999, i]; })
       .sort(function (a, b) { return (guofeng.length ? gf(a[0]) - gf(b[0]) : 0) || a[1] - b[1] || a[2] - b[2]; }).map(function (x) { return x[0]; });

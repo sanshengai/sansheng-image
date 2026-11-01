@@ -1,11 +1,11 @@
 {
   "code": "C101",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "纸景微缩",
     "en": "Paper Landscape Miniature"
   },
-  "family": "国风传统",
+  "family": "国风 · 东方",
   "fit": [
     "封面",
     "讲故事"
@@ -88,6 +88,12 @@
       "revision": 2,
       "date": "2026-11-01",
       "note": "暂去掉 PPT 用途：本期未做 PPT 试图，放第二期验证",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
       "samples_unaffected": true
     }
   ],

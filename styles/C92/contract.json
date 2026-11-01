@@ -1,11 +1,11 @@
 {
   "code": "C92",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "敦煌矿物彩壁画",
     "en": "Mineral Pigment Cave-Mural Texture"
   },
-  "family": "国风传统",
+  "family": "国风 · 东方",
   "fit": [
     "讲故事"
   ],
@@ -94,6 +94,12 @@
       "revision": 2,
       "date": "2026-11-01",
       "note": "海报试图通过：用途加海报，登记推荐版式 axis、sky-title",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
       "samples_unaffected": true
     }
   ],

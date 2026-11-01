@@ -1,11 +1,11 @@
 {
   "code": "C94",
-  "revision": 1,
+  "revision": 2,
   "name": {
     "zh": "青花蓝白装饰",
     "en": "Blue-and-White Underglaze Decoration"
   },
-  "family": "国风传统",
+  "family": "国风 · 东方",
   "fit": [
     "讲故事"
   ],
@@ -110,6 +110,12 @@
       "revision": 1,
       "date": "2026-10-11",
       "note": "当前标准题最终证据、三次稳定与两项同题近邻通过；保留原失败/误报及编辑链，登记三张矩阵示例；全场景与发布另计。"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {

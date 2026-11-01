@@ -1,11 +1,11 @@
 {
   "code": "C100",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "青釉园林",
     "en": "Celadon Garden Editorial"
   },
-  "family": "国风传统",
+  "family": "国风 · 东方",
   "fit": [
     "封面"
   ],
@@ -94,6 +94,12 @@
       "revision": 3,
       "date": "2026-11-01",
       "note": "暂去掉 PPT 用途：本期未做 PPT 试图，放第二期验证",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
       "samples_unaffected": true
     }
   ],

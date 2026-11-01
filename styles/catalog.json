@@ -366,7 +366,7 @@
     {
       "code": "C17",
       "zh": "新国潮工笔扁平",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -402,7 +402,7 @@
     {
       "code": "C18",
       "zh": "宋画淡彩现代化",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -437,7 +437,7 @@
     {
       "code": "C19",
       "zh": "新中式水墨小人",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -1564,7 +1564,7 @@
     {
       "code": "C64",
       "zh": "空灵中国水墨幻想动画",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "动画·分镜",
       "region": [
         "中国"
@@ -1599,7 +1599,7 @@
     {
       "code": "C65",
       "zh": "文人漫画毛笔写意",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "文章插图·封面",
       "region": [
         "中国"
@@ -2391,7 +2391,7 @@
     {
       "code": "C95",
       "zh": "汉画像石拓片",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2479,7 +2479,7 @@
     {
       "code": "C93",
       "zh": "年画木版敷彩",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2541,7 +2541,7 @@
     {
       "code": "C92",
       "zh": "敦煌矿物彩壁画",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2572,7 +2572,7 @@
     {
       "code": "C94",
       "zh": "青花蓝白装饰",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2633,7 +2633,7 @@
     {
       "code": "C99",
       "zh": "新中式细线设色",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2663,7 +2663,7 @@
     {
       "code": "C100",
       "zh": "青釉园林",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2696,7 +2696,7 @@
     {
       "code": "C101",
       "zh": "纸景微缩",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2728,7 +2728,7 @@
     {
       "code": "C102",
       "zh": "文旅长卷",
-      "family": "国风传统",
+      "family": "国风 · 东方",
       "legacyFamily": "中国风",
       "region": [
         "中国"
@@ -2796,7 +2796,7 @@
       "手绘媒材",
       "绘本动画",
       "细线速写",
-      "国风传统",
+      "国风 · 东方",
       "立体材质",
       "扁平几何",
       "漫画卡通",
