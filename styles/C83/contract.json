@@ -1,6 +1,6 @@
 {
   "code": "C83",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "大字报排印",
     "en": "Oversized Type Poster"
@@ -36,6 +36,10 @@
     "text_mode": [
       "native",
       "none"
+    ],
+    "poster_layouts": [
+      "type-led",
+      "sky-title"
     ]
   },
   "palette": {
@@ -74,6 +78,12 @@
       "revision": 3,
       "date": "2026-10-13",
       "note": "字即图：title 为 required_text_roles（有字档必须给标题文字）；去掉「被画框裁掉」以免与逐字准确、居中方形安全区冲突，笔画须完整可见。"
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 type-led、sky-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -83,7 +93,8 @@
   "uses": [
     "封面",
     "小红书",
-    "PPT"
+    "PPT",
+    "海报"
   ],
   "renderer": "codex",
   "samples": [
@@ -317,6 +328,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "b41fd44a595c3cd668e845d69a29a8adaeff0fc4333ea8feea5992a4bfcf1c5c",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "07e603dcb623d179acd2e69169ec07bedcd87c864c08df876a5ddd4775b4cb4a",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ],
   "anchor": {

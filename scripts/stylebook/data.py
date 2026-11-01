@@ -23,6 +23,17 @@ def structures() -> dict[str, dict]:
 
 
 @lru_cache(maxsize=None)
+def layouts() -> dict[str, dict]:
+    """海报版式（layouts/layouts.json）：与信息图 structures 平行，清单用 poster_layout 指定。"""
+    return {x["id"]: x for x in _load("layouts/layouts.json")["layouts"]}
+
+
+@lru_cache(maxsize=None)
+def info_levels() -> dict[str, dict]:
+    return _load("layouts/layouts.json")["info_levels"]
+
+
+@lru_cache(maxsize=None)
 def palettes() -> dict:
     return _load("palettes/palettes.json")
 

@@ -1,0 +1,496 @@
+{
+  "version": 1,
+  "note": "海报版式：与 structures/（信息图结构）平行、互不混用。en 进入编译；zones 是精确排字的参考坐标（最终画布 0–1 比例 [x, y, w, h]，以竖版为基准，横版条目另给 zones_landscape）；ratios 列出适用格式；info 列出适用信息量档位。清单用 poster_layout 字段指定，不占用 layout（文字区/主体区）键。",
+  "info_levels": {
+    "mood": {
+      "zh": "意境型",
+      "roles": [
+        "title",
+        "subtitle",
+        "line"
+      ],
+      "note": "主标题 + 一句副题，可选 1–2 行短句"
+    },
+    "event": {
+      "zh": "活动型",
+      "roles": [
+        "title",
+        "subtitle",
+        "date",
+        "place",
+        "host",
+        "qr"
+      ],
+      "note": "意境型 + 时间、地点、主办 + 二维码留位；时间地点只用用户给的信息"
+    },
+    "product": {
+      "zh": "产品 / 课程型",
+      "roles": [
+        "title",
+        "subtitle",
+        "point",
+        "cta",
+        "qr"
+      ],
+      "note": "主标题 + 卖点不超过 3 条 + 行动入口"
+    },
+    "travel": {
+      "zh": "文旅型",
+      "roles": [
+        "year",
+        "seal",
+        "name_en",
+        "title",
+        "seal_place",
+        "subtitle",
+        "intro_zh",
+        "place_en",
+        "intro_en",
+        "closing"
+      ],
+      "note": "文旅长卷专用；主标题原生书写，其余精确排字，印章程序生成"
+    }
+  },
+  "layouts": [
+    {
+      "id": "vertical-title",
+      "zh": "竖排题签",
+      "en": "Poster layout — vertical title strip: one narrow side (about 22% of the width) is a calm continuous blank strip that holds a vertical title column; the single main subject enters from the opposite edge and never crosses into that strip.",
+      "ratios": [
+        "poster-9x16",
+        "poster-elevator",
+        "poster-a",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-custom"
+      ],
+      "info": [
+        "mood",
+        "event"
+      ],
+      "zones": {
+        "title": [
+          0.08,
+          0.1,
+          0.14,
+          0.46
+        ],
+        "subtitle": [
+          0.08,
+          0.58,
+          0.14,
+          0.18
+        ],
+        "info": [
+          0.08,
+          0.84,
+          0.4,
+          0.08
+        ],
+        "qr": [
+          0.8,
+          0.86,
+          0.12,
+          0.068
+        ]
+      },
+      "origin": "东方编辑海报：白墙漏窗局部 + 竖排细宋体标题",
+      "title_en": "Main title placement: the requested main title is a single vertical column of characters inside the narrow blank strip, reading top to bottom; nothing else is written there."
+    },
+    {
+      "id": "sky-title",
+      "zh": "天头标题",
+      "en": "Poster layout — sky title: the upper third is open, quiet background reserved for the title block; the main subject sits low in the lower two thirds, anchored to the bottom edge.",
+      "ratios": [
+        "poster-9x16",
+        "poster-elevator",
+        "poster-a",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-16x9",
+        "poster-custom"
+      ],
+      "info": [
+        "mood",
+        "event",
+        "product"
+      ],
+      "zones": {
+        "title": [
+          0.1,
+          0.07,
+          0.8,
+          0.12
+        ],
+        "subtitle": [
+          0.1,
+          0.24,
+          0.8,
+          0.045
+        ],
+        "info": [
+          0.1,
+          0.88,
+          0.56,
+          0.07
+        ],
+        "qr": [
+          0.78,
+          0.87,
+          0.12,
+          0.068
+        ]
+      },
+      "zones_landscape": {
+        "title": [
+          0.06,
+          0.1,
+          0.5,
+          0.18
+        ],
+        "subtitle": [
+          0.06,
+          0.3,
+          0.5,
+          0.08
+        ],
+        "info": [
+          0.06,
+          0.82,
+          0.4,
+          0.1
+        ],
+        "qr": [
+          0.88,
+          0.78,
+          0.07,
+          0.124
+        ]
+      },
+      "origin": "器物特写海报：器口弧线在下，上方留白题字",
+      "title_en": "Main title placement: the requested main title is set HORIZONTALLY on one line, centred in the upper third of the canvas; it is never a vertical column.",
+      "align": "center"
+    },
+    {
+      "id": "corner-embrace",
+      "zh": "角落环抱",
+      "en": "Poster layout — corner embrace: two large shapes grow in from opposite corners (top-right and bottom-left) and curve toward each other, enclosing one wide, bright, continuous open field in the middle; that central field stays clean for the title.",
+      "ratios": [
+        "poster-9x16",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-custom"
+      ],
+      "info": [
+        "mood"
+      ],
+      "zones": {
+        "title": [
+          0.18,
+          0.36,
+          0.64,
+          0.1
+        ],
+        "subtitle": [
+          0.22,
+          0.47,
+          0.56,
+          0.04
+        ],
+        "line": [
+          0.22,
+          0.53,
+          0.56,
+          0.06
+        ]
+      },
+      "origin": "手工纸景城市海报：两角纸景合围出中央留白",
+      "title_en": "Main title placement: the requested main title is set horizontally on one line in the middle of the central open field, small and quiet.",
+      "align": "center"
+    },
+    {
+      "id": "big-shape-band",
+      "zh": "大形出画 + 底部信息带",
+      "en": "Poster layout — big shape with an information band: one oversized shape bleeds off the TOP-RIGHT corner and occupies the upper right; nothing hangs or extends from it into the left half below its lower edge. A small grounded scene sits low on the right, above a calm bottom band of open background (about 18% of the height) kept for compact information lines.",
+      "ratios": [
+        "poster-9x16",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-custom"
+      ],
+      "info": [
+        "mood",
+        "event",
+        "product"
+      ],
+      "zones": {
+        "title": [
+          0.08,
+          0.46,
+          0.34,
+          0.08
+        ],
+        "subtitle": [
+          0.08,
+          0.55,
+          0.34,
+          0.03
+        ],
+        "info": [
+          0.08,
+          0.84,
+          0.5,
+          0.1
+        ],
+        "qr": [
+          0.8,
+          0.86,
+          0.12,
+          0.068
+        ]
+      },
+      "origin": "手作活动海报：巨大纸灯从角落出画，下方小场景与活动信息",
+      "title_en": "Main title placement: the requested main title is set horizontally in the open area on the LEFT side at mid-height, away from the big shape; it never overlaps the shape."
+    },
+    {
+      "id": "axis",
+      "zh": "中轴对称",
+      "en": "Poster layout — central axis: the main subject stands centred on the vertical axis; the title block sits centred above it and a short centred information block sits below it, with symmetrical margins.",
+      "ratios": [
+        "poster-9x16",
+        "poster-elevator",
+        "poster-a",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-16x9",
+        "poster-custom"
+      ],
+      "info": [
+        "mood",
+        "event",
+        "product"
+      ],
+      "zones": {
+        "title": [
+          0.12,
+          0.06,
+          0.76,
+          0.1
+        ],
+        "subtitle": [
+          0.18,
+          0.215,
+          0.64,
+          0.04
+        ],
+        "info": [
+          0.18,
+          0.86,
+          0.64,
+          0.08
+        ],
+        "qr": [
+          0.44,
+          0.75,
+          0.12,
+          0.068
+        ]
+      },
+      "zones_landscape": {
+        "title": [
+          0.2,
+          0.06,
+          0.6,
+          0.16
+        ],
+        "subtitle": [
+          0.25,
+          0.24,
+          0.5,
+          0.07
+        ],
+        "info": [
+          0.25,
+          0.84,
+          0.5,
+          0.1
+        ]
+      },
+      "origin": "展览、演出海报常见的对称版式",
+      "title_en": "Main title placement: the requested main title is set horizontally, centred above the subject.",
+      "align": "center"
+    },
+    {
+      "id": "type-led",
+      "zh": "大字主导",
+      "en": "Poster layout — type-led: the title itself is the main visual and occupies a large area; imagery recedes into a single supporting element or texture that never competes with the letters.",
+      "ratios": [
+        "poster-9x16",
+        "poster-elevator",
+        "poster-a",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-16x9",
+        "poster-custom"
+      ],
+      "info": [
+        "mood",
+        "product"
+      ],
+      "zones": {
+        "title": [
+          0.08,
+          0.1,
+          0.84,
+          0.36
+        ],
+        "subtitle": [
+          0.08,
+          0.48,
+          0.84,
+          0.05
+        ],
+        "info": [
+          0.08,
+          0.88,
+          0.6,
+          0.06
+        ]
+      },
+      "zones_landscape": {
+        "title": [
+          0.05,
+          0.12,
+          0.62,
+          0.5
+        ],
+        "subtitle": [
+          0.05,
+          0.66,
+          0.62,
+          0.08
+        ],
+        "info": [
+          0.05,
+          0.84,
+          0.5,
+          0.08
+        ]
+      },
+      "origin": "大字报排印、人物编辑海报的大标题",
+      "title_en": "Main title placement: the requested main title is very large and horizontal, filling the upper part of the canvas as the main visual."
+    },
+    {
+      "id": "magazine-scroll",
+      "zh": "杂志栏 + S 形长卷",
+      "en": "Poster layout — magazine column with an S-shaped scroll: the left 30% of the width is a clean warm-white text column with no imagery at all — the scroll, its flowers, petals, birds and splashes never cross 31% of the width; the right 70% is one continuous S-shaped narrative scroll that flows from distant landscape and landmarks at the top, through traditional architecture in the middle, to people and local crafts at the bottom, joined by organic curves rather than rectangular frames.",
+      "ratios": [
+        "poster-9x16",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-custom",
+        "wechat-cover-head"
+      ],
+      "info": [
+        "travel"
+      ],
+      "zones": {
+        "year": [
+          0.05,
+          0.03,
+          0.12,
+          0.022
+        ],
+        "seal": [
+          0.19,
+          0.025,
+          0.05,
+          0.032
+        ],
+        "title": [
+          0.05,
+          0.07,
+          0.21,
+          0.48
+        ],
+        "name_en": [
+          0.05,
+          0.57,
+          0.22,
+          0.018
+        ],
+        "seal_place": [
+          0.05,
+          0.595,
+          0.06,
+          0.035
+        ],
+        "subtitle": [
+          0.05,
+          0.64,
+          0.22,
+          0.045
+        ],
+        "intro_zh": [
+          0.05,
+          0.69,
+          0.22,
+          0.07
+        ],
+        "place_en": [
+          0.05,
+          0.77,
+          0.22,
+          0.016
+        ],
+        "intro_en": [
+          0.05,
+          0.79,
+          0.22,
+          0.1
+        ],
+        "closing": [
+          0.05,
+          0.91,
+          0.22,
+          0.045
+        ]
+      },
+      "zones_landscape": {
+        "title": [
+          0.04,
+          0.16,
+          0.08,
+          0.6
+        ],
+        "name_en": [
+          0.13,
+          0.16,
+          0.03,
+          0.6
+        ],
+        "seal": [
+          0.04,
+          0.8,
+          0.04,
+          0.1
+        ],
+        "subtitle": [
+          0.17,
+          0.3,
+          0.1,
+          0.2
+        ],
+        "year": [
+          0.17,
+          0.12,
+          0.08,
+          0.08
+        ]
+      },
+      "landscape_en": "Horizontal variant: the left 25% is the text column; the scroll unfolds horizontally from landscape on the left to people and crafts on the right, with the key landmark and figure kept inside the central square crop.",
+      "origin": "国风城市文旅海报：左疏右密、上景下人",
+      "title_en": "Main title placement: the requested main title is four large vertical calligraphy characters in one column, centred inside the left text column, upper half."
+    }
+  ]
+}

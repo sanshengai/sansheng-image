@@ -18,6 +18,7 @@ from pathlib import Path
 from . import contract as CT
 from . import data as D
 from . import plan_card as PC
+from . import poster as PO
 from .comic import validate_content as validate_comic_content
 from .textspec import MODES, native_items, validate_hybrid
 
@@ -121,6 +122,22 @@ def _has_contract(code: str) -> bool:
         return False
 
 
+def _poster_manifest(plan: dict, it: dict, contract: dict | None, fmt_id: str | None) -> dict:
+    """计划项里与海报有关的清单字段（check 与 manifests 共用，保证判据一致）。
+
+    返回的清单只含海报检查需要的键；poster_layout 缺省时按海报场景推断。
+    """
+    scene = D.scenes().get(plan.get("scene", "")) or {}
+    m: dict = {"format": fmt_id, **PO.resolve_plan_fields(plan, it, contract, uses_layout=bool(scene.get("uses_layout")))}
+    if plan.get("scene"):
+        m["scene"] = plan["scene"]
+    if it.get("aspect"):
+        m["aspect"] = it["aspect"]
+    if it.get("form") == "structure" and it.get("structure"):
+        m["structure"] = it["structure"]
+    return m
+
+
 def check(plan: dict, *, base_path: Path | None = None) -> tuple[list[str], list[str]]:
     """返回（错误，提醒）。错误要改完才能出图；提醒写进确认表。"""
     errs: list[str] = []
@@ -204,6 +221,12 @@ def check(plan: dict, *, base_path: Path | None = None) -> tuple[list[str], list
         pos = str(it.get("position", ""))
         item_fmt_id = it.get("format") or fmt_id
         errs.extend(f"{tag} {problem}" for problem in validate_comic_content(item_fmt_id, it))
+        poster_code = ((it.get("style") if it.get("manual") and it.get("style") else code) or "").split("@")[0]
+        if poster_code and _has_contract(poster_code):  # 与编译同一判据：计划放行的海报组合，编译不会再拒
+            poster_contract = CT.load(poster_code)
+            poster_m = _poster_manifest(plan, it, poster_contract, item_fmt_id)
+            errs.extend(f"{tag} {problem}" for problem in PO.problems(poster_contract, poster_m, fmts.get(item_fmt_id)))
+            warns.extend(f"{tag} {w}" for w in PO.warnings(poster_contract, poster_m))
         if item_fmt_id in {"article-illustration", "article-summary", "article-summary-tall"} and pos and not re.search(r"「[^」]{4,}」(之后|之前)", pos):
             errs.append(f"{tag} 位置要引用原文的一句话，写成「……」之后（不写「段首」「一节末」这类含糊位置）")
         if it.get("why") and len(it["why"]) < 8:
@@ -325,12 +348,17 @@ def check(plan: dict, *, base_path: Path | None = None) -> tuple[list[str], list
     return errs, warns
 
 
+def _format_label(fmt_id: str) -> str:
+    """计划卡里的格式列：优先显示格式的 label，没有就退回 id。"""
+    return (D.formats().get(fmt_id) or {}).get("label") or fmt_id
+
+
 def table(plan: dict) -> str:
     """出图前给用户确认一次的计划表。"""
     style = plan["style"]
     src, why = SOURCE_ZH.get(style.get("source"), ""), style.get("why", "")
     head = [f"样式：{style['code']}（{why if why.startswith(src) else f'{src}：{why}'}）",
-            f"场景：{D.scenes()[plan['scene']]['zh']}　格式：{plan.get('format') or D.scenes()[plan['scene']]['formats'][0]}", "",
+            f"场景：{D.scenes()[plan['scene']]['zh']}　格式：{_format_label(plan.get('format') or D.scenes()[plan['scene']]['formats'][0])}", "",
             "| # | 位置 | 画什么 | 必要信息 | 形式 | 密度 | 依据 |", "|---|---|---|---|---|---|---|"]
     for i, it in enumerate(plan["items"], 1):
         form = FORM_ZH.get(it["form"], it["form"])
@@ -365,6 +393,13 @@ def manifests(plan: dict, model: str = "gpt-image-2") -> list[dict]:
             m["content"]["points"] = [point.strip() for point in it["points"]]
         if it.get("use_anchor") is False:
             m["use_anchor"] = False
+        style_code = m["style"].split("@")[0]
+        poster = _poster_manifest(plan, it, CT.load(style_code) if _has_contract(style_code) else None, m["format"])
+        for k in ("poster_layout", "poster_info", "variant", "region_skin", "size_cm", "dpi"):
+            if k in poster:
+                m[k] = poster[k]
+        if "poster_layout" in poster and D.scenes()[plan["scene"]].get("uses_layout"):
+            m["scene"] = plan["scene"]
         if it["form"] == "structure":
             m["structure"] = it["structure"]
             m["density"] = density_for(len(it["points"]))

@@ -1,0 +1,133 @@
+{
+  "place": "敦煌",
+  "country_label": "CHINA",
+  "landscape": [
+    {
+      "value": "鸣沙山与月牙泉的沙山环泉景观",
+      "source": "https://zh.wikipedia.org/zh-cn/鸣沙山",
+      "confidence": "high"
+    },
+    {
+      "value": "敦煌雅丹地貌（魔鬼城）",
+      "source": "https://zh.wikipedia.org/zh-cn/雅丹",
+      "confidence": "medium"
+    },
+    {
+      "value": "三危山",
+      "source": "https://zh.wikipedia.org/zh-cn/三危山",
+      "confidence": "medium"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "莫高窟",
+      "source": "https://zh.wikipedia.org/zh-cn/莫高窟",
+      "confidence": "high"
+    },
+    {
+      "value": "鸣沙山月牙泉",
+      "source": "https://zh.wikipedia.org/zh-cn/月牙泉",
+      "confidence": "high"
+    },
+    {
+      "value": "玉门关（小方盘城）",
+      "source": "https://zh.wikipedia.org/zh-cn/玉门关",
+      "confidence": "high"
+    }
+  ],
+  "architecture": {
+    "value": "莫高窟崖壁上层叠开凿的窟檐与九层楼，戈壁中的夯土关城与汉长城烽燧",
+    "source": "https://zh.wikipedia.org/zh-cn/莫高窟",
+    "confidence": "medium"
+  },
+  "heritage": [
+    {
+      "value": "敦煌壁画（飞天、反弹琵琶）",
+      "source": "https://zh.wikipedia.org/zh-cn/莫高窟",
+      "confidence": "high"
+    },
+    {
+      "value": "敦煌曲子戏",
+      "source": "https://www.gsei.com.cn/html/1669/2025-01-02/content-565590.html",
+      "confidence": "high"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "敦煌壁画矿物颜料临摹",
+      "source": "https://www.zupu.cn/lishi/20191014/192491.html",
+      "confidence": "high"
+    }
+  ],
+  "foods": [
+    {
+      "value": "敦煌驴肉黄面",
+      "source": "http://gansu.gscn.com.cn/system/2025/05/28/013332203.shtml",
+      "confidence": "high"
+    },
+    {
+      "value": "李广杏杏皮水",
+      "source": "http://gansu.gscn.com.cn/system/2025/05/28/013332203.shtml",
+      "confidence": "medium"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "胡杨",
+      "source": "https://zh.wikipedia.org/zh-cn/胡杨",
+      "confidence": "high"
+    },
+    {
+      "value": "骆驼（鸣沙山骑驼）",
+      "source": "http://www.xinhuanet.com/culture/20250219/637c8ffef0ee43c19f1c379eda332656/c.html",
+      "confidence": "medium"
+    }
+  ],
+  "season_light": {
+    "value": "大漠日落时沙丘染成金红色，干燥晴朗的高原晴空",
+    "source": "https://zh.wikipedia.org/zh-cn/敦煌市",
+    "confidence": "medium"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "莫高窟壁画临摹画师",
+    "action": "在画案前用毛笔和矿物颜料临摹飞天壁画",
+    "costume": "朴素的工作服，袖口挽起，案上摆放矿物颜料与毛笔",
+    "ethnicity_region": "汉族 · 甘肃敦煌",
+    "source": "https://www.zupu.cn/lishi/20191014/192491.html",
+    "confidence": "medium"
+  },
+  "palette": {
+    "main": [
+      "#E4B77A",
+      "#5B3A29"
+    ],
+    "accent": [
+      "#A83C2A",
+      "#2E6F73",
+      "#D8A24A"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "seal": "大漠丝路",
+    "name_en": "DUNHUANG · CHINA",
+    "title": "沙海飞天",
+    "seal_place": "中国敦煌",
+    "subtitle": [
+      "莫高窟壁画 · 鸣沙山月牙泉",
+      "丝路咽喉 · 戈壁关城"
+    ],
+    "intro_zh": [
+      "沙山环抱一弯清泉",
+      "洞窟里色彩千年未远",
+      "关隘之外便是西域"
+    ],
+    "place_en": "DUNHUANG, GANSU, CHINA",
+    "intro_en": "At the western end of the Hexi Corridor, Dunhuang holds the Mogao Caves, a crescent spring cradled by singing dunes, and the gate of Yumen Pass. It is a place where the Silk Road still seems to travel through the sand.",
+    "closing": [
+      "丝路 · 明珠",
+      "Where the desert keeps its colors."
+    ]
+  }
+}

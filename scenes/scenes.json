@@ -204,6 +204,39 @@
       "site_more": false
     },
     {
+      "id": "poster",
+      "zh": "海报",
+      "job": "封面",
+      "formats": [
+        "poster-9x16",
+        "poster-elevator",
+        "poster-a",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-16x9",
+        "poster-custom"
+      ],
+      "preview_test": "s1",
+      "uses_structure": false,
+      "uses_layout": true,
+      "default_density": "sparse",
+      "default": "C100",
+      "alternates": [
+        "C101",
+        "C102",
+        "C103",
+        "C75",
+        "C83",
+        "C84",
+        "C91",
+        "C92"
+      ],
+      "use": "海报",
+      "site_sample": "pst",
+      "site_note": "一张图一个焦点：远看认得出标题和主视觉，走近才读时间地点。可选版式，文字精确排版。",
+      "site_name": "海报"
+    },
+    {
       "id": "board",
       "zh": "视频分镜首帧",
       "job": "讲故事",

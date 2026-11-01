@@ -10,14 +10,16 @@ from stylebook import data as D  # noqa: E402
 def test_counts():
     assert len(D.structures()) == 24
     assert len(D.palettes()["palettes"]) == 20
-    assert len(D.scenes()) == 12  # 动图已下架（旧版 motion 命令保留）
+    assert len(D.scenes()) == 13  # 动图已下架（旧版 motion 命令保留）；2.6 新增海报
     assert "motion" not in D.scenes()
     fams = {f["family"] for f in D.formats().values()}
-    assert fams == {"单张封面", "多张轮播", "叙事分格", "信息结构", "视频帧", "透明底多宫格", "透明底单图", "教材插图"}
+    assert fams == {"单张封面", "多张轮播", "叙事分格", "信息结构", "视频帧", "透明底多宫格", "透明底单图", "教材插图", "海报"}
+    assert all(f.get("label") for f in D.formats().values())  # 看板显示「比例（场景）」
+    assert len(D.layouts()) == 7 and set(D.info_levels()) == {"mood", "event", "product", "travel"}
     single = D.formats()["sticker-single"]
     assert single["transparent"] and single["export_px"] == [512, 512] and single["text"]["default"] == "none"
     assert D.scenes()["sticker"]["formats"] == ["sticker-grid", "sticker-single"]
-    assert len(json.loads((ROOT / "styles/catalog.json").read_text())["styles"]) == 82
+    assert len(json.loads((ROOT / "styles/catalog.json").read_text())["styles"]) == 86
     for s in json.loads((ROOT / "styles/catalog.json").read_text())["styles"]:
         assert s["uses"], s["code"]
 

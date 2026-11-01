@@ -1,0 +1,133 @@
+{
+  "place": "泉州",
+  "country_label": "CHINA",
+  "landscape": [
+    {
+      "value": "清源山",
+      "source": "https://zh.wikipedia.org/zh-cn/清源山",
+      "confidence": "high"
+    },
+    {
+      "value": "洛阳江入海口湿地",
+      "source": "https://zh.wikipedia.org/zh-cn/洛阳江",
+      "confidence": "medium"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "开元寺（镇国塔与仁寿塔）",
+      "source": "https://zh.wikipedia.org/zh-cn/开元寺_(泉州)",
+      "confidence": "high"
+    },
+    {
+      "value": "清净寺",
+      "source": "https://zh.wikipedia.org/zh-cn/清净寺",
+      "confidence": "high"
+    },
+    {
+      "value": "洛阳桥",
+      "source": "https://zh.wikipedia.org/zh-cn/洛阳桥",
+      "confidence": "high"
+    }
+  ],
+  "architecture": {
+    "value": "闽南红砖古厝：红砖红瓦、燕尾脊",
+    "source": "https://zh.wikipedia.org/zh-cn/官式大厝",
+    "confidence": "high"
+  },
+  "heritage": [
+    {
+      "value": "泉州南音",
+      "source": "https://zh.wikipedia.org/zh-cn/南音",
+      "confidence": "high"
+    },
+    {
+      "value": "泉州提线木偶戏",
+      "source": "https://zh.wikipedia.org/zh-cn/提线木偶",
+      "confidence": "medium"
+    },
+    {
+      "value": "蟳埔女习俗（簪花围）",
+      "source": "http://fj.news.cn/20240923/a2e51c9f2a4e4275be17e8335c2046b8/c.html",
+      "confidence": "high"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "德化白瓷",
+      "source": "https://zh.wikipedia.org/zh-cn/德化瓷",
+      "confidence": "medium"
+    }
+  ],
+  "foods": [
+    {
+      "value": "面线糊",
+      "source": "https://zh.wikipedia.org/zh-cn/面线糊",
+      "confidence": "medium"
+    },
+    {
+      "value": "蟳埔蚵仔煎",
+      "source": "https://zh.wikipedia.org/zh-cn/蟳埔女",
+      "confidence": "medium"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "刺桐花",
+      "source": "https://zh.wikipedia.org/zh-cn/刺桐",
+      "confidence": "high"
+    },
+    {
+      "value": "蟳（海蟹）",
+      "source": "https://zh.wikipedia.org/zh-cn/蟳埔女",
+      "confidence": "low"
+    }
+  ],
+  "season_light": {
+    "value": "沿海温暖明亮的海洋性季风光线，红砖在斜阳下泛暖",
+    "source": "https://zh.wikipedia.org/zh-cn/泉州市",
+    "confidence": "medium"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "蟳埔女（海滩劳作的蚵女）",
+    "action": "头戴簪花围，在海边挑拣蚵、整理渔获",
+    "costume": "大裾衫与阔脚裤，头发盘起并环戴一圈鲜花（簪花围）",
+    "ethnicity_region": "汉族 · 闽南泉州蟳埔",
+    "source": "https://zh.wikipedia.org/zh-cn/蟳埔女",
+    "confidence": "high"
+  },
+  "palette": {
+    "main": [
+      "#B5482F",
+      "#EFE0C8"
+    ],
+    "accent": [
+      "#2D5F73",
+      "#D9A441",
+      "#C8506A"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "seal": "刺桐古港",
+    "name_en": "QUANZHOU · CHINA",
+    "title": "海丝簪花",
+    "seal_place": "中国泉州",
+    "subtitle": [
+      "红砖古厝 · 燕尾飞檐",
+      "海丝起点 · 簪花围上"
+    ],
+    "intro_zh": [
+      "刺桐花开的古港",
+      "红砖映着海风与斜阳",
+      "簪花围里藏着蟳埔的日子"
+    ],
+    "place_en": "QUANZHOU, FUJIAN, CHINA",
+    "intro_en": "Quanzhou, the old port of the Maritime Silk Road, is known for red-brick houses with swallowtail roofs and ancient temples and mosques. In Xunpu village, women still wear flower crowns as part of everyday life.",
+    "closing": [
+      "海丝 · 刺桐",
+      "Red bricks, flowers and the sea."
+    ]
+  }
+}

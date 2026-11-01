@@ -1,6 +1,6 @@
 {
   "code": "C59",
-  "revision": 1,
+  "revision": 2,
   "name": {
     "zh": "中世纪摩登几何童话",
     "en": "Midcentury Geometric Fairytale"
@@ -32,6 +32,10 @@
       "native",
       "overlay",
       "none"
+    ],
+    "poster_layouts": [
+      "sky-title",
+      "axis"
     ]
   },
   "palette": {
@@ -59,6 +63,12 @@
       "revision": 1,
       "date": "2026-09-30",
       "note": "画风库 v2 新增"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 sky-title、axis",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -71,7 +81,8 @@
     "封面",
     "小红书",
     "绘本",
-    "音乐封面"
+    "音乐封面",
+    "海报"
   ],
   "renderer": "codex",
   "motion_dialect": {
@@ -303,6 +314,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "c377d291638145c1ea8b3c784d669994d8f5ccdd0263f21be0f85dde5f7b78df",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "518d4b92c7733e71bb61bdf48ea30b9a3edbbad6f95eb356149d6ddd138239ab",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ],
   "anchor": {

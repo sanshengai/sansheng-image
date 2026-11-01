@@ -131,9 +131,13 @@ def normalize(raw: dict | str, *, scene: str | None = None, item_ids: set[str] |
                               "structure": legacy.structure or "auto", "density": legacy.density or "auto", "source": "explicit"}}
         if legacy.palette == "brand" and not legacy.custom:
             raise SelectionError("旧 sb1 品牌色缺具体 HEX，请改用 selection JSON")
+        if legacy.layout:
+            raw["poster_layout"] = legacy.layout
+        if legacy.variant:
+            raw["variant"] = legacy.variant
     if not isinstance(raw, dict):
         raise SelectionError("selection 必须是对象或 sb1/sb2 风格码")
-    _keys(raw, {"version", "scene", "series_id", "style", "palette", "expression", "items"}, "selection")
+    _keys(raw, {"version", "scene", "series_id", "style", "palette", "expression", "items", "poster_layout", "variant"}, "selection")
     if raw.get("version") != VERSION:
         raise SelectionError(f"不支持的 selection 版本：{raw.get('version')!r}")
     target_scene = raw.get("scene") or scene
@@ -146,6 +150,16 @@ def normalize(raw: dict | str, *, scene: str | None = None, item_ids: set[str] |
     palette = _palette(raw.get("palette", {"family": "orig", "source": "factory"}), "palette")
     _palette_compatible(style, palette)
     expression = _expression(raw.get("expression", {"source": "factory"}), "expression", "series")
+    poster = {}
+    if raw.get("poster_layout") is not None:
+        if raw["poster_layout"] not in D.layouts():
+            raise SelectionError(f"未知海报版式：{raw['poster_layout']!r}；可选 {list(D.layouts())}")
+        poster["poster_layout"] = raw["poster_layout"]
+    if raw.get("variant") is not None:
+        variants = (CT.load(style["code"]).get("recipe") or {}).get("variants") or {}
+        if raw["variant"] not in variants:
+            raise SelectionError(f"{style['code']} 没有手法变体 {raw['variant']!r}" + (f"；可选 {list(variants)}" if variants else "（该画风没有变体）"))
+        poster["variant"] = raw["variant"]
     items = raw.get("items", {})
     if not isinstance(items, dict):
         raise SelectionError("items 必须按图片 ID 存储")
@@ -170,7 +184,7 @@ def normalize(raw: dict | str, *, scene: str | None = None, item_ids: set[str] |
             raise SelectionError(f"items.{item_id} 没有实际修改")
         out_items[item_id] = item
     return {"version": VERSION, "scene": target_scene, **({"series_id": series_id} if series_id else {}),
-            "style": style, "palette": palette, "expression": expression, "items": out_items}
+            "style": style, "palette": palette, "expression": expression, **poster, "items": out_items}
 
 
 def apply(plan: dict, selection: dict, *, base_path: Path | None = None) -> dict:
@@ -186,6 +200,9 @@ def apply(plan: dict, selection: dict, *, base_path: Path | None = None) -> dict
     result["style"] = {"code": f"{style['code']}@r{style['revision']}", "source": style["source"],
                        "why": f"{PL.SOURCE_ZH[style['source']]}：沿用系列画风 {style['code']} 当前修订"}
     result["palette"] = {k: v for k, v in selected["palette"].items() if k in {"family", "light", "sat", "custom"}}
+    for key in ("poster_layout", "variant"):  # 计划顶层作默认，图片项自己写了的不覆盖
+        if key in selected:
+            result[key] = selected[key]
     for it in result.get("items", []):
         item_sel = selected["items"].get(it["id"], {})
         expr = item_sel.get("expression", selected["expression"])
@@ -223,7 +240,8 @@ def affected(before: dict, after: dict, plan: dict, *, replace_master: bool = Fa
     if ({k: left["style"][k] for k in ("code", "revision")} !=
         {k: right["style"][k] for k in ("code", "revision")} or
         any(left["palette"].get(k) != right["palette"].get(k) for k in ("family", "light", "sat", "custom")) or
-        any(left["expression"].get(k) != right["expression"].get(k) for k in ("form", "structure", "density"))):
+        any(left["expression"].get(k) != right["expression"].get(k) for k in ("form", "structure", "density")) or
+        any(left.get(k) != right.get(k) for k in ("poster_layout", "variant"))):
         changed.update(ids)
     else:
         for item_id in ids:

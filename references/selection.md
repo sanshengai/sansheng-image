@@ -2,7 +2,7 @@
 
 ## 一行选择码
 
-Skill 现已接受 `sb2:<用途>/<画风>[@r<修订>][-<色系>[.L<深浅>S<鲜灰>]][-hex.<RRGGBB>.<RRGGBB>…]`。
+Skill 现已接受 `sb2:<用途>/<画风>[@r<修订>][~<海报版式>][+<手法变体>][-<色系>[.L<深浅>S<鲜灰>]][-hex.<RRGGBB>.<RRGGBB>…]`。
 
 - `sb2:wxcover/C30`：公众号封面，原色。
 - `sb2:xhs/C35-earth`：小红书卡片，大地色。
@@ -10,6 +10,7 @@ Skill 现已接受 `sb2:<用途>/<画风>[@r<修订>][-<色系>[.L<深浅>S<鲜�
 - 指定修订必须等于当前合同；旧修订不静默替换。品牌 HEX 与命名色系二选一；锁色画风拒绝换色。
 - 用途取自 `scenes/scenes.json`；它决定默认格式。码与任务用途不一致时明确拒绝，由用户或 Agent 根据原请求纠正。
 - 表达结构、每张图的主体、文字仍由 Agent 读内容后决定；手动改动可以直接用语言提出。
+- 海报用途可在画风码之后加 `~<版式 id>`（版式见 `layouts/layouts.json`，如 `corner-embrace`、`vertical-title`）和 `+<变体 id>`（画风合同 `recipe.variants` 里的手法变体），色系照旧写在最后：`sb2:poster/C101~corner-embrace`、`sb2:poster/C103+mirror`、`sb2:poster/C100~vertical-title-ink`、`sb2:poster/C100~axis+mirror-earth.L1S0`。版式 id 自带连字符，解析时取最长的已知版式 id，剩下的 `-xxx` 才算色系。它们进入清单的 `poster_layout` / `variant`（清单里的 `layout` 是文字区/主体区，不能混用），`selection normalize` 保留这两项，`selection apply` 写成计划顶层默认，图片项自己写的优先。版式与格式、信息量、画风是否兼容由编译与计划共用同一套检查，不兼容会列出可选项后拒绝。
 
 ```sh
 python3 scripts/sb.py selection normalize --code 'sb2:info/C42-hex.1F6F8B.F4F1E8' -o selection.json

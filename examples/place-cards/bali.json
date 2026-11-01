@@ -1,0 +1,126 @@
+{
+  "place": "巴厘岛",
+  "country_label": "INDONESIA",
+  "landscape": [
+    {
+      "value": "贾蒂鲁维（Jatiluwih）层层梯田",
+      "source": "https://en.wikipedia.org/wiki/Jatiluwih",
+      "confidence": "high"
+    },
+    {
+      "value": "阿贡火山",
+      "source": "https://en.wikipedia.org/wiki/Mount_Agung",
+      "confidence": "high"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "海神庙（Tanah Lot）",
+      "source": "https://en.wikipedia.org/wiki/Tanah_Lot",
+      "confidence": "high"
+    },
+    {
+      "value": "乌伦达努寺（Pura Ulun Danu Beratan）",
+      "source": "https://en.wikipedia.org/wiki/Pura_Ulun_Danu_Bratan",
+      "confidence": "high"
+    },
+    {
+      "value": "贾蒂鲁维梯田",
+      "source": "https://en.wikipedia.org/wiki/Jatiluwih",
+      "confidence": "high"
+    }
+  ],
+  "architecture": {
+    "value": "巴厘印度教寺庙：分裂门（candi bentar）与多层叠顶佛塔式建筑（meru）",
+    "source": "https://en.wikipedia.org/wiki/Balinese_temple",
+    "confidence": "medium"
+  },
+  "heritage": [
+    {
+      "value": "苏巴克（Subak）水利灌溉体系",
+      "source": "https://en.wikipedia.org/wiki/Subak_(irrigation)",
+      "confidence": "high"
+    },
+    {
+      "value": "巴厘甘美兰与传统舞蹈",
+      "source": "https://en.wikipedia.org/wiki/Balinese_gamelan",
+      "confidence": "medium"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "巴厘 Endek 扎经织布",
+      "source": "https://en.wikipedia.org/wiki/Endek",
+      "confidence": "medium"
+    }
+  ],
+  "foods": [
+    {
+      "value": "烤乳猪 babi guling",
+      "source": "https://en.wikipedia.org/wiki/Babi_guling",
+      "confidence": "high"
+    },
+    {
+      "value": "椰丝肉沫串 sate lilit",
+      "source": "https://en.wikipedia.org/wiki/Satay",
+      "confidence": "medium"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "鸡蛋花（jepun）",
+      "source": "https://en.wikipedia.org/wiki/Plumeria",
+      "confidence": "medium"
+    },
+    {
+      "value": "巴厘岛八哥（Jalak Bali）",
+      "source": "https://en.wikipedia.org/wiki/Bali_myna",
+      "confidence": "high"
+    }
+  ],
+  "season_light": {
+    "value": "热带清晨薄雾与金色斜阳，雨季前后的湿润天光",
+    "source": "https://en.wikipedia.org/wiki/Bali",
+    "confidence": "low"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "梯田稻农",
+    "action": "在梯田里插秧或收割稻谷",
+    "costume": "传统腰布（sarong）与头巾（udeng），农用草帽",
+    "ethnicity_region": "巴厘人 · 巴厘岛塔巴南",
+    "source": "https://en.wikipedia.org/wiki/Subak_(irrigation)",
+    "confidence": "low"
+  },
+  "palette": {
+    "main": [
+      "#4F7F3A",
+      "#F0E6C8"
+    ],
+    "accent": [
+      "#C6682E",
+      "#2F6F6B",
+      "#D7A53C"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "name_en": "BALI · INDONESIA",
+    "title": "众神之岛",
+    "subtitle": [
+      "梯田层叠 · 海边神庙",
+      "甘美兰声 · 花与祭品"
+    ],
+    "intro_zh": [
+      "稻田沿山势层层展开",
+      "神庙在湖水与海浪间静立",
+      "清晨的乐声里，一天开始"
+    ],
+    "place_en": "BALI, INDONESIA",
+    "intro_en": "Bali is known for terraced rice fields shaped by the Subak water system and for temples set beside lakes and sea. Gamelan music and daily offerings give the island its quiet ceremony.",
+    "closing": [
+      "梯田 · 神庙",
+      "Terraces, temples and morning music."
+    ]
+  }
+}

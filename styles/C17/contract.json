@@ -1,6 +1,6 @@
 {
   "code": "C17",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "新国潮工笔扁平",
     "en": "Modern Guochao Gongbi Flat Art"
@@ -31,6 +31,10 @@
       "native",
       "overlay",
       "none"
+    ],
+    "poster_layouts": [
+      "axis",
+      "sky-title"
     ]
   },
   "palette": {
@@ -68,6 +72,12 @@
       "revision": 3,
       "date": "2026-09-30",
       "note": "画风库 v2：配方加入原作名；旧自产锚点退役（移入 legacy/），改用 MIT 原作样图或不配锚点；新增用途、渲染器与同题样图。"
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 axis、sky-title",
+      "samples_unaffected": true
     }
   ],
   "anchor": {
@@ -92,7 +102,8 @@
     "小红书",
     "漫画",
     "绘本",
-    "音乐封面"
+    "音乐封面",
+    "海报"
   ],
   "renderer": "codex",
   "motion_dialect": {
@@ -395,6 +406,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "b1c21f65664ece9205a659a9b9079b5c9b2c33aee82baae28b32b898c79cbfd5",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "4eff68116be9da95b2ea1b968b4a0d5facc39425565254fb6738a93465751f6f",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ]
 }

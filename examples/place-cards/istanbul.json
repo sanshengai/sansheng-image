@@ -1,0 +1,126 @@
+{
+  "place": "伊斯坦布尔",
+  "country_label": "TÜRKİYE",
+  "landscape": [
+    {
+      "value": "博斯普鲁斯海峡",
+      "source": "https://en.wikipedia.org/wiki/Bosphorus",
+      "confidence": "high"
+    },
+    {
+      "value": "金角湾",
+      "source": "https://en.wikipedia.org/wiki/Golden_Horn",
+      "confidence": "high"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "圣索菲亚大教堂（Ayasofya）",
+      "source": "https://en.wikipedia.org/wiki/Hagia_Sophia",
+      "confidence": "high"
+    },
+    {
+      "value": "苏丹艾哈迈德清真寺（蓝色清真寺）",
+      "source": "https://en.wikipedia.org/wiki/Sultan_Ahmed_Mosque",
+      "confidence": "high"
+    },
+    {
+      "value": "托普卡帕宫",
+      "source": "https://en.wikipedia.org/wiki/Topkapı_Palace",
+      "confidence": "high"
+    }
+  ],
+  "architecture": {
+    "value": "奥斯曼风格的叠层圆顶与细长宣礼塔，沿海峡的木构海滨宅邸",
+    "source": "https://en.wikipedia.org/wiki/Ottoman_architecture",
+    "confidence": "medium"
+  },
+  "heritage": [
+    {
+      "value": "土耳其茶文化",
+      "source": "https://en.wikipedia.org/wiki/List_of_Intangible_Cultural_Heritage_elements_in_Turkey",
+      "confidence": "medium"
+    },
+    {
+      "value": "埃布鲁纸上浮墨画（Ebru）",
+      "source": "https://en.wikipedia.org/wiki/List_of_Intangible_Cultural_Heritage_elements_in_Turkey",
+      "confidence": "high"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "伊兹尼克瓷砖（İznik çini）",
+      "source": "https://en.wikipedia.org/wiki/Iznik_pottery",
+      "confidence": "high"
+    }
+  ],
+  "foods": [
+    {
+      "value": "土耳其茶（çay）与郁金香形玻璃杯",
+      "source": "https://en.wikipedia.org/wiki/Turkish_tea",
+      "confidence": "high"
+    },
+    {
+      "value": "芝麻圈 simit",
+      "source": "https://en.wikipedia.org/wiki/Simit",
+      "confidence": "high"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "郁金香（lale）",
+      "source": "https://en.wikipedia.org/wiki/Istanbul",
+      "confidence": "medium"
+    },
+    {
+      "value": "海鸥",
+      "source": "https://en.wikipedia.org/wiki/Istanbul",
+      "confidence": "low"
+    }
+  ],
+  "season_light": {
+    "value": "海峡上的晨雾与金色日落，海风与潮湿的光线",
+    "source": "https://en.wikipedia.org/wiki/Istanbul",
+    "confidence": "low"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "土耳其茶师（çaycı）",
+    "action": "在茶馆端着铜托盘，为客人递上郁金香形小玻璃杯的红茶",
+    "costume": "白衬衫与深色马甲，围裙，手持铜托盘",
+    "ethnicity_region": "土耳其人 · 伊斯坦布尔",
+    "source": "https://en.wikipedia.org/wiki/Turkish_tea",
+    "confidence": "medium"
+  },
+  "palette": {
+    "main": [
+      "#1E5C7A",
+      "#F1E9DA"
+    ],
+    "accent": [
+      "#C8442F",
+      "#2F8F83",
+      "#D9A441"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "name_en": "ISTANBUL · TÜRKİYE",
+    "title": "两洲茶韵",
+    "subtitle": [
+      "海峡之畔 · 圆顶与宣礼塔",
+      "伊兹尼克瓷砖 · 一杯红茶"
+    ],
+    "intro_zh": [
+      "海峡一侧是欧洲，一侧是亚洲",
+      "圆顶与尖塔在晨雾里相望",
+      "茶杯里的热气，是城市的问候"
+    ],
+    "place_en": "ISTANBUL, TÜRKİYE",
+    "intro_en": "Istanbul spreads across both sides of the Bosphorus, where domes and minarets rise above the water. Blue and turquoise İznik tiles and small tulip-shaped glasses of tea are part of its everyday beauty.",
+    "closing": [
+      "海峡晨光 · 瓷砖花园",
+      "Between two shores, over tea."
+    ]
+  }
+}

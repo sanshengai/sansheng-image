@@ -1,6 +1,6 @@
 {
   "code": "C08",
-  "revision": 4,
+  "revision": 5,
   "name": {
     "zh": "空灵留白诗意绘本",
     "en": "Poetic White-space Picture Book"
@@ -41,6 +41,10 @@
     "text_mode": [
       "none",
       "overlay"
+    ],
+    "poster_layouts": [
+      "corner-embrace",
+      "sky-title"
     ]
   },
   "prompt_bans": [
@@ -104,6 +108,12 @@
       "revision": 4,
       "date": "2026-09-30",
       "note": "画风库 v2：配方加入原作名；旧自产锚点退役（移入 legacy/），改用 MIT 原作样图或不配锚点；新增用途、渲染器与同题样图。"
+    },
+    {
+      "revision": 5,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 corner-embrace、sky-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -119,7 +129,8 @@
     "漫画",
     "绘本",
     "音乐封面",
-    "教材"
+    "教材",
+    "海报"
   ],
   "renderer": "codex",
   "motion_dialect": {
@@ -414,6 +425,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "8c1b62db3519f677ba9c34dfd13f61b9342758bd22ea629a75babd1e5289c3c4",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 4,
+        "prompt_sha256": "37ec589d5147a8d229cfa3d8284369d61e80e14259a1de1cb43f41f70b5484d2",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ],
   "anchor": {

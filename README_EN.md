@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://sanshengai.top/tools/image/">
-    <img src="./assets/readme/gallery-entry.webp" width="100%" alt="Open the visual gallery: browse 82 styles and 18 named palettes, with real pencil, screen-print, ink and woodblock examples">
+    <img src="./assets/readme/gallery-entry.webp" width="100%" alt="Open the visual gallery: browse 86 styles and 18 named palettes, with real pencil, screen-print, ink and woodblock examples">
   </a>
 </p>
 
@@ -16,7 +16,7 @@
 
 <p align="center"><a href="#start-in-three-steps">Install and try</a> · <a href="#see-the-outputs">Still examples</a> · <a href="#let-a-paragraph-explain-itself-in-motion">Motion demo</a> · <a href="./CHANGELOG.md">Changelog</a></p>
 
-> Public beta: 82 styles can be browsed and 18 named palettes selected. Eight styles, C91–C98, currently pass formal admission. Browsing, prompt compilation, and validation for an actual use are different states. See [capability boundaries](#current-capabilities-and-boundaries).
+> Public beta: 86 styles can be browsed and 18 named palettes selected. Eight styles, C91–C98, currently pass formal admission. Browsing, prompt compilation, and validation for an actual use are different states. See [capability boundaries](#current-capabilities-and-boundaries).
 
 <!-- PROMO_VIDEO:START -->
 <!-- Reserved for the promotional film: insert its heading, real poster and playback link between these markers when ready. Keep hidden until then. -->
@@ -113,9 +113,10 @@ This synthetic example prints the style, dimensions, full prompt and references.
 
 | Capability | Current scope |
 |---|---|
-| Browse and compile styles | 82 public contracts; C91–C98 pass formal admission, the other 74 remain pending. A gallery choice is not validation for every use or palette. |
+| Browse and compile styles | 86 public contracts; C91–C98 pass formal admission, the other 78 remain pending. A gallery choice is not validation for every use or palette. |
 | Plan illustrations from an article | Source grounding, per-image structures, single/batch generation, local revisions and quality records. Check facts, text, cropping and series consistency in actual images. |
 | Xiaohongshu, infographics, comics, books and audio covers | Creation workflows and samples are available. Check text, cropping and the complete series on the target platform before publishing. |
+| Posters | Seven sizes, each labelled with its use (e.g. 9:16 for WeChat Moments, phone and elevator screens), seven switchable layouts and four information levels (mood, event, product, travel); exact vertical text and seals; travel posters start from a sourced place card. Print sizes export screen previews only and need upscaling before printing; non-Chinese regional skins are experimental. |
 | Slides | Image pages and optional PPTX assembly; no editable page-element promise. |
 | Storyboards | Static first frames and written motion notes. Check characters, light and continuity per project; no complete video generation. |
 | Motion illustrations | Eight gallery works passed production review and browser playback. An older single GIF has WeChat phone feedback; three earlier films have X desktop-draft previews. Those results apply only to the files tested, not every current work or automatic-upload APIs. Ordinary Xiaohongshu GIF image posts remain unverified. |

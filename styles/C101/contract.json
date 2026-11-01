@@ -1,0 +1,189 @@
+{
+  "code": "C101",
+  "revision": 2,
+  "name": {
+    "zh": "纸景微缩",
+    "en": "Paper Landscape Miniature"
+  },
+  "family": "国风传统",
+  "fit": [
+    "封面",
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "手工纸拼贴纸景 · 微缩人物",
+    "density": "极简留白"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "Original technique specification; inspiration: handmade-paper landscape posters",
+    "license": "original",
+    "notes": "2026-11 参考公众号文章《我如何用AI，做出这种超绝的东方美学海报》中的两类东方海报做法，仅取思路，配方自写；未复制文章或第三方 Skill（chinese-poster-skill、fantasy-dongfang-jianyuehaibao）的文本与图片。"
+  },
+  "essence": [
+    "大片薄手工纸拼出山、园、花、灯等大形，纸片本身构成景物",
+    "长纤维、纸浆碎屑、薄撕裂边，层叠阴影极轻",
+    "大形与微缩人物场景形成强烈尺度对比"
+  ],
+  "recipe": {
+    "positive": "Flat handmade-paper collage poster on an opaque warm ivory paper ground. Large sheets of thin translucent handmade paper are torn and layered so that the paper shapes themselves form the scenery — mountains, a garden enclosure, petals, a lantern or a fan — in a few broad, unbroken colour planes with front, middle and back layers. The paper shows clear long natural fibres, tiny pulp flecks and occasional plant fragments; edges are thin, irregular torn deckles; where sheets overlap there is only the faintest shadow, no thickness. Somewhere in the open space a tiny, finely drawn flat miniature scene — a few small people doing one quiet everyday or craft activity with a few props — gives a dramatic contrast of scale with the huge paper forms. Even, bright, soft light; light and airy; restrained harmonious colours. Not a photograph with paper texture laid over it, not thick cardboard, not a 3D paper sculpture, no tape, no halftone dots, no vignette, no yellowed ageing.",
+    "text_mode": [
+      "native",
+      "hybrid",
+      "overlay",
+      "none"
+    ],
+    "text_style": "Use only the requested exact text. Lettering is a slim, light Song-style serif in black or dark grey with loose spacing, small and restrained so it never becomes the main visual; never bold, never gold. No invented captions, seals or pseudo-text.",
+    "poster_layouts": [
+      "corner-embrace",
+      "big-shape-band",
+      "sky-title"
+    ]
+  },
+  "composition": {
+    "negative_space": "40–50% of the canvas, broad and continuous",
+    "figure_scale": "each person about 1/25 to 1/28 of the canvas height; the whole group with its props no wider than 30% and no taller than 11% of the canvas; no facial close-up",
+    "big_shape": "one or two huge paper forms enter from a corner, built from a few large complete colour planes, never confetti-like fragments"
+  },
+  "type": {
+    "direction": [
+      "horizontal",
+      "vertical"
+    ],
+    "face": "slim light Song-style serif, black or dark grey, loose spacing"
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "薄手工纸的纤维与撕裂边，纸片本身构成景物",
+      "微缩人物场景与大纸形的强烈尺度对比",
+      "大片连贯留白，层叠阴影极轻"
+    ],
+    "must_not_see": [
+      "实景照片叠纸纹、厚纸板或立体纸雕",
+      "胶带、半色调网点、零碎花叶铺满",
+      "人物画成大插画、塑料高光、做旧暗角、写实地标建筑"
+    ],
+    "fix_phrases": [
+      "保留纸形、配色和标题位置，只把下方人物与器具整组缩小，让周围留白更多",
+      "纸材改成薄手工纸，看得见长纤维和撕裂边，去掉厚度和重阴影",
+      "大纸形合并成几块完整的大色块，去掉零碎的小纸片"
+    ]
+  },
+  "evidence": {
+    "admission": "pending",
+    "model": "尚未实测",
+    "date": "2026-11-01",
+    "notes": "新增画风，仅完成合同校验；样图与看图结论见执行记录。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-11-01",
+      "note": "新增：手工纸纸景 + 微缩人物（尺度锁），准入待验证"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "暂去掉 PPT 用途：本期未做 PPT 试图，放第二期验证",
+      "samples_unaffected": true
+    }
+  ],
+  "inspiration": {
+    "names": [
+      "手工纸拼贴纸景"
+    ],
+    "prompt": "手工纸拼贴纸景"
+  },
+  "uses": [
+    "海报",
+    "文章插图",
+    "小红书"
+  ],
+  "renderer": "codex",
+  "samples": [
+    {
+      "topic": "山居生活笔记封面",
+      "file": "samples/xhs.webp",
+      "source_sha256": "c9c009d772301922bca16e89d19dfda358cb07488804a0b9196838ac847e91d8",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "2862dbd8609dea53402444629f81211b39873622afa57997f67f837163122ec4",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "文章中关于故乡小镇的段落配图",
+      "file": "samples/wxi.webp",
+      "source_sha256": "fe6addb485893e7f4163df8d682c3761c1b2b7ea1380e565323a1f4b0873fe39",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.778,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "ded840b9c15c302242307657e486f91bb94a0ee5a8f19ff4620f77519819c2fc",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "渔港清晨的意境",
+      "file": "samples/pst.webp",
+      "source_sha256": "2cd60c4cacb3ba6745e156f68bd0b1bbc18e45904891c2789dbb97a217bea214",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "1e7ecca067fcfa8135ac6d6247316fb023eaa1cb4e8fd7c35b6c26e498b98d41",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "元宵灯会的手作氛围",
+      "file": "samples/pst-2.webp",
+      "source_sha256": "78ab715d735acf9932a86228a10129085286b91ff0859f7b1256074930bde07a",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.714,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "aa092347ef5d1a51257c1f52f6a2cf1c79ded3b2c048d8e6b4d7851ad918f258",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "风格参考板",
+      "file": "samples/bd.webp",
+      "source_sha256": "75520bea30fbb655e69811781b3d9ed88c88a73b58f6b241f2a9b1d31465a48f",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.5,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "c221c67cb0961fcb83c0a09d1e3c2d8ae7c64afbebc5f52c6e26e2461acc9fdd",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    }
+  ],
+  "anchor": {
+    "file": "anchor.png",
+    "sha256": "c4b4a2cbd475678649b496d0d9c249ced7eb98671f254a03af49b38628e00655",
+    "enabled": true,
+    "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
+  }
+}

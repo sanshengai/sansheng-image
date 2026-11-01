@@ -340,7 +340,7 @@
       ],
       "dynasty": [],
       "en": "Poetic White-space Picture Book",
-      "revision": 4,
+      "revision": 5,
       "essence": [
         "大面积安静留白",
         "主体周围的安静纸面",
@@ -602,7 +602,7 @@
         "跨朝代"
       ],
       "en": "Modern Guochao Gongbi Flat Art",
-      "revision": 3,
+      "revision": 4,
       "essence": [
         "工笔细线与平面色块",
         "中国传统纹样与少量金色",
@@ -773,7 +773,7 @@
         "近现代"
       ],
       "en": "Shanghai Calendar-Poster Retro",
-      "revision": 3,
+      "revision": 4,
       "essence": [
         "柔和喷绘式月份牌人物",
         "桃色玉色奶油色复古配色",
@@ -2467,7 +2467,7 @@
       ],
       "dynasty": [],
       "en": "Midcentury Geometric Fairytale",
-      "revision": 1,
+      "revision": 2,
       "essence": [
         "明快色块与夸张几何比例",
         "现代主义童话式造型",
@@ -3226,7 +3226,7 @@
       ],
       "dynasty": [],
       "en": "Screen-print Poster",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "平涂色块无描边、2 到 5 个专色",
         "半色调网点与轻微套印错位",
@@ -3273,7 +3273,7 @@
       ],
       "dynasty": [],
       "en": "Warm Paper Two-Colour Editorial",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "暖奶油纸底与细纸纹",
         "深墨色加一个暖金或红的点缀色",
@@ -3321,7 +3321,7 @@
       ],
       "dynasty": [],
       "en": "Editorial Magazine Cover",
-      "revision": 3,
+      "revision": 4,
       "essence": [
         "衬线大标题是画面主角",
         "细线框、编号式小标签、清晰网格",
@@ -3617,7 +3617,7 @@
       ],
       "dynasty": [],
       "en": "Oversized Type Poster",
-      "revision": 3,
+      "revision": 4,
       "essence": [
         "一个巨大汉字或短语占满画面",
         "纯色背景加一个对比色块",
@@ -3664,7 +3664,7 @@
       ],
       "dynasty": [],
       "en": "Mid-Century Film Poster Silhouette",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "手刻剪影与负形",
         "两三个平涂色",
@@ -4224,7 +4224,7 @@
       ],
       "dynasty": [],
       "en": "New Year Print Woodblock Colouring",
-      "revision": 2,
+      "revision": 3,
       "essence": [
         "木版黑线轮廓加手工敷彩",
         "桃粉朱红黄绿的喜庆高饱和色",
@@ -4289,7 +4289,7 @@
       ],
       "dynasty": [],
       "en": "Multi-Block Woodblock Colour Print",
-      "revision": 1,
+      "revision": 2,
       "essence": [
         "均匀黑色主线加分版平涂色块",
         "和纸纤维底与仅限边缘的渐变",
@@ -4354,7 +4354,7 @@
       ],
       "dynasty": [],
       "en": "Mineral Pigment Cave-Mural Texture",
-      "revision": 1,
+      "revision": 2,
       "essence": [
         "泥灰岩壁底肌理清晰可见",
         "石绿石青朱砂赭石的厚重矿物色块",
@@ -4602,6 +4602,200 @@
         ],
         "safety": "人物和建筑保持完整；水面效果只在真实水域，灯光只落在实际光源；不把细碎花木硬切片弹入，不用全图压黑替代夜色。"
       }
+    },
+    {
+      "code": "C100",
+      "zh": "青釉园林",
+      "family": "国风传统",
+      "fit": [
+        "封面"
+      ],
+      "visibility": "public",
+      "origin": "original",
+      "status": "contract",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "海报版式",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "en": "Celadon Garden Editorial",
+      "revision": 3,
+      "essence": [
+        "只取一个能撑住画面的材质局部，从画面一边进入",
+        "真实材质近看：釉面、墙面、丝线、竹篾",
+        "大片连贯留白与细宋体题字共同构图"
+      ],
+      "colors": [],
+      "text_mode": [
+        "native",
+        "hybrid",
+        "overlay",
+        "none"
+      ],
+      "abilities": {},
+      "facets": {
+        "medium": "东方编辑海报 · 材质局部",
+        "density": "极简留白"
+      },
+      "admission": "pending",
+      "tests": {},
+      "recipe_sha": "466546bc4536"
+    },
+    {
+      "code": "C101",
+      "zh": "纸景微缩",
+      "family": "国风传统",
+      "fit": [
+        "封面",
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original",
+      "status": "contract",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "纸艺拼贴",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "en": "Paper Landscape Miniature",
+      "revision": 2,
+      "essence": [
+        "大片薄手工纸拼出山、园、花、灯等大形，纸片本身构成景物",
+        "长纤维、纸浆碎屑、薄撕裂边，层叠阴影极轻",
+        "大形与微缩人物场景形成强烈尺度对比"
+      ],
+      "colors": [],
+      "text_mode": [
+        "native",
+        "hybrid",
+        "overlay",
+        "none"
+      ],
+      "abilities": {},
+      "facets": {
+        "medium": "手工纸拼贴纸景 · 微缩人物",
+        "density": "极简留白"
+      },
+      "admission": "pending",
+      "tests": {},
+      "recipe_sha": "518ffd9237df"
+    },
+    {
+      "code": "C102",
+      "zh": "文旅长卷",
+      "family": "国风传统",
+      "fit": [
+        "封面",
+        "讲故事"
+      ],
+      "visibility": "public",
+      "origin": "original",
+      "status": "contract",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "水彩插画",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "en": "Cultural Travel Scroll",
+      "revision": 2,
+      "essence": [
+        "一条连续的 S 形叙事长卷：上段山水地标，中段传统建筑街区，下段人物与风物",
+        "景物从花叶、丝带、云水里自然长出，没有矩形边框",
+        "左侧干净的杂志文字栏，所有文字都在栏内"
+      ],
+      "colors": [],
+      "text_mode": [
+        "native",
+        "hybrid",
+        "overlay",
+        "none"
+      ],
+      "abilities": {},
+      "facets": {
+        "medium": "东方水彩文旅长卷",
+        "density": "细节丰富"
+      },
+      "admission": "pending",
+      "tests": {},
+      "recipe_sha": "6aa7f1ab7bec"
+    },
+    {
+      "code": "C103",
+      "zh": "圆域人物",
+      "family": "摄影写实",
+      "fit": [
+        "封面"
+      ],
+      "visibility": "public",
+      "origin": "original",
+      "status": "contract",
+      "has_contract": true,
+      "recolor": "free",
+      "recolor_note": "",
+      "tone": [
+        "个性潮流"
+      ],
+      "craft": "人物摄影",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "en": "Circle-Field Portrait Editorial",
+      "revision": 2,
+      "essence": [
+        "真实高级人物摄影与当代编辑设计",
+        "一个大尺度圆形视觉场真正改变空间，人物进入圆的结构",
+        "缩成小图仍一眼看出：人物 + 大圆 + 空间变化"
+      ],
+      "colors": [],
+      "text_mode": [
+        "native",
+        "hybrid",
+        "overlay",
+        "none"
+      ],
+      "abilities": {},
+      "facets": {
+        "medium": "人物摄影 · 大圆空间编辑海报",
+        "density": "极简留白"
+      },
+      "admission": "pending",
+      "tests": {},
+      "recipe_sha": "9df32c408f66"
     }
   ],
   "removed": [
@@ -4812,6 +5006,39 @@
       "site_name": "音乐/播客封面",
       "site_short": "音乐封面",
       "site_more": false
+    },
+    {
+      "id": "poster",
+      "zh": "海报",
+      "job": "封面",
+      "formats": [
+        "poster-9x16",
+        "poster-elevator",
+        "poster-a",
+        "poster-5x7",
+        "poster-2x3",
+        "poster-16x9",
+        "poster-custom"
+      ],
+      "preview_test": "s1",
+      "uses_structure": false,
+      "uses_layout": true,
+      "default_density": "sparse",
+      "default": "C100",
+      "alternates": [
+        "C101",
+        "C102",
+        "C103",
+        "C75",
+        "C83",
+        "C84",
+        "C91",
+        "C92"
+      ],
+      "use": "海报",
+      "site_sample": "pst",
+      "site_note": "一张图一个焦点：远看认得出标题和主视觉，走近才读时间地点。可选版式，文字精确排版。",
+      "site_name": "海报"
     },
     {
       "id": "board",
@@ -5739,6 +5966,7 @@
     {
       "id": "wechat-cover-head",
       "zh": "公众号头条封面",
+      "label": "2.35:1（公众号头条）",
       "family": "单张封面",
       "ratio": "2.35:1",
       "export_px": [
@@ -5764,6 +5992,7 @@
     {
       "id": "wechat-cover-square",
       "zh": "公众号次条 / 分享封面",
+      "label": "1:1（公众号次条 · 分享卡片）",
       "family": "单张封面",
       "ratio": "1:1",
       "export_px": [
@@ -5789,6 +6018,7 @@
     {
       "id": "xhs-cover",
       "zh": "小红书封面",
+      "label": "3:4（小红书封面）",
       "family": "单张封面",
       "ratio": "3:4",
       "export_px": [
@@ -5814,6 +6044,7 @@
     {
       "id": "x-image",
       "zh": "X 配图",
+      "label": "16:9（X 配图）",
       "family": "单张封面",
       "ratio": "16:9",
       "export_px": [
@@ -5837,6 +6068,7 @@
     {
       "id": "og-image",
       "zh": "链接预览图",
+      "label": "1.91:1（链接预览）",
       "family": "单张封面",
       "ratio": "1.91:1",
       "export_px": [
@@ -5860,6 +6092,7 @@
     {
       "id": "podcast-cover",
       "zh": "播客封面",
+      "label": "1:1（播客封面）",
       "family": "单张封面",
       "ratio": "1:1",
       "export_px": [
@@ -5883,6 +6116,7 @@
     {
       "id": "music-cover",
       "zh": "音乐 / 单曲封面",
+      "label": "1:1（音乐 · 单曲封面）",
       "family": "单张封面",
       "ratio": "1:1",
       "export_px": [
@@ -5906,6 +6140,7 @@
     {
       "id": "weibo-head",
       "zh": "微博头条封面",
+      "label": "16:9（微博头条）",
       "family": "单张封面",
       "ratio": "16:9",
       "export_px": [
@@ -5929,6 +6164,7 @@
     {
       "id": "xhs-carousel",
       "zh": "小红书轮播",
+      "label": "3:4（小红书轮播）",
       "family": "多张轮播",
       "ratio": "3:4",
       "export_px": [
@@ -5953,6 +6189,7 @@
     {
       "id": "x-multi",
       "zh": "X 多图",
+      "label": "16:9（X 多图）",
       "family": "多张轮播",
       "ratio": "16:9",
       "export_px": [
@@ -5975,6 +6212,7 @@
     {
       "id": "ppt",
       "zh": "PPT",
+      "label": "16:9（PPT 整页）",
       "family": "多张轮播",
       "ratio": "16:9",
       "export_px": [
@@ -6007,6 +6245,7 @@
     {
       "id": "courseware",
       "zh": "课件插图",
+      "label": "4:3（课件）",
       "family": "多张轮播",
       "ratio": "4:3",
       "export_px": [
@@ -6030,6 +6269,7 @@
     {
       "id": "picturebook-page",
       "zh": "绘本故事页",
+      "label": "4:3（绘本页）",
       "family": "叙事分格",
       "ratio": "4:3",
       "export_px": [
@@ -6052,6 +6292,7 @@
     {
       "id": "comic-4panel",
       "zh": "四格漫画",
+      "label": "1:1（四格漫画）",
       "family": "叙事分格",
       "ratio": "1:1",
       "export_px": [
@@ -6076,6 +6317,7 @@
     {
       "id": "comic-page",
       "zh": "单页多格漫画",
+      "label": "3:4（单页漫画）",
       "family": "叙事分格",
       "ratio": "3:4",
       "export_px": [
@@ -6098,6 +6340,7 @@
     {
       "id": "infographic",
       "zh": "信息图",
+      "label": "3:4（信息图）",
       "family": "信息结构",
       "ratio": "3:4",
       "export_px": [
@@ -6122,6 +6365,7 @@
     {
       "id": "article-illustration",
       "zh": "文章配图",
+      "label": "16:9（文章横版插图）",
       "family": "信息结构",
       "ratio": "16:9",
       "export_px": [
@@ -6146,6 +6390,7 @@
     {
       "id": "storyboard-frame",
       "zh": "视频分镜首帧",
+      "label": "16:9（视频分镜）",
       "family": "视频帧",
       "ratio": "16:9",
       "export_px": [
@@ -6169,6 +6414,7 @@
     {
       "id": "video-thumbnail",
       "zh": "横版视频缩略图",
+      "label": "16:9（横版视频缩略图）",
       "family": "视频帧",
       "ratio": "16:9",
       "export_px": [
@@ -6193,6 +6439,7 @@
     {
       "id": "vertical-cover",
       "zh": "竖版短视频封面",
+      "label": "9:16（竖版短视频封面）",
       "family": "视频帧",
       "ratio": "9:16",
       "export_px": [
@@ -6217,6 +6464,7 @@
     {
       "id": "sticker-single",
       "zh": "单张透明表情",
+      "label": "1:1（单张表情）",
       "family": "透明底单图",
       "ratio": "1:1",
       "export_px": [
@@ -6241,6 +6489,7 @@
     {
       "id": "sticker-grid",
       "zh": "表情包宫格",
+      "label": "1:1（表情包宫格）",
       "family": "透明底多宫格",
       "ratio": "1:1",
       "export_px": [
@@ -6265,6 +6514,7 @@
     {
       "id": "textbook-vocab",
       "zh": "教材单词参考图",
+      "label": "1:1（教材单词图）",
       "family": "教材插图",
       "ratio": "1:1",
       "export_px": [
@@ -6284,6 +6534,7 @@
     {
       "id": "textbook-grammar",
       "zh": "教材语法情景图",
+      "label": "4:3（教材情景图）",
       "family": "教材插图",
       "ratio": "4:3",
       "export_px": [
@@ -6303,6 +6554,7 @@
     {
       "id": "comic-manga-page",
       "zh": "日漫标准页（5 格）",
+      "label": "3:4（日漫标准页）",
       "family": "叙事分格",
       "ratio": "3:4",
       "export_px": [
@@ -6326,6 +6578,7 @@
     {
       "id": "comic-splash-page",
       "zh": "日漫大格页（大格加小格）",
+      "label": "3:4（日漫大格页）",
       "family": "叙事分格",
       "ratio": "3:4",
       "export_px": [
@@ -6349,6 +6602,7 @@
     {
       "id": "comic-webtoon",
       "zh": "竖向长条漫",
+      "label": "9:16（竖向条漫）",
       "family": "叙事分格",
       "ratio": "9:16",
       "export_px": [
@@ -6372,6 +6626,7 @@
     {
       "id": "article-summary",
       "zh": "文章归纳插图（横）",
+      "label": "16:9（文章归纳 · 横）",
       "family": "信息结构",
       "ratio": "16:9",
       "export_px": [
@@ -6396,6 +6651,7 @@
     {
       "id": "article-summary-tall",
       "zh": "文章归纳插图（竖）",
+      "label": "9:16（文章归纳 · 竖）",
       "family": "信息结构",
       "ratio": "9:16",
       "export_px": [
@@ -6420,6 +6676,7 @@
     {
       "id": "comic-mixed-page",
       "zh": "日漫混排页",
+      "label": "3:4（日漫混排页）",
       "family": "叙事分格",
       "ratio": "3:4",
       "export_px": [
@@ -6444,6 +6701,7 @@
     {
       "id": "wechat-cover-brand-wide",
       "zh": "公众号品牌宽幅封面（独立方形版）",
+      "label": "2.35:1（公众号品牌宽幅）",
       "family": "单张封面",
       "ratio": "2.35:1",
       "export_px": [
@@ -6465,6 +6723,236 @@
       "source": "作者已确认的宽幅品牌封面合同",
       "density_max": "sparse",
       "compose": "Wide editorial banner. Use the entire landscape canvas: large left typography, a substantial right hero, an airy gutter and 8 percent outer margins. Do not compress the design into a central square."
+    },
+    {
+      "id": "poster-9x16",
+      "zh": "竖版数字海报",
+      "label": "9:16（朋友圈 · 手机竖屏 · 电梯屏）",
+      "family": "海报",
+      "ratio": "9:16",
+      "export_px": [
+        1080,
+        1920
+      ],
+      "safe_zone": {
+        "note": "四边留 5%；底部 8% 避开朋友圈与电梯屏信息栏"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "业内口径",
+      "density_max": "sparse",
+      "compose": "A single poster with one dominant visual focus readable from a distance; keep generous continuous negative space for the title block, and keep every requested word inside the safe margins.",
+      "compose_no_text": "A single poster with one dominant visual focus readable from a distance; leave the reserved title and information areas completely clean for exact text added after generation."
+    },
+    {
+      "id": "poster-elevator",
+      "zh": "电梯框架海报",
+      "label": "3:4（电梯框架海报 42.4×57cm）",
+      "family": "海报",
+      "ratio": "424:570",
+      "export_px": [
+        1252,
+        1683
+      ],
+      "safe_zone": {
+        "note": "四边各留 3mm 出血与 5% 压框边，文字不贴边"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "电梯框架常规印刷尺寸 424×570mm",
+      "density_max": "sparse",
+      "compose": "A single poster with one dominant visual focus readable from a distance; keep generous continuous negative space for the title block, and keep every requested word inside the safe margins.",
+      "compose_no_text": "A single poster with one dominant visual focus readable from a distance; leave the reserved title and information areas completely clean for exact text added after generation.",
+      "print": {
+        "size_cm": [
+          42.4,
+          57
+        ],
+        "dpi": 150,
+        "bleed_mm": 3,
+        "needs_upscale": true,
+        "note": "印刷尺寸超出生图上限，本期导出为屏幕预览尺寸并标注需放大；近看会软"
+      }
+    },
+    {
+      "id": "poster-a",
+      "zh": "A 系纸海报",
+      "label": "1:1.41（A3 / A2 打印店常规纸）",
+      "family": "海报",
+      "ratio": "1:1.414",
+      "export_px": [
+        1240,
+        1754
+      ],
+      "safe_zone": {
+        "note": "四边留 5%；A 系纸同比例，A3/A2 通用"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "ISO 216 纸张比例",
+      "density_max": "sparse",
+      "compose": "A single poster with one dominant visual focus readable from a distance; keep generous continuous negative space for the title block, and keep every requested word inside the safe margins.",
+      "compose_no_text": "A single poster with one dominant visual focus readable from a distance; leave the reserved title and information areas completely clean for exact text added after generation.",
+      "print": {
+        "size_cm": [
+          29.7,
+          42
+        ],
+        "dpi": 150,
+        "bleed_mm": 3,
+        "needs_upscale": true,
+        "note": "印刷尺寸超出生图上限，本期导出为屏幕预览尺寸并标注需放大；近看会软"
+      }
+    },
+    {
+      "id": "poster-5x7",
+      "zh": "标准印刷海报",
+      "label": "5:7（50×70cm 标准印刷海报）",
+      "family": "海报",
+      "ratio": "5:7",
+      "export_px": [
+        1250,
+        1750
+      ],
+      "safe_zone": {
+        "note": "四边各留 3mm 出血，文字距边 ≥5%"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "常规海报印刷尺寸",
+      "density_max": "sparse",
+      "compose": "A single poster with one dominant visual focus readable from a distance; keep generous continuous negative space for the title block, and keep every requested word inside the safe margins.",
+      "compose_no_text": "A single poster with one dominant visual focus readable from a distance; leave the reserved title and information areas completely clean for exact text added after generation.",
+      "print": {
+        "size_cm": [
+          50,
+          70
+        ],
+        "dpi": 150,
+        "bleed_mm": 3,
+        "needs_upscale": true,
+        "note": "印刷尺寸超出生图上限，本期导出为屏幕预览尺寸并标注需放大；近看会软"
+      }
+    },
+    {
+      "id": "poster-2x3",
+      "zh": "大幅海报 / 展板",
+      "label": "2:3（60×90cm 大幅海报 · 展板）",
+      "family": "海报",
+      "ratio": "2:3",
+      "export_px": [
+        1280,
+        1920
+      ],
+      "safe_zone": {
+        "note": "四边各留 3mm 出血，文字距边 ≥5%"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "常规海报印刷尺寸",
+      "density_max": "sparse",
+      "compose": "A single poster with one dominant visual focus readable from a distance; keep generous continuous negative space for the title block, and keep every requested word inside the safe margins.",
+      "compose_no_text": "A single poster with one dominant visual focus readable from a distance; leave the reserved title and information areas completely clean for exact text added after generation.",
+      "print": {
+        "size_cm": [
+          60,
+          90
+        ],
+        "dpi": 150,
+        "bleed_mm": 3,
+        "needs_upscale": true,
+        "note": "印刷尺寸超出生图上限，本期导出为屏幕预览尺寸并标注需放大；近看会软"
+      }
+    },
+    {
+      "id": "poster-16x9",
+      "zh": "横版展示屏海报",
+      "label": "16:9（会场大屏 · 横版展示屏）",
+      "family": "海报",
+      "ratio": "16:9",
+      "export_px": [
+        1920,
+        1080
+      ],
+      "safe_zone": {
+        "note": "四边留 5%；大屏远看，主标题字高 ≥ 画高 8%"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "业内口径",
+      "density_max": "sparse",
+      "compose": "A wide horizontal poster for a large screen: one dominant visual focus on one side and a clear title block on the other, readable from across a room.",
+      "compose_no_text": "A wide horizontal poster for a large screen: one dominant visual focus on one side and a completely clean title area on the other for exact text added after generation."
+    },
+    {
+      "id": "poster-custom",
+      "zh": "自定义尺寸海报",
+      "label": "自定义（输入宽 × 高 cm 与 dpi）",
+      "family": "海报",
+      "ratio": "2:3",
+      "export_px": [
+        1280,
+        1920
+      ],
+      "safe_zone": {
+        "note": "按实际尺寸换算；四边各留 3mm 出血"
+      },
+      "text": {
+        "default": "hybrid",
+        "title_max_chars": 8,
+        "subtitle_max_chars": 16
+      },
+      "count": [
+        1,
+        1
+      ],
+      "source": "用户自定义",
+      "density_max": "sparse",
+      "compose": "A single poster with one dominant visual focus readable from a distance; keep generous continuous negative space for the title block, and keep every requested word inside the safe margins.",
+      "compose_no_text": "A single poster with one dominant visual focus readable from a distance; leave the reserved title and information areas completely clean for exact text added after generation.",
+      "custom": true
     }
   ],
   "tests": {

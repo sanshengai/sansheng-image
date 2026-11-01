@@ -226,7 +226,8 @@
         "漫画",
         "绘本",
         "音乐封面",
-        "教材"
+        "教材",
+        "海报"
       ],
       "names": [
         "几米"
@@ -387,7 +388,8 @@
         "小红书",
         "漫画",
         "绘本",
-        "音乐封面"
+        "音乐封面",
+        "海报"
       ],
       "names": [],
       "origin": "handraw-style #189（描述已重写，不含人名）",
@@ -489,7 +491,8 @@
         "PPT",
         "漫画",
         "绘本",
-        "音乐封面"
+        "音乐封面",
+        "海报"
       ],
       "names": [
         "杭穉英",
@@ -1417,7 +1420,8 @@
         "封面",
         "小红书",
         "绘本",
-        "音乐封面"
+        "音乐封面",
+        "海报"
       ],
       "names": [
         "Mary Blair"
@@ -1907,7 +1911,8 @@
         "小红书",
         "PPT",
         "文章插图",
-        "音乐封面"
+        "音乐封面",
+        "海报"
       ],
       "names": [
         "Mondo 丝网印电影海报"
@@ -1938,7 +1943,8 @@
       "uses": [
         "封面",
         "文章插图",
-        "音乐封面"
+        "音乐封面",
+        "海报"
       ],
       "names": [
         "《纽约客》封面插画"
@@ -1970,7 +1976,8 @@
       "uses": [
         "封面",
         "小红书",
-        "PPT"
+        "PPT",
+        "海报"
       ],
       "names": [
         "Monocle、Kinfolk 杂志封面"
@@ -2151,7 +2158,8 @@
       ],
       "uses": [
         "封面",
-        "PPT"
+        "PPT",
+        "海报"
       ],
       "names": [],
       "origin": "original",
@@ -2180,7 +2188,8 @@
       "uses": [
         "文章插图",
         "PPT",
-        "音乐封面"
+        "音乐封面",
+        "海报"
       ],
       "names": [
         "Saul Bass 电影海报"
@@ -2486,7 +2495,8 @@
         "绘本",
         "文章插图",
         "信息图",
-        "封面"
+        "封面",
+        "海报"
       ],
       "names": [],
       "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
@@ -2516,7 +2526,8 @@
         "绘本",
         "文章插图",
         "信息图",
-        "封面"
+        "封面",
+        "海报"
       ],
       "names": [],
       "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
@@ -2546,7 +2557,8 @@
         "绘本",
         "文章插图",
         "信息图",
-        "封面"
+        "封面",
+        "海报"
       ],
       "names": [],
       "origin": "original traditional-technique recipe; evidence verified 2026-10-11",
@@ -2646,6 +2658,135 @@
         "东方雅致"
       ],
       "craft": "手绘插画",
+      "recolor": "free"
+    },
+    {
+      "code": "C100",
+      "zh": "青釉园林",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "fit": [
+        "封面"
+      ],
+      "uses": [
+        "海报",
+        "封面",
+        "文章插图",
+        "音乐封面",
+        "小红书"
+      ],
+      "names": [
+        "当代东方编辑海报"
+      ],
+      "origin": "original",
+      "status": "contract",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "海报版式",
+      "recolor": "free"
+    },
+    {
+      "code": "C101",
+      "zh": "纸景微缩",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "fit": [
+        "封面",
+        "讲故事"
+      ],
+      "uses": [
+        "海报",
+        "文章插图",
+        "小红书"
+      ],
+      "names": [
+        "手工纸拼贴纸景"
+      ],
+      "origin": "original",
+      "status": "contract",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "纸艺拼贴",
+      "recolor": "free"
+    },
+    {
+      "code": "C102",
+      "zh": "文旅长卷",
+      "family": "国风传统",
+      "legacyFamily": "中国风",
+      "region": [
+        "中国"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "fit": [
+        "封面",
+        "讲故事"
+      ],
+      "uses": [
+        "海报",
+        "封面",
+        "小红书",
+        "文章插图"
+      ],
+      "names": [
+        "文旅杂志海报"
+      ],
+      "origin": "original",
+      "status": "contract",
+      "tone": [
+        "东方雅致"
+      ],
+      "craft": "水彩插画",
+      "recolor": "free"
+    },
+    {
+      "code": "C103",
+      "zh": "圆域人物",
+      "family": "摄影写实",
+      "legacyFamily": "封面与海报",
+      "region": [
+        "跨地域"
+      ],
+      "era": [
+        "当代"
+      ],
+      "dynasty": [],
+      "fit": [
+        "封面"
+      ],
+      "uses": [
+        "海报",
+        "小红书",
+        "音乐封面"
+      ],
+      "names": [
+        "时尚 Editorial 人物海报"
+      ],
+      "origin": "original",
+      "status": "contract",
+      "tone": [
+        "个性潮流"
+      ],
+      "craft": "人物摄影",
       "recolor": "free"
     }
   ],

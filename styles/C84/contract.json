@@ -1,6 +1,6 @@
 {
   "code": "C84",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "电影海报几何剪影",
     "en": "Mid-Century Film Poster Silhouette"
@@ -30,6 +30,10 @@
     "text_mode": [
       "native",
       "none"
+    ],
+    "poster_layouts": [
+      "axis",
+      "sky-title"
     ]
   },
   "palette": {
@@ -63,6 +67,12 @@
       "revision": 2,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 axis、sky-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -75,7 +85,8 @@
     "封面",
     "文章插图",
     "PPT",
-    "音乐封面"
+    "音乐封面",
+    "海报"
   ],
   "renderer": "codex",
   "samples": [
@@ -351,6 +362,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "6055b5f27a9c9713115df58e5a740885d7fd1025b3254066a8b81e33bd60ed9c",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "fc28f2412f51e9d322a289db90a867246805411c9f743bb1ba7cadd9c02cfca5",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ],
   "anchor": {

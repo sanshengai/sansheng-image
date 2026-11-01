@@ -21,6 +21,7 @@
   matrix <风格码> [--only T1,T2]        8 道标准题测试矩阵（断点续跑、成本记账）
   build  [--private] [--gallery]        由风格合同生成 registry.json；--gallery 生成选择器（index.html + img/）；--advanced 生成旧完整画廊
   plan   <计划.json> [--manifests 目录]  检查配图计划、打印确认表并存成 <计划名>.plan-card.md、生成每张图的编译清单
+  place-card check|rows <资料卡.json>    地域资料卡检查 / 计划卡表格（文旅海报）
   board  <镜头表.json> -o 目录 [--locations]  分镜：先出地点设定图与定调图，再一次出整场竖屏与横屏首帧
   batch  <计划.json> -o 目录             一口气做完：出图 → 导出 → 验收 → 单张返修 → 报告（可续跑）
   pptx   <计划.json> --images 目录 -o 文件.pptx [--mode illustration|full]   组装 PPT（插画 + 可编辑文字 / 整页图）
@@ -425,6 +426,25 @@ def cmd_plan(a) -> int:
             (d / f"{m['_id']}.json").write_text(json.dumps(m, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"编译清单：{d}")
     return 0
+
+
+def cmd_place_card(a) -> int:
+    from stylebook import place_card as PCD
+    card = _manifest(a.card)
+    if a.action == "rows":
+        print(PCD.plan_rows(card))
+        return 0
+    errs, warns = PCD.validate(card)
+    for e in errs:
+        print(f"错误：{e}")
+    for w in warns:
+        print(f"提醒：{w}")
+    un = PCD.unverified(card)
+    if un:
+        print("待确认清单：\n" + "\n".join(f"- {u}" for u in un))
+    if not errs:
+        print("资料卡通过检查")
+    return 1 if errs else 0
 
 
 def cmd_board(a) -> int:
@@ -871,6 +891,8 @@ def main(argv=None) -> int:
     p.add_argument("--legacy-prompts", help="兼容旧命令；选择器已停用独立提示词模板，此参数不再生效")
     p.add_argument("--check", action="store_true", help="只检查 registry.json 是否与合同一致，不写文件"); p.set_defaults(fn=cmd_build)
     p = sub.add_parser("plan"); p.add_argument("plan"); p.add_argument("--manifests"); p.add_argument("--model"); p.set_defaults(fn=cmd_plan)
+    p = sub.add_parser("place-card", help="地域资料卡（文旅海报）：check 检查 / rows 打印计划卡表格")
+    p.add_argument("action", choices=["check", "rows"]); p.add_argument("card"); p.set_defaults(fn=cmd_place_card)
     p = sub.add_parser("board", help="按镜头表一次出整场竖屏与横屏首帧（--locations 先出地点设定图与定调图）")
     p.add_argument("board"); p.add_argument("-o", "--out"); p.add_argument("--locations", action="store_true")
     p.add_argument("--prepare", action="store_true", help="交给当前会话出图，不调用后台")

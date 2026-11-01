@@ -303,18 +303,18 @@ def test_single_placeholder_is_enforced(tmp_path, monkeypatch):
 
 def test_page_is_small_and_images_are_external(built):
     d, html = built
-    # 包内完整版本记录随页面分发，保留 300 KB 文本预算；图片仍必须外链。
-    assert 0 < html.stat().st_size < 300_000, "页面本体应只含文字与数据，且不超过 300 KB"
+    # 包内完整版本记录随页面分发，文本预算 320 KB（海报版式、尺寸与手法选择加进页面后从 300 KB 放宽，2026-11）；图片仍必须外链。
+    assert 0 < html.stat().st_size < 320_000, "页面本体应只含文字与数据，且不超过 320 KB"
     assert len(list((d / "img").glob("*.webp"))) >= 57 * 3
     assert "data:image" not in html.read_text(encoding="utf-8").replace(GRID_TEXTURE, "")
 
 
-@pytest.mark.parametrize("content", ["", "x" * 300_000], ids=["empty", "oversized"])
+@pytest.mark.parametrize("content", ["", "x" * 320_000], ids=["empty", "oversized"])
 def test_page_size_guard_rejects_empty_and_oversized_output(tmp_path, content):
     html = tmp_path / "index.html"
     html.write_text(content, encoding="utf-8")
     # 直接调用同一被测路径，确认空输出和超预算输出不能因后续图片断言而假绿。
-    with pytest.raises(AssertionError, match="300 KB"):
+    with pytest.raises(AssertionError, match="320 KB"):
         test_page_is_small_and_images_are_external((tmp_path, html))
 
 
@@ -330,7 +330,7 @@ def test_every_use_has_its_own_sample_kind_and_palettes_have_stories(built):
     meta = _data(html)
     ids = {s["id"] for s in meta["scenes"]}
     assert ids >= {"wxcover", "wxillus", "xhs", "ppt", "info", "comic4"} and "motion" not in ids
-    assert len(ids) == 9, ids
+    assert len(ids) == 10 and "poster" in ids, ids   # 9 个老用途 + 海报
     assert not any(k.startswith("mo") for c in meta["cands"] for k in c["imgs"]) and "motion" not in meta
     assert not any(k.startswith("mo") for k in meta["kinds"])
     assert "githubStars" in meta
@@ -344,6 +344,8 @@ def test_every_style_in_a_pool_has_that_uses_own_sample(built):
     imgs = {c["id"]: set(c["imgs"]) for c in meta["cands"]}
     # 音乐/播客封面必须有自己的 1:1 方形样图（不能拿 2.35:1 公众号封面充数）
     siblings = {"cm": {"cm", "cx", "ce"}, "wxi": {"wxi", "wxt", "wxx"}}  # 同组的兄弟种类也算本用途样图（页面同样按组回退）
+    # 海报：城市样张（pst-suzhou）与手法样张（pst-lens）同样算本用途样图
+    siblings["pst"] = {"pst"} | {k for v in imgs.values() for k in v if k.startswith("pst-")}
     missing = [(s["id"], c) for s in meta["scenes"] for c in s["pool"]
                if not (siblings.get(s["sample"], {s["sample"]}) & imgs[c])]
     assert missing == [], f"这些画风缺它所属用途的样图：{missing[:8]}"
@@ -1661,8 +1663,11 @@ def test_page_works_without_animation_frame_and_intersection_observer(browser, b
         assert moved and any(moved), (before[:2], after[:2])
         # 展台手动切换可用
         if meta["carousel"]:
+            # 降级模式下自动轮播仍会走（定时器），图片多时等待期间可能已前进；只断言手动切换恰好前进一格
+            n = len(meta["carousel"])
+            cur = int(page.inner_text("#stage-count").split(" / ")[0])
             page.click("#stage-next")
-            assert page.inner_text("#stage-count") == f"2 / {len(meta['carousel'])}"
+            assert page.inner_text("#stage-count") == f"{cur % n + 1} / {n}"
         # 搜索可用
         tok = cands[0]["tone"][0]
         page.fill("#lib-q", tok)
@@ -1810,3 +1815,89 @@ def test_library_cards_use_real_scene_images_in_a_masonry(browser, built, size):
                 assert k in cands[c["id"]]["imgs"], (scene["id"], c)
                 if any(i.split("-")[0] == group for i in cands[c["id"]]["imgs"]):
                     assert k.split("-")[0] == group, (scene["id"], c["id"], k)
+
+
+# ---------------- 海报用途：样图种类识别、降级、看板数据 ----------------
+
+@pytest.mark.parametrize("stem,ok", [
+    ("pst", True), ("pst-2", True), ("pst-suzhou", True), ("pst-light-cut", True), ("pst-dual-glass", True),
+    ("pst-2x", False), ("pst-", False), ("pst_suzhou", False), ("pstx", False), ("pst-Suzhou", False)])
+def test_poster_sample_kind_recognition(stem, ok):
+    """pst / pst-2 / pst-<英文 slug> 认作海报样张；数字开头、大写、下划线的名字不认（反例）。"""
+    assert "pst" in BD.SITE_KINDS and "pst" in BD.SET_KINDS
+    got = bool(BD.SET_RE.match(stem) or BD.POSTER_SLUG_RE.match(stem))
+    assert got is ok
+    assert not (BD.SET_RE.match(stem) and BD.POSTER_SLUG_RE.match(stem)), "数字序号与具名 slug 不能互相重叠"
+
+
+def test_poster_named_samples_pass_through_sample_files_and_duplicates_are_rejected(monkeypatch, tmp_path):
+    fake = {"samples": [{"file": "samples/pst.webp", "ratio": 0.75}, {"file": "samples/pst-2.webp", "ratio": 0.75},
+                        {"file": "samples/pst-suzhou.webp", "ratio": 0.75}, {"file": "samples/pst-light-cut.webp", "ratio": 0.75}]}
+    monkeypatch.setattr(BD.CT, "load", lambda code: fake)
+    cp = tmp_path / "C999" / "contract.json"
+    assert set(BD._sample_files("C999", cp)) == {"pst", "pst-2", "pst-suzhou", "pst-light-cut"}
+    fake["samples"].append({"file": "samples/pst-suzhou-continuous.webp", "ratio": 0.75})   # 同一品种的续出图变体：键相同，必须报重复
+    with pytest.raises(ValueError, match="duplicate sample kind"):
+        BD._sample_files("C999", cp)
+
+
+def test_poster_style_data_degrades_without_samples():
+    """缺样图时：版式照给（缺省 sky-title/axis），手法 chip 在但 sample 为空，城市列表为空，不报错。"""
+    plain = BD._poster_style_data("C103", [])
+    assert plain["posterLayouts"] == BD.CT.load("C103")["recipe"]["poster_layouts"]
+    assert [v["sample"] for v in plain["variants"]] == ["", "", "", ""] and sum(v["default"] for v in plain["variants"]) == 1
+    assert "cities" not in plain or plain["cities"] == []
+    some = BD._poster_style_data("C103", ["pst", "pst-mirror"])
+    assert {v["id"]: v["sample"] for v in some["variants"]}["mirror"] == "pst-mirror"
+    assert BD._poster_style_data("C102", [])["cities"] == []
+    assert BD._poster_style_data("C102", ["pst", "pst-suzhou", "pst-bali", "pst-unknown"])["cities"] == ["pst-suzhou", "pst-bali"]
+
+
+def test_page_data_carries_formats_labels_and_poster_layouts(built):
+    _, html = built
+    meta = _data(html)
+    poster = next(s for s in meta["scenes"] if s["id"] == "poster")
+    assert poster["layout"] is True and poster["name"] == "海报" and poster["sample"] == "pst"
+    assert poster["formats"] == D_scene_formats("poster") and len(poster["formats"]) == 7
+    for sc in meta["scenes"]:
+        for f in sc["formats"]:
+            assert meta["formats"][f]["label"] == BD.D.formats()[f]["label"] and "（" in meta["formats"][f]["label"]
+    assert meta["formats"]["poster-elevator"]["label"] == "3:4（电梯框架海报 42.4×57cm）"
+    assert not [s for s in meta["scenes"] if s["id"] != "poster" and s["layout"]]
+    layouts = {x["id"]: x for x in meta["posterLayouts"]}
+    assert set(layouts) == set(BD.D.layouts()) and len(layouts) == 7
+    for lid, x in layouts.items():
+        src = BD.D.layouts()[lid]
+        assert x["name"] == src["zh"] and x["zones"] == src["zones"] and x["ratios"] == src["ratios"] and x["info"] == src["info"]
+    assert set(meta["posterInfo"]) == set(BD.D.info_levels()) and meta["posterInfo"]["travel"]["only"] == ["C102"]
+    assert "only" not in meta["posterInfo"]["mood"]
+    for c in meta["cands"]:
+        if "poster" in c["uses"]:
+            want = BD.CT.load(c["id"]).get("recipe", {}).get("poster_layouts") or ["sky-title", "axis"]
+            assert c["posterLayouts"] == want and set(want) <= set(layouts), c["id"]
+        else:
+            assert "posterLayouts" not in c and "cities" not in c
+    for k, v in meta["posterKinds"].items():
+        assert k.startswith("pst-") and v["name"] and v["type"] in ("city", "variant")
+    assert meta["posterKinds"]["pst-istanbul"]["experimental"] and meta["posterKinds"]["pst-bali"]["experimental"]
+    assert not meta["posterKinds"]["pst-suzhou"]["experimental"]
+
+
+def D_scene_formats(sid):
+    return BD.D.scenes()[sid]["formats"]
+
+
+def test_poster_cards_use_named_poster_samples_when_style_has_no_plain_pst(browser, built):
+    """C102 只有城市样张、C103 只有手法样张：选「海报」后卡片封面仍用本用途样张，不退回封面或小红书图（2026-11-01 验收发现）。"""
+    d, _ = built
+    with open_page(browser, d) as page:
+        _open(page)
+        page.click('button[data-scene="poster"]')
+        page.wait_for_timeout(600)
+        srcs = page.evaluate("""() => Array.from(document.querySelectorAll('#lib-grid img'))
+            .map(i => (i.getAttribute('src') || '') + ' ' + (i.getAttribute('data-src') || ''))""")
+        for code in ("C102", "C103"):
+            mine = [s for s in srcs if f"/{code}-" in s]
+            assert mine and all(f"{code}-pst-" in s for s in mine), (code, mine)
+        trial = [s for s in srcs if "C102-pst-bali" in s or "C102-pst-istanbul" in s]
+        assert not trial, trial   # 试验样张不当卡片封面

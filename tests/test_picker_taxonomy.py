@@ -175,8 +175,8 @@ def test_embedded_data_carries_taxonomy_matching_the_catalog(built):
     d, html, meta = built
     doc = _catalog()
     cat = {s["code"]: s for s in doc["styles"]}
-    # 与主页面测试共用既有 300 KB 文本预算，包含本地可读的完整发布日志。
-    assert 0 < html.stat().st_size < 300_000, '页面本体不超过 300 KB，且不得为空'
+    # 与主页面测试共用既有 320 KB 文本预算，包含本地可读的完整发布日志。
+    assert 0 < html.stat().st_size < 320_000, '页面本体不超过 320 KB，且不得为空'
     assert meta["taxonomy"] == {k: doc["taxonomy"][k] for k in TX.VOCAB_KEYS}
     assert meta["cands"] and all(c["id"] in cat for c in meta["cands"])
     for c in meta["cands"]:
@@ -186,11 +186,11 @@ def test_embedded_data_carries_taxonomy_matching_the_catalog(built):
     assert not re.search(r"C2\b|审批|复审|冲突", json.dumps(meta["taxonomy"], ensure_ascii=False))   # 公共页面不带内部术语
 
 
-@pytest.mark.parametrize('content', ['', 'x' * 300_000], ids=['empty', 'oversized'])
+@pytest.mark.parametrize('content', ['', 'x' * 320_000], ids=['empty', 'oversized'])
 def test_taxonomy_page_size_guard_rejects_invalid_output(tmp_path, content):
     html = tmp_path / 'index.html'
     html.write_text(content, encoding='utf-8')
-    with pytest.raises(AssertionError, match='300 KB'):
+    with pytest.raises(AssertionError, match='320 KB'):
         test_embedded_data_carries_taxonomy_matching_the_catalog((tmp_path, html, {}))
 
 

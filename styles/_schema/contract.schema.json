@@ -273,6 +273,84 @@
             }
           },
           "description": "机器可读的版式声明：配方正文只写分区，不靠英文方位词去猜"
+        },
+        "poster_layouts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "海报用途推荐的版式 id（layouts/layouts.json），2–3 种；未写时海报只允许 sky-title 与 axis"
+        },
+        "ratio_range": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "description": "本画风适用的宽高比范围 [最小, 最大]（宽/高）；超出时 plan 与编译报错"
+        },
+        "variants": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "zh",
+              "en"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "zh": {
+                "type": "string",
+                "minLength": 2
+              },
+              "en": {
+                "type": "string",
+                "minLength": 20
+              },
+              "default": {
+                "type": "boolean"
+              }
+            }
+          },
+          "description": "画风内部的手法变体；清单用 variant 选择，en 原样进入编译"
+        },
+        "region_skins": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "en"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 20
+              },
+              "lettering": {
+                "type": "string"
+              },
+              "experimental": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              },
+              "default": {
+                "type": "boolean",
+                "description": "清单未指定 region_skin 时使用的皮肤；恰好一个"
+              }
+            }
+          },
+          "description": "地域媒材皮肤：按地区替换材质、纹样与字体语汇；清单用 region_skin 选择"
         }
       }
     },
@@ -506,6 +584,16 @@
           "minimum": 0.5,
           "maximum": 0.95,
           "description": "深色宽幅品牌封面的可见内容跨度下限，排除底部水印；空图和中央小图必须拒绝，语义仍独立看图"
+        },
+        "fix_phrases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 8
+          },
+          "description": "现成的局部返修话术（中文），供 selection 与返修优先使用"
         }
       }
     },
@@ -600,6 +688,9 @@
           },
           "note": {
             "type": "string"
+          },
+          "samples_unaffected": {
+            "type": "boolean"
           }
         }
       }
@@ -640,7 +731,8 @@
           "绘本",
           "分镜",
           "音乐封面",
-          "教材"
+          "教材",
+          "海报"
         ]
       },
       "description": "适合的用途；选了用途只列出打勾的画风"
@@ -864,6 +956,57 @@
           }
         }
       }
+    },
+    "composition": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "negative_space": {
+          "type": "string",
+          "minLength": 4
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 4
+        },
+        "figure_scale": {
+          "type": "string",
+          "minLength": 4
+        },
+        "big_shape": {
+          "type": "string",
+          "minLength": 4
+        },
+        "flow": {
+          "type": "string",
+          "minLength": 4
+        }
+      },
+      "description": "尺度与版面锁：留白比例、主体方式、人物尺度、大形、动线；编译成 Composition lock 段，QA 列为必查"
+    },
+    "type": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "vertical",
+              "horizontal"
+            ]
+          }
+        },
+        "face": {
+          "type": "string",
+          "minLength": 4
+        }
+      },
+      "description": "字的方向与字面"
     }
   },
   "$defs": {

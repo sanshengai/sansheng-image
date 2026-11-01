@@ -1,0 +1,227 @@
+{
+  "code": "C100",
+  "revision": 3,
+  "name": {
+    "zh": "青釉园林",
+    "en": "Celadon Garden Editorial"
+  },
+  "family": "国风传统",
+  "fit": [
+    "封面"
+  ],
+  "facets": {
+    "medium": "东方编辑海报 · 材质局部",
+    "density": "极简留白"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "Original technique specification; inspiration: contemporary Chinese editorial posters",
+    "license": "original",
+    "notes": "2026-11 参考公众号文章《我如何用AI，做出这种超绝的东方美学海报》中的两类东方海报做法，仅取思路，配方自写；未复制文章或第三方 Skill（chinese-poster-skill、fantasy-dongfang-jianyuehaibao）的文本与图片。"
+  },
+  "essence": [
+    "只取一个能撑住画面的材质局部，从画面一边进入",
+    "真实材质近看：釉面、墙面、丝线、竹篾",
+    "大片连贯留白与细宋体题字共同构图"
+  ],
+  "recipe": {
+    "positive": "Contemporary Chinese editorial poster built from one single cropped material detail — the curved rim of a celadon bowl, a lattice garden window in a white wall, an embroidered sleeve, a strip of woven bamboo or the edge of a lacquer box — entering the frame from one edge, never a whole scene and never several objects. Render the material up close with quiet realism: thin glaze depth and fine crackle, lime-plaster wall grain, silk threads, bamboo fibre. Bright, even, diffused daylight with very soft shadows; warm white, moon white and pale grey grounds with one or two restrained accents chosen from pale celadon green, ink black, bamboo green or a small vermilion. At least forty percent of the canvas is one continuous calm empty area that the title and lines of text sit in, as in a refined museum or culture-magazine poster. Composition is asymmetric and still, edges are clean, nothing is decorative filler. Not a landscape painting, not a collage, not a product catalogue shot, not vintage or yellowed.",
+    "text_mode": [
+      "native",
+      "hybrid",
+      "overlay",
+      "none"
+    ],
+    "text_style": "Use only the requested exact text. Titles are thin, elegant Song-style serif Chinese characters, set vertically or horizontally exactly as the poster layout specifies, with generous letter spacing, dark grey or ink black, never bold, never gold, never outlined. Small lines are lighter and smaller. No invented inscriptions, seals or pseudo-text.",
+    "poster_layouts": [
+      "vertical-title",
+      "sky-title",
+      "axis"
+    ]
+  },
+  "composition": {
+    "negative_space": "at least 40% of the canvas, one continuous calm area that holds the text",
+    "subject": "exactly one cropped material detail entering from one edge; no complete scene, no second object"
+  },
+  "type": {
+    "direction": [
+      "vertical",
+      "horizontal"
+    ],
+    "face": "thin Song-style serif, generous spacing, dark grey or ink black"
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "一个材质局部从一边进入，质感真实",
+      "连贯的大片留白（约四成以上）",
+      "细宋体题字与主体共同构图"
+    ],
+    "must_not_see": [
+      "多个物件拼贴或完整全景",
+      "景点标志、装饰性山水堆砌、假印章",
+      "塑料高光、泛黄做旧、四角暗角、粗黑或金色大标题"
+    ],
+    "when_text": [
+      "细宋体题字与主体共同构图"
+    ],
+    "fix_phrases": [
+      "保留材质和配色，只把主体再裁近一些，让留白更完整",
+      "去掉多余的物件和装饰，只留一个局部",
+      "标题改成细宋体竖排，不加粗，放进留白里"
+    ]
+  },
+  "evidence": {
+    "admission": "pending",
+    "model": "尚未实测",
+    "date": "2026-11-01",
+    "notes": "新增画风，仅完成合同校验；样图与看图结论见执行记录。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-11-01",
+      "note": "新增：东方编辑海报（材质局部 + 大留白 + 细宋体），准入待验证"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "标题方向改为跟随海报版式（原写死竖排，与天头标题版式冲突）"
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "暂去掉 PPT 用途：本期未做 PPT 试图，放第二期验证",
+      "samples_unaffected": true
+    }
+  ],
+  "inspiration": {
+    "names": [
+      "当代东方编辑海报"
+    ],
+    "prompt": "当代东方编辑海报"
+  },
+  "uses": [
+    "海报",
+    "封面",
+    "文章插图",
+    "音乐封面",
+    "小红书"
+  ],
+  "renderer": "codex",
+  "samples": [
+    {
+      "topic": "漆器小展的安静",
+      "file": "samples/pst-2.webp",
+      "source_sha256": "85368e2fdbcab7288f6c2245e92e9b9b67bce49e66576723658444d4980a75c3",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.714,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "18d66b806af186276e534e68315ba5fc41cbf9618856259292c67a8994ad28d0",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "手作竹编展的气质",
+      "file": "samples/pst.webp",
+      "source_sha256": "14704e8fb19d1f85b5690fd3c0c3f3ad3583e39791b5549114166ed565e88bf6",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "9b7823446526d2ae62e921f2402adda506efa3741e7a262f0710830b430c1e3b",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "风格参考板",
+      "file": "samples/bd.webp",
+      "source_sha256": "e84495bcecdb4a364d6e7be2b683a37ef4456775550a1a223196e48e78ef7d33",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.5,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "78fc366354628018827cc0a146e5677e17e6b0edded028a08a353ef7fa0d5084",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "关于慢生活的文章封面",
+      "file": "samples/cv.webp",
+      "source_sha256": "5bbc42f3267a04d0bf277e092f7a493ae9811e273e466851b1376bd744a2630e",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 2.35,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "e9fc6c1b70c41d9a1d3f43fd6fb63ae01828b1a8dd30313508fd204b6f1b07a9",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "居家器物分享笔记封面",
+      "file": "samples/xhs.webp",
+      "source_sha256": "295a928d65731d047d1b0f9d96f51e94d636d197845ff2bfcf5eeaacce37b404",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "eb4dc95f512bd9eb36a04a9888e5281a68bfb9e4b0aa219e84820b11971f9142",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "文章中关于留白的段落配图",
+      "file": "samples/wxi.webp",
+      "source_sha256": "b83d60676b15956f86c7b538342539561d2f03eed2d456fdc49419511515ec23",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.778,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "da7eead404542ff5452cf53a8e520795ada30c8922d5444e944584a5f8280be7",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "安静的器乐专辑封面",
+      "file": "samples/au.webp",
+      "source_sha256": "c2abb2adb43205f3122ef6038f370a604d48f82ac9178278645e66a67f1ded52",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.0,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "6924e51cdc9ca7559875d97c5f4f0641c29560afdb6d46c471e7a8d19a431251",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    }
+  ],
+  "anchor": {
+    "file": "anchor.png",
+    "sha256": "a363935b12a1f5af733ef1a5989cd91ab3952e791c9788d2bb863efd10146e32",
+    "enabled": true,
+    "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
+  }
+}

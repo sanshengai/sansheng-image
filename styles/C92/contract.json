@@ -1,6 +1,6 @@
 {
   "code": "C92",
-  "revision": 1,
+  "revision": 2,
   "name": {
     "zh": "敦煌矿物彩壁画",
     "en": "Mineral Pigment Cave-Mural Texture"
@@ -37,6 +37,10 @@
     "text_mode": [
       "none",
       "native"
+    ],
+    "poster_layouts": [
+      "axis",
+      "sky-title"
     ]
   },
   "palette": {
@@ -85,6 +89,12 @@
       "revision": 1,
       "date": "2026-10-11",
       "note": "当前标准题最终证据、三次稳定与两项同题近邻通过；保留原失败/误报及编辑链，登记三张矩阵示例；全场景与发布另计。"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 axis、sky-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -102,7 +112,8 @@
     "绘本",
     "文章插图",
     "信息图",
-    "封面"
+    "封面",
+    "海报"
   ],
   "abilities": {
     "character_consistency": "ok",
@@ -726,6 +737,21 @@
         "revision": 1,
         "prompt_sha256": "eb934cbcd876234d7335ced5e56e89c9a22d99f77a060bacd2057062f1604a16",
         "attempts": 2,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "f492c5006450c48f38a1fafd7c56be3843a2d4c9e92b4ccc44f632eab46a14b2",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "c309a13c689eb38c1204e1d655b8799f69ed9d236ab302065eff51b3f5d7db6f",
+        "attempts": 1,
         "picked_from": 1,
         "edited": false
       }

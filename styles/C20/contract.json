@@ -1,6 +1,6 @@
 {
   "code": "C20",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "海派月份牌",
     "en": "Shanghai Calendar-Poster Retro"
@@ -30,6 +30,10 @@
       "native",
       "overlay",
       "none"
+    ],
+    "poster_layouts": [
+      "sky-title",
+      "axis"
     ]
   },
   "palette": {
@@ -67,6 +71,12 @@
       "revision": 3,
       "date": "2026-09-30",
       "note": "画风库 v2：配方加入原作名；旧自产锚点退役（移入 legacy/），改用 MIT 原作样图或不配锚点；新增用途、渲染器与同题样图。"
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 sky-title、axis",
+      "samples_unaffected": true
     }
   ],
   "anchor": {
@@ -93,7 +103,8 @@
     "PPT",
     "漫画",
     "绘本",
-    "音乐封面"
+    "音乐封面",
+    "海报"
   ],
   "renderer": "codex",
   "samples": [
@@ -387,6 +398,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "4f8d5bb582ee71954dd1055e9ae8b02b0e8bf9ebd13a434a3124e0e377118af6",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "5b34c39ac6b9ce262a501a65d860c629431f1374bc3a9b2abbcd91526758de33",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ]
 }

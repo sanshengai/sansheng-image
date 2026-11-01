@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import compile as CP, data as D, export as EX, plan as PL, plan_card as PC
-from . import selection as SEL
+from . import contract as CT, poster as PO, selection as SEL
 from .qa.sheet import matrix_sheet
 
 
@@ -37,7 +37,8 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
     if not isinstance(brief, dict) or brief.get("version") != 1:
         raise BriefError("brief.version 必须是 1")
     allowed = {"version", "scene", "style", "palette", "reason", "code", "source", "items", "format", "references",
-               "chosen_by", "task_id", "confirmed", "editorial", "use_anchor"}
+               "chosen_by", "task_id", "confirmed", "editorial", "use_anchor",
+               "poster_layout", "poster_info", "variant", "region_skin", "place_card"}
     if set(brief) - allowed:
         raise BriefError(f"brief 未知字段：{sorted(set(brief) - allowed)}")
     if "use_anchor" in brief and type(brief["use_anchor"]) is not bool:
@@ -92,8 +93,21 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
         raise BriefError("references 必须是 role/path 对象列表")
     references = [{"role": r["role"], "path": str((base_path / r["path"]).resolve())} for r in references]
     default_format = brief.get("format") or D.scenes()[scene]["formats"][0]
+    card_fields = None
+    if brief.get("place_card"):
+        from . import place_card as PCARD
+        if not isinstance(brief["place_card"], str):
+            raise BriefError("place_card 必须是资料卡 JSON 路径")
+        card = json.loads((base_path / brief["place_card"]).read_text(encoding="utf-8"))
+        card_errs, _card_warns = PCARD.validate(card)
+        if card_errs:
+            raise BriefError("地域资料卡不合格：" + "；".join(card_errs))
+        card_fields = PCARD.to_manifest_fields(card)
+    style_contract = CT.load(chosen["code"])
+    uses_layout = bool(D.scenes()[scene].get("uses_layout"))
     for index, item in enumerate(items, 1):
-        if not isinstance(item, dict) or set(item) - {"id", "position", "message", "visual", "text", "format", "points", "panels", "relations", "final_relations"}:
+        if not isinstance(item, dict) or set(item) - {"id", "position", "message", "visual", "text", "format", "points", "panels", "relations", "final_relations",
+                                                      "poster_layout", "poster_info", "variant", "region_skin", "size_cm", "dpi", "inventory", "lighting"}:
             raise BriefError(f"第 {index} 张字段不合格")
         for field in ("position", "message", "visual"):
             if not isinstance(item.get(field), str) or not item[field].strip():
@@ -108,11 +122,35 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
         fmt = item.get("format") or ("wechat-cover-head" if scene == "wxillus" and position == "cover" else default_format)
         if fmt not in D.formats():
             raise BriefError(f"未知格式：{fmt}")
+        # 资料卡的杂志栏版式与整套文旅文字只用于海报；小红书、插图等场景只借用资料卡的画面内容
+        card_poster = card_fields if (card_fields is not None and uses_layout) else None
+        poster_fields = PO.resolve_plan_fields({**{k: (card_poster or {}).get(k) for k in ("poster_layout", "poster_info") if (card_poster or {}).get(k)},
+                                                **{k: brief[k] for k in ("poster_layout", "poster_info", "variant", "region_skin") if k in brief}},
+                                               item, style_contract, uses_layout=uses_layout)
         text = item.get("text", [])
+        if card_poster is not None and not text:
+            text = copy.deepcopy(card_fields["text"])
         if isinstance(text, dict):
-            if text.get("mode") != "overlay":
-                raise BriefError(f"第 {index} 张 text 对象仅支持 overlay 精确排字")
+            if text.get("mode") not in ("overlay", "hybrid"):
+                raise BriefError(f"第 {index} 张 text 对象仅支持 overlay 精确排字或 hybrid 混合档")
             text_spec = copy.deepcopy(text)
+            for entry in text_spec.get("items") or []:
+                if isinstance(entry, dict) and entry.get("box", 0) is None:
+                    del entry["box"]  # 资料卡留空的 box 交给版式补
+            if poster_fields.get("poster_layout"):
+                try:
+                    text_spec = PO.fill_boxes(text_spec, poster_fields["poster_layout"], D.formats()[fmt])
+                except ValueError as exc:
+                    raise BriefError(f"第 {index} 张精确排字位置：{exc}") from exc
+                for entry in text_spec.get("items") or []:  # 海报精确排字默认按底色选字色、要求文字区干净
+                    if isinstance(entry, dict) and (text_spec.get("mode") == "overlay" or entry.get("render") == "overlay") \
+                            and entry.get("role") != "seal" and not entry.get("spans"):
+                        entry.setdefault("color", "auto")
+                        entry.setdefault("require_clean", True)
+                if text_spec.get("mode") == "hybrid" and not text_spec.get("reserve"):
+                    # 只留精确排字那几块（坐标在版式段里列出）；不能笼统说「版式文字区」，否则模型连主标题也不画
+                    text_spec["reserve"] = ("only the exact-text areas listed with coordinates in the poster layout instructions "
+                                            "(the main title is NOT in them and must still be drawn as instructed)")
             from .overlay import validate as validate_overlay
             problems = validate_overlay(text_spec)
             if problems:
@@ -143,7 +181,18 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
             purpose += "\nTextbook constraints: " + " ".join(constraints)
         manifest = {"style": chosen["code"], "format": fmt, "model": model, "palette": palette,
                     "references": references, **({"use_anchor": False} if any(r["role"] == "style" for r in references) else {}),
-                    "content": {"subject": item["visual"], "purpose": purpose}, "text": text_spec}
+                    "content": {"subject": item["visual"], "purpose": purpose}, "text": text_spec,
+                    **poster_fields, **({"scene": scene} if uses_layout else {})}
+        if card_fields is not None:
+            manifest["content"]["subject"] = item["visual"].strip() + " " + card_fields["content"]["subject"]
+            manifest["content"]["inventory"] = card_fields["content"]["inventory"]
+            if card_fields["content"].get("lighting"):
+                manifest["content"]["lighting"] = card_fields["content"]["lighting"]
+        for field in ("inventory", "lighting"):
+            if field in item:
+                if not isinstance(item[field], str) or not item[field].strip():
+                    raise BriefError(f"第 {index} 张 {field} 必须是非空文字")
+                manifest["content"][field] = item[field]
         if "use_anchor" in brief:
             manifest["use_anchor"] = brief["use_anchor"] and not any(r["role"] == "style" for r in references)
         for field in ("points", "panels"):
@@ -160,6 +209,9 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
                 manifest["content"][field] = item[field]
         for field in ("structure", "density"):
             if expression.get(field, "auto") != "auto":
+                manifest[field] = expression[field]
+        for field in ("poster_layout", "variant"):
+            if expression.get(field) and field not in item and field not in brief:
                 manifest[field] = expression[field]
         compiled = CP.compile_manifest(manifest)
         refs = [{**r, "sha256": _sha(Path(r["path"]))} for r in compiled.references]
@@ -196,7 +248,7 @@ def execution_card(task: dict, source: dict | None = None) -> dict:
                            "referenced_image_paths": [r["path"] for r in task["references"]],
                            "transparent_background": bool(D.formats()[manifest["format"]].get("transparent"))},
         "prompt_sha256": task["prompt_sha256"], "generation_size": compiled["size"],
-        "export_px": D.formats()[manifest["format"]]["export_px"],
+        "export_px": list(PO.custom_export_px(manifest, D.formats()[manifest["format"]]) or D.formats()[manifest["format"]]["export_px"]),
         "human_preflight": "核对原题遗漏、身份与材质参考职责、保留项与修改项冲突；此卡不证明已完成检查。",
         "visual_review": "not_run", "accepted": False,
     }
@@ -254,13 +306,15 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
                     raise BriefError("出图期间参考图发生变化，候选不可接受")
             fmt = task["manifest"]["format"]
             text_spec = task["manifest"]["text"]
-            exported = EX.export(raw, fmt, final, overlay=text_spec if text_spec["mode"] == "overlay" else None,
-                                 overlay_root=base_path)
+            custom = PO.custom_export_px(task["manifest"], D.formats()[fmt])
+            exported = EX.export(raw, fmt, final, overlay=text_spec if text_spec["mode"] in ("overlay", "hybrid") else None,
+                                 overlay_root=base_path,
+                                 size=(PO.actual_aspect(task["manifest"], D.formats()[fmt]), custom) if custom else None)
             with Image.open(final) as image:
                 actual_size = list(image.size)
                 alpha = image.convert("RGBA").getchannel("A").getextrema()
             problems = []
-            target = D.formats()[fmt]["export_px"]
+            target = list(custom) if custom else D.formats()[fmt]["export_px"]
             if actual_size != target:
                 problems.append(f"实际尺寸 {actual_size} 未达到配置目标 {target}，需核对平台要求")
             if not D.formats()[fmt].get("transparent") and alpha[0] != 255:

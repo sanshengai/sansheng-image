@@ -1,6 +1,6 @@
 {
   "code": "C93",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "年画木版敷彩",
     "en": "New Year Print Woodblock Colouring"
@@ -39,6 +39,10 @@
     "text_mode": [
       "none",
       "native"
+    ],
+    "poster_layouts": [
+      "axis",
+      "sky-title"
     ]
   },
   "palette": {
@@ -92,6 +96,12 @@
       "revision": 2,
       "date": "2026-10-16",
       "note": "参考图保持原尺寸，改用高质量 JPEG 以控制公开安装包体积；同步文件名和指纹。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 axis、sky-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -109,7 +119,8 @@
     "绘本",
     "文章插图",
     "信息图",
-    "封面"
+    "封面",
+    "海报"
   ],
   "abilities": {
     "character_consistency": "ok",
@@ -717,6 +728,21 @@
       "generation": {
         "revision": 1,
         "prompt_sha256": "850ca022061c942ddcadab8d209de27e9915d417c96c50983b01b8e173429847",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "7f0be79f722806465267951df8cc0fbbdff2da5cccaf876a268b1b34db01aaae",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "8e200f74128833ab37af77b98dce47beb97debfbc18e512213b339ad18f214bf",
         "attempts": 1,
         "picked_from": 1,
         "edited": false

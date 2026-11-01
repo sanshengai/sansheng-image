@@ -59,6 +59,34 @@ python3 scripts/sb.py export 底图.png --format infographic --overlay 叠字.js
 PPT / 课件如需可编辑文字，继续用 `text.mode = overlay` 和 `reserve`，不填 `box`，之后运行 `sb.py pptx --mode illustration`；批量导出的中间插画仍按无字图验收。
 
 
+### 自动折行、缺字兜底、自动字色与干净度
+
+- `wrap: true`：横排长段落按 box 宽度自动折行（西文按单词、中文按字），在 `font_px`→`min_px` 之间找能放下的最大字号；不能与 `spans` 同用。不写时仍只认 `\n` 换行。
+- 缺字兜底：所选字体缺某个字形（如中文黑体里没有土耳其文 İ ğ ş ı）时，整条改用能覆盖全部字符的候选字体；都缺就报错列出缺的字，不会渲染成方块。
+- `color: "auto"`：按文字区底色中位亮度选深字（#263432）或浅字（#F4EFE6）；不能与 `spans` 同用。
+- `require_clean: true`：先检查文字区是否是一块干净的底，偏离底色的像素超过 6% 就拒绝，提示改位置或重出底图，防止字压在主体、装饰或模型写的字上。
+- 海报场景的精确排字默认带 `color: "auto"` 与 `require_clean: true`；按版式补 box 时可写 `zone` 指定分区（如两个印章分别用 `seal` 与 `seal_place`）。
+
+### 竖排、印章、楷体与 light 字重
+
+`direction: "vertical"` 排竖排：自上而下，列从右往左换，每列字数由 box 高度与字号推出，`\n` 强制换列；列从 box 右缘起排。`line_gap` 是列距（横排则为行距）相对字号的倍数，默认 1.25，范围 1.0–3.0。竖排的 `align` 解释为列内对齐，取 `top`（默认）、`center`、`bottom`；`valign` 对竖排不起作用。竖排不支持 `spans`、`pill`、`effect: felt`。括号引号自动换竖排形（「→﹁ 』→﹄ （→︵ 《→︽ 等）；。，、落在字格右上；·与：居中；——、……、～旋转 90°；连续 ≤2 个半角字母数字横置于一格（纵中横），更长的半角串整体顺时针转 90° 占列中一段。列数超出 box 宽度或在 `min_px` 下仍放不下照旧报错拒绝。
+
+```json
+{"role":"title","text":"床前明月光，\n疑是地上霜。","box":[0.62,0.08,0.3,0.8],"direction":"vertical","font_family":"kai","font_px":64,"min_px":48,"align":"top","line_gap":1.3,"color":"#222222"}
+```
+
+`role: "seal"` 画印章，不按普通文字排：`seal.shape` 为 `square`（默认）或 `oval`，`seal.style` 为 `white`（默认，朱红实底、字镂空成底色，阴文）或 `red`（朱红边框与字，阳文）；默认色 `#B8322A`，可用 `color` 改。印文必须 2–6 个字，自动排成竖排 1–3 列（先读右列），字体用 `font_family` 的 `serif`（默认）或 `kai`，字重默认 `bold`。边缘有以印文哈希为种子的轻微残损，同输入同输出。印面就是 `box`，比例由 box 决定（2 字配瘦长盒，4 字配方盒）；印章不支持 `pill`、`spans`、`effect`，box 与其他 box 相交照旧拒绝。
+
+```json
+{"role":"seal","text":"叁笙画坊","box":[0.8,0.82,0.12,0.12],"seal":{"shape":"square","style":"white"},"font_family":"kai"}
+```
+
+`font_family: "kai"` 是楷体：macOS 找 Kaiti SC / STKaiti（该文件在系统字体资产目录里，路径含哈希，叠字器会扫描），Linux 找 AR PL UKai 或 LXGW WenKai，都找不到就明确报错，不换成宋体或黑体。`weight: "light"` 目前只有 `serif` 提供，macOS 按 face 名选 Songti SC Light（不按序号，因 ttc 内顺序随系统版本变）；缺该字重明确报错，不静默回退 regular。
+
+```json
+{"text":"慢慢来","box":[0.1,0.1,0.5,0.15],"font_family":"serif","weight":"light","font_px":72,"min_px":56}
+```
+
 ## 深色或指定色平底的精确文字预检（`blank_background`）
 
 `require_blank: true` 单独使用时，仍是原来的浅底检查：文字盒缩小后，亮度低于 170 的像素超过 2% 就拒绝。这条分支没有改动，纯深底仍会被它拒绝。

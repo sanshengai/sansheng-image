@@ -1,0 +1,123 @@
+{
+  "place": "厦门",
+  "country_label": "CHINA",
+  "landscape": [
+    {
+      "value": "环岛路海岸与厦门湾",
+      "source": "https://zh.wikipedia.org/zh-cn/厦门市",
+      "confidence": "medium"
+    },
+    {
+      "value": "白鹭栖息的筼筜湖",
+      "source": "https://zh.wikipedia.org/zh-cn/筼筜湖",
+      "confidence": "medium"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "鼓浪屿",
+      "source": "https://zh.wikipedia.org/zh-cn/鼓浪屿",
+      "confidence": "high"
+    },
+    {
+      "value": "南普陀寺",
+      "source": "https://zh.wikipedia.org/zh-cn/南普陀寺",
+      "confidence": "high"
+    },
+    {
+      "value": "胡里山炮台",
+      "source": "https://zh.wikipedia.org/zh-cn/胡里山炮台",
+      "confidence": "high"
+    }
+  ],
+  "architecture": {
+    "value": "中山路一带的闽南骑楼与鼓浪屿多元风格建筑",
+    "source": "https://zh.wikipedia.org/zh-cn/厦门市",
+    "confidence": "medium"
+  },
+  "heritage": [
+    {
+      "value": "厦门漆线雕技艺",
+      "source": "https://zh.wikipedia.org/zh-cn/漆线雕",
+      "confidence": "high"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "漆线雕",
+      "source": "https://zh.wikipedia.org/zh-cn/漆线雕",
+      "confidence": "high"
+    }
+  ],
+  "foods": [
+    {
+      "value": "沙茶面",
+      "source": "https://zh.wikipedia.org/zh-cn/沙茶面",
+      "confidence": "medium"
+    },
+    {
+      "value": "土笋冻",
+      "source": "https://zh.wikipedia.org/zh-cn/土笋冻",
+      "confidence": "medium"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "三角梅",
+      "source": "https://zh.wikipedia.org/zh-cn/厦门市",
+      "confidence": "high"
+    },
+    {
+      "value": "白鹭",
+      "source": "https://zh.wikipedia.org/zh-cn/厦门市",
+      "confidence": "high"
+    }
+  ],
+  "season_light": {
+    "value": "海滨明亮的海风与午后光线，亚热带海洋性季风气候",
+    "source": "https://zh.wikipedia.org/zh-cn/厦门市",
+    "confidence": "medium"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "漆线雕艺人",
+    "action": "用手工搓出的漆线盘绕、堆塑龙纹",
+    "costume": "工作围裙与袖套，案上摆放漆线与雕刻工具",
+    "ethnicity_region": "汉族 · 闽南厦门",
+    "source": "https://zh.wikipedia.org/zh-cn/漆线雕",
+    "confidence": "medium"
+  },
+  "palette": {
+    "main": [
+      "#F2EBDD",
+      "#2A5F7A"
+    ],
+    "accent": [
+      "#C6523A",
+      "#E0B050",
+      "#7DB0A6"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "seal": "海岛琴韵",
+    "name_en": "XIAMEN · CHINA",
+    "title": "鹭岛琴声",
+    "seal_place": "中国厦门",
+    "subtitle": [
+      "鼓浪屿 · 骑楼 · 海",
+      "漆线雕里 · 闽南手艺"
+    ],
+    "intro_zh": [
+      "海风吹过骑楼长廊",
+      "钢琴声从老洋楼里飘出",
+      "白鹭在湖面掠过"
+    ],
+    "place_en": "XIAMEN, FUJIAN, CHINA",
+    "intro_en": "Xiamen faces the sea with its arcaded old streets, the island of Gulangyu and a temple beneath the hills. Lacquer-thread carving is one of the local crafts that carries Minnan skill into the present.",
+    "closing": [
+      "海岛 · 骑楼",
+      "A city of sea and song."
+    ]
+  }
+}

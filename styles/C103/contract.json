@@ -1,0 +1,239 @@
+{
+  "code": "C103",
+  "revision": 2,
+  "name": {
+    "zh": "圆域人物",
+    "en": "Circle-Field Portrait Editorial"
+  },
+  "family": "摄影写实",
+  "fit": [
+    "封面"
+  ],
+  "facets": {
+    "medium": "人物摄影 · 大圆空间编辑海报",
+    "density": "极简留白"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "Original technique specification; inspiration: fashion editorial posters with circular framing",
+    "license": "original",
+    "notes": "2026-11 参考公众号文章《如何用AI生成高级人物海报？圆形框景构图》的四种圆形手法思路，配方自写；不复制原提示词全文，不使用原文图片。"
+  },
+  "essence": [
+    "真实高级人物摄影与当代编辑设计",
+    "一个大尺度圆形视觉场真正改变空间，人物进入圆的结构",
+    "缩成小图仍一眼看出：人物 + 大圆 + 空间变化"
+  ],
+  "recipe": {
+    "positive": "Vertical fashion editorial poster: premium, natural portrait photography combined with contemporary editorial design. One large circular visual field dominates the composition and genuinely changes the space rather than sitting behind the person as decoration: the person physically enters the circle's structure, so the face, a hand, the body or the cast shadow crosses, overlaps or is cut by the circle's edge, and inside versus outside the circle differ clearly in light, colour, transparency, scale or viewpoint. Use exactly one circular mechanism in the picture. Light, shadow, transparency, refraction and reflection follow real physics. Skin, hair and clothing look natural, never CGI; clean large colour fields; about twenty percent effective negative space for typography. Even as a small thumbnail the picture reads instantly as person, big circle and a visible change of space. No HUD graphics, no neon rings, no exaggerated distortion, no extra circles.",
+    "text_mode": [
+      "native",
+      "hybrid",
+      "overlay",
+      "none"
+    ],
+    "text_style": "Use only the requested exact text: a modern high-contrast Chinese headline in a bold Song or heavy serif face, an elegant serif English line and a few small theme words, aligned to the open area and never crossing the face. No logos, QR codes, numbers or copyright marks unless requested.",
+    "poster_layouts": [
+      "sky-title",
+      "axis",
+      "type-led"
+    ],
+    "ratio_range": [
+      0.5,
+      1.0
+    ],
+    "variants": {
+      "light-cut": {
+        "zh": "光落成界",
+        "default": true,
+        "en": "Circular mechanism — light cut: a large circular pool of light on the wall or floor; the person stands half inside the light and half in shadow, and the cast shadow is cleanly cut by the circle's edge."
+      },
+      "dual-glass": {
+        "zh": "两界之间",
+        "en": "Circular mechanism — two translucent discs: one coloured translucent disc in front of the person and another behind; where they overlap the body and each other they create new mixed colours, and the person's hand reaches through or touches the front disc."
+      },
+      "lens": {
+        "zh": "折光之间",
+        "en": "Circular mechanism — lens: a large clear optical lens or glass disc in front of part of the person subtly magnifies or shifts that part and the background behind it with physically correct refraction; restrained, never grotesque."
+      },
+      "mirror": {
+        "zh": "另一种我",
+        "en": "Circular mechanism — round mirror: a large round mirror shows the same person from a different angle or a revealing detail; the reflection keeps exactly the same identity, clothing and lighting logic."
+      }
+    }
+  },
+  "composition": {
+    "negative_space": "about 20% effective empty area reserved for typography",
+    "subject": "one person and one large circle; the person's face, hand, body or shadow crosses the circle's edge"
+  },
+  "type": {
+    "direction": [
+      "horizontal"
+    ],
+    "face": "bold Song or heavy serif Chinese headline with elegant serif English"
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "人物真正进入圆的结构，脸、手、身体或影子与圆边发生关系",
+      "圆内与圆外在光线、颜色、透明度、比例或视角上明显不同",
+      "人物皮肤头发服装自然，光影折射镜像符合物理"
+    ],
+    "must_not_see": [
+      "背景随手贴个圆、PPT 感、科技 HUD、霓虹圆环",
+      "同时出现多个圆形机制、夸张变形、错误镜像",
+      "CGI 塑料感、未请求的小字、Logo、二维码、编号"
+    ],
+    "fix_phrases": [
+      "保留人物和配色，只让圆边穿过人物的手或影子",
+      "只保留一个圆形机制，去掉其余的圆",
+      "镜中人物保持同一身份和服装，修正镜像方向"
+    ]
+  },
+  "evidence": {
+    "admission": "pending",
+    "model": "尚未实测",
+    "date": "2026-11-01",
+    "notes": "新增画风，仅完成合同校验；样图与看图结论见执行记录。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-11-01",
+      "note": "新增：圆域人物编辑海报（四种圆形手法变体，仅竖版与方形），准入待验证"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "3:4 与 1:1 试图通过，用途加小红书、音乐封面",
+      "samples_unaffected": true
+    }
+  ],
+  "inspiration": {
+    "names": [
+      "时尚 Editorial 人物海报"
+    ],
+    "prompt": "时尚 Editorial 人物海报"
+  },
+  "uses": [
+    "海报",
+    "小红书",
+    "音乐封面"
+  ],
+  "renderer": "codex",
+  "samples": [
+    {
+      "topic": "时尚编辑海报：两界之间",
+      "file": "samples/pst-dual-glass.webp",
+      "source_sha256": "0f11548886fbb89963ce88e687c515531681525055997b8e707102f9af26e208",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "41fc192b45b5bc645d1499b1838ccf4cd17eda40f85e8406f3e0c80e878f5c19",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "时尚编辑海报：另一种我",
+      "file": "samples/pst-mirror.webp",
+      "source_sha256": "a8cb5703c13e6ce5169f12517f5b6b1f74f2aacf2e84daa7700ac66eabf2100b",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "13563931336d3154b95af2632fcd915413b29d8e5583a3315bb277df33b3969f",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "穿搭笔记封面",
+      "file": "samples/xhs.webp",
+      "source_sha256": "2efb3a2b63539fbbc47bd40db65331a169ac666ff8d1c00d609aa4a1c83a75e5",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "63c3356d3487ddd8e0c57305f8ae41d3029758c27b38777dc2a5c9f757d42a26",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "城市夜色单曲封面",
+      "file": "samples/au.webp",
+      "source_sha256": "674982c8057d46648fc313cc2369bf4d9f47fa7194b5f5273af830a02d110d71",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.0,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "b1d69d3b8b378bab88599419a00fef99b278a5a7ba101b45018ad02aa07aea89",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "时尚编辑海报：光落成界",
+      "file": "samples/pst-light-cut.webp",
+      "source_sha256": "07f447d081106e53a639796f856556f286b8e32a6ad80b3577fb61c7667cb01c",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "1cb30bafd579b560197c199ff62e1ef49ba45022b87fdd51252ab0d49ad50f74",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "时尚编辑海报：折光之间",
+      "file": "samples/pst-lens.webp",
+      "source_sha256": "f59b9c12008a9a263cb102fd0fb2207635ce1744675be6961518c3ec34d9025a",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "8cb52dbeee12943a96bdf03fe1ee7f7447ccbed4e45ac1733df0f4ec1e8f0c29",
+        "attempts": 4,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "风格参考板",
+      "file": "samples/bd.webp",
+      "source_sha256": "3883faf9d0141ba5ae2ca46869039ecf5575c628e0740c24644f5ddb80bc8206",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.5,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "672ea407b7c98f1ef215e3807e1512e97a29589f4ecd38733292f6dafeacb567",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    }
+  ],
+  "anchor": {
+    "file": "anchor.png",
+    "sha256": "10c7333a2046cfa6839303da49a99fa15dc979c060b175bef507535b825c3800",
+    "enabled": true,
+    "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
+  }
+}

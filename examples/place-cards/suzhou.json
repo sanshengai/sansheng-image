@@ -1,0 +1,129 @@
+{
+  "place": "苏州",
+  "country_label": "CHINA",
+  "landscape": [
+    {
+      "value": "金鸡湖",
+      "source": "https://zh.wikipedia.org/zh-cn/金鸡湖",
+      "confidence": "high"
+    },
+    {
+      "value": "太湖西山岛",
+      "source": "https://zh.wikipedia.org/zh-cn/太湖",
+      "confidence": "high"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "拙政园",
+      "source": "https://zh.wikipedia.org/zh-cn/拙政园",
+      "confidence": "high"
+    },
+    {
+      "value": "虎丘",
+      "source": "https://zh.wikipedia.org/zh-cn/虎丘",
+      "confidence": "high"
+    },
+    {
+      "value": "山塘街",
+      "source": "https://zh.wikipedia.org/zh-cn/山塘街",
+      "confidence": "high"
+    }
+  ],
+  "architecture": {
+    "value": "粉墙黛瓦的江南水巷民居与古典私家园林，亭台漏窗、小桥流水",
+    "source": "https://www.gujianchina.cn/quote/show-4230.html",
+    "confidence": "medium"
+  },
+  "heritage": [
+    {
+      "value": "苏州评弹",
+      "source": "https://zh.wikipedia.org/zh-cn/评弹",
+      "confidence": "high"
+    },
+    {
+      "value": "昆曲",
+      "source": "https://zh.wikipedia.org/zh-cn/昆曲",
+      "confidence": "high"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "苏绣（劈丝细绣）",
+      "source": "http://m.mpsj.com.cn/local/10/82CF7EE3.html",
+      "confidence": "high"
+    }
+  ],
+  "foods": [
+    {
+      "value": "松鼠鳜鱼",
+      "source": "https://zh.wikipedia.org/zh-cn/松鼠鳜鱼",
+      "confidence": "high"
+    },
+    {
+      "value": "碧螺春",
+      "source": "https://zh.wikipedia.org/zh-cn/碧螺春",
+      "confidence": "high"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "桂花",
+      "source": "https://zh.wikipedia.org/zh-cn/苏州市",
+      "confidence": "high"
+    },
+    {
+      "value": "香樟（市树）",
+      "source": "https://zh.wikipedia.org/zh-cn/苏州市",
+      "confidence": "high"
+    }
+  ],
+  "season_light": {
+    "value": "江南烟雨与柔和的漫射天光，水面倒映粉墙黛瓦",
+    "source": "https://zh.wikipedia.org/zh-cn/苏州市",
+    "confidence": "low"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "苏绣绣娘",
+    "action": "坐在绣绷前，用劈细的蚕丝线一针一针绣制花鸟",
+    "costume": "素色棉麻上衣，袖口收窄，便于绣作；绣架与彩色丝线置于身旁",
+    "ethnicity_region": "汉族 · 江南苏州",
+    "source": "http://m.mpsj.com.cn/local/10/82CF7EE3.html",
+    "confidence": "medium"
+  },
+  "palette": {
+    "main": [
+      "#EDEBE3",
+      "#2F3A3E"
+    ],
+    "accent": [
+      "#5E8C7B",
+      "#B8473B",
+      "#D9A441"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "seal": "水巷园林",
+    "name_en": "SUZHOU · CHINA",
+    "title": "枕水听弹",
+    "seal_place": "中国苏州",
+    "subtitle": [
+      "粉墙黛瓦 · 园林深处",
+      "评弹一曲 · 苏绣千针"
+    ],
+    "intro_zh": [
+      "小桥流水人家",
+      "园中一步一景",
+      "吴侬软语入耳",
+      "丝线劈细成绣"
+    ],
+    "place_en": "SUZHOU, JIANGSU, CHINA",
+    "intro_en": "Whitewashed walls and gray-tiled roofs line the canals of Suzhou, where classical gardens open one scene after another. Pingtan storytelling and silk embroidery keep the unhurried rhythm of Jiangnan alive.",
+    "closing": [
+      "园林 · 评弹",
+      "Where water becomes poetry."
+    ]
+  }
+}

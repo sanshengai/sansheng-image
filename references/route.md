@@ -10,6 +10,8 @@
 | 给文章配图、文章插图、推特单图 | [scenes/wxillus.md](scenes/wxillus.md) | article-summary / article-summary-tall |
 | 小红书、微博、图文笔记 | [scenes/xhs.md](scenes/xhs.md) | xhs-cover / xhs-carousel |
 | 整页图片型 PPT、把文档做成 PPT | [scenes/ppt.md](scenes/ppt.md) | ppt |
+| 海报、活动海报、电梯海报、展板、朋友圈海报、展览或演出主视觉 | [scenes/poster.md](scenes/poster.md) | poster-*（7 种尺寸） |
+| 文旅海报、家乡海报、城市海报、旅行海报（某个地方的风物长卷） | [scenes/poster.md](scenes/poster.md) + [scenes/place-poster.md](scenes/place-poster.md) | poster-* / wechat-cover-head |
 | 信息图、干货图、一图看懂 | [scenes/info.md](scenes/info.md) | infographic |
 | 漫画、四格、条漫、知识漫画 | [scenes/comic.md](scenes/comic.md) | comic-* |
 | AI 短剧分镜、视频分镜首帧、角色三视图 | [scenes/storyboard.md](scenes/storyboard.md) | storyboard-frame |

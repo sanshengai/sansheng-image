@@ -164,3 +164,26 @@ def test_registered_sample_without_ratio_or_file_is_rejected(tmp_path, monkeypat
     cp.parent.mkdir()
     files = BD._sample_files("C99", cp)
     assert files["cv"][1] is None and not files["cv"][0].is_file()
+
+
+def _index_entries():
+    out = subprocess.check_output(["git", "ls-files", "-s", "-z"], cwd=ROOT).decode("utf-8")
+    return [(row.split(" ", 1)[0], row.split("\t", 1)[1]) for row in out.split("\0") if row]
+
+
+def test_every_repo_path_the_runtime_reads_ships_in_public_package():
+    """运行代码按 ROOT / "<名字>" 读的仓内路径，公开包都要带（2026-11-01：layouts/ 漏出白名单，发布后海报会直接报错）。"""
+    import re
+    code = "\n".join(p.read_text(encoding="utf-8") for p in [ROOT / "scripts/sb.py", *sorted((ROOT / "scripts/stylebook").glob("*.py"))])
+    names = set(re.findall(r'\bROOT / "([A-Za-z_.-]+)"', code)) - {"out"}   # out/ 是出图输出目录
+    assert {"layouts", "styles", "registry.json"} <= names, names
+    selected = PE.select(_index_entries())
+    missing = sorted(n for n in names if not any(p == n or p.startswith(n + "/") for p in selected))
+    assert not missing, f"运行代码读取但公开包不带：{missing}"
+
+
+def test_runtime_path_check_catches_a_dropped_directory(monkeypatch):
+    """反例：把 layouts/ 从白名单拿掉，上面的检查必须失败。"""
+    monkeypatch.setattr(PE, "PUBLIC_DIRS", tuple(d for d in PE.PUBLIC_DIRS if d != "layouts/"))
+    with pytest.raises(AssertionError, match="layouts"):
+        test_every_repo_path_the_runtime_reads_ships_in_public_package()

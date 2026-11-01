@@ -273,6 +273,18 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .chip:disabled, .chip.off { opacity: .38; text-decoration: line-through; cursor: not-allowed; }
 .chip:disabled:hover { border-color: var(--line); }
 .dlg-usenote { margin-top: 8px; font-size: 13px; color: var(--mut); }
+/* 尺寸、海报版式、信息量、手法：和色系同一套 chip */
+.dlg-opts { margin-top: 12px; display: grid; gap: 8px; }
+.dlg-opts[hidden], .dlg-opts [hidden] { display: none; }
+.opt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.opt-row .tune-lbl { flex: none; min-width: 3em; }
+.opt-row .chip { min-height: 34px; padding: 3px 11px; font-size: 13px; }
+.chip.chip-fmt { white-space: normal; text-align: left; line-height: 1.35; }
+.wire-wrap { display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+.wire { position: relative; flex: none; width: 96px; aspect-ratio: 3 / 4; border: 1px solid var(--line-2); border-radius: 3px; }
+.wire i { position: absolute; border: 1px dashed var(--green); border-radius: 2px; font: normal 10px/1.2 var(--sans); color: var(--mut); overflow: hidden; padding: 1px 2px; box-sizing: border-box; }
+.wire-note { margin: 0; font-size: 13px; color: var(--mut); min-width: 0; }
+.dlg-cap .dlg-trial { margin-left: 8px; padding: 0 6px; border: 1px solid var(--line-2); border-radius: 3px; font-size: 12px; color: var(--mut); }
 .dlg-also { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--mut); }
 .dlg-also:empty { display: none; }
 .dlg-also .chip { min-height: 32px; padding: 2px 10px; font-size: 13px; }
@@ -1133,6 +1145,16 @@ body::before {
       <p class="dlg-h">① 用在哪</p>
       <div class="chips-wrap" id="dlg-uses" role="group" aria-label="用在哪"></div>
       <p class="dlg-usenote" id="dlg-usenote"></p>
+      <div class="dlg-opts" id="dlg-opts" hidden>
+        <div class="opt-row" id="opt-fmt" role="group" aria-label="尺寸" hidden></div>
+        <div class="opt-row" id="opt-layout" role="group" aria-label="版式" hidden></div>
+        <div class="opt-row" id="opt-info" role="group" aria-label="信息量" hidden></div>
+        <div class="opt-row" id="opt-variant" role="group" aria-label="手法" hidden></div>
+        <div class="wire-wrap" id="opt-wirewrap" hidden>
+          <div class="wire" id="opt-wire" aria-hidden="true"></div>
+          <p class="wire-note" id="opt-wire-note"></p>
+        </div>
+      </div>
 
       <p class="dlg-h">② 色系</p>
       <p class="dlg-recolor" id="dlg-recolor"></p>
@@ -1245,8 +1267,8 @@ body::before {
     sb: ['角色三视图', '竖屏镜头 1', '竖屏镜头 2', '横屏电影感'],
     cv: ['封面', '方形版', 'X 版 16:9']
   };
-  var IMG_GROUPS = [['cv', '封面'], ['au', '音乐封面'], ['xhs', '小红书'], ['wxi', '文章插图'], ['inf', '信息图'], ['ppt', 'PPT'], ['comic', '漫画'], ['sb', 'AI 短剧分镜'], ['bd', '风格档案'], ['same', '同题对比'], ['anchor', '原作参考']];
-  var GROUP_KINDS = { cv: ['cv'], au: ['au'], xhs: ['xhs'], wxi: ['wxi', 'wxt', 'wxx'], inf: ['inf'], ppt: ['ppt'], comic: ['cm', 'cx', 'ce'], sb: ['sb'], bd: ['bd'], same: ['s1', 's2', 's3'], anchor: ['anchor'] };
+  var IMG_GROUPS = [['poster', '海报'], ['cv', '封面'], ['au', '音乐封面'], ['xhs', '小红书'], ['wxi', '文章插图'], ['inf', '信息图'], ['ppt', 'PPT'], ['comic', '漫画'], ['sb', 'AI 短剧分镜'], ['bd', '风格档案'], ['same', '同题对比'], ['anchor', '原作参考']];
+  var GROUP_KINDS = { poster: ['pst'], cv: ['cv'], au: ['au'], xhs: ['xhs'], wxi: ['wxi', 'wxt', 'wxx'], inf: ['inf'], ppt: ['ppt'], comic: ['cm', 'cx', 'ce'], sb: ['sb'], bd: ['bd'], same: ['s1', 's2', 's3'], anchor: ['anchor'] };
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1259,6 +1281,7 @@ body::before {
 
   var DATA = null, styles = [], styleById = {}, sceneList = [], sceneById = {}, palettes = [], paletteById = {};
   var kinds = KINDS_DEFAULT, kindLabels = LABELS_DEFAULT, palCompare = {}, palShots = {}, ratios = {}, prov = {}, firstScene = '';
+  var formatMeta = {}, posterLayouts = [], posterLayoutById = {}, posterInfo = {}, posterKinds = {};   // 海报与尺寸数据；旧数据没有这些字段时整块不出现
   var libState = { scene: 'wxcover', palette: 'orig', light: 0, sat: 0, hex: [], q: '', region: '', era: '', dynasty: '', family: '' };
   /* 地域 / 时代 / 朝代 / 风格分类：选项只取页面数据 taxonomy 词表里确有画风的值；空值＝全部，各维度取交集 */
   var TAX_DIMS = [['region', '地域', '全部地域'], ['era', '时代', '全部时代'], ['dynasty', '朝代', '全部朝代'], ['family', '风格分类', '全部分类']];
@@ -1334,7 +1357,7 @@ body::before {
   function imgPath(s, key) { return assetUrl(s.id + '-' + (key || imgKey(s)) + '.webp'); }
 
   /* ---------- 样图分组（与现役 picker 一致） ---------- */
-  function baseKind(k) { return k.replace(/-\d+$/, ''); }
+  function baseKind(k) { return /^pst-[a-z]/.test(k) ? 'pst' : k.replace(/-\d+$/, ''); }   // pst-suzhou 这类具名海报样张归 pst，pst-2 照旧去序号
   function groupOf(k) {
     var b = baseKind(k);
     var keys = Object.keys(GROUP_KINDS);
@@ -1347,9 +1370,11 @@ body::before {
       if (c.imgs.indexOf(b) !== -1) out.push(b);
       for (var i = 2; i <= 12; i++) if (c.imgs.indexOf(b + '-' + i) !== -1) out.push(b + '-' + i);
     });
+    if (g === 'poster') (c.imgs || []).forEach(function (k) { if (posterKinds[k] && out.indexOf(k) === -1) out.push(k); });   // 城市、手法样张：有几张显示几张
     return out;
   }
   function stemLabel(k) {
+    if (posterKinds[k]) return posterKinds[k].name + (posterKinds[k].experimental ? '（试验）' : '');
     var b = baseKind(k), m = k.match(/-(\d+)$/), n = +(m ? m[1] : 1);
     var t = b === 'anchor' ? '原作参考' : (kinds[b] || b);
     var L = kindLabels[b];
@@ -1360,8 +1385,14 @@ body::before {
     var c = styleById[styleId], sc = sceneById[sceneId];
     if (!c) return 's1';
     var g = sc && groupOf(sc.sample);
-    var order = [sc && sc.sample].concat(g ? GROUP_KINDS[g] : [], ['s1', 'cv', 'xhs', 'wxi', 'ppt', 'inf', 'cm', 'cx', 'ce']);
-    for (var i = 0; i < order.length; i++) if (order[i] && c.imgs.indexOf(order[i]) !== -1) return order[i];
+    var own = [sc && sc.sample].concat(g ? GROUP_KINDS[g] : []);
+    for (var j = 0; j < own.length; j++) if (own[j] && c.imgs.indexOf(own[j]) !== -1) return own[j];
+    if (g) {   // 只有城市、手法样张（C102、C103）时用本用途的样张，不退回别的用途；试验样张排后
+      var named = stems(c, g).sort(function (a, b) { return (posterKinds[a] && posterKinds[a].experimental ? 1 : 0) - (posterKinds[b] && posterKinds[b].experimental ? 1 : 0); });
+      if (named.length) return named[0];
+    }
+    var order = ['s1', 'cv', 'xhs', 'wxi', 'ppt', 'inf', 'cm', 'cx', 'ce'];
+    for (var i = 0; i < order.length; i++) if (c.imgs.indexOf(order[i]) !== -1) return order[i];
     return c.imgs[0] || 's1';
   }
 
@@ -1380,6 +1411,9 @@ body::before {
   function codeOk(st) { var e = eff(st); return !(e.pal === 'brand' && !e.hex.length); }
   function applyCode(st, sceneId) {
     var e = eff(st), s = 'sb2:' + sceneId + '/' + st.id;
+    var ps = posterSel(st, sceneId);
+    if (ps.layout) s += '~' + ps.layout;                    // ~版式、+手法 与 stylecode.py 的解析一致，写在色系之前
+    if (ps.variant) s += '+' + ps.variant;
     if (e.pal === 'brand') { if (e.hex.length) s += '-hex.' + e.hex.join('.'); }
     else if (e.pal !== 'orig') { s += '-' + e.pal; if (e.light || e.sat) s += '.L' + e.light + 'S' + e.sat; }
     return s;
@@ -1393,7 +1427,118 @@ body::before {
   /* 复制给 AI 的完整人话（与现役 picker.onceText 同句式） */
   function onceText(st, sceneId) {
     var sc = sceneById[sceneId];
-    return '用叁笙生图帮我出一组' + (sc ? sc.name : '图片') + '：画风 ' + st.id + ' ' + st.name + '，色系「' + palLabel(st) + '」（' + applyCode(st, sceneId) + '）。内容是：';
+    var extra = optionsText(st, sceneId);
+    return '用叁笙生图帮我出一组' + (sc ? sc.name : '图片') + '：画风 ' + st.id + ' ' + st.name + '，色系「' + palLabel(st) + '」' + extra + '（' + applyCode(st, sceneId) + '）。内容是：';
+  }
+
+  /* ---------- 尺寸、海报版式、信息量、手法（详情里“用在哪”下面的一排排 chip） ---------- */
+  var dlgFmt = '', dlgLayout = '', dlgInfo = '', dlgVariant = '';
+  var ZONE_NAMES = { title: '标题', subtitle: '副题', line: '短句', info: '信息', date: '时间', place: '地点', host: '主办', qr: '二维码', year: '年份', seal: '印章', intro_zh: '介绍', closing: '结语' };
+  function sceneIsPoster(sceneId) { var sc = sceneById[sceneId]; return !!(sc && sc.layout && posterLayouts.length); }
+  function layoutsFor(st) {
+    var ids = st.posterLayouts || ['sky-title', 'axis'];
+    return ids.map(function (id) { return posterLayoutById[id]; }).filter(Boolean);
+  }
+  function infoFor(st, layout) {
+    return Object.keys(posterInfo).filter(function (k) {
+      var only = posterInfo[k].only;
+      if (only && only.indexOf(st.id) === -1) return false;       // 文旅型只在 C102 下出现
+      if (!layout) return true;
+      return (layout.info || []).indexOf(k) !== -1;
+    });
+  }
+  function variantsOf(st) { return (st && st.variants) || []; }
+  function normalizeOptions(st) {
+    var fm = sceneById[useFor] && sceneById[useFor].formats || [];
+    if (dlgFmt && fm.indexOf(dlgFmt) === -1) dlgFmt = '';
+    if (!sceneIsPoster(useFor)) { dlgLayout = dlgInfo = dlgVariant = ''; return; }
+    var ls = layoutsFor(st);
+    if (!ls.some(function (l) { return l.id === dlgLayout; })) dlgLayout = ls[0] ? ls[0].id : '';
+    var lay = posterLayoutById[dlgLayout];
+    var is = infoFor(st, lay);
+    if (is.indexOf(dlgInfo) === -1) dlgInfo = is[0] || '';
+    var vs = variantsOf(st);
+    if (!vs.some(function (v) { return v.id === dlgVariant; })) {
+      var dv = vs.filter(function (v) { return v.default; })[0] || vs[0];
+      dlgVariant = dv ? dv.id : '';
+    }
+  }
+  function posterSel(st, sceneId) {
+    if (!sceneIsPoster(sceneId) || sceneId !== useFor || !st || st !== dlgStyle) return { layout: '', variant: '' };
+    return { layout: dlgLayout, variant: variantsOf(st).length ? dlgVariant : '' };
+  }
+  function optionsText(st, sceneId) {
+    if (sceneId !== useFor || st !== dlgStyle) return '';
+    var parts = [];
+    if (dlgFmt && formatMeta[dlgFmt]) parts.push('尺寸「' + formatMeta[dlgFmt].label + '」');
+    if (sceneIsPoster(sceneId)) {
+      var l = posterLayoutById[dlgLayout];
+      if (l) parts.push('版式「' + l.name + '」');
+      if (dlgInfo && posterInfo[dlgInfo]) parts.push('信息量「' + posterInfo[dlgInfo].name + '」');
+      var v = variantsOf(st).filter(function (x) { return x.id === dlgVariant; })[0];
+      if (v) parts.push('手法「' + v.name + '」');
+    }
+    return parts.length ? '，' + parts.join('，') : '';
+  }
+  function optRow(box, label, items, current, onPick, cls) {
+    box.textContent = '';
+    box.hidden = !items.length;
+    if (!items.length) return;
+    box.appendChild(h('span', { class: 'tune-lbl', text: label }));
+    items.forEach(function (it) {
+      var b = h('button', { class: 'chip' + (cls ? ' ' + cls : ''), type: 'button', 'data-v': it[0], 'aria-pressed': it[0] === current ? 'true' : 'false', text: it[1] });
+      if (it[2]) b.title = it[2];
+      b.addEventListener('click', function () { onPick(it[0]); });
+      box.appendChild(b);
+    });
+  }
+  function renderWire() {
+    var wrap = $('#opt-wirewrap'), wire = $('#opt-wire');
+    var lay = sceneIsPoster(useFor) ? posterLayoutById[dlgLayout] : null;
+    wrap.hidden = !lay;
+    wire.textContent = '';
+    if (!lay) return;
+    Object.keys(lay.zones || {}).forEach(function (zk) {
+      var z = lay.zones[zk];
+      if (!z || z.length !== 4) return;
+      var box = h('i', { text: z[2] > 0.18 && z[3] > 0.07 ? (ZONE_NAMES[zk] || zk) : '' });
+      box.style.cssText = 'left:' + (z[0] * 100) + '%;top:' + (z[1] * 100) + '%;width:' + (z[2] * 100) + '%;height:' + (z[3] * 100) + '%';
+      box.title = ZONE_NAMES[zk] || zk;
+      wire.appendChild(box);
+    });
+    $('#opt-wire-note').textContent = '「' + lay.name + '」示意：虚线框是文字区，主体画面避开这些位置。';
+  }
+  function renderOptions() {
+    var st = dlgStyle, box = $('#dlg-opts');
+    if (!st) return;
+    normalizeOptions(st);
+    var sc = sceneById[useFor];
+    var fm = (sc && sc.formats || []).filter(function (f) { return formatMeta[f]; });
+    optRow($('#opt-fmt'), '尺寸', fm.map(function (f) { return [f, formatMeta[f].label]; }), dlgFmt, function (v) {
+      dlgFmt = dlgFmt === v ? '' : v; renderOptions(); refreshCopy();
+    }, 'chip-fmt');
+    var poster = sceneIsPoster(useFor);
+    if (poster) {
+      var ls = layoutsFor(st);
+      optRow($('#opt-layout'), '版式', ls.map(function (l) { return [l.id, l.name]; }), dlgLayout, function (v) {
+        dlgLayout = v; renderOptions(); refreshCopy();
+      });
+      var is = infoFor(st, posterLayoutById[dlgLayout]);
+      optRow($('#opt-info'), '信息量', is.map(function (k) { return [k, posterInfo[k].name, posterInfo[k].note]; }), dlgInfo, function (v) {
+        dlgInfo = v; renderOptions(); refreshCopy();
+      });
+      var vs = variantsOf(st);
+      optRow($('#opt-variant'), '手法', vs.map(function (v) { return [v.id, v.name]; }), dlgVariant, function (v) {
+        dlgVariant = v;
+        var vv = vs.filter(function (x) { return x.id === v; })[0];
+        if (vv && vv.sample && (st.imgs || []).indexOf(vv.sample) !== -1) dlgImg = vv.sample;   // 有这一手法的样张就切过去，没有就留在原图
+        renderOptions(); updateImages(); refreshCopy();
+      });
+    } else {
+      ['#opt-layout', '#opt-info', '#opt-variant'].forEach(function (id) { $(id).textContent = ''; $(id).hidden = true; });
+    }
+    renderWire();
+    box.hidden = !fm.length && !poster;
   }
 
   function copyToClipboard(text, btn, doneText, onFailure) {
@@ -2190,8 +2335,12 @@ body::before {
     }
     var shown = 0, gridEl = $('#lib-grid');
     var lis = styles.map(function (st) { return gridEl.querySelector('li[data-style="' + st.id + '"]'); }).filter(Boolean);
+    var guofeng = libState.family === '国风传统' ? ['C100', 'C101', 'C102'] : [];   // 选了「国风传统」分类时，海报三套国风画风排前面
+    function gf(li) { var k = guofeng.indexOf(li.dataset.style); return k === -1 ? 99 : k; }
     if (sc) lis = lis.map(function (li, i) { return [li, order[li.dataset.style] != null ? order[li.dataset.style] : 999, i]; })
-      .sort(function (a, b) { return a[1] - b[1] || a[2] - b[2]; }).map(function (x) { return x[0]; });
+      .sort(function (a, b) { return (guofeng.length ? gf(a[0]) - gf(b[0]) : 0) || a[1] - b[1] || a[2] - b[2]; }).map(function (x) { return x[0]; });
+    else if (guofeng.length) lis = lis.map(function (li, i) { return [li, i]; })
+      .sort(function (a, b) { return gf(a[0]) - gf(b[0]) || a[1] - b[1]; }).map(function (x) { return x[0]; });
     lis.forEach(function (li) {
       var id = li.dataset.style, st = styleById[id];
       var vis = (!sc || order[id] != null) && matchQuery(st) && matchTax(st);
@@ -2330,7 +2479,7 @@ body::before {
       if (st.uses.indexOf(s.id) !== -1) {
         var b = h('button', { class: 'chip', type: 'button', 'data-for': s.id, 'aria-pressed': 'false', text: s.name });
         b.addEventListener('click', function () {
-          useFor = s.id; dlgExtra = null; dlgImg = null;
+          useFor = s.id; dlgExtra = null; dlgImg = null; dlgFmt = '';
           updateUses(); updateImages(); refreshCopy();
         });
         box.appendChild(b);
@@ -2362,6 +2511,7 @@ body::before {
     });
     var sc = sceneById[useFor];
     $('#dlg-usenote').textContent = sc ? sc.note : '';
+    renderOptions();
     var sh = sc ? (sc.short || sc.name) : '';
     $('#dlg-default').textContent = '设为' + sh + '默认';
     $('#dlg-how').textContent = '「复制给 AI」：粘贴给装了叁笙生图的 AI 助手，在末尾写上你的内容，这次就按这个画风出。「设为' + sh + '默认」：先记在页面上的「我的默认」，选好几个用途后一起复制给 AI，以后做' + sh + '都按它出。';
@@ -2388,6 +2538,8 @@ body::before {
     im.alt = st.name + '（' + st.id + '）的样图，' + label;
     var cap = $('#dlg-cap');
     cap.textContent = label;
+    if (posterKinds[key] && posterKinds[key].experimental) cap.appendChild(h('span', { class: 'dlg-trial', text: '试验' }));
+    if (posterKinds[key] && posterKinds[key].type === 'city') cap.appendChild(h('span', { class: 'dlg-prov', text: '换个地名就能用' }));
     if (key !== 'anchor') cap.appendChild(h('span', { class: 'dlg-prov', text: provText((prov[st.id] || {})[key]) }));
     $('#dlg-thumbs').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.key === key ? 'true' : 'false'); });
   }
@@ -2413,7 +2565,11 @@ body::before {
         var im = h('img', { src: imgPath(st, k), alt: '', decoding: 'async' });
         var label = stemLabel(k);
         var b = h('button', { type: 'button', 'data-key': k, 'aria-pressed': 'false', 'aria-label': '查看样图：' + label, title: label }, [im]);
-        b.addEventListener('click', function () { dlgImg = k; setDialogMain(st, k); updateHint(); });
+        b.addEventListener('click', function () {
+          dlgImg = k;
+          if (posterKinds[k] && posterKinds[k].type === 'variant') { dlgVariant = k.slice(4); renderOptions(); refreshCopy(); }
+          setDialogMain(st, k); updateHint();
+        });
         im.addEventListener('error', function () { b.hidden = true; });
         box.appendChild(b);
       });
@@ -2575,7 +2731,7 @@ body::before {
   }
 
   function openDetail(st, opener) {
-    dlgOpener = opener || null; dlgStyle = st; dlgExtra = null; dlgImg = null;
+    dlgOpener = opener || null; dlgStyle = st; dlgExtra = null; dlgImg = null; dlgFmt = ''; dlgLayout = ''; dlgInfo = ''; dlgVariant = '';
     var ok = usableScenes(st).map(function (s) { return s.id; });
     var libSc = libState.scene !== 'all' ? libState.scene : null;
     if (!useFor || !sceneById[useFor] || (libSc && useFor !== libSc)) useFor = libSc || ok[0] || firstScene;
@@ -2857,7 +3013,9 @@ body::before {
         id: String(s.id), name: s.name || s.id, origin: s.origin || '', recolor: s.recolor || 'free', recolorNote: s.recolorNote || '',
         essence: s.essence || '', family: s.family || '', legacyFamily: typeof s.legacyFamily === 'string' ? s.legacyFamily : '',
         region: strList(s.region), era: strList(s.era), dynasty: strList(s.dynasty),
-        imgs: s.imgs || [], uses: s.uses || [], tone: s.tone || [], craft: s.craft || ''
+        imgs: s.imgs || [], uses: s.uses || [], tone: s.tone || [], craft: s.craft || '',
+        posterLayouts: Array.isArray(s.posterLayouts) ? s.posterLayouts : null, variants: Array.isArray(s.variants) ? s.variants : [],
+        cities: Array.isArray(s.cities) ? s.cities : []
       };
     });
     styles.forEach(function (s) { styleById[s.id] = s; });
@@ -2877,6 +3035,11 @@ body::before {
     palShots = d.palShots || {};
     ratios = d.ratios || {};
     prov = d.prov || {};
+    formatMeta = d.formats || {};
+    posterLayouts = d.posterLayouts || [];
+    posterLayouts.forEach(function (l) { posterLayoutById[l.id] = l; });
+    posterInfo = d.posterInfo || {};
+    posterKinds = d.posterKinds || {};
 
     var sel = $('#dlg-palette');
     palettes.forEach(function (p) { sel.appendChild(h('option', { value: p.id, text: p.id === 'orig' ? '样式原色' : p.name })); });

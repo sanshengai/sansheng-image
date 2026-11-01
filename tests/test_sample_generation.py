@@ -84,3 +84,20 @@ def test_status_strict_fails_only_for_admitted_style_with_stale_sample(tmp_path,
 def test_picker_caption_reads_prov():
     html = (ROOT / "gallery/picker.html").read_text(encoding="utf-8")
     assert "prov = d.prov || {}" in html and "历史样图，未记录挑选" in html and "待重出" in html
+
+
+def test_samples_unaffected_revisions_keep_sample_current():
+    c = with_sample(base(rev=4), generation={**GEN, "revision": 2})
+    s = c["samples"][-1]
+    c["changelog"] = [{"revision": 3, "date": "2026-11-01", "note": "用途加海报", "samples_unaffected": True},
+                      {"revision": 4, "date": "2026-11-01", "note": "去掉 PPT", "samples_unaffected": True}]
+    assert CT.validate(c) == []
+    assert CT.sample_state(c, s) == "current"
+    # 反例：中间有一版改了画面（没标）就仍待重出
+    c["changelog"][0].pop("samples_unaffected")
+    assert CT.sample_state(c, s) == "stale"
+    # 反例：标记不是布尔真值、或缺了中间某一版的记录，都不算
+    c["changelog"][0]["samples_unaffected"] = "yes"
+    assert CT.validate(c) and CT.sample_state(c, s) == "stale"
+    c["changelog"] = c["changelog"][1:]
+    assert CT.sample_state(c, s) == "stale"

@@ -152,6 +152,8 @@ def validate(contract: dict, *, where: Path | None = None) -> list[str]:
         for structure in structure_prompts:
             if structure not in known_structures:
                 problems.append(f"recipe.structure_prompts 未知表达结构 {structure}")
+    if isinstance(recipe, dict):
+        problems.extend(_poster_field_problems(contract, recipe))
     overrides = qa.get("mode_overrides", {})
     if isinstance(overrides, dict):
         for mode, override in overrides.items():
@@ -196,7 +198,15 @@ def sample_state(contract: dict, sample: dict) -> str:
     gen = sample.get("generation")
     if not isinstance(gen, dict):
         return "historical"
-    return "current" if gen.get("revision") == contract.get("revision") else "stale"
+    made, now = gen.get("revision"), contract.get("revision")
+    if made == now:
+        return "current"
+    # 中间每一版都在 changelog 里标了 samples_unaffected（只改用途、推荐版式等不进提示词的字段）时样图仍有效
+    if isinstance(made, int) and isinstance(now, int) and made < now:
+        quiet = {e.get("revision") for e in contract.get("changelog") or [] if e.get("samples_unaffected") is True}
+        if all(r in quiet for r in range(made + 1, now + 1)):
+            return "current"
+    return "stale"
 
 
 def contract_paths() -> list[Path]:
@@ -256,4 +266,34 @@ def load_all(strict: bool = True) -> list[dict]:
             raise ContractError(c.get("code", p.parent.name), problems)
         c["_path"] = str(p)
         out.append(c)
+    return out
+
+
+def _poster_field_problems(contract: dict, recipe: dict) -> list[str]:
+    """海报相关字段的语义检查：版式必须存在、比例范围有序、变体至多一个默认、用了海报版式就要勾海报用途。"""
+    out: list[str] = []
+    pl = recipe.get("poster_layouts")
+    if isinstance(pl, list) and pl:
+        known = {x["id"] for x in json.loads((ROOT / "layouts" / "layouts.json").read_text(encoding="utf-8"))["layouts"]}
+        unknown = [x for x in pl if x not in known]
+        if unknown:
+            out.append(f"recipe.poster_layouts 未知版式 {unknown}；可选 {sorted(known)}")
+        if "海报" not in (contract.get("uses") or []):
+            out.append("recipe.poster_layouts 需要 uses 包含「海报」")
+    rr = recipe.get("ratio_range")
+    if isinstance(rr, list) and len(rr) == 2 and all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in rr):
+        if not 0 < rr[0] < rr[1]:
+            out.append(f"recipe.ratio_range 须为 0 < 最小 < 最大，实际 {rr}")
+    variants = recipe.get("variants")
+    if isinstance(variants, dict):
+        defaults = [k for k, v in variants.items() if isinstance(v, dict) and v.get("default")]
+        if len(defaults) > 1:
+            out.append(f"recipe.variants 只能有一个默认，实际 {defaults}")
+    skins = recipe.get("region_skins")
+    if isinstance(skins, dict) and skins:
+        defaults = [k for k, v in skins.items() if isinstance(v, dict) and v.get("default")]
+        if len(defaults) != 1:
+            out.append(f"recipe.region_skins 必须恰好一个 default，实际 {defaults}")
+        elif skins[defaults[0]].get("experimental"):
+            out.append(f"recipe.region_skins 的默认皮肤 {defaults[0]} 不能是 experimental")
     return out

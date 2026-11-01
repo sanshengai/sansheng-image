@@ -36,7 +36,8 @@ PUBLIC_FILES = {
     "scripts/replay_wake.py",
 }
 PUBLIC_DIRS = ("formats/", "palettes/", "references/", "scenes/",
-               "scripts/stylebook/", "structures/", "styles/", "tests/", "examples/motion/")
+               "scripts/stylebook/", "structures/", "styles/", "tests/", "examples/motion/",
+               "layouts/", "examples/place-cards/")   # 海报版式（运行必需）与地域资料卡示例
 MOTION_FONT_FILES = {f"examples/motion/{case}/assets/serif.otf"
                      for case in ("city-light", "spring-album", "rainwater")}
 MOTION_FONT_SHA256 = "435efadc1475f961c7a26eb2cec5d6a3e93cd2fe57e85aa14fcf35ce6558f60f"

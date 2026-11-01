@@ -1,6 +1,6 @@
 {
   "code": "C74",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "丝网印海报",
     "en": "Screen-print Poster"
@@ -30,6 +30,10 @@
     "text_mode": [
       "native",
       "none"
+    ],
+    "poster_layouts": [
+      "big-shape-band",
+      "sky-title"
     ]
   },
   "palette": {
@@ -63,6 +67,12 @@
       "revision": 2,
       "date": "2026-10-02",
       "note": "加入叁笙自制的无人物风格参考板作为画风锚点（色板、材质、母题、构图），出图时自动当画风参考；不含人物与动物，避免内容串入。"
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 big-shape-band、sky-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -76,7 +86,8 @@
     "小红书",
     "PPT",
     "文章插图",
-    "音乐封面"
+    "音乐封面",
+    "海报"
   ],
   "renderer": "codex",
   "samples": [
@@ -416,6 +427,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "e349c11e13261dbb0b42d68be012625152f459a9d20ac1540379e8ca76370486",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "152aa717ca48169dbc3e14a5217d4f6abd1593592acdcbe4d445c93b255a0b49",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ],
   "anchor": {

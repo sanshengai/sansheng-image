@@ -7,6 +7,12 @@
     密度  auto / sparse / balanced / dense，与结构成对出现
     色彩  orig，或 <色系 id>.L<深浅>S<鲜灰>，深浅与鲜灰取 -1 / 0 / 1
 例：sb1:C01-orig　sb1:C31-flow-balanced-macaron.L1S0　sb1:C31@r2-auto-auto-orig
+
+语法（sb2）：
+    sb2:<用途>/<样式>[~<海报版式>][+<手法变体>][-<色系>[.L<深浅>S<鲜灰>]][-hex.<RRGGBB>…]
+    ~版式  layouts/layouts.json 里的版式 id（可含连字符，如 corner-embrace）；紧随其后的 -色系 靠已知版式 id 切开
+    +变体  合同 recipe.variants 的 id（小写字母、数字、下划线）
+例：sb2:poster/C101~corner-embrace　sb2:poster/C103+mirror　sb2:poster/C100~vertical-title-ink
 """
 from __future__ import annotations
 
@@ -33,10 +39,18 @@ class StyleCode:
     sat: int = 0
     scene: str | None = None
     custom: tuple[str, ...] = ()
+    layout: str | None = None
+    variant: str | None = None
 
     def format(self) -> str:
+        if (self.layout or self.variant) and self.scene is None:
+            raise StyleCodeError("海报版式与手法变体只能写在 sb2 码里")
         if self.scene is not None:
             result = f"sb2:{self.scene}/{self.style}"
+            if self.layout:
+                result += f"~{self.layout}"
+            if self.variant:
+                result += f"+{self.variant}"
             if self.palette not in ("orig", "brand"):
                 result += f"-{self.palette}"
                 if self.light or self.sat:
@@ -63,12 +77,16 @@ class StyleCode:
             out["structure"] = self.structure
         if self.density and self.density != "auto":
             out["density"] = self.density
+        if self.layout:
+            out["poster_layout"] = self.layout
+        if self.variant:
+            out["variant"] = self.variant
         return out
 
 
 def find(text: str) -> list[str]:
     """从一段话里找出所有风格码（用户可能连同整句「用叁笙生图 sb1:… 做成…」一起贴过来）。"""
-    return re.findall(r"sb[12]:[A-Za-z0-9@./\-]+", text or "")
+    return re.findall(r"sb[12]:[A-Za-z0-9@./~+_\-]+", text or "")
 
 
 def parse(code: str) -> StyleCode:
@@ -120,10 +138,45 @@ def validate(sc: StyleCode) -> list[str]:
         problems.append(f"没有这个表达结构：{sc.structure}")
     if sc.palette not in {p["id"] for p in D.palettes()["palettes"]}:
         problems.append(f"没有这个色系：{sc.palette}")
+    if sc.layout and sc.layout not in D.layouts():
+        problems.append(f"没有这个海报版式：{sc.layout}")
+    if sc.variant:
+        from . import contract as CT
+        try:
+            variants = (CT.load(sc.style.split("@")[0]).get("recipe") or {}).get("variants") or {}
+        except (KeyError, CT.ContractError):
+            variants = None  # 样式本身不存在，上面已报
+        if variants is not None and sc.variant not in variants:
+            problems.append(f"{sc.style} 没有手法变体 {sc.variant}" + (f"；可选 {list(variants)}" if variants else "（该画风没有变体）"))
     return problems
 
 
+def _split_layout(chain: str) -> str:
+    """把「版式-色系」连写的片段切开：取最长的已知版式 id 前缀；都不认识就整段当版式（validate 会报未知）。"""
+    from . import data as D
+    tokens = chain.split("-")
+    known = D.layouts()
+    for n in range(len(tokens), 0, -1):
+        if "-".join(tokens[:n]) in known:
+            return "-".join(tokens[:n])
+    return chain
+
+
 def _parse_v2(raw: str) -> StyleCode:
+    head = re.match(r"sb2:[a-z][a-z0-9-]*/[CS]\d{2,3}(?:@r[1-9]\d*)?", raw)
+    layout = variant = None
+    if head and raw[head.end():head.end() + 1] == "~":
+        chain = re.match(r"~([a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)*)", raw[head.end():])
+        if not chain:
+            raise StyleCodeError(f"海报版式不对：{raw!r}")
+        layout = _split_layout(chain.group(1))
+        raw = raw[:head.end()] + raw[head.end() + 1 + len(layout):]
+    if head and raw[head.end():head.end() + 1] == "+":
+        var = re.match(r"\+([a-z][a-z0-9]*(?:_[a-z0-9]+)*)", raw[head.end():])
+        if not var:
+            raise StyleCodeError(f"手法变体不对：{raw!r}")
+        variant = var.group(1)
+        raw = raw[:head.end()] + raw[head.end() + 1 + len(variant):]
     m = re.fullmatch(r"sb2:(?P<scene>[a-z][a-z0-9-]*)/(?P<style>[CS]\d{2,3}(?:@r[1-9]\d*)?)(?:-(?P<pal>[a-z]+)(?:\.L(?P<l>-?1|0)S(?P<s>-?1|0))?)?(?:-hex(?P<hex>(?:\.[0-9A-Fa-f]{6})+))?", raw)
     if not m:
         raise StyleCodeError(f"sb2 格式不对：{raw!r}")
@@ -138,4 +191,4 @@ def _parse_v2(raw: str) -> StyleCode:
         raise StyleCodeError("品牌色需要具体 HEX")
     return StyleCode(m.group("style"), palette="brand" if colors else fam,
                      light=int(m.group("l") or 0), sat=int(m.group("s") or 0),
-                     scene=m.group("scene"), custom=colors)
+                     scene=m.group("scene"), custom=colors, layout=layout, variant=variant)

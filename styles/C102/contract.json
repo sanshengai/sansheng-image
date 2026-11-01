@@ -1,0 +1,329 @@
+{
+  "code": "C102",
+  "revision": 2,
+  "name": {
+    "zh": "文旅长卷",
+    "en": "Cultural Travel Scroll"
+  },
+  "family": "国风传统",
+  "fit": [
+    "封面",
+    "讲故事"
+  ],
+  "facets": {
+    "medium": "东方水彩文旅长卷",
+    "density": "细节丰富"
+  },
+  "visibility": "public",
+  "source": {
+    "from": "Original technique specification; inspiration: cultural-tourism magazine posters",
+    "license": "original",
+    "notes": "2026-11 参考公众号文章《把家乡做成国风电影海报》的版式思路（左侧文字栏 + 右侧 S 形长卷），配方与资料卡机制自写；不复制原提示词全文，不使用原文图片。"
+  },
+  "essence": [
+    "一条连续的 S 形叙事长卷：上段山水地标，中段传统建筑街区，下段人物与风物",
+    "景物从花叶、丝带、云水里自然长出，没有矩形边框",
+    "左侧干净的杂志文字栏，所有文字都在栏内"
+  ],
+  "recipe": {
+    "positive": "Collectable cultural-tourism magazine poster: one continuous S-shaped narrative scroll that reads as a single journey with clear foreground, middle ground and distance. The upper part holds the place's natural landscape and its listed landmarks, with accurate, complete architectural structure; the middle holds traditional architecture or a historic street with local crafts and objects; the lower part holds one local person doing a characteristic everyday or craft activity, surrounded by local foods, flowers and small birds. Every element grows out of flowing curves — branches, petals, ribbons of silk, water or mist — and dissolves into the paper with soft painterly edges, dry-brush trails and a few small paint splashes; no rectangular photo frames, no collage seams, no grid. A clean empty text column is kept free of all imagery. The person looks natural and calm, is not posing for an advertisement and does not look at the viewer; hands and faces are anatomically correct; costume details are accurate for the stated people and region. Fresh, bright, refined and poetic, not crowded, not a cheap tourist flyer.",
+    "text_mode": [
+      "native",
+      "hybrid",
+      "overlay",
+      "none"
+    ],
+    "text_style": "Use only the requested exact text, all inside the clean text column. The main title is four large vertical Chinese characters in expressive running-script calligraphy in deep ink green, ink black or deep blue; it is the most prominent text. Other lines are small, quiet serif or Song-style type. No invented titles, slogans, brand names, seals or pseudo-text.",
+    "poster_layouts": [
+      "magazine-scroll",
+      "sky-title"
+    ],
+    "region_skins": {
+      "中国": {
+        "default": true,
+        "en": "Regional material language: oriental watercolour on warm ivory handmade xuan paper with fine fibres and slight print grain, transparent watercolour layers with real leaf veins, ink-wash and flying-white dry-brush edges, small vermilion seal accents.",
+        "lettering": "Chinese running-script title with Song-style and elegant serif supporting type."
+      },
+      "土耳其": {
+        "experimental": true,
+        "en": "Regional material language: Ottoman miniature-painting delicacy with flat jewel colours and fine gold-free outlines, Iznik tile motifs of tulips, carnations and saz leaves in cobalt, turquoise and tomato red as the flowing ribbons, marbled ebru-paper swirls instead of ink wash; warm cream paper ground. No Chinese calligraphy, no Chinese seals.",
+        "lettering": "Latin elegant serif title and supporting type; Turkish characters such as ş ğ ı İ ç ö ü must be exact."
+      },
+      "印尼": {
+        "experimental": true,
+        "en": "Regional material language: batik-dyed fabric textures with crackled wax lines and parang or kawung motifs forming the flowing ribbons, wayang shadow-puppet filigree curves, tropical frangipani and palm foliage in watercolour; warm natural cotton-paper ground. No Chinese calligraphy, no Chinese seals.",
+        "lettering": "Latin elegant serif title and supporting type; Indonesian words must be exact."
+      }
+    }
+  },
+  "composition": {
+    "negative_space": "the clean text column (about 30% of the width in portrait) is empty of imagery",
+    "flow": "one continuous S-shaped flow: landscape and landmarks at top, architecture in the middle, people and local things at the bottom",
+    "figure_scale": "at most one person, half-length or three-quarter, in the lower scroll; or no person when the brief says so"
+  },
+  "type": {
+    "direction": [
+      "vertical",
+      "horizontal"
+    ],
+    "face": "running-script calligraphy title; Song-style and elegant serif supporting type"
+  },
+  "palette": {
+    "recolor": "free"
+  },
+  "qa": {
+    "must_see": [
+      "连续的 S 形长卷：上段山水地标、中段建筑、下段人物风物",
+      "景物自然衔接、没有矩形边框，前中远景清楚",
+      "文字栏干净，文字不被景物遮挡"
+    ],
+    "must_not_see": [
+      "巨大人物侧脸剪影、双重曝光人像、矩形照片拼贴或九宫格",
+      "不同城市地标混用、建筑变形、民族服饰混搭",
+      "满版拥挤、廉价旅游传单质感、霓虹色、塑料 3D、手部畸形"
+    ],
+    "when_text": [
+      "文字栏干净，文字不被景物遮挡"
+    ],
+    "fix_phrases": [
+      "保留文字栏和长卷走向，只把右下人物换成资料卡里的手艺人",
+      "去掉资料卡以外的建筑和地标，只保留列出的三个地标",
+      "长卷边缘改成水彩晕染和飞白，去掉生硬的矩形边框"
+    ]
+  },
+  "evidence": {
+    "admission": "pending",
+    "model": "尚未实测",
+    "date": "2026-11-01",
+    "notes": "新增画风，仅完成合同校验；样图与看图结论见执行记录。"
+  },
+  "changelog": [
+    {
+      "revision": 1,
+      "date": "2026-11-01",
+      "note": "新增：文旅长卷（资料卡驱动 + 地域皮肤，中国为默认，土耳其、印尼为试验），准入待验证"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "暂去掉 PPT 用途：本期未做 PPT 试图，放第二期验证",
+      "samples_unaffected": true
+    }
+  ],
+  "inspiration": {
+    "names": [
+      "文旅杂志海报"
+    ],
+    "prompt": "文旅杂志海报"
+  },
+  "uses": [
+    "海报",
+    "封面",
+    "小红书",
+    "文章插图"
+  ],
+  "renderer": "codex",
+  "samples": [
+    {
+      "topic": "苏州旅行长文的头条封面",
+      "file": "samples/cv.webp",
+      "source_sha256": "6c22309574fb8616594809d1a82ff3904b730bac0b43b8e78b870baca790fd9a",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 2.35,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "c383a37159024c9d7af3a38a7b5af48d42969dc00cc552be92a2e069e3df82d3",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "泉州旅行笔记封面",
+      "file": "samples/xhs.webp",
+      "source_sha256": "52f927b6602486671f7358a8f3a320b27ac7ff7b9650da420fde8816626bbe45",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.75,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "708736650c6793af30a5df200c728b6a6b6cec8c5aea42995fe61770931b0e53",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "大理游记的文中插图",
+      "file": "samples/cv-2.webp",
+      "source_sha256": "184452e7b755c8e14690384c3ec75af49d20d800e88942e833a4a8973ede33cf",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 2.35,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "7a357308f14f11b82834ffe28daf125869f1a785d1581d91c98a198c704e7e7f",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "大理游记的文中插图",
+      "file": "samples/wxi.webp",
+      "source_sha256": "077b49525e3cc182105c040a5f75a75430be59c32097953767ef448016b07eb5",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.778,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "be393ca6e43b0a331735bca5d884f7704edb89e21849239cb75e122719deb975",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "苏州文旅海报",
+      "file": "samples/pst-suzhou.webp",
+      "source_sha256": "0082028e008f65135210923b3d09400c23084268f8dd936ca320dd4f6f7779d4",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "3b68a16c86d6d78394be45b750c2aeb5b748af8974ca4ceb03fbb2b66591d68d",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "敦煌文旅海报",
+      "file": "samples/pst-dunhuang.webp",
+      "source_sha256": "64760af9d976721a5573b5c8a57f7f07b3e3d79824254610950a02f1359742d6",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "aa082ca6f7533620f1af9da8f32d2eeabf65c2e40d6e19f2315aec02b997fd06",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "泉州文旅海报",
+      "file": "samples/pst-quanzhou.webp",
+      "source_sha256": "628c8d4e372125f4e5d8435af3e466d58acaa887ede766e90fbc494ba9136bfa",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "cb698ec3349a88a318db7de1b41950e651e8c7d9f6c4492eef17e17d6575e87a",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "大理文旅海报",
+      "file": "samples/pst-dali.webp",
+      "source_sha256": "9a1e909ca16881ca6893df07ab287c803e9609dda3db15bda1309f226257f418",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "4c8603ec1ffdfd4e896d693214b9fe862677969d462e4839a3d2ce4ff5a889cf",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "哈尔滨文旅海报",
+      "file": "samples/pst-haerbin.webp",
+      "source_sha256": "1d844c262f0812fbdd28d99d0027482716f5bcf4a9bf100cf04d34bc3efa7ef9",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 2,
+        "prompt_sha256": "4a98f90d032132ba4dfc9133130c7972f7845667cf8c8df4b5a3128aff198f49",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "厦门文旅海报",
+      "file": "samples/pst-xiamen.webp",
+      "source_sha256": "ab878d77cdd726ee476fb910f13d71e9fc2a90c871938b144996341c911ece09",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "72bf5e4cdaff4feb0bf01e533d5f3c4d12f71be7810527cf35574a1213f75553",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "伊斯坦布尔文旅海报",
+      "file": "samples/pst-istanbul.webp",
+      "source_sha256": "a7b86981a16a3f3d5770f7786c961562f1054fabe2aa806443050691f68ed836",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "1cc84a5b0468e07870f596252c6fcc34348a3628cee14e9244bc430ef0a47a21",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "巴厘岛文旅海报",
+      "file": "samples/pst-bali.webp",
+      "source_sha256": "d23bc2954657a0f166be73c8554b281b71974b8d7c605cc2f6368daf80bb072f",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "296919f490264d0fc1043d9b40a9f7b802d2f6572f73822bbccf0a5653c276d8",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "风格参考板",
+      "file": "samples/bd.webp",
+      "source_sha256": "aa347ac7cf018eced0b3308c97fd0730ec7c59174c168a7228b7dd9c17b6ff92",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 1.5,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "95628b9118239e61d6c950c42a73959ed2cf738917ba36cd8bdba2e905fbe8c9",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    }
+  ],
+  "anchor": {
+    "file": "anchor.png",
+    "sha256": "40479ddbdfd8c3792832b7b8b462ae5d4e763383513ee9d5f6a72de8a264e5dc",
+    "enabled": true,
+    "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
+  }
+}

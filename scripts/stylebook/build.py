@@ -251,11 +251,19 @@ THUMB = 640  # 长边像素；外部文件，页面本体只放文字与数据
 SITE_KINDS = {
     "s1": "人物", "s2": "物件", "s3": "信息图（简）", "bd": "风格参考板",
     "cv": "封面", "au": "音乐封面", "wxi": "横版插图", "wxt": "竖版插图", "wxx": "推特单图", "xhs": "小红书", "ppt": "PPT", "inf": "信息图",
-    "cm": "四格漫画", "cx": "日漫混排页", "ce": "知识条漫", "sb": "短剧分镜",
+    "cm": "四格漫画", "cx": "日漫混排页", "ce": "知识条漫", "sb": "短剧分镜", "pst": "海报",
 }
-SET_KINDS = ["cv", "wxi", "wxt", "wxx", "xhs", "ppt", "inf", "cm", "cx", "ce", "sb"]
+SET_KINDS = ["cv", "wxi", "wxt", "wxx", "xhs", "ppt", "inf", "cm", "cx", "ce", "sb", "pst"]
 # 一组图：<种类> 是第一张，<种类>-2、-3…… 是同组后面的图
 SET_RE = re.compile(r"^(" + "|".join(SET_KINDS) + r")(?:-(\d+))?$")
+# 海报的具名样张：pst-<英文 slug>（pst-2 这种数字序号仍归 SET_RE，两者不冲突：slug 必须以字母开头）
+POSTER_SLUG_RE = re.compile(r"^pst-([a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)*)$")
+# C102 城市样张：slug -> (中文名, 是否国外试点)；换个地名就能用
+POSTER_CITIES = {"suzhou": ("苏州", False), "dunhuang": ("敦煌", False), "quanzhou": ("泉州", False), "dali": ("大理", False),
+                 "haerbin": ("哈尔滨", False), "xiamen": ("厦门", False), "istanbul": ("伊斯坦布尔", True), "bali": ("巴厘岛", True)}
+POSTER_CITY_STYLE = "C102"
+POSTER_DEFAULT_LAYOUTS = ["sky-title", "axis"]  # 与 poster.py DEFAULT_LAYOUTS 同口径：合同没登记版式的画风只放行这两种
+POSTER_TRAVEL_STYLES = ["C102"]  # 文旅型信息量只在这些画风下出现
 # 一组里每一张的名字（详情页缩略图下显示）
 KIND_LABELS = {
     "ppt": ["封面", "目录", "章节页", "大数字", "数据", "对比", "四象限", "流程", "图文", "金句", "全幅图", "谢谢观看"],
@@ -289,7 +297,7 @@ HERO_MOTION = ["moving", "travel", "beach"]  # 首屏背景近景浮图只播这
 HERO_PX, HERO_Q = 1600, 82  # 展台图放大铺满宽屏画框：长边 1600
 # 与页面里 GROUP_KINDS 同口径：一个用途的样图种类属于哪一组
 IMG_GROUP_KINDS = {"cv": ["cv"], "au": ["au"], "xhs": ["xhs"], "wxi": ["wxi", "wxt", "wxx"], "inf": ["inf"], "ppt": ["ppt"],
-                   "comic": ["cm", "cx", "ce"], "sb": ["sb"], "bd": ["bd"], "same": ["s1", "s2", "s3"], "anchor": ["anchor"]}
+                   "comic": ["cm", "cx", "ce"], "sb": ["sb"], "poster": ["pst"], "bd": ["bd"], "same": ["s1", "s2", "s3"], "anchor": ["anchor"]}
 SAMPLE_FALLBACK = ["s1", "cv", "xhs", "wxi", "ppt", "inf", "cm", "cx", "ce"]
 
 
@@ -450,7 +458,7 @@ def _sample_files(code: str, cp: Path | None) -> dict[str, tuple[Path, float | N
         sp = cp.parent / sample["file"]
         stem = sp.stem
         key = _sample_kind(stem)
-        if key in SITE_KINDS or SET_RE.match(key) or _pal_kind(key) or _pc_kind(key):
+        if key in SITE_KINDS or SET_RE.match(key) or POSTER_SLUG_RE.match(key) or _pal_kind(key) or _pc_kind(key):
             if key in out:
                 raise ValueError(
                     f"duplicate sample kind {key!r} in contract {code!r}: "
@@ -469,6 +477,37 @@ def prov_entry(contract: dict, sample: dict) -> dict:
     if CT.sample_state(contract, sample) == "stale":
         out["now"] = contract["revision"]
     return out
+
+
+def _poster_style_data(code: str, imgs: list[str]) -> dict:
+    """某画风在海报用途下的看板数据：兼容版式、C103 手法、C102 城市样张（只列有样图的）。"""
+    recipe = CT.load(code).get("recipe") or {}
+    out: dict = {"posterLayouts": list(recipe.get("poster_layouts") or POSTER_DEFAULT_LAYOUTS)}
+    variants = recipe.get("variants") or {}
+    if variants:
+        out["variants"] = [{"id": vid, "name": v.get("zh", vid), "default": bool(v.get("default")),
+                            "sample": f"pst-{vid}" if f"pst-{vid}" in imgs else ""}
+                           for vid, v in variants.items()]
+    if code == POSTER_CITY_STYLE:
+        out["cities"] = [f"pst-{slug}" for slug in POSTER_CITIES if f"pst-{slug}" in imgs]
+    return out
+
+
+def _poster_meta(cands: list[dict], poster_ids: list[str]) -> dict:
+    """海报相关的看板数据（顶层字段）；没有海报场景时返回空字典，页面整块不出现。"""
+    if not poster_ids:
+        return {}
+    layouts = [{"id": x["id"], "name": x["zh"], "zones": x.get("zones", {}), "ratios": x.get("ratios", []), "info": x.get("info", [])}
+               for x in D.layouts().values()]
+    info = {k: {"name": v["zh"], "note": v.get("note", ""), **({"only": POSTER_TRAVEL_STYLES} if k == "travel" else {})}
+            for k, v in D.info_levels().items()}
+    kinds_zh: dict[str, dict] = {}
+    for slug, (zh, exp) in POSTER_CITIES.items():
+        kinds_zh[f"pst-{slug}"] = {"name": zh, "type": "city", "experimental": exp}
+    for c in cands:
+        for v in c.get("variants", []):
+            kinds_zh[f"pst-{v['id']}"] = {"name": v["name"], "type": "variant", "experimental": False}
+    return {"posterLayouts": layouts, "posterInfo": info, "posterKinds": kinds_zh}
 
 
 def _hero_hd(code: str, cp: Path, kind: str) -> Path | None:
@@ -554,7 +593,7 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
                     raise ValueError(f"{code} 的样图 {kind} 登记比例 {registered} 与实际 {actual} 不一致")
                 ratio = actual
             elif registered is not None:
-                ratio = registered  # 无样图文件（公开包）：按合同登记
+                ratio = round(registered, 3)  # 无样图文件（公开包）：按合同登记，与实测同口径取三位
             else:
                 raise ValueError(f"{code} 的样图 {kind} 缺少文件，合同里也没有登记宽高比")
             expected_imgs.append(f"{code}-{kind}.webp")
@@ -594,11 +633,13 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     scene_ids = [sc["id"] for sc in reg["scenes"] if not sc.get("hidden") and not sc.get("site_hide") and sc.get("use")]  # site_hide：Skill 里可用，官网不展示（教材自用；视频分镜待重做样图）
     pools = {sc["id"]: [c for c in D.styles_for_use(sc["use"]) if c in have] for sc in reg["scenes"] if sc["id"] in scene_ids}
     tax = _catalog_doc().get("taxonomy")
+    poster_ids = [sc["id"] for sc in reg["scenes"] if sc["id"] in scene_ids and sc.get("uses_layout")]  # 带海报版式的用途
     cands = [{"id": s["code"], "name": s["zh"], "origin": inspiration.get(s["code"], ""), "recolor": s["recolor"],
               "recolorNote": s.get("recolor_note", ""), "essence": "；".join(s.get("essence", [])[:3]), "family": s.get("family", ""),
               "imgs": sorted(have[s["code"]]), "uses": [sid for sid in scene_ids if s["code"] in pools[sid]],
               "tone": s.get("tone", []), "craft": s.get("craft", ""),
-              **({k: s.get(k, [] if k != "legacyFamily" else "") for k in TX.NEW_KEYS} if tax else {})}
+              **({k: s.get(k, [] if k != "legacyFamily" else "") for k in TX.NEW_KEYS} if tax else {}),
+              **(_poster_style_data(s["code"], have[s["code"]]) if any(sid in poster_ids and s["code"] in pools[sid] for sid in scene_ids) else {})}
              for s in reg["styles"] if s["code"] in have]
     scenes = []
     for sc in reg["scenes"]:
@@ -607,7 +648,8 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
         alternates = [a for a in sc["alternates"] if a in have]
         rep, rep_kind = _scene_image(sc.get("site_sample", "s1"), sc["default"], pools[sc["id"]], have)
         scenes.append({"id": sc["id"], "name": sc.get("site_name", sc["zh"]), "short": sc.get("site_short", sc.get("site_name", sc["zh"])),
-                       "more": bool(sc.get("site_more")), "use": sc["use"], "sample": sc.get("site_sample", "s1"), "note": sc.get("site_note", ""), "default": sc["default"],
+                       "more": bool(sc.get("site_more")), "use": sc["use"],
+                       "formats": [f for f in sc.get("formats", []) if f in D.formats()], "layout": bool(sc.get("uses_layout")), "sample": sc.get("site_sample", "s1"), "note": sc.get("site_note", ""), "default": sc["default"],
                        "alternates": alternates, "pool": pools[sc["id"]],
                        "representative": rep, "image": f"{rep}-{rep_kind}.webp" if rep else ""})  # 场景墙配图：来自 have，因此必在 manifest 里
     MG.check_scenes(motion_plan.doc, scenes)  # 动态示范挂到场景上的，画风必须在该场景的静态画风池里；不满足就整体失败，不写任何输出
@@ -627,7 +669,10 @@ def picker(out_dir: Path | None = None, private: bool = False, brand_dir: Path |
     expected_imgs.extend(BRAND_IMAGES)  # 品牌图也是页面引用的图：官网投影检查据 manifest 核对图片目录
     expected_imgs.append(BRAND_LOGO_NAME)
     package_version = _package_version()
-    meta = {"cands": cands, "scenes": scenes, "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
+    used_formats = sorted({f for sc in scenes for f in sc["formats"]})
+    meta = {"cands": cands, "scenes": scenes,
+            "formats": {f: {"label": D.formats()[f].get("label") or D.formats()[f]["zh"], "ratio": D.formats()[f].get("ratio", "")} for f in used_formats},
+            **_poster_meta(cands, poster_ids), "pals": pals, "kinds": SITE_KINDS, "labels": KIND_LABELS, "ratios": ratios, "first": "wxcover", "githubStars": _github_stars(),  # 快照随公开包分发，确保官网重建一致
             "palShots": {k: sorted(v, key=lambda x: ("poi".find(x["k"]), x["code"])) for k, v in sorted(pal_shots.items())},
             "palCompare": {k: {"ratio": v["ratio"], "pals": sorted(v["pals"])} for k, v in sorted(pal_compare.items()) if v["ratio"] and v["pals"]},
             "metrics": metrics, "carousel": carousel, "prov": prov,

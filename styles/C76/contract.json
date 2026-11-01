@@ -1,6 +1,6 @@
 {
   "code": "C76",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "杂志编辑封面",
     "en": "Editorial Magazine Cover"
@@ -40,6 +40,11 @@
     "text_mode": [
       "native",
       "none"
+    ],
+    "poster_layouts": [
+      "type-led",
+      "sky-title",
+      "axis"
     ]
   },
   "palette": {
@@ -82,6 +87,12 @@
       "revision": 3,
       "date": "2026-10-13",
       "note": "文字声明化：标题为 required_text_roles，编号式小标签改为可选角色 issue（给了才画，进入逐字文字清单）；配方正文不再自带文字，无字档不检查带字验收项。"
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 type-led、sky-title、axis",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -93,7 +104,8 @@
   "uses": [
     "封面",
     "小红书",
-    "PPT"
+    "PPT",
+    "海报"
   ],
   "renderer": "codex",
   "samples": [
@@ -384,6 +396,21 @@
       "renderer": "codex-builtin",
       "date": "2026-10-05",
       "ratio": 0.75
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "56a9fae1b5fbfed020fb357951268b7a72c1885b96476846a3381434f194c5b6",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 3,
+        "prompt_sha256": "c208004650a63e41288c7c332743eb21eb9c24c078826b2d607fa5c60c5a6f5d",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
     }
   ],
   "anchor": {

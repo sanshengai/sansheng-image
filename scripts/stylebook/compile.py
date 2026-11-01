@@ -19,6 +19,7 @@ from . import data as D
 from .comic import validate_content as validate_comic_content
 from .textspec import MODES, native_items, validate_hybrid
 from . import palette as PL
+from . import poster as PO
 from .sizes import gen_size, parse_ratio
 
 MODEL_FAMILY = {
@@ -309,6 +310,9 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     model = manifest.get("model", "gpt-image-2")
     family = MODEL_FAMILY.get(model, "gpt-image")
     fmt = D.formats().get(manifest.get("format", "")) if manifest.get("format") else None
+    poster_problems = PO.problems(contract, manifest, fmt)
+    if poster_problems:
+        raise CompileError("；".join(poster_problems))
     text = manifest.get("text") or {}
     if fmt and text.get("mode", fmt.get("text", {}).get("default")) in ("native", "hybrid"):
         for role, key in (("subtitle", "subtitle_max_chars"), ("body", "body_item_max_chars")):
@@ -330,7 +334,7 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
         raise CompileError(f"未知编译阶段 {stage}")
     if stage == "center_square_master" and manifest.get("format") != "wechat-cover-head":
         raise CompileError("方形母版阶段目前只支持 wechat-cover-head")
-    aspect = "1:1" if stage == "center_square_master" else manifest.get("aspect") or (fmt or {}).get("ratio", "1:1")
+    aspect = "1:1" if stage == "center_square_master" else PO.actual_aspect(manifest, fmt)
     content = manifest.get("content") or {}
     if not content.get("subject"):
         raise CompileError("content.subject 必填")
@@ -355,6 +359,8 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     if rec.get("constraints_first") and rec.get("hard_constraints"):
         lock = "Most important: " + " ".join(rec["hard_constraints"]) + "\n" + lock
     sec.append(("lock", "Visual style (follow exactly): " + lock))
+    poster_sec = PO.sections(contract, manifest, fmt)
+    sec.extend(x for x in poster_sec if x[0] in ("composition", "style_variant", "region_skin"))
     text_mode = (manifest.get("text") or {}).get("mode") or ((fmt or {}).get("text") or {}).get("default", "none")
     if stage == "center_square_master":
         square_content = ("Leave the left title zone clear for exact text added after generation; place the full "
@@ -412,6 +418,7 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     structure_prompt = (rec.get("structure_prompts") or {}).get(structure)
     if structure_prompt:
         sec.append(("structure_style", f"Style layout for {structure} (follow exactly): {structure_prompt}"))
+    sec.extend(x for x in poster_sec if x[0] in ("poster_layout", "poster_info"))
     if content.get("purpose") or content.get("mood"):
         sec.append(("purpose", "; ".join(f"{label}: {content[key].strip()}"
                                         for key, label in (("purpose", "Purpose"), ("mood", "Mood"))
@@ -496,9 +503,11 @@ def compile_manifest(manifest: dict, contract: dict | None = None, *, stage: str
     if cols and len(ref_list) < MAX_REFS:  # 选了色系：最后附一张无字色带，让颜色靠图而不只靠色值文字
         ref_list = ref_list + [{"path": str(PL.swatch_png([c["hex"] for c in cols])), "role": "palette_swatch"}]
     prompt, params = _dialect(family, sec, ref_list, contract, aspect, anchor_isolation)
+    fmt_px = PO.custom_export_px(manifest, fmt) or tuple((fmt or {}).get("export_px") or ())
+    export_px = None if stage == "center_square_master" else fmt_px or None
     return Compiled(prompt=prompt, model=model, family=family, style=f"{contract['code']}@r{contract['revision']}",
-                    aspect=aspect, size=gen_size(aspect, model, max([1536, *((fmt or {}).get("export_px") or [])])),
-                    export_px=None if stage == "center_square_master" else tuple((fmt or {}).get("export_px", [])) or None,
+                    aspect=aspect, size=gen_size(aspect, model, max([1536, *fmt_px])),
+                    export_px=export_px,
                     references=ref_list, params=params, manifest_hash=manifest_hash(manifest))
 
 

@@ -45,7 +45,9 @@ def center_square_preview(image: Path, out: Path) -> Path:
 
 
 def export(image: Path, fmt_id: str, out: Path, anchor: tuple[float, float] = (0.5, 0.5),
-           overlay: dict | None = None, overlay_root: Path | None = None) -> Exported:
+           overlay: dict | None = None, overlay_root: Path | None = None,
+           size: tuple[str, tuple[int, int]] | None = None) -> Exported:
+    """size 只给自定义尺寸格式（custom: true）用：(比例, 导出像素)，覆盖格式里的名义比例与像素。"""
     from PIL import Image
     fmt = D.formats().get(fmt_id)
     if not fmt:
@@ -56,8 +58,12 @@ def export(image: Path, fmt_id: str, out: Path, anchor: tuple[float, float] = (0
             raise ValueError(f"非透明格式 {fmt_id} 的源图含透明像素：{image}；不能直接转 RGB 隐藏边角异常")
     mode = "RGBA" if fmt.get("transparent") and im.mode in ("RGBA", "LA", "P") else "RGB"
     im = im.convert(mode)
-    tw, th = fmt["export_px"]
-    box = _crop_box(im.width, im.height, parse_ratio(fmt["ratio"]), anchor)
+    if size is not None and not fmt.get("custom"):
+        raise ValueError(f"格式 {fmt_id} 不是自定义尺寸格式，不能覆盖比例与像素")
+    if fmt.get("custom") and size is None:
+        raise ValueError(f"自定义尺寸格式 {fmt_id} 导出时必须给出实际比例与像素（size_cm + dpi 换算）")
+    ratio_str, (tw, th) = size if size is not None else (fmt["ratio"], fmt["export_px"])
+    box = _crop_box(im.width, im.height, parse_ratio(ratio_str), anchor)
     crop = im.crop(box)
     res = Exported(main=Path(out))
     no_upscale = "不得放大" in (fmt.get("safe_zone") or {}).get("note", "")

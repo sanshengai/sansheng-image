@@ -1,6 +1,6 @@
 {
   "code": "C91",
-  "revision": 1,
+  "revision": 2,
   "name": {
     "zh": "浮世绘木版多色印",
     "en": "Multi-Block Woodblock Colour Print"
@@ -43,7 +43,11 @@
       "none",
       "native"
     ],
-    "constraints_first": true
+    "constraints_first": true,
+    "poster_layouts": [
+      "sky-title",
+      "vertical-title"
+    ]
   },
   "palette": {
     "recolor": "free"
@@ -91,6 +95,12 @@
       "revision": 1,
       "date": "2026-10-11",
       "note": "当前标准题最终证据、三次稳定与两项同题近邻通过；保留原失败/误报及编辑链，登记三张矩阵示例；全场景与发布另计。"
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-01",
+      "note": "海报试图通过：用途加海报，登记推荐版式 sky-title、vertical-title",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -108,7 +118,8 @@
     "绘本",
     "文章插图",
     "信息图",
-    "封面"
+    "封面",
+    "海报"
   ],
   "abilities": {
     "character_consistency": "ok",
@@ -716,6 +727,21 @@
       "generation": {
         "revision": 1,
         "prompt_sha256": "65a61d96258c359e49027e15a6b05c67efe51961c84d237feb6eb6e0e721b4f7",
+        "attempts": 1,
+        "picked_from": 1,
+        "edited": false
+      }
+    },
+    {
+      "topic": "秋分节气海报",
+      "file": "samples/pst.webp",
+      "source_sha256": "8882a6544fceeaaf1428b19c238286f976e491002f9b76b19af571fda3ad79a4",
+      "renderer": "codex-builtin",
+      "date": "2026-11-01",
+      "ratio": 0.562,
+      "generation": {
+        "revision": 1,
+        "prompt_sha256": "de986aa595f22842e6016ecc08075de6dd8b3838df9d381bc560694c5214e895",
         "attempts": 1,
         "picked_from": 1,
         "edited": false

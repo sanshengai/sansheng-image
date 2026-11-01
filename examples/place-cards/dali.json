@@ -1,0 +1,128 @@
+{
+  "place": "大理",
+  "country_label": "CHINA",
+  "landscape": [
+    {
+      "value": "苍山",
+      "source": "https://zh.wikipedia.org/zh-cn/苍山",
+      "confidence": "high"
+    },
+    {
+      "value": "洱海",
+      "source": "https://zh.wikipedia.org/zh-cn/洱海",
+      "confidence": "high"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "崇圣寺三塔",
+      "source": "https://zh.wikipedia.org/zh-cn/崇圣寺三塔",
+      "confidence": "high"
+    },
+    {
+      "value": "大理古城",
+      "source": "https://zh.wikipedia.org/zh-cn/大理古城",
+      "confidence": "high"
+    },
+    {
+      "value": "喜洲古镇",
+      "source": "https://zh.wikipedia.org/zh-cn/喜洲",
+      "confidence": "medium"
+    }
+  ],
+  "architecture": {
+    "value": "白族民居：白墙青瓦、照壁与三坊一照壁",
+    "source": "https://zh.wikipedia.org/zh-cn/白族",
+    "confidence": "medium"
+  },
+  "heritage": [
+    {
+      "value": "白族扎染技艺",
+      "source": "http://www.news.cn/culture/20251124/bdd959b9e0a04142a7ab8f6f211f4afe/c.html",
+      "confidence": "high"
+    },
+    {
+      "value": "白族三道茶",
+      "source": "https://zh.wikipedia.org/zh-cn/三道茶",
+      "confidence": "high"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "周城白族扎染（蓝底白花）",
+      "source": "http://www.news.cn/culture/20251124/bdd959b9e0a04142a7ab8f6f211f4afe/c.html",
+      "confidence": "high"
+    }
+  ],
+  "foods": [
+    {
+      "value": "乳扇",
+      "source": "https://zh.wikipedia.org/zh-cn/乳扇",
+      "confidence": "high"
+    },
+    {
+      "value": "喜洲粑粑",
+      "source": "https://zh.wikipedia.org/zh-cn/喜洲",
+      "confidence": "medium"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "杜鹃花（大理市花）",
+      "source": "https://www.huajiangbk.com/newsview425541.html",
+      "confidence": "medium"
+    },
+    {
+      "value": "红嘴鸥",
+      "source": "https://kunming.cn/news/c/2020-11-09/13085666.shtml",
+      "confidence": "high"
+    }
+  ],
+  "season_light": {
+    "value": "苍山雪与洱海月：高原清澈的晨昏光与流云",
+    "source": "https://zh.wikipedia.org/zh-cn/大理市",
+    "confidence": "medium"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "白族扎染匠人",
+    "action": "在院中把扎染布从靛蓝染缸中提起，晾晒蓝白花布",
+    "costume": "白族传统服饰：蓝白相间的围腰与头饰，袖口收窄",
+    "ethnicity_region": "白族 · 大理周城",
+    "source": "http://www.news.cn/culture/20251124/bdd959b9e0a04142a7ab8f6f211f4afe/c.html",
+    "confidence": "high"
+  },
+  "palette": {
+    "main": [
+      "#2F5D8A",
+      "#F3EFE6"
+    ],
+    "accent": [
+      "#7FA6C0",
+      "#C9573A",
+      "#6B8E5A"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "seal": "苍洱白族",
+    "name_en": "DALI · CHINA",
+    "title": "风花雪月",
+    "seal_place": "中国大理",
+    "subtitle": [
+      "苍山洱海 · 白族扎染",
+      "古塔静立 · 蓝白成画"
+    ],
+    "intro_zh": [
+      "苍山负雪，洱海映月",
+      "白族院落里蓝布飘动",
+      "一方染缸，染出一片天"
+    ],
+    "place_en": "DALI, YUNNAN, CHINA",
+    "intro_en": "Between the Cangshan Mountains and Erhai Lake, Dali is home to the Bai people, whose tie-dyed indigo cloth is made in Zhoucheng village. Ancient pagodas and white-walled courtyards frame a clear plateau sky.",
+    "closing": [
+      "苍山 · 洱海",
+      "Indigo hands, mountain light."
+    ]
+  }
+}

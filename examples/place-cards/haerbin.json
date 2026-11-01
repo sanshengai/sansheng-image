@@ -1,0 +1,123 @@
+{
+  "place": "哈尔滨",
+  "country_label": "CHINA",
+  "landscape": [
+    {
+      "value": "松花江",
+      "source": "https://zh.wikipedia.org/zh-cn/松花江",
+      "confidence": "high"
+    },
+    {
+      "value": "太阳岛",
+      "source": "https://zh.wikipedia.org/zh-cn/太阳岛",
+      "confidence": "high"
+    }
+  ],
+  "landmarks": [
+    {
+      "value": "圣索菲亚教堂",
+      "source": "https://zh.wikipedia.org/zh-cn/圣索菲亚大教堂_(哈尔滨)",
+      "confidence": "high"
+    },
+    {
+      "value": "中央大街",
+      "source": "https://zh.wikipedia.org/zh-cn/中央大街",
+      "confidence": "high"
+    },
+    {
+      "value": "防洪胜利纪念塔",
+      "source": "https://zh.wikipedia.org/zh-cn/哈尔滨防洪胜利纪念塔",
+      "confidence": "medium"
+    }
+  ],
+  "architecture": {
+    "value": "中央大街的欧陆风格建筑与方石路面，俄式与新艺术运动立面",
+    "source": "https://zh.wikipedia.org/zh-cn/中央大街",
+    "confidence": "high"
+  },
+  "heritage": [
+    {
+      "value": "哈尔滨国际冰雪节",
+      "source": "https://zh.wikipedia.org/zh-cn/中国哈尔滨国际冰雪节",
+      "confidence": "medium"
+    }
+  ],
+  "crafts": [
+    {
+      "value": "冰雕与冰灯",
+      "source": "https://zh.wikipedia.org/zh-cn/冰雕",
+      "confidence": "medium"
+    }
+  ],
+  "foods": [
+    {
+      "value": "哈尔滨红肠",
+      "source": "https://zh.wikipedia.org/zh-cn/哈尔滨红肠",
+      "confidence": "medium"
+    },
+    {
+      "value": "锅包肉",
+      "source": "https://zh.wikipedia.org/zh-cn/锅包肉",
+      "confidence": "medium"
+    }
+  ],
+  "flora_fauna": [
+    {
+      "value": "丁香花",
+      "source": "https://zh.wikipedia.org/zh-cn/哈尔滨市",
+      "confidence": "high"
+    },
+    {
+      "value": "东北虎",
+      "source": "https://zh.wikipedia.org/zh-cn/东北虎",
+      "confidence": "low"
+    }
+  ],
+  "season_light": {
+    "value": "冬季低角度斜阳与蓝调黄昏，雪地与冰面反光",
+    "source": "https://zh.wikipedia.org/zh-cn/哈尔滨市",
+    "confidence": "medium"
+  },
+  "figure": {
+    "mode": "artisan",
+    "role": "冰雕师",
+    "action": "在松花江畔用凿子与电锯雕琢大块冰",
+    "costume": "厚实的棉服与毛线帽、防寒手套和防滑靴",
+    "ethnicity_region": "汉族 · 黑龙江哈尔滨",
+    "source": "https://zh.wikipedia.org/zh-cn/冰雕",
+    "confidence": "low"
+  },
+  "palette": {
+    "main": [
+      "#DDE8F0",
+      "#27384D"
+    ],
+    "accent": [
+      "#B6403A",
+      "#E2B35A",
+      "#6FA3C7"
+    ]
+  },
+  "text": {
+    "year": "2026",
+    "seal": "冰城欧韵",
+    "name_en": "HARBIN · CHINA",
+    "title": "雪落冰城",
+    "seal_place": "中国哈尔滨",
+    "subtitle": [
+      "冰雪世界 · 中央大街",
+      "穹顶红砖 · 异域风情"
+    ],
+    "intro_zh": [
+      "松花江封冻成路",
+      "方石街两旁立着欧式立面",
+      "冰雕在寒夜里透出微光"
+    ],
+    "place_en": "HARBIN, HEILONGJIANG, CHINA",
+    "intro_en": "Harbin pairs winter ice and snow with a European-style old town, from Saint Sophia Cathedral to Central Street. Ice carvers turn the river's cold into glowing sculptures.",
+    "closing": [
+      "冰雪 · 穹顶",
+      "Light carved from ice."
+    ]
+  }
+}
