@@ -1,6 +1,6 @@
 {
   "code": "C91",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "浮世绘木版多色印",
     "en": "Multi-Block Woodblock Colour Print"
@@ -101,6 +101,12 @@
       "date": "2026-11-01",
       "note": "海报试图通过：用途加海报，登记推荐版式 sky-title、vertical-title",
       "samples_unaffected": true
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "技法参考图无损重压缩（像素逐一相同），控制公开安装包体积；不改提示词",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -111,7 +117,7 @@
   "anchor": {
     "enabled": true,
     "file": "anchor.png",
-    "sha256": "a090b61b820aa4af851f6838879e9c3491f5945d6ffe2e3535174eff71d76d77",
+    "sha256": "012568cffcd2b8553023ff24fb7872cc8cc242d40d014ac01b1305d2289e017a",
     "isolation": "Transfer only the woodblock carved ink outlines, limited flat color plates, washi fibers and compressed perspective technique from this reference board. Do not reproduce its writing, labels, grid, border, sample figures, scenery or layout. Do not copy any content of the reference board: its people, animals (such as its sleeping cat), cups and vessels, books, window, reading room, furniture, decorative layout, poses or arrangement. Draw people, animals, cups, books, windows, rooms or furniture only when the current brief itself asks for them, and then compose them fresh from the brief's own wording, never from the board's scene. When the brief gives no setting, use the washi paper fibre ground of the technique instead of adding a room or scenery from the board. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering.; reproduce no writing from the board, and add text only where the brief explicitly requests it, spelled exactly as given. The reference is an abstract material proof, not a background design for the new picture. Do not copy any of its individual black strokes, colour-plate silhouettes, fan-like arrangement, intersections, colour positions or crop. Recut all linework and reprint all ink marks for the current brief from scratch; transfer the craft, not the same shapes. When the brief specifies no setting, show only an unprinted plain washi-paper ground behind the subject: no coloured background plates, no black background rays, no abstract decorative background pattern. When the brief requests a setting or ornamental content, construct it only from those requested elements, with fresh shapes and placement; never use the proof layout as a scene or backdrop."
   },
   "uses": [

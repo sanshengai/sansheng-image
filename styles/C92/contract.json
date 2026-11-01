@@ -1,6 +1,6 @@
 {
   "code": "C92",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "敦煌矿物彩壁画",
     "en": "Mineral Pigment Cave-Mural Texture"
@@ -101,6 +101,12 @@
       "date": "2026-11-01",
       "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
       "samples_unaffected": true
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "技法参考图无损重压缩（像素逐一相同），控制公开安装包体积；不改提示词",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -111,7 +117,7 @@
   "anchor": {
     "enabled": true,
     "file": "anchor.png",
-    "sha256": "7ac3d087954e8847e8c2a6443a6a2b81896f42a1128ab811eacd51edcd18671b",
+    "sha256": "c10ecb3aeb7a953e57c883399095c82cdadd1c3498f8d2f338ce5ad06570f62a",
     "isolation": "Transfer only the mineral-pigment colour fields, the flowing dark iron-wire outlines, the plaster-wall tooth and the sparse hairline cracks in empty ground technique from this reference board. Do not reproduce its title, labels, colour dots, panel grid, frames, sample objects, sample figures, house or layout. Do not copy any content of the reference board: its people, animals (such as its sleeping cat), cups and vessels, books, window, reading room, furniture, decorative layout, poses or arrangement. Draw people, animals, cups, books, windows, rooms or furniture only when the current brief itself asks for them, and then compose them fresh from the brief's own wording, never from the board's scene. When the brief gives no setting, use the plaster-wall ground of the technique instead of adding a room or scenery from the board. Principal subjects, identities, actions and relationships follow the current brief, not the reference board. Do not add extra people, deities, animals or a new narrative theme. Ordinary supporting scene details and the source-style ornamental motifs may support the requested scene; when the brief sets an exact count or says only, preserve that restricted inventory. Borrow technique, never the reference scene, props, composition or lettering.; reproduce no writing from the board, and add text only where the brief explicitly requests it, spelled exactly as given."
   },
   "uses": [

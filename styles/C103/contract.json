@@ -1,6 +1,6 @@
 {
   "code": "C103",
-  "revision": 2,
+  "revision": 3,
   "name": {
     "zh": "圆域人物",
     "en": "Circle-Field Portrait Editorial"
@@ -108,6 +108,12 @@
       "revision": 2,
       "date": "2026-11-01",
       "note": "3:4 与 1:1 试图通过，用途加小红书、音乐封面",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 3,
+      "date": "2026-11-01",
+      "note": "技法参考图改用原分辨率 WebP Q80 打包（同一张图，与 C99 一致），控制公开安装包体积；不改提示词",
       "samples_unaffected": true
     }
   ],
@@ -231,8 +237,8 @@
     }
   ],
   "anchor": {
-    "file": "anchor.png",
-    "sha256": "10c7333a2046cfa6839303da49a99fa15dc979c060b175bef507535b825c3800",
+    "file": "anchor.webp",
+    "sha256": "e1af7de65e92ffd0be15bfb1cd241e1e5a184e33bbafd2d420a229122b36de21",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }

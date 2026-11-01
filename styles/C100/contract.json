@@ -1,6 +1,6 @@
 {
   "code": "C100",
-  "revision": 4,
+  "revision": 5,
   "name": {
     "zh": "青釉园林",
     "en": "Celadon Garden Editorial"
@@ -100,6 +100,12 @@
       "revision": 4,
       "date": "2026-11-01",
       "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 5,
+      "date": "2026-11-01",
+      "note": "技法参考图改用原分辨率 WebP Q80 打包（同一张图，与 C99 一致），控制公开安装包体积；不改提示词",
       "samples_unaffected": true
     }
   ],
@@ -225,8 +231,8 @@
     }
   ],
   "anchor": {
-    "file": "anchor.png",
-    "sha256": "a363935b12a1f5af733ef1a5989cd91ab3952e791c9788d2bb863efd10146e32",
+    "file": "anchor.webp",
+    "sha256": "1d96da9074e814bfacb81d20e50441358f82ad091ef6591a82b7f5f2a76a2fe0",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }

@@ -1,6 +1,6 @@
 {
   "code": "C102",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "文旅长卷",
     "en": "Cultural Travel Scroll"
@@ -113,6 +113,12 @@
       "revision": 3,
       "date": "2026-11-01",
       "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
+      "samples_unaffected": true
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "技法参考图改用原分辨率 WebP Q80 打包（同一张图，与 C99 一致），控制公开安装包体积；不改提示词",
       "samples_unaffected": true
     }
   ],
@@ -327,8 +333,8 @@
     }
   ],
   "anchor": {
-    "file": "anchor.png",
-    "sha256": "40479ddbdfd8c3792832b7b8b462ae5d4e763383513ee9d5f6a72de8a264e5dc",
+    "file": "anchor.webp",
+    "sha256": "2417d05b5e19987467ac893280dca52ce1aebbd471fd21b44bc06c972c33f143",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }

@@ -1,6 +1,6 @@
 {
   "code": "C101",
-  "revision": 3,
+  "revision": 4,
   "name": {
     "zh": "纸景微缩",
     "en": "Paper Landscape Miniature"
@@ -95,6 +95,12 @@
       "date": "2026-11-01",
       "note": "分类名「国风传统」改为「国风 · 东方」（只改看板分类名，不进提示词）",
       "samples_unaffected": true
+    },
+    {
+      "revision": 4,
+      "date": "2026-11-01",
+      "note": "技法参考图改用原分辨率 WebP Q80 打包（同一张图，与 C99 一致），控制公开安装包体积；不改提示词",
+      "samples_unaffected": true
     }
   ],
   "inspiration": {
@@ -187,8 +193,8 @@
     }
   ],
   "anchor": {
-    "file": "anchor.png",
-    "sha256": "c4b4a2cbd475678649b496d0d9c249ced7eb98671f254a03af49b38628e00655",
+    "file": "anchor.webp",
+    "sha256": "d46424b97501217c24df7821452b3f055616601227173f6d792a053bb8771cbc",
     "enabled": true,
     "isolation": "This image is a style reference sheet for this visual style. Transfer only its rendering technique, line or brush character, material, texture, colour tendency and decorative language. Never copy the sheet's layout, panels, swatches, labels, words, objects or composition; all subjects, layout and text come exclusively from the current brief."
   }
