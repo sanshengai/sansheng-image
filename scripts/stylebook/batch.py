@@ -17,6 +17,7 @@ from typing import Callable
 
 from . import compile as CP
 from . import contract as CT
+from . import poster as PO
 from . import data as D
 from .textspec import overlay_items
 from . import export as EX
@@ -214,7 +215,9 @@ def run(plan: dict, out_dir: Path, *, provider: str | None = None, model: str | 
             final = out / f"{iid}.png"
             prior_final_sha = rec.get("image_sha256")
             try:
-                ex = EX.export(raw, base["format"], final, overlay=text if raster_overlay else None)
+                custom = PO.custom_export_px(base, fmt)   # 自定义尺寸海报按 size_cm 的实际比例与像素导出（与 make 一致）
+                ex = EX.export(raw, base["format"], final, overlay=text if raster_overlay else None,
+                               size=(PO.actual_aspect(base, fmt), custom) if custom else None)
             except ValueError as e:
                 rec.update(status="export_failed", error=str(e), problems=[str(e)], passed=False,
                            attempts=attempt + 1, fp=None)

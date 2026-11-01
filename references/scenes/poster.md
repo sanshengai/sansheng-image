@@ -35,7 +35,7 @@
 | `type-led` | 大字主导 | 大字报、人物编辑海报 |
 | `magazine-scroll` | 杂志栏 + S 形长卷 | 文旅长卷专用 |
 
-每个画风在合同 `recipe.poster_layouts` 登记 2–3 种推荐版式；没登记的画风只能用 `sky-title` 和 `axis`。版式和格式、信息量档位不兼容时 `plan` 会报错并列出可选项。各版式的精确排字参考坐标在 `layouts/layouts.json` 的 `zones`；overlay 条目缺 `box` 时按版式补齐。
+每个画风在合同 `recipe.poster_layouts` 登记 2–3 种推荐版式；没登记的画风只能用 `sky-title` 和 `axis`。版式和格式、信息量档位不兼容时 `plan` 会报错并列出可选项。各版式的精确排字参考坐标在 `layouts/layouts.json` 的 `zones`；overlay 条目缺 `box` 时按版式补齐（目前只在 `sb.py make` 路径；`plan` / `batch` 计划里的精确排字条目要自己写 `box`，混合档要写 `reserve`）。
 
 ## 信息量档位（`poster_info`）
 

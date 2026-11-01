@@ -554,3 +554,16 @@ def test_square_thumbnail_fails_even_when_full_image_passes(tmp_path):
     assert st["items"]["cover"]["status"] == "failed"
     assert any("缩略图主题不清" in x for x in st["items"]["cover"]["problems"])
     assert not json.loads((tmp_path / "b" / "deliverables.json").read_text())["items"][0]["ready"]
+
+
+def test_custom_size_poster_exports_at_real_ratio(tmp_path):
+    """poster-custom 在 batch 里要按 size_cm 的实际比例导出，不能出完图才在导出时报错（2026-11-01 评审发现）。"""
+    from PIL import Image
+    it = {"id": "01", "position": "cover", "shape": "story", "form": "scene", "what": "展板主视觉", "subject": "a quiet garden scene",
+          "why": "活动展板需要一张能让人停下来的主视觉，用安静的园林场景定调", "format": "poster-custom", "size_cm": [60, 90], "dpi": 72,
+          "poster_layout": "sky-title", "text": {"mode": "none", "items": []}}
+    plan = {"scene": "poster", "style": {"code": "C08", "source": "explicit", "why": "测试用的诗意留白画风"}, "items": [it]}
+    st, _ = run(tmp_path, plan)
+    assert st["summary"]["passed"] == 1, st
+    w, h = Image.open(tmp_path / "b" / "01.png").size
+    assert abs(w / h - 60 / 90) < 0.01

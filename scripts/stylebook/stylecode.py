@@ -12,7 +12,7 @@
     sb2:<用途>/<样式>[~<海报版式>][+<手法变体>][-<色系>[.L<深浅>S<鲜灰>]][-hex.<RRGGBB>…]
     ~版式  layouts/layouts.json 里的版式 id（可含连字符，如 corner-embrace）；紧随其后的 -色系 靠已知版式 id 切开
     +变体  合同 recipe.variants 的 id（小写字母、数字、下划线）
-例：sb2:poster/C101~corner-embrace　sb2:poster/C103+mirror　sb2:poster/C100~vertical-title-ink
+例：sb2:poster/C101~corner-embrace　sb2:poster/C103+mirror　sb2:poster/C101~corner-embrace-macaron.L1S0
 """
 from __future__ import annotations
 

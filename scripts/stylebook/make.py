@@ -124,7 +124,9 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
             raise BriefError(f"未知格式：{fmt}")
         # 资料卡的杂志栏版式与整套文旅文字只用于海报；小红书、插图等场景只借用资料卡的画面内容
         card_poster = card_fields if (card_fields is not None and uses_layout) else None
+        # 优先级：图片项 > brief > 风格码（~版式 +手法）> 资料卡
         poster_fields = PO.resolve_plan_fields({**{k: (card_poster or {}).get(k) for k in ("poster_layout", "poster_info") if (card_poster or {}).get(k)},
+                                                **{k: selected[k] for k in ("poster_layout", "variant") if selected and selected.get(k)},
                                                 **{k: brief[k] for k in ("poster_layout", "poster_info", "variant", "region_skin") if k in brief}},
                                                item, style_contract, uses_layout=uses_layout)
         text = item.get("text", [])
@@ -139,7 +141,8 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
                     del entry["box"]  # 资料卡留空的 box 交给版式补
             if poster_fields.get("poster_layout"):
                 try:
-                    text_spec = PO.fill_boxes(text_spec, poster_fields["poster_layout"], D.formats()[fmt])
+                    text_spec = PO.fill_boxes(text_spec, poster_fields["poster_layout"], D.formats()[fmt],
+                                              aspect=PO.actual_aspect(poster_fields, D.formats()[fmt]))
                 except ValueError as exc:
                     raise BriefError(f"第 {index} 张精确排字位置：{exc}") from exc
                 for entry in text_spec.get("items") or []:  # 海报精确排字默认按底色选字色、要求文字区干净
@@ -209,9 +212,6 @@ def prepare(brief: dict, *, base_path: Path, model: str = "gpt-image-2") -> dict
                 manifest["content"][field] = item[field]
         for field in ("structure", "density"):
             if expression.get(field, "auto") != "auto":
-                manifest[field] = expression[field]
-        for field in ("poster_layout", "variant"):
-            if expression.get(field) and field not in item and field not in brief:
                 manifest[field] = expression[field]
         compiled = CP.compile_manifest(manifest)
         refs = [{**r, "sha256": _sha(Path(r["path"]))} for r in compiled.references]

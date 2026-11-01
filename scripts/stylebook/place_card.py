@@ -212,9 +212,6 @@ def to_manifest_fields(card: dict) -> dict:
     add("seal", "seal")
     add("name_en", "name_en", font_px=18, min_px=12)
     add("title", "title", direction="vertical")
-    for it in items:
-        if it["text"] == t.get("title"):
-            it["render"] = "native"
     add("seal", "seal_place", seal={"shape": "oval"}, zone="seal_place")
     # 杂志栏是小字排版：左栏只有画面宽度的 24%，各条目给出小字号区间
     sizes = {"subtitle": (24, 16), "intro_zh": (22, 14), "place_en": (16, 11), "intro_en": (14, 10), "closing": (18, 12)}

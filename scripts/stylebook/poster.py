@@ -105,6 +105,12 @@ def _layout_problems(contract: dict, manifest: dict, fmt: dict | None) -> list[s
         out.append(f"版式 {lid} 不适用格式 {fid}；该版式可用格式：{'、'.join(layout['ratios'])}")
     if info is not None and info in D.info_levels() and info not in layout["info"]:
         out.append(f"版式 {lid} 不适合信息量 {info}；该版式适合：{'、'.join(layout['info'])}")
+    try:
+        real_landscape = parse_ratio(actual_aspect(manifest, fmt)) > 1
+    except (ValueError, ZeroDivisionError):
+        real_landscape = False
+    if real_landscape and not layout.get("zones_landscape"):
+        out.append(f"版式 {lid} 没有横版分区，实际比例 {actual_aspect(manifest, fmt)} 是横版；换有横版的版式或改竖版尺寸")
     allowed = (contract.get("recipe") or {}).get("poster_layouts")
     if allowed:
         if lid not in allowed:
@@ -269,7 +275,7 @@ def resolve_plan_fields(plan: dict, item: dict, contract: dict | None, *, uses_l
     return out
 
 
-def fill_boxes(text: dict, layout_id: str, fmt: dict) -> dict:
+def fill_boxes(text: dict, layout_id: str, fmt: dict, aspect: str | None = None) -> dict:
     """给 overlay / hybrid(render=overlay) 中缺 box 的条目按 zone（缺省为 role）补版式参考 box；返回新 dict，不改原对象。
 
     横版格式（宽高比 > 1）用 zones_landscape；版式没有横版分区，或某个 role 没有对应分区，都抛 ValueError。
@@ -281,7 +287,7 @@ def fill_boxes(text: dict, layout_id: str, fmt: dict) -> dict:
     mode = out.get("mode")
     if mode not in ("overlay", "hybrid"):
         return out
-    landscape = parse_ratio((fmt or {}).get("ratio", "1:1")) > 1
+    landscape = parse_ratio(aspect or (fmt or {}).get("ratio", "1:1")) > 1   # aspect：自定义尺寸按 size_cm 换算的实际比例
     zones = layout.get("zones_landscape") if landscape else layout.get("zones")
     kind = "横版" if landscape else "竖版"
     for n, item in enumerate(out.get("items") or [], 1):

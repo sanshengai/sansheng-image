@@ -172,3 +172,12 @@ def test_place_card_layout_only_applies_to_poster_scene():
     assert xhs.get("poster_layout") is None
     assert [i["text"] for i in xhs["text"]["items"]] == ["海丝簪花"]
     assert "Literal inventory" in xhs["content"]["inventory"]
+
+
+def test_seal_with_same_text_as_title_stays_exact_overlay():
+    """印章文字与主标题相同时，印章仍由排字器精确盖印，只有主标题交给模型书写（2026-11-01 评审发现）。"""
+    c = good()
+    c.setdefault("text", {}); c["text"]["title"] = c["text"].get("title") or "风花雪月"; c["text"]["seal"] = c["text"]["title"]
+    items = PC.to_manifest_fields(c)["text"]["items"]
+    assert [i["render"] for i in items if i["role"] == "title"] == ["native"]
+    assert all(i["render"] == "overlay" for i in items if i["role"] == "seal")

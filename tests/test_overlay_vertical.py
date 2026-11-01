@@ -123,6 +123,7 @@ def test_vertical_rotated_dash_is_vertical_stroke():
 
 def test_missing_vertical_glyph_falls_back_to_rotated_horizontal(monkeypatch):
     monkeypatch.setattr(OL, "_has_glyph", lambda font, ch: False)
+    monkeypatch.setattr(OL, "_face_for_text", lambda *a: None)   # 本例只测竖排字形缺失时旋转横排字形，不测整字缺字
     img = render(canvas(), vertical("「", font_px=80, min_px=80))
     assert ink(img)[3] > 50
 
@@ -386,5 +387,25 @@ def test_unrenderable_char_raises(monkeypatch):
     try:
         with pytest.raises(ValueError, match="找不到包含这些字符的字体"):
             OL._face_for_text("regular", "sans", "\U0001F9FF\u0F00")
+    finally:
+        OL._face_for_text.cache_clear()
+
+
+def test_invisible_format_characters_are_not_missing_glyphs():
+    """U+FE0F 变体选择符、零宽空格不画字形，不能因此报缺字（2026-11-01 评审发现）；可见的缺字仍报错（见上面的反例测试）。"""
+    for text in ("春日️", "春​日", "风花‍雪月"):
+        OL._face_for_text("regular", "sans", text)   # 不抛错
+
+
+def test_vertical_text_with_unrenderable_char_raises(monkeypatch):
+    """竖排也走缺字检查：所有候选都缺字时报错，不静默出方块（反例：改动前竖排直接用首选字体）。"""
+    from PIL import Image
+    monkeypatch.setattr(OL, "LATIN_FALLBACKS", [])
+    monkeypatch.setattr(OL, "FONT_CANDIDATES", {"sans": OL.FONT_CANDIDATES["sans"]})
+    OL._face_for_text.cache_clear()
+    try:
+        item = {"text": "春ༀ日", "box": [0.1, 0.1, 0.1, 0.5], "direction": "vertical", "font_px": 40, "min_px": 20}
+        with pytest.raises(ValueError, match="找不到包含这些字符的字体"):
+            OL.render(Image.new("RGB", (1080, 1920), "white"), {"mode": "overlay", "items": [item]})
     finally:
         OL._face_for_text.cache_clear()

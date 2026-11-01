@@ -7,6 +7,7 @@ import hashlib
 import math
 import random
 import re
+import unicodedata
 
 from PIL import Image, ImageChops, ImageColor, ImageDraw, ImageFilter, ImageFont
 
@@ -130,7 +131,9 @@ LATIN_FALLBACKS = [
 def _face_for_text(weight: str, family: str, chars: str):
     """返回能覆盖全部非 ASCII 字符的字体 (路径, 序号)；首选字体已覆盖时返回 None（照常用 _font）。
     依次试：本字族同字重其余候选 → 其他字族同字重 → 西文兜底字体。都缺字时抛错列出缺的字，绝不渲染成方块。"""
-    need = sorted(set(c for c in chars if ord(c) > 127 and not c.isspace()))
+    # 不可见的组合与格式字符（变体选择符 U+FE0F、零宽空格等）不画字形，不算缺字；从微信、小红书复制的文字常带这些
+    need = sorted(set(c for c in chars if ord(c) > 127 and not c.isspace()
+                      and unicodedata.category(c) not in {"Mn", "Me", "Cf"} and not 0xFE00 <= ord(c) <= 0xFE0F))
     if not need:
         return None
     first = _font(weight, 32, family)
@@ -574,8 +577,9 @@ def _draw_vertical_item(out: Image.Image, draw: ImageDraw.ImageDraw, item: dict,
     preferred, minimum = item.get("font_px", 48), item.get("min_px", 32)
     gap = item.get("line_gap", 1.25)
     chosen = None
+    face = _face_for_text(weight, family, item["text"])   # 竖排同样缺字兜底，都缺就报错
     for size in range(preferred, minimum - 1, -1):
-        font = _font(weight, size, family)
+        font = ImageFont.truetype(face[0], size, index=face[1]) if face else _font(weight, size, family)
         columns = _pack_vertical(lines, font, size, height)
         pitch = round(size * gap)
         if columns is not None and (len(columns) - 1) * pitch + size <= width:
@@ -656,7 +660,8 @@ def _draw_seal(out: Image.Image, item: dict, n: int) -> None:
     elif tw / th < 0.75:
         th = tw / 0.75
     em = 256
-    big = _font(weight, em, family)
+    face = _face_for_text(weight, family, text)
+    big = ImageFont.truetype(face[0], em, index=face[1]) if face else _font(weight, em, family)
     glyphs = Image.new("L", (W, H))
     index = 0
     for col, count in enumerate(counts):  # 先读右列

@@ -65,7 +65,7 @@ PPT / 课件如需可编辑文字，继续用 `text.mode = overlay` 和 `reserve
 - 缺字兜底：所选字体缺某个字形（如中文黑体里没有土耳其文 İ ğ ş ı）时，整条改用能覆盖全部字符的候选字体；都缺就报错列出缺的字，不会渲染成方块。
 - `color: "auto"`：按文字区底色中位亮度选深字（#263432）或浅字（#F4EFE6）；不能与 `spans` 同用。
 - `require_clean: true`：先检查文字区是否是一块干净的底，偏离底色的像素超过 6% 就拒绝，提示改位置或重出底图，防止字压在主体、装饰或模型写的字上。
-- 海报场景的精确排字默认带 `color: "auto"` 与 `require_clean: true`；按版式补 box 时可写 `zone` 指定分区（如两个印章分别用 `seal` 与 `seal_place`）。
+- 用 `sb.py make` 出海报时，精确排字默认带 `color: "auto"` 与 `require_clean: true`（`plan` / `batch` 路径不自动加，需要时自己写）；按版式补 box 时可写 `zone` 指定分区（如两个印章分别用 `seal` 与 `seal_place`）。
 
 ### 竖排、印章、楷体与 light 字重
 

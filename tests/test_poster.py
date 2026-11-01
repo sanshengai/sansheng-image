@@ -571,3 +571,39 @@ def test_fill_boxes_centres_horizontal_items_in_centred_layouts():
     # 反例：左对齐版式不加居中
     out2 = PO.fill_boxes({"mode": "overlay", "items": [{"role": "subtitle", "text": "a"}]}, "big-shape-band", fmt)
     assert "align" not in out2["items"][0]
+
+
+def _code_brief(code, **extra):
+    return {"version": 1, "code": code, "reason": "测试", "confirmed": "skipped",
+            "items": [{"id": "a", "position": "cover", "message": "海报", "visual": "a quiet scene",
+                       "text": ["春日"]}], **extra}
+
+
+def test_make_uses_layout_and_variant_from_style_code():
+    """看板复制的 sb2:poster/C103~axis+mirror 在 make 路径里必须真的用上版式与手法（2026-11-01 评审发现被丢掉）。"""
+    from stylebook import make as MK
+    m = MK.prepare(_code_brief("sb2:poster/C103~axis+mirror"), base_path=ROOT)["tasks"][0]["manifest"]
+    assert m["poster_layout"] == "axis" and m["variant"] == "mirror"
+    m = MK.prepare(_code_brief("sb2:poster/C101~big-shape-band"), base_path=ROOT)["tasks"][0]["manifest"]
+    assert m["poster_layout"] == "big-shape-band"
+    # brief 显式写的版式优先于风格码
+    m = MK.prepare(_code_brief("sb2:poster/C101~big-shape-band", poster_layout="sky-title"), base_path=ROOT)["tasks"][0]["manifest"]
+    assert m["poster_layout"] == "sky-title"
+    # 反例：不带 ~ 时仍取画风推荐的第一个版式
+    m = MK.prepare(_code_brief("sb2:poster/C101"), base_path=ROOT)["tasks"][0]["manifest"]
+    assert m["poster_layout"] == CT.load("C101")["recipe"]["poster_layouts"][0]
+
+
+def test_custom_landscape_size_uses_landscape_zones_and_rejects_portrait_only_layouts():
+    """poster-custom 名义 2:3，size_cm 90×60 实际是横版：补框用横版分区；只有竖版分区的版式直接拒绝（反例）。"""
+    fmt = D.formats()["poster-custom"]
+    text = {"mode": "overlay", "items": [{"role": "title", "text": "春日"}]}
+    real = PO.actual_aspect({"size_cm": [90, 60]}, fmt)
+    box = PO.fill_boxes(text, "sky-title", fmt, aspect=real)["items"][0]["box"]
+    assert box == D.layouts()["sky-title"]["zones_landscape"]["title"]
+    assert PO.fill_boxes(text, "sky-title", fmt)["items"][0]["box"] == D.layouts()["sky-title"]["zones"]["title"]
+    c = CT.load("C08")
+    m = {"style": "C08", "format": "poster-custom", "size_cm": [90, 60], "poster_layout": "corner-embrace"}
+    assert any("没有横版分区" in p for p in PO.problems(c, m, fmt))
+    m["size_cm"] = [60, 90]
+    assert not any("没有横版分区" in p for p in PO.problems(c, m, fmt))
