@@ -550,3 +550,18 @@ def test_other_page_features_survive(browser, built):
         page.locator("#lib-grid > li:not([hidden]) .style-card").first.click()
         page.wait_for_selector("dialog[open]")
         assert _hash(page).get("s") and _hash(page).get("u") == sc["id"]
+
+
+@pytest.mark.parametrize("size", [(390, 844), (1440, 900)])
+def test_tools_row_folds_only_while_mobile_filters_are_open(browser, built, size):
+    """手机上展开筛选时暂收「帮我挑 / 我的默认」，关掉筛选就回来；桌面宽度始终可见（反例）。"""
+    d, html, meta = built
+    w, h = size
+    with open_page(browser, d, w, h) as page:
+        _open(page)
+        assert page.is_visible("#quiz-btn")
+        page.click("#lib-more")
+        assert page.is_visible("#lib-tax-row")
+        assert page.is_visible("#quiz-btn") == (w >= 600)
+        page.click("#lib-more")
+        assert page.is_hidden("#lib-tax-row") and page.is_visible("#quiz-btn")
