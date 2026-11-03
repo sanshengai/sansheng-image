@@ -126,7 +126,6 @@
 }
 
 /* 分类作品墙：画面为主，原文与下载在展开层。 */
-.motion-sec .wrap { width:min(1760px,calc(100% - 80px)); max-width:1760px; }
 .motion-filter-bar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:24px; }
 .motion-filter-bar .motion-choices { margin:0; }
 .motion-pause-all { flex-shrink:0; appearance:none; border:1px solid var(--line); border-radius:24px; padding:10px 16px; color:var(--mut); background:var(--bg); font:500 14px/1.5 var(--sans); cursor:pointer; }
@@ -163,7 +162,6 @@
 .motion-lightbox .motion-detail-content { max-width:70em; }
 @media(max-width:1199px) { .motion-exhibit.motion-gallery { grid-template-columns:minmax(0,1fr); } }
 @media(max-width:640px) {
-  .motion-sec .wrap { width:calc(100% - 36px); }
   .motion-filter-bar { align-items:flex-start; flex-wrap:wrap; gap:12px; }
   .motion-pause-all { font-size:12px; padding:7px 12px; }
   .motion-exhibit .motion-card { padding:0 0 14px; }

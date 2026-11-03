@@ -405,7 +405,7 @@ dialog::backdrop { background: rgba(2, 4, 8, .8); }
 .lib-row-pal .lib-label { padding-top: 12px; }
 #lib-palettes { flex: 1 1 auto; }
 #lib-palettes.is-folded { flex-wrap: nowrap; overflow: hidden; }
-.pal-side { flex: none; display: flex; gap: 8px; align-self: flex-start; padding-top: 2px; }
+.pal-side { flex: none; display: flex; gap: 8px; align-self: flex-start; padding-top: 10px; }   /* = 色系容器的 8px 上边距 + 2px 内边距，按钮与色系胶囊同一水平线 */
 .chips-wrap .chip { padding: 4px 11px; gap: 6px; max-width: 100%; }
 .lib-bar.is-stuck { box-shadow: 0 18px 40px -18px rgba(0,0,0,.75); border-bottom-color: var(--line-2); }
 #quiz { width: min(760px, calc(100vw - 24px)); }
@@ -910,6 +910,16 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   .hero .actions button { transition: none; }
 }
+
+/* 画风卡片：编号与名字同一行、基线对齐（编号原先离图片比离名字还近，分组错位）。
+   名字过长时只在自己那一栏换行，编号不被挤走；简介另起一行占满宽度。 */
+.style-card .sc-text {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 8px; align-items: baseline;
+  margin-top: 10px;
+}
+.style-card .sc-id { font-size: 12px; letter-spacing: .02em; }
+.style-card .sc-text .sc-name { margin-top: 0; }
+.style-card .sc-text .sc-ess { grid-column: 1 / -1; }
 
 </style>
 <link rel="stylesheet" href="/tools/image/motion.css">
