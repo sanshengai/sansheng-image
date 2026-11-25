@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from . import character as CH
@@ -29,6 +30,189 @@ ASPECTS = ("9:16", "16:9")
 SAME_KEYS = ("服装", "道具", "光线方向", "天气", "持物", "发型", "站位")
 REQUIRED = ("id", "location", "size", "camera", "action", "axis", "facing", "gaze", "holding", "start", "end", "motion")
 FACING_EN = {"left": "facing frame left", "right": "facing frame right", "camera": "facing the camera", "away": "facing away from the camera"}
+SIZE_EN = {"远景": "extreme wide shot", "全景": "wide establishing shot", "中景": "medium shot", "近景": "medium close-up", "特写": "close-up"}
+SAFE_LENS_BY_SIZE = {
+    "远景": ("24mm wide cinema prime", "deep focus with clear atmospheric perspective across foreground, midground and horizon"),
+    "全景": ("28mm cinema prime", "deep natural focus keeping architecture, landscape and figures grounded"),
+    "中景": ("35mm cinema prime", "natural cinematic depth of field separating subject from background"),
+    "近景": ("50mm portrait cinema prime", "shallow depth of field with natural facial proportions and gentle background falloff"),
+    "特写": ("85mm cinema prime", "shallow depth of field with crisp eyes/details and soft bokeh falloff"),
+}
+_ULTRAWIDE_RE = re.compile(r"(?:\b(?:ultra[\s-]?wide|fisheye|14mm|16mm|18mm)\b|超广角|鱼眼)", re.I)
+
+# 与 sansheng-video/references/generated-audiovisual.md §二对齐的 4 决定首帧电影感预设
+CINEMA_PRESETS: dict[str, dict[str, str]] = {
+    "oriental-historical-clear": {
+        "anchor": "Live-action Oriental historical cinema frame, authentic East Asian people, natural skin texture",
+        "light": "clear highlight-to-shadow modeling with clean legible shadow detail, never murky",
+        "color": "restrained low-saturation historical palette (max 3 hues), natural skin and authentic wood/stone/linen tones",
+        "texture": "subtle 35mm fine film grain, organic material wear, natural atmospheric depth, no plastic sheen",
+        "mood": "clear, dignified historical presence",
+    },
+    "wuxia-backlight": {
+        "anchor": "1990s Oriental wuxia live-action cinema frame",
+        "light": "strong directional side-backlight, glowing rim edges, volumetric light shafts through dust",
+        "color": "bleached ochre earth and slate teal low-saturation palette, cold steel accent",
+        "texture": "textured 35mm film grain, windblown dust and atmospheric haze",
+        "mood": "tense, stark martial-world atmosphere",
+    },
+    "oriental-ink-poetic": {
+        "anchor": "Poetic Oriental historical cinema frame",
+        "light": "soft diffused directional daylight with dappled foliage shadows and gentle contrast",
+        "color": "muted celadon green and ink-wash slate greys, at most one warm accent",
+        "texture": "fine film grain, delicate distant mist, painterly depth",
+        "mood": "quiet, restrained classical poise",
+    },
+    "period-nostalgia": {
+        "anchor": "Warm East Asian period nostalgia cinema frame",
+        "light": "warm late-afternoon angled sunlight casting soft shadows across textured walls",
+        "color": "low-saturation warm ochre, faded timber and soft olive tones",
+        "texture": "gentle 35mm film grain, mild vintage softness, lived-in surfaces",
+        "mood": "warm, wistful memory",
+    },
+    "neon-night-cinema": {
+        "anchor": "Atmospheric East Asian urban night cinema frame",
+        "light": "mixed tungsten practicals and directional neon side-light, deep shadows, wet reflections",
+        "color": "warm amber-red paired with cool deep emerald or slate blue shadows",
+        "texture": "35mm film grain, subtle anamorphic halation, humid night air",
+        "mood": "intimate, moody urban solitude",
+    },
+    "bright-youth-daylight": {
+        "anchor": "Clean East Asian youth daylight cinema frame",
+        "light": "bright directional daylight and airy window bounce, soft open shadows",
+        "color": "clear sky blue, leafy green and crisp white, low contrast, natural warm skin",
+        "texture": "fine subtle film grain, clear sunlit air, natural optical softness",
+        "mood": "fresh, open daylight clarity",
+    },
+}
+
+
+def infer_keyframe_size(shot_type: str = "", scene: str = "") -> str:
+    """按镜头类型或英文描述推断景别，用于自动匹配安全焦段（特写禁超广角）。"""
+    probe = f"{shot_type} {scene}".lower()
+    if any(k in probe for k in ("extreme close-up", "close-up", "closeup", "ecu", "特写", "hand holds", "hands on")):
+        return "特写"
+    if any(k in probe for k in ("medium close", "bust", "portrait", "近景", "shoulder")):
+        return "近景"
+    if any(k in probe for k in ("aerial", "bird's-eye", "elevated view", "high above", "panorama", "远景", "大景", "航拍", "俯瞰")):
+        return "远景"
+    if any(k in probe for k in ("wide shot", "wide view", "establishing", "walled city", "courtyard", "battlefield", "全景", "宏大")):
+        return "全景"
+    return "中景"
+
+
+def _adapt_lighting_for_setting(base_light: str, setting: str, scene: str) -> str:
+    """根据实际时段/室内外把光影描述具象到光源、方向、光比和空气介质（精炼无重复）。"""
+    probe = f"{setting} {scene}".lower()
+    if any(k in probe for k in ("oil lamp", "lamplight", "lamplit", "candle", "torch", "firelight")):
+        lead = "warm directional oil-lamp/firelight key light sculpting faces against cooler ambient shadows"
+    elif any(k in probe for k in ("night", "midnight", "moonlit")) and any(k in probe for k in ("tent", "hall", "room", "inside", "indoors")):
+        lead = "warm practical indoor lamp key light from one side with cool shadowed depth"
+    elif any(k in probe for k in ("dusk", "sunset", "twilight")):
+        lead = "low-angle directional dusk side-backlight raking across terrain with crisp atmospheric haze"
+    elif any(k in probe for k in ("dawn", "sunrise", "early morning")):
+        lead = "low pale-gold dawn side light cutting across cool morning mist"
+    elif any(k in probe for k in ("snow", "winter")) and any(k in probe for k in ("overcast", "gray", "grey", "cold")):
+        lead = "crisp directional overcast winter skylight with subtle snow bounce and pale atmospheric depth"
+    elif any(k in probe for k in ("overcast", "rain", "mist", "fog")):
+        lead = "soft directional overcast skylight with gentle shadow separation and humid atmospheric depth"
+    elif any(k in probe for k in ("tent", "hall", "room", "palace", "inside", "indoors", "study", "workshop")):
+        lead = "directional daylight from side windows or open doorways carving clear light and shadow on faces"
+    else:
+        lead = "clear directional angled sunlight with natural highlight-to-shadow volume and contact shadows"
+    parts = [lead]
+    if setting.strip():
+        parts.append(setting.strip().rstrip("."))
+    elif base_light.strip():
+        parts.append(base_light.strip().rstrip("."))
+    return "; ".join(parts)
+
+
+_INDOOR_PROBE_RE = re.compile(r"\b(?:inside\s+a|indoors?|tent|palace\s+hall|government\s+hall|chamber|study|room|workshop|temple)\b", re.I)
+
+
+def _sanitize_indoor_guard(text: str, is_indoor: bool) -> str:
+    """室内镜剥离 villages/huts 等户外否定词，防止无独立 negative_prompt 的模型触发粉红大象串味。"""
+    if not text or not is_indoor:
+        return text
+    cleaned = re.sub(r",?\s*\b(?:villagers?|villages?|huts?)\b", "", text, flags=re.I)
+    cleaned = re.sub(r"\bor\s+(?=(?:beyond|appear|\.|;|$))", "", cleaned, flags=re.I)
+    return re.sub(r"\s{2,}", " ", cleaned).replace(" ,", ",").strip(" ,;")
+
+
+def compile_keyframe_prompt(
+    *,
+    scene: str,
+    preset: str | dict[str, str] = "oriental-historical-clear",
+    shot_type: str = "",
+    setting: str = "",
+    anchor: str = "",
+    characters: str = "",
+    crowd: str = "",
+    guard: str = "",
+    ref_note: str = "",
+    lens: str = "",
+    focus: str = "",
+    foreground: str = "",
+    aspect: str = "16:9",
+    extra_rules: str = "",
+) -> str:
+    """视频分镜首帧统一 4 决定摄影编译器（光影 / 色彩 / 质感 / 构图与安全焦段，精简高信噪比）。"""
+    if isinstance(preset, str):
+        if preset not in CINEMA_PRESETS:
+            raise ValueError(f"未知电影感首帧预设 {preset!r}，可选：{sorted(CINEMA_PRESETS)}")
+        spec = CINEMA_PRESETS[preset]
+    elif isinstance(preset, dict):
+        spec = preset
+    else:
+        raise ValueError("preset 必须是预设名或包含光/色/质字段的字典")
+
+    size_zh = shot_type if shot_type in SIZES else infer_keyframe_size(shot_type, scene)
+    default_lens, default_focus = SAFE_LENS_BY_SIZE[size_zh]
+    chosen_lens = lens.strip() or default_lens
+    chosen_focus = focus.strip() or default_focus
+    if size_zh in ("近景", "特写") and _ULTRAWIDE_RE.search(chosen_lens):
+        raise ValueError(f"{size_zh} 禁用超广角焦段（{chosen_lens!r}），请改用 35mm / 50mm / 85mm")
+
+    is_indoor = bool(_INDOOR_PROBE_RE.search(f"{setting} {scene}"))
+    framing_bits = [f"{SIZE_EN[size_zh]} on {chosen_lens}", chosen_focus]
+    if foreground.strip():
+        framing_bits.append(f"foreground framing: {foreground.strip().rstrip('.')}")
+    elif size_zh in ("远景", "全景"):
+        framing_bits.append("layered foreground-midground-horizon depth")
+
+    light_txt = _adapt_lighting_for_setting(spec.get("light", ""), setting, scene)
+    blocks = []
+    lead = " ".join(x.strip().rstrip(".") + "." for x in (anchor, scene) if x and x.strip())
+    if lead:
+        blocks.append(lead)
+    blocks.append(f"Cinematography & Optics: {spec.get('anchor', '').strip().rstrip('.')}; {'; '.join(framing_bits)}.")
+    blocks.append(f"Lighting: {light_txt}.")
+    style_tail = []
+    if spec.get("color"):
+        style_tail.append(spec["color"].strip().rstrip("."))
+    if spec.get("texture"):
+        style_tail.append(spec["texture"].strip().rstrip("."))
+    if style_tail:
+        blocks.append("Texture & Atmosphere: " + "; ".join(style_tail) + ".")
+    if characters.strip():
+        blocks.append(f"Characters: {characters.strip().rstrip('.')}.")
+    if crowd.strip():
+        blocks.append(f"Crowd: {crowd.strip().rstrip('.')}.")
+    if ref_note.strip():
+        blocks.append(ref_note.strip().rstrip(".") + ".")
+    guard_bits = [
+        f"{aspect} single continuous live-action frame (no split screen or collage)",
+        "no beautification, nobody looks into camera",
+        "no readable text, signs or watermarks",
+    ]
+    clean_guard = _sanitize_indoor_guard(guard.strip().rstrip("."), is_indoor)
+    if clean_guard:
+        guard_bits.append(clean_guard)
+    if extra_rules.strip():
+        guard_bits.append(_sanitize_indoor_guard(extra_rules.strip().rstrip("."), is_indoor))
+    blocks.append("Frame Guard: " + "; ".join(guard_bits) + ".")
+    return "\n".join(blocks)
 
 
 def validate(board: dict, *, locations: set[str] | None = None) -> list[str]:
@@ -53,6 +237,9 @@ def validate(board: dict, *, locations: set[str] | None = None) -> list[str]:
         seen.add(s.get("id"))
         if s.get("size") and s["size"] not in SIZES:
             p.append(f"{tag} 景别只能是 {'、'.join(SIZES)}")
+        lens_probe = f"{s.get('lens', '')} {s.get('camera', '')}"
+        if s.get("size") in ("近景", "特写") and _ULTRAWIDE_RE.search(lens_probe):
+            p.append(f"{tag} {s['size']}禁用超广角镜头（易人脸变形），请改用 35mm / 50mm / 85mm")
         if s.get("axis") and s["axis"] not in SIDES:
             p.append(f"{tag} axis 只能是 left / right（机位在轴线哪一侧）")
         if s.get("facing") and s["facing"] not in FACING:
@@ -98,14 +285,37 @@ def frames(board: dict, chars: list[dict], locs: dict[str, dict], *, sheets: dic
     probs = validate(board, locations=set(locs))
     if probs:
         raise ValueError("镜头表不合格：" + "；".join(probs))
+    board_cine = board.get("cinematography") or {}
     out, prev = [], None
     for s in board["shots"]:
+        loc = locs[s["location"]]
         refs = [{"path": str(p), "role": "identity"} for c in chars if (p := (sheets or {}).get(c["id"]))]
         if (settings or {}).get(s["location"]):
             refs.append({"path": str(settings[s["location"]]), "role": "background"})
+        default_lens, default_focus = SAFE_LENS_BY_SIZE[s["size"]]
+        cam = {
+            "shot": SIZE_EN[s["size"]],
+            "angle": s["camera"],
+            "lens": str(s.get("lens") or board_cine.get("lens") or default_lens),
+            "focus": str(s.get("focus") or board_cine.get("focus") or default_focus),
+        }
+        fg = str(s.get("foreground") or board_cine.get("foreground") or "").strip()
+        if fg:
+            cam["composition"] = f"foreground framing: {fg}"
+        light_parts = [LC.lighting_text(loc).rstrip(".")]
+        for extra in (board_cine.get("lighting"), s.get("lighting")):
+            if str(extra or "").strip():
+                light_parts.append(str(extra).strip().rstrip("."))
+        lighting = "; ".join(light_parts) + "."
+        texture_parts = [str(x).strip().rstrip(".") for x in (board_cine.get("texture"), s.get("texture")) if str(x or "").strip()]
+        subj = shot_subject(s, prev) + " Setting: " + LC.setting_text(loc)
+        if texture_parts:
+            subj += " Texture & Atmosphere: " + "; ".join(texture_parts) + "."
         for aspect in s.get("aspects", list(ASPECTS)):
             m = {"style": board["style"], "model": model, "format": "storyboard-frame", "aspect": aspect,
-                 "content": {"subject": shot_subject(s, prev) + " Setting: " + LC.setting_text(locs[s["location"]]),
+                 "content": {"subject": subj,
+                             "camera": cam,
+                             "lighting": lighting,
                              "characters": [{"id": c["id"], "desc": CH.identity_text(c)} for c in chars]},
                  "text": {"mode": "none"}}
             if refs:

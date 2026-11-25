@@ -157,3 +157,60 @@ def test_prepare_rejects_empty_and_invalid_board_before_backend(tmp_path, monkey
         bp.write_text(json.dumps({"style": "C58", "confirmed": "skipped", "shots": shots}))
         with pytest.raises(ValueError, match="镜头表不合格"):
             BD.run(bp, tmp_path / "out", prepare_only=True)
+
+
+def test_board_frames_populate_camera_lighting_and_reject_closeup_ultrawide():
+    rich_loc = {
+        **copy.deepcopy(LOC),
+        "light": {
+            "source": "warm oil lamp flame",
+            "direction": "left",
+            "time": "night",
+            "quality": "soft directional falloff",
+            "medium": "light airborne dust",
+        },
+        "texture": "subtle 35mm film grain",
+    }
+    b = board(
+        {**copy.deepcopy(SHOT), "foreground": "stone archway edge"},
+        nxt(size="特写", lens="85mm portrait prime"),
+    )
+    b["cinematography"] = {"texture": "delicate air mist"}
+    jobs = BD.frames(b, [CHAR], {"tower": rich_loc})
+    c0 = CP.compile_manifest(jobs[0]["manifest"])
+    assert "Camera:" in c0.prompt and "35mm cinema prime" in c0.prompt and "stone archway edge" in c0.prompt
+    assert "Lighting:" in c0.prompt and "soft directional falloff" in c0.prompt and "light airborne dust" in c0.prompt
+    assert "delicate air mist" in c0.prompt
+    c1 = CP.compile_manifest(jobs[2]["manifest"])
+    assert "85mm portrait prime" in c1.prompt
+
+    # Counterexample: close-up paired with ultra-wide lens must be rejected
+    bad_board = board(copy.deepcopy(SHOT), nxt(size="特写", lens="14mm ultra-wide"))
+    probs = BD.validate(bad_board, locations={"tower"})
+    assert any("超广角" in p for p in probs), probs
+
+
+def test_compile_keyframe_prompt_cinematography_presets_and_guards():
+    prompt = BD.compile_keyframe_prompt(
+        scene="Inside a Tang army tent lit by oil lamps, Li Su examines a terrain model on a low table.",
+        preset="oriental-historical-clear",
+        shot_type="中景",
+        setting="Winter night, warm lamp light inside a tent, cold blue darkness outside.",
+        anchor="817 AD, mid-Tang Dynasty China, Huaixi campaign.",
+        characters="Li Su: calm Tang commander in dark iron-and-cloth armor.",
+        guard="No readable writing on map.",
+    )
+    assert "35mm cinema prime" in prompt
+    assert "oil-lamp/firelight key light" in prompt
+    assert "35mm fine film grain" in prompt
+    assert "natural light," not in prompt.lower()
+    assert "No readable writing on map" in prompt
+
+    # Close-up auto-selects safe portrait lens and rejects ultra-wide override
+    cu = BD.compile_keyframe_prompt(scene="Close-up of Li Su lifting one hand calmly.", preset="wuxia-backlight")
+    assert "85mm cinema prime" in cu
+    with pytest.raises(ValueError, match="超广角"):
+        BD.compile_keyframe_prompt(scene="Close-up portrait.", shot_type="特写", lens="16mm ultra-wide")
+    with pytest.raises(ValueError, match="未知电影感首帧预设"):
+        BD.compile_keyframe_prompt(scene="Wide shot.", preset="nonexistent-preset")
+

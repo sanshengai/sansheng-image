@@ -1,6 +1,6 @@
 ---
 name: sansheng-image
-description: 用户说“给这篇文章配几张图”“做个封面”“出一张图”“换个画风”，或要做小红书知识卡、信息图、教材插图、漫画、绘本、整页 PPT、音乐或播客封面、海报（活动海报、电梯海报、展板、文旅或家乡城市海报）时使用；给出 sb2/sb1 或 C31 等画风码，或配置、检查叁笙生图时也用。读内容后挑视觉要点，同一系列保持选定画风，默认轻量出图，出图走 Codex 订阅额度。默认出静态图；用户明确要动态版（做成动的、动图、短视频版）时见动态手册。
+description: 用户说“给这篇文章配几张图”“做个封面”“出一张图”“换个画风”，或要做小红书知识卡、信息图、教材插图、漫画、绘本、整页 PPT、音乐或播客封面、视频分镜首帧／关键帧、角色三视图、海报（活动海报、电梯海报、展板、文旅或家乡城市海报）时使用；给出 sb2/sb1 或 C31 等画风码，或配置、检查叁笙生图时也用。读内容后挑视觉要点，同一系列保持选定画风，默认轻量出图，出图走 Codex 订阅额度。默认出静态图；用户明确要动态版（做成动的、动图、短视频版）时见动态手册。
 metadata:
   version: "2.6.3"
 ---
@@ -13,7 +13,7 @@ metadata:
 
 ## 先路由，再按场景读
 
-先读 [route.md](references/route.md)：判断场景（封面、文章插图、小红书、PPT、信息图、漫画），只读该场景手册和它点名的库，不一次读完所有参考文件。日常单图、教材、音乐封面等读 [quick.md](references/quick.md)；各类图的页序速查在 [recipes.md](references/recipes.md)。
+先读 [route.md](references/route.md)：判断场景（封面、文章插图、小红书、PPT、信息图、漫画、视频分镜首帧 `board`），只读该场景手册和它点名的库，不一次读完所有参考文件。日常单图、教材、音乐封面等读 [quick.md](references/quick.md)；各类图的页序速查在 [recipes.md](references/recipes.md)。给视频模型出首帧或关键帧时，必须走 `board`（`storyboard-frame`）场景与 4 决定摄影编译（[scenes/storyboard.md](references/scenes/storyboard.md)），不绕过编译层直接裸调底层生图接口。
 
 先按 [内容取舍与评审](references/editorial-review.md) 明确读者、展示环境和沟通目标；场景默认画风只是候选。
 

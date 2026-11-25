@@ -49,14 +49,21 @@
 
 `cd scripts && python3 -m stylebook.board ../镜头表.json -o ../首帧/` 校验镜头表后，每镜出竖屏 `sXX-v.png` 与横屏 `sXX-h.png`，并写出 `shots.md`（交给视频模型与后期的镜头表）和 `plan-card.md`。已出的首帧不重出，加 `--force` 才覆盖。
 
-## 电影感要点
+## 电影感要点（首帧四决定，与 `sansheng-video` 闭环）
 
-- 景别要有变化：中景交代人在做什么，特写给表情或手，远景给大场面和孤独感。
-- 机位别总是平视：略仰、略俯、贴地、过肩，每个镜头选一个。
-- 光线要有方向：逆光轮廓光、窗光、灯笼光；同一场戏光源方向不变。
-- 浅景深：前景或背景虚化，只让一个焦点清楚。
-- 远景里人物小而居中偏下，留出天空或空间给运镜。
-- 画面无字：招牌、字幕、数字一律不要，提示词末尾写明。
+I2V 视频模式下 **80% 的电影感由首帧决定**（光影、色彩、质感、构图与安全焦段）；视频提示词只管第 5 决定（运镜与动作 Delta）。无论风格化动画还是写实历史短片，给视频模型出首帧都必须经过本场景编译，不能跳过编译层直接裸传一句 `natural light` 调生图接口：
+
+1. **光影（光源 + 方向 + 软硬光比 + 空气介质）**：在 `location.json` 的 `light` 里除 `source/direction/time` 外，可补 `quality`（软硬光比）与 `medium`（体积光、微尘、薄雾）；`board.frames()` 会自动写入 `compile.py` 的 `content.lighting`，不再混进普通正文。同场光源方向固定。
+2. **色彩（主色 ≤3 + 饱和度 + 冷暖）**：与光影成对绑定，不把暖光硬配冷色；写实历史题材保持自然肤色与器物固有色，避免整体昏暗滤镜或过饱和网游感。
+3. **质感（4 选 2，去“AI 精修塑料感”）**：胶片微颗粒、光学柔度/浅景深、贴合场景的空气介质（薄烟/微尘/水汽/晨雾）、真实材质磨损。可在 `board.json` 的 `cinematography.texture` 或单镜 `texture` 声明。
+4. **构图与安全焦段（`content.camera` 自动填充）**：`board.frames()` 按景别自动配安全焦段（远景 `24mm`、全景 `28mm`、中景 `35mm`、近景 `50mm`、特写 `85mm`），并拦截近景／特写使用超广角（`14–18mm / ultra-wide` 防人脸畸变）；优先用门框、柱廊、窗棂、枝叶写入 `foreground` 建立前景纵深，打破正面居中证件照感。
+5. **画面无字**：招牌、字幕、卷轴、数字一律保持空白或不可读，强制 `text.mode = "none"`。
+
+### 写实电影／纪录片首帧闭环（无 2D 插画风格码时）
+
+当上游视频项目（如写实历史短片）不需要 2D/动画风格合同 `C01–C103`，而是需要**写实电影感首帧**时，不要绕过本 Skill 自己手拼一句 `natural light`，应调用 `stylebook.board.compile_keyframe_prompt(...)`：
+- 内置 6 套与 `sansheng-video/references/generated-audiovisual.md` 一一对应的 4 决定预设（`oriental-historical-clear`、`wuxia-backlight`、`oriental-ink-poetic`、`period-nostalgia`、`neon-night-cinema`、`bright-youth-daylight`），也可传入自定义 4 决定字典；
+- 按景别自动匹配安全焦段，按时段/室内外 `setting` 自动具象光源方向、光比与空气层次，并拦截近景超广角冲突。
 
 ## 连续性规则
 

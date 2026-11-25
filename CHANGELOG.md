@@ -4,6 +4,8 @@
 
 ## [未发布]
 
+- 升级视频分镜首帧（`board` / `storyboard-frame`）4 决定摄影编译与跨技能闭环（`SKILL.md`、`references/scenes/storyboard.md`、`scripts/stylebook/board.py`、`scripts/stylebook/location.py`）：① `SKILL.md` 触发描述与路由补入视频分镜首帧／关键帧，明确给视频模型出首帧须走 `board` 摄影编译、不绕过编译层裸调底层生图接口；② `location.py` 扩展 `light.quality` / `light.medium` 与 `lighting_text()`；`board.frames()` 正式填充 `compile.py` 的 `content.camera`（按景别自动配 24–85mm 安全焦段与前景框景）和 `content.lighting`，并在 `validate()` 中拦截近景／特写使用超广角；③ 新增 `stylebook.board.compile_keyframe_prompt()` 与 6 套对齐 `sansheng-video` 的写实电影感预设（`CINEMA_PRESETS`），供写实历史短片等无 2D 插画风格码的视频首帧流水线复用，补全单测与反例校验。（MINOR：新增兼容可选字段、摄影预设与统一首帧编译 API，既有 `board.json` 与 86 种画风契约保持不变）
+
 - 在 `references/route.md` 与 `references/motion-wake.md` 补充静态图动态化与扩散视频模型的生成前分流交接规则：地图、竹简／碑刻／手稿、文字信息卡及局部氛围微动优先留在本 Skill 确定性动效或 HyperFrames／FFmpeg 缓推，不送图生视频扩散模型（避免伪汉字与透视漂移）。（PATCH：补充路由与交接判据，既有出图契约不变）
 
 ## [2.6.3] -- 2026-11-03

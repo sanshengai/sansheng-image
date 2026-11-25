@@ -44,10 +44,26 @@ def load(path: Path) -> dict:
     return loc
 
 
-def setting_text(loc: dict) -> str:
+def lighting_text(loc: dict) -> str:
+    """结构化光影描述（光源 + 方向 + 时段 + 可选软硬光比/空气介质），直接喂给 compile.py 的 content.lighting。"""
     lt = loc["light"]
-    return (f"{loc['desc'].strip()} Fixed features that must stay in place: " + "; ".join(loc["fixtures"]) +
-            f". Light: {lt['source']} from the {lt['direction']} of the frame, {lt['time']}.")
+    parts = [f"{lt['source'].strip()} from the {lt['direction']} of the frame ({lt['time']})"]
+    if str(lt.get("quality", "")).strip():
+        parts.append(str(lt["quality"]).strip())
+    if str(lt.get("medium", "")).strip():
+        parts.append(str(lt["medium"]).strip())
+    return ", ".join(parts) + "."
+
+
+def setting_text(loc: dict) -> str:
+    parts = [
+        loc["desc"].strip(),
+        "Fixed features that must stay in place: " + "; ".join(loc["fixtures"]) + ".",
+        "Light: " + lighting_text(loc),
+    ]
+    if str(loc.get("texture", "")).strip():
+        parts.append("Atmosphere & texture: " + str(loc["texture"]).strip().rstrip(".") + ".")
+    return " ".join(parts)
 
 
 def establishing_manifest(loc: dict, style: str, model: str = "gpt-image-2") -> dict:
