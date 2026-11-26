@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "file_count": 498,
+  "file_count": 500,
   "files": {
     ".claude-plugin/marketplace.json": "5cf96c1d9550ad2bd37858b337d414a2479308b4bb3c7034a296273b64b17020",
     ".claude-plugin/plugin.json": "ec1815a754b1824b69f09474905b8cf870c6461121151e8ca019e142095347c0",
@@ -171,6 +171,7 @@
     "scripts/stylebook/assets/motion-primitives.mjs": "b0af7e647b1eff63d2f33d4c23d1f863e072d85096147c2ea06de15e589334dc",
     "scripts/stylebook/backends/__init__.py": "86dc2c4659d26056ed4521856a043d77181d4ae92d9f7da19b1084ebd21f19a9",
     "scripts/stylebook/backends/base.py": "7eba5843d10fb177c9958a7b6cfa89cc0247d658e37e585620635b4e2d08d353",
+    "scripts/stylebook/backends/openai_batch.py": "4126d10b258c9e6938e43f9854d9017b965a7549684724773a147dba059fcafc",
     "scripts/stylebook/backends/providers.py": "f88427b2bd054cefc5753fb39d26dbd3c24f1ebf8099c722c6f0b0c2075c0aa6",
     "scripts/stylebook/batch.py": "36d33662339b7f82a76ff0b36f3ec9ad45f2dcbce4369dca74496d43956cba21",
     "scripts/stylebook/board.py": "84403143829d1fd26dcf4ecbb5cc2f1fa4f0fc22f314e26494bcd40b0fd46f36",
@@ -464,6 +465,7 @@
     "tests/test_motion_examples.py": "64582a15336d98ed924fd53a6dcd79bcc2af6cc8791b41d08fbbb491b70f2cd4",
     "tests/test_motion_gallery.py": "5c33d369e83ae7bad8cb02623423fa6d62b6eafef9f034b7a321a86e180b0767",
     "tests/test_motion_pipeline.py": "fb709c6b1f84d4658f1add36a20ed3b0f28de237a385b023d3300e378a88d93e",
+    "tests/test_openai_batch.py": "af0e484adb9e2e902bf87c08b535c6722d6a98a07a1a3fa072f9487661537dc5",
     "tests/test_overlay.py": "8db0095347c9b78743b82faabccaeef0705f89c4706f7d5fe2a70ffcc2f35f9f",
     "tests/test_overlay_vertical.py": "06dcd73489e89bd52e0046ac598a3d8223ce2edbea4f9dbdc2fa6a8cfcc4fb26",
     "tests/test_palette_check.py": "135b7c0f72a2a7bfd091a324a59cbd703e6c50981e31e2cfa064374f7a4a3256",
