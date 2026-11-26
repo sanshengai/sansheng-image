@@ -224,7 +224,7 @@ PROVIDERS: dict[str, dict] = {
               "apply": "https://developers.openai.com/codex"},
     "openai": {"zh": "OpenAI / OpenAI 兼容中转", "fn": openai_generate, "ping": openai_ping, "env": ["OPENAI_API_KEY", "OPENAI_BASE_URL"],
                "default_model": "gpt-image-2", "refs": True, "verified": True,
-               "blurb": "质量高、中文字准；官方直连需境外网络且要先做组织验证；国内可用兼容中转（改 OPENAI_BASE_URL）",
+               "blurb": "质量高、中文字准（官方支持 gpt-image-2.6-sunburst / flare 与 5 折 Batch API）；国内可用兼容中转（改 OPENAI_BASE_URL）",
                "apply": "https://platform.openai.com/api-keys"},
     "gemini": {"zh": "Google Gemini（Nano Banana）", "fn": gemini_generate, "env": ["GEMINI_API_KEY", "GOOGLE_BASE_URL"],
                "default_model": "gemini-3.1-flash-image", "refs": True, "verified": False,

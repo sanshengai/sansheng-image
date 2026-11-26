@@ -23,11 +23,21 @@
 | 服务 | 环境变量 | 默认模型 | 参考图 | 实测 |
 |---|---|---|---|---|
 | Codex 内置生图 | 无（`codex login`） | codex-builtin | 支持 | 已实测 |
-| OpenAI 及兼容中转 | `OPENAI_API_KEY`、`OPENAI_BASE_URL` | gpt-image-2 | 支持 | 已实测 |
+| OpenAI 及兼容中转 | `OPENAI_API_KEY`、`OPENAI_BASE_URL` | gpt-image-2（官方支持 `gpt-image-2.6-sunburst` / `gpt-image-2.6-flare`） | 支持 | 已实测 |
 | 火山方舟 Seedream | `ARK_API_KEY` | doubao-seedream-4-0-250828 | 支持 | 待实测 |
 | 阿里云百炼（万相 / Qwen-Image） | `DASHSCOPE_API_KEY` | qwen-image-plus | 支持 | 待实测 |
 | Google Gemini | `GEMINI_API_KEY`（可选 `GOOGLE_BASE_URL`） | gemini-3.1-flash-image | 支持 | 待实测 |
 | OpenRouter | `OPENROUTER_API_KEY` | google/gemini-3.1-flash-image | 支持 | 待实测 |
+
+### OpenAI 官方 Batch API（5 折批量出图）
+
+使用 OpenAI 官方端点（`https://api.openai.com/v1`）且模型为 `gpt-image-*`（如 `gpt-image-2.6-sunburst` / `gpt-image-2.6-flare`）时，可启用异步 Batch API，费用为实时接口的 **5 折**，同时支持无参考图（`/v1/images/generations`）与带参考图（`/v1/images/edits`）两类任务：
+
+- **自动阈值**：在 `~/.config/sansheng-image/config.json` 设置 `"batch_threshold": 4`（或 `setup --provider openai --model gpt-image-2.6-sunburst --batch-threshold 4`，或环境变量 `SANSHENG_IMAGE_OPENAI_BATCH_THRESHOLD=4`）。达到该张数时，`make`、`batch` 与 `raw-batch` 自动打包走 Batch；低于阈值仍走实时同步出图。未配置或设为 `0` 时默认关闭，不改变原有行为。
+- **单次覆盖**：`make`、`batch`、`raw-batch` 均支持 `--openai-batch`（强制 5 折批跑）和 `--no-openai-batch`（强制实时同步）。
+- **多页系列与断点续接**：`batch` 跑多页系列时，先实时生成并验收第 1 张系列母版，通过后再把剩余页（达到阈值时）一次性合并进 Batch；批次 ID 写入 `openai-batch-state.json`，中断重跑会自动续等已有批次，避免重复提交。
+- **安全边界**：第三方中转默认不自动切入 Batch，显式传入 `--openai-batch` 时若不是 `api.openai.com` 官方地址会直接报错拦截。
+- **原生批量入口**：非画风清单的原始提示词批次可用 `python3 scripts/sb.py raw-batch --jobs-file jobs.json`，每条记录含 `id`、`prompt`、`out` 及可选 `size`、`quality`、`refs`、`transparent`。
 
 使用 `sb.py generate` / `batch` 时，选服务顺序：命令行 `--provider` > 配置文件 `~/.config/sansheng-image/config.json` > 按上表顺序找第一个配好的（Codex 排第一）。当前会话没有内置工具且外部服务都未配置时，用 `sb.py inbox` 把编译好的提示词写成「待出图清单」，用户拿去任何工具出图，再回来验收。
 

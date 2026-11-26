@@ -13,12 +13,13 @@ from pathlib import Path
 
 from ..contract import ROOT
 from .base import CONFIG_DIR, BackendError, Result, load_dotenv, now
+from . import openai_batch as _openai_batch
 from . import providers as _providers
 from .providers import PROVIDERS
 
 LOG_DIR = Path(os.environ.get("SANSHENG_IMAGE_LOG_DIR", ROOT / "logs"))
 
-# gpt-image-2 官方价（2026-09，美元 / 张，按质量与画幅）；其余服务未登记则不估算
+# gpt-image 系参考价（美元 / 张，按质量与画幅；Batch API 5 折）；其余服务未登记则不估算
 PRICE = {("gpt-image", "medium", "square"): 0.053, ("gpt-image", "medium", "rect"): 0.041,
          ("gpt-image", "high", "square"): 0.211, ("gpt-image", "high", "rect"): 0.165,
          ("gpt-image", "low", "square"): 0.006, ("gpt-image", "low", "rect"): 0.005}
@@ -63,13 +64,55 @@ def choose(provider: str | None = None, model: str | None = None, need_refs: boo
     return name, mdl
 
 
-def _estimate(model: str, quality: str, size: tuple[int, int]) -> float | None:
+def _estimate(model: str, quality: str, size: tuple[int, int], batch: bool = False) -> float | None:
     fam = "gpt-image" if model.startswith("gpt-image") else None
     if not fam:
         return None
     q = {"normal": "medium"}.get(quality, quality)
     shape = "square" if abs(size[0] - size[1]) < 16 else "rect"
-    return PRICE.get((fam, q, shape))
+    usd = PRICE.get((fam, q, shape))
+    if usd is None:
+        return None
+    return round(usd * 0.5, 4) if batch else usd
+
+
+def batch_threshold() -> int:
+    load_dotenv()
+    return _openai_batch.batch_threshold(config())
+
+
+def should_use_openai_batch(provider: str, count: int, *, explicit: bool | None = None) -> bool:
+    load_dotenv()
+    return _openai_batch.should_use_batch(provider, count, explicit=explicit, cfg=config())
+
+
+def generate_openai_batch(
+    jobs: list[dict],
+    *,
+    model: str | None = None,
+    quality: str | None = None,
+    state_file: Path | None = None,
+    poll_interval: float = 10.0,
+    timeout: float = 7200.0,
+    sleep=time.sleep,
+    log=None,
+) -> dict[str, Result | BackendError]:
+    load_dotenv()
+    cfg = config()
+    _, mdl = choose("openai", model, need_refs=any(j.get("refs") for j in jobs))
+    q = quality or cfg.get("quality", "normal")
+    return _openai_batch.run_openai_batch(
+        jobs,
+        model=mdl,
+        quality=q,
+        state_file=state_file,
+        poll_interval=poll_interval,
+        timeout=timeout,
+        sleep=sleep,
+        log=log,
+        estimate_fn=_estimate,
+        record_log=_log,
+    )
 
 
 def _log(rec: dict) -> None:

@@ -4,6 +4,8 @@
 
 ## [未发布]
 
+- 新增 OpenAI 官方 Batch API 5 折批量出图支持（`scripts/stylebook/backends/openai_batch.py`、`make`、`batch`、`raw-batch`、`setup`）：① 支持 OpenAI 官方端点（`https://api.openai.com/v1`）下 `gpt-image-2.6-sunburst` / `gpt-image-2.6-flare` 等 `gpt-image-*` 模型的异步批跑，按有无参考图自动分流 `/v1/images/generations` 与 `/v1/images/edits` 两个端点，费用估算按 5 折计入成本日志并写断点状态文件 `openai-batch-state.json`（中断可续等不重复提交）；② `config.json` 新增可选 `batch_threshold`（亦支持 `setup --batch-threshold` 与环境变量 `SANSHENG_IMAGE_OPENAI_BATCH_THRESHOLD`），`make`、`batch`、`raw-batch` 新增 `--openai-batch` / `--no-openai-batch` 覆盖开关；多页系列仍先实时生成并验收母版，其余页达阈值再整批 5 折出图；③ 新增 `raw-batch` 子命令与 `raw-generate --model` 可选参数，方便上游项目直接批量原生出图。默认未配置阈值时完全保持原有同步行为不变，第三方中转端点默认拦截不自动切入 Batch。（MINOR：新增兼容可选批量模式与子命令，既有配置、模型默认与同步契约保持不变）
+
 ## [2.7.0] -- 2026-11-25
 
 - 升级视频分镜首帧（`board` / `storyboard-frame`）4 决定摄影编译与跨技能闭环（`SKILL.md`、`references/scenes/storyboard.md`、`scripts/stylebook/board.py`、`scripts/stylebook/location.py`）：① `SKILL.md` 触发描述与路由补入视频分镜首帧／关键帧，明确给视频模型出首帧须走 `board` 摄影编译、不绕过编译层裸调底层生图接口；② `location.py` 扩展 `light.quality` / `light.medium` 与 `lighting_text()`；`board.frames()` 正式填充 `compile.py` 的 `content.camera`（按景别自动配 24–85mm 安全焦段与前景框景）和 `content.lighting`，并在 `validate()` 中拦截近景／特写使用超广角；③ 新增 `stylebook.board.compile_keyframe_prompt()` 与 6 套对齐 `sansheng-video` 的写实电影感预设（`CINEMA_PRESETS`），供写实历史短片等无 2D 插画风格码的视频首帧流水线复用，补全单测与反例校验。（MINOR：新增兼容可选字段、摄影预设与统一首帧编译 API，既有 `board.json` 与 86 种画风契约保持不变）

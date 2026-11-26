@@ -256,7 +256,7 @@ def execution_card(task: dict, source: dict | None = None) -> dict:
 
 def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
         model: str | None = None, quality: str | None = None, jobs: int = 4,
-        prepare_only: bool = False, gen_fn=None) -> dict:
+        prepare_only: bool = False, gen_fn=None, openai_batch: bool | None = None) -> dict:
     from . import backends as B
     from PIL import Image
     from .sticker import check_single
@@ -264,7 +264,8 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
     if type(jobs) is not int or not 1 <= jobs <= 8:
         raise BriefError("jobs 必须是 1–8")
     started = time.monotonic()
-    if not prepare_only and gen_fn is None:
+    used_default_backend = not prepare_only and gen_fn is None
+    if used_default_backend:
         provider, model = B.choose(provider, model, need_refs=True)
         gen_fn = B.generate
     prepared = prepare(brief, base_path=base_path, model=model or "gpt-image-2")
@@ -283,6 +284,35 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
         _write(out / "report.json", report)
         return report
 
+    use_batch = used_default_backend and B.should_use_openai_batch(
+        provider, len(prepared["tasks"]), explicit=openai_batch
+    )
+    batch_results = None
+    if use_batch:
+        batch_jobs = []
+        for task in prepared["tasks"]:
+            for ref in task["references"] + task.get("overlay_assets", []):
+                if _sha(Path(ref["path"])) != ref["sha256"]:
+                    raise BriefError("参考图在编译后发生变化")
+            compiled = task["compiled"]
+            ident = task["id"]
+            fmt_def = D.formats()[task["manifest"]["format"]]
+            batch_jobs.append({
+                "id": ident,
+                "prompt": compiled["prompt"],
+                "out": out / f"{ident}-raw.png",
+                "size": tuple(compiled["size"]),
+                "refs": [Path(r["path"]) for r in task["references"]],
+                "transparent": bool(fmt_def.get("transparent")),
+                "tag": f"make:{ident}",
+            })
+        batch_results = B.generate_openai_batch(
+            batch_jobs,
+            model=model,
+            quality=quality,
+            state_file=out / "openai-batch-state.json",
+        )
+
     stopped = Event()
 
     def generate_one(task):
@@ -295,9 +325,15 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
             for ref in task["references"] + task.get("overlay_assets", []):
                 if _sha(Path(ref["path"])) != ref["sha256"]:
                     raise BriefError("参考图在编译后发生变化")
-            result = gen_fn(compiled["prompt"], raw, size=tuple(compiled["size"]), aspect=compiled["aspect"],
-                            refs=[Path(r["path"]) for r in task["references"]], provider=provider,
-                            model=model or compiled["model"], quality=quality, tag=f"make:{ident}")
+            if batch_results is not None:
+                res = batch_results[ident]
+                if isinstance(res, Exception):
+                    raise res
+                result = res
+            else:
+                result = gen_fn(compiled["prompt"], raw, size=tuple(compiled["size"]), aspect=compiled["aspect"],
+                                refs=[Path(r["path"]) for r in task["references"]], provider=provider,
+                                model=model or compiled["model"], quality=quality, tag=f"make:{ident}")
             rec["generation"] = {"provider": result.provider, "model": result.model,
                                  "attempts": result.attempts, "seconds": result.seconds,
                                  "est_usd": result.est_usd, "raw_sha256": _sha(raw)}
@@ -345,7 +381,8 @@ def run(brief: dict, out: Path, *, base_path: Path, provider: str | None = None,
     report = {"status": "failed" if failed or not source_unchanged else "pending_visual_review",
               "selection": prepared["selection"], "items": results, "failed": failed,
               "source_unchanged": source_unchanged, "overview": str(overview),
-              "seconds": round(time.monotonic() - started, 3), "visual_review": "not_run", "accepted": False}
+              "seconds": round(time.monotonic() - started, 3), "visual_review": "not_run", "accepted": False,
+              **({"openai_batch": True} if use_batch else {})}
     _write(out / "report.json", report)
     return report
 

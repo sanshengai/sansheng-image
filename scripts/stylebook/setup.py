@@ -105,7 +105,9 @@ def doctor(deep: bool = False, only: str | None = None) -> str:
             ready = ("✓ " if ok else "✗ ") + msg
         rows.append(f"| {p['zh']} | {'✓' if conf else '未配置'} | {reach} | {ready} | {'是' if p['verified'] else '否（按官方文档实现）'} |")
     base = os.environ.get("OPENAI_BASE_URL")
-    head = [f"当前设置：服务 {cfg.get('provider', '自动选择')}，模型 {cfg.get('model', '默认')}，质量 {cfg.get('quality', 'normal')}",
+    th = B.batch_threshold()
+    batch_note = f"，OpenAI Batch 5 折阈值 ≥ {th} 张" if th > 0 else ""
+    head = [f"当前设置：服务 {cfg.get('provider', '自动选择')}，模型 {cfg.get('model', '默认')}，质量 {cfg.get('quality', 'normal')}{batch_note}",
             f"配置目录：{CONFIG_DIR}（密钥文件 .env {'存在' if (CONFIG_DIR / '.env').exists() else '不存在'}）"]
     if base:
         head.append(f"OpenAI 兼容地址：{redact(base)}")
@@ -113,10 +115,13 @@ def doctor(deep: bool = False, only: str | None = None) -> str:
     return "\n".join(head + [""] + rows + tail)
 
 
-def configure(provider: str, model: str | None = None, quality: str = "normal", test: bool = True) -> str:
+def configure(provider: str, model: str | None = None, quality: str = "normal", test: bool = True,
+              batch_threshold: int | None = None) -> str:
     load_dotenv()
     if provider not in PROVIDERS:
         raise SystemExit(f"未知服务 {provider}；可选 {ORDER}")
+    if batch_threshold is not None and batch_threshold < 0:
+        raise SystemExit("batch_threshold 不能小于 0（0 表示关闭自动 Batch）")
     if not B.configured(provider):
         return (f"还没有 {PROVIDERS[provider]['zh']} 的密钥。请在 {env_template()} 里填入："
                 + "；".join(ENV_HELP[provider]) + "。填好再运行一次本命令。")
@@ -125,6 +130,8 @@ def configure(provider: str, model: str | None = None, quality: str = "normal", 
         if not ok:
             return f"测试出图没通过，设置未保存。原因：{msg}"
     cfg = {"provider": provider, "model": model or PROVIDERS[provider]["default_model"], "quality": quality}
+    if batch_threshold is not None:
+        cfg["batch_threshold"] = batch_threshold
     f = B.save_config(cfg)
     return f"已保存设置到 {f}：{cfg}" + ("" if test else "（跳过了测试出图）")
 

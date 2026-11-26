@@ -130,7 +130,8 @@ def cmd_setup(a) -> int:
     if a.env_template:
         print(f"密钥模板：{S.env_template()}（权限 600，只在本机）")
     elif a.provider:
-        print(S.configure(a.provider, a.model, a.quality or "normal", test=not a.no_test))
+        print(S.configure(a.provider, a.model, a.quality or "normal", test=not a.no_test,
+                          batch_threshold=a.batch_threshold))
     else:
         out = S.interactive()
         if out:
@@ -671,7 +672,7 @@ def cmd_batch(a) -> int:
     from stylebook import batch as BT
     st = BT.run(_manifest(a.plan), Path(a.out), provider=a.provider, model=a.model, quality=a.quality, retries=a.retries,
                 jobs=a.jobs, do_review=not a.no_review, log=lambda m: print(m, file=sys.stderr, flush=True),
-                base_path=Path(a.plan).resolve().parent)
+                base_path=Path(a.plan).resolve().parent, openai_batch=a.openai_batch)
     print(json.dumps(st["summary"], ensure_ascii=False, indent=2))
     print(f"报告：{Path(a.out) / 'report.md'}")
     produced = [item for item in st.get("items", {}).values() if item.get("status") in {"passed", "generated"}]
@@ -693,7 +694,7 @@ def cmd_make(a) -> int:
                 raise MK.BriefError("--prepared 只用于 --import-results")
             report = MK.run(_manifest(a.brief), Path(a.out), base_path=Path(a.brief).resolve().parent,
                             provider=a.provider, model=a.model, quality=a.quality, jobs=a.jobs,
-                            prepare_only=a.prepare)
+                            prepare_only=a.prepare, openai_batch=a.openai_batch)
     except (MK.BriefError, BackendError, FileExistsError) as exc:
         print(f"轻量出图停止：{exc}", file=sys.stderr)
         return 2
@@ -744,13 +745,117 @@ def cmd_raw_generate(a) -> int:
     w, h = (int(x) for x in a.size.lower().split("x"))
     try:
         r = B.generate(prompt, Path(a.out), size=(w, h), aspect=a.aspect, refs=[Path(p) for p in a.ref or []],
-                       provider=a.provider, quality=a.quality, tag=a.tag or "raw-generate")
+                       provider=a.provider, model=a.model, quality=a.quality, tag=a.tag or "raw-generate")
     except BackendError as exc:
         print(json.dumps({"ok": False, "kind": exc.kind, "error": str(exc)}, ensure_ascii=False))
         return 2
     print(json.dumps({"ok": True, "out": a.out, "provider": r.provider, "model": r.model, "seconds": r.seconds,
                       "attempts": r.attempts, "est_usd": r.est_usd, "tokens": getattr(PV.META, "tokens", None)}, ensure_ascii=False))
     return 0
+
+
+def _load_raw_jobs(path: Path) -> list[dict]:
+    text = path.read_text(encoding="utf-8").strip()
+    if not text:
+        return []
+    if text.startswith("["):
+        rows = json.loads(text)
+    else:
+        rows = [json.loads(line) for line in text.splitlines() if line.strip()]
+    if not isinstance(rows, list):
+        raise ValueError("jobs-file 必须是 JSON 数组或 JSONL")
+    base = path.resolve().parent
+    parsed: list[dict] = []
+    for idx, row in enumerate(rows, 1):
+        if not isinstance(row, dict) or not row.get("prompt") or not row.get("out"):
+            raise ValueError(f"第 {idx} 条任务缺少 prompt 或 out")
+        raw_size = row.get("size", "1024x1024")
+        if isinstance(raw_size, str):
+            w, h = (int(x) for x in raw_size.lower().split("x"))
+        else:
+            w, h = int(raw_size[0]), int(raw_size[1])
+        out_p = Path(row["out"])
+        if not out_p.is_absolute():
+            out_p = (base / out_p).resolve()
+        refs = []
+        for rp in row.get("refs") or []:
+            p = Path(rp)
+            refs.append(p if p.is_absolute() else (base / p).resolve())
+        parsed.append({
+            "id": str(row.get("id") or f"item-{idx:03d}"),
+            "prompt": str(row["prompt"]),
+            "out": out_p,
+            "size": (w, h),
+            "aspect": str(row.get("aspect") or "1:1"),
+            "quality": row.get("quality"),
+            "refs": refs,
+            "transparent": bool(row.get("transparent")),
+            "tag": str(row.get("tag") or f"raw-batch:{row.get('id') or idx}"),
+        })
+    return parsed
+
+
+def cmd_raw_batch(a) -> int:
+    """批量原生出图：达阈值（或指定 --openai-batch）自动走 OpenAI Batch API 5 折，否则走常规实时出图。"""
+    from stylebook import backends as B
+    from stylebook.backends.base import BackendError
+    jobs_path = Path(a.jobs_file)
+    try:
+        jobs = _load_raw_jobs(jobs_path)
+        if not jobs:
+            raise ValueError("任务清单为空")
+        provider, model = B.choose(a.provider, a.model, need_refs=any(j["refs"] for j in jobs))
+        explicit = a.openai_batch
+        if explicit is None and a.threshold is not None:
+            use_batch = B.should_use_openai_batch(provider, len(jobs), explicit=True) if (a.threshold > 0 and len(jobs) >= a.threshold) else False
+        else:
+            use_batch = B.should_use_openai_batch(provider, len(jobs), explicit=explicit)
+    except (ValueError, BackendError) as exc:
+        print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False))
+        return 2
+
+    items_out: list[dict] = []
+    failed = 0
+    if use_batch:
+        state_file = Path(a.state_file) if a.state_file else jobs_path.with_suffix(".openai-batch-state.json")
+        try:
+            res_map = B.generate_openai_batch(
+                jobs,
+                model=model,
+                quality=a.quality,
+                state_file=state_file,
+                poll_interval=a.poll_interval,
+                timeout=a.timeout,
+                log=lambda m: print(m, file=sys.stderr, flush=True),
+            )
+        except BackendError as exc:
+            print(json.dumps({"ok": False, "mode": "openai_batch", "kind": exc.kind, "error": str(exc)}, ensure_ascii=False))
+            return 2
+        for j in jobs:
+            r = res_map[j["id"]]
+            if isinstance(r, BackendError):
+                failed += 1
+                items_out.append({"id": j["id"], "ok": False, "out": str(j["out"]), "kind": r.kind, "error": str(r)})
+            else:
+                items_out.append({"id": j["id"], "ok": True, "out": str(j["out"]), "provider": r.provider,
+                                  "model": r.model, "seconds": r.seconds, "est_usd": r.est_usd})
+    else:
+        for j in jobs:
+            try:
+                r = B.generate(j["prompt"], j["out"], size=j["size"], aspect=j["aspect"], refs=j["refs"],
+                               provider=provider, model=model, quality=j["quality"] or a.quality, tag=j["tag"])
+                items_out.append({"id": j["id"], "ok": True, "out": str(j["out"]), "provider": r.provider,
+                                  "model": r.model, "seconds": r.seconds, "est_usd": r.est_usd})
+            except BackendError as exc:
+                failed += 1
+                items_out.append({"id": j["id"], "ok": False, "out": str(j["out"]), "kind": exc.kind, "error": str(exc)})
+    est_total = round(sum((it.get("est_usd") or 0) for it in items_out if it["ok"]), 4)
+    print(json.dumps({
+        "ok": failed == 0, "mode": "openai_batch" if use_batch else "sync",
+        "provider": provider, "model": model, "total": len(jobs), "failed": failed,
+        "est_usd": est_total, "items": items_out,
+    }, ensure_ascii=False, indent=2))
+    return 0 if failed == 0 else 1
 
 
 def cmd_accept(a) -> int:
@@ -819,11 +924,22 @@ def main(argv=None) -> int:
     p = sub.add_parser("doctor"); p.add_argument("--deep", action="store_true"); p.add_argument("--only"); p.set_defaults(fn=cmd_doctor)
     p = sub.add_parser("raw-generate"); p.add_argument("--prompt-file", required=True); p.add_argument("--ref", action="append")
     p.add_argument("--aspect", default="1:1"); p.add_argument("--size", default="1024x1024"); p.add_argument("-o", "--out", required=True)
-    p.add_argument("--provider"); p.add_argument("--quality"); p.add_argument("--tag"); p.set_defaults(fn=cmd_raw_generate)
+    p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality"); p.add_argument("--tag"); p.set_defaults(fn=cmd_raw_generate)
+    p = sub.add_parser("raw-batch", help="批量原生出图；达阈值或指定 --openai-batch 走 OpenAI Batch API 5 折")
+    p.add_argument("--jobs-file", required=True, help="JSON 数组或 JSONL，每项含 id/prompt/out 及可选 size/quality/refs")
+    p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality")
+    p.add_argument("--state-file", help="OpenAI Batch 断点状态文件路径")
+    p.add_argument("--threshold", type=int, help="覆盖自动切入 Batch 模式的张数阈值")
+    p.add_argument("--poll-interval", type=float, default=10.0); p.add_argument("--timeout", type=float, default=7200.0)
+    rb_grp = p.add_mutually_exclusive_group()
+    rb_grp.add_argument("--openai-batch", dest="openai_batch", action="store_true", default=None, help="强制走 OpenAI Batch API（5 折）")
+    rb_grp.add_argument("--no-openai-batch", dest="openai_batch", action="store_false", help="强制实时同步出图")
+    p.set_defaults(fn=cmd_raw_batch)
     p = sub.add_parser("accept"); p.add_argument("out_dir"); p.add_argument("--ids"); p.set_defaults(fn=cmd_accept)
     p = sub.add_parser("flywheel"); p.add_argument("action", choices=["status", "questions", "answer"]); p.add_argument("--scene"); p.add_argument("--project")
     p.add_argument("--field"); p.add_argument("--value"); p.add_argument("--choice", choices=["default", "project", "no"]); p.set_defaults(fn=cmd_flywheel)
     p = sub.add_parser("setup"); p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality")
+    p.add_argument("--batch-threshold", type=int, help="OpenAI 官方接口自动走 5 折 Batch API 的张数阈值（0=关闭）")
     p.add_argument("--no-test", action="store_true"); p.add_argument("--env-template", action="store_true"); p.set_defaults(fn=cmd_setup)
     p = sub.add_parser("inbox"); p.add_argument("manifests", nargs="+"); p.add_argument("-d", "--dir", required=True); p.set_defaults(fn=cmd_inbox)
     p = sub.add_parser("qa"); p.add_argument("image"); p.add_argument("--style", required=True); p.add_argument("--text", help="应有文字，用 | 分隔")
@@ -927,6 +1043,9 @@ def main(argv=None) -> int:
     p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality")
     p.add_argument("--jobs", type=int, default=4); p.add_argument("--prepare", action="store_true")
     p.add_argument("--import-results"); p.add_argument("--prepared")
+    mk_grp = p.add_mutually_exclusive_group()
+    mk_grp.add_argument("--openai-batch", dest="openai_batch", action="store_true", default=None, help="强制走 OpenAI Batch API（5 折）")
+    mk_grp.add_argument("--no-openai-batch", dest="openai_batch", action="store_false", help="强制实时同步出图")
     p.set_defaults(fn=cmd_make)
     p = sub.add_parser("layers"); p.add_argument("brief"); p.add_argument("-o", "--out", required=True)
     p.add_argument("--prepare", action="store_true"); p.add_argument("--import-results"); p.add_argument("--prepared")
@@ -935,7 +1054,11 @@ def main(argv=None) -> int:
     p.set_defaults(fn=cmd_animate)
     p = sub.add_parser("batch"); p.add_argument("plan"); p.add_argument("-o", "--out", required=True)
     p.add_argument("--provider"); p.add_argument("--model"); p.add_argument("--quality"); p.add_argument("--retries", type=int, default=2)
-    p.add_argument("--jobs", type=int, default=3); p.add_argument("--no-review", action="store_true"); p.set_defaults(fn=cmd_batch)
+    p.add_argument("--jobs", type=int, default=3); p.add_argument("--no-review", action="store_true")
+    bt_grp = p.add_mutually_exclusive_group()
+    bt_grp.add_argument("--openai-batch", dest="openai_batch", action="store_true", default=None, help="强制走 OpenAI Batch API（5 折）")
+    bt_grp.add_argument("--no-openai-batch", dest="openai_batch", action="store_false", help="强制实时同步出图")
+    p.set_defaults(fn=cmd_batch)
     p = sub.add_parser("pptx"); p.add_argument("plan"); p.add_argument("--images", required=True); p.add_argument("-o", "--out", required=True)
     p.add_argument("--mode", choices=["illustration", "full"], default="illustration"); p.set_defaults(fn=cmd_pptx)
     a = ap.parse_args(argv)

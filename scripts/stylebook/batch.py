@@ -104,14 +104,15 @@ def _base_fp(m: dict) -> str:
 def run(plan: dict, out_dir: Path, *, provider: str | None = None, model: str | None = None, quality: str | None = None,
         retries: int = 2, jobs: int = 3, do_review: bool = True, gen_fn: Callable | None = None,
         review_fn: Callable | None = None, review_source: str | None = None, log: Callable = print,
-        base_path: Path | None = None) -> dict:
+        base_path: Path | None = None, openai_batch: bool | None = None) -> dict:
     from . import backends as B
     errs, warns = PL.check(plan, base_path=base_path)
     if errs:
         raise ValueError("计划不合格：" + "；".join(errs))
     if not plan["items"]:
         raise ValueError("本篇计划不需要新增图片，无需运行 batch")
-    if gen_fn is None:
+    used_default_backend = gen_fn is None
+    if used_default_backend:
         gen_fn = B.generate
         provider, model = B.choose(provider, model, need_refs=True)
     model = model or "gpt-image-2"
@@ -296,8 +297,89 @@ def run(plan: dict, out_dir: Path, *, provider: str | None = None, model: str | 
         ref = first if accepted else None
     else:
         rest, ref = ms, None
+    batch_failed: set[str] = set()
+    if used_default_backend and rest and not stop["flag"]:
+        pending_meta = []
+        for m in rest:
+            iid = m["_id"]
+            rec = items.setdefault(iid, {})
+            base = copy.deepcopy(m)
+            if ref:
+                base.setdefault("references", []).append({"path": str(ref), "role": "style"})
+                base["use_anchor"] = False
+            contract = pin(base["style"])
+            base["style"] = f"{contract['code']}@r{contract['revision']}"
+            base_fp = _base_fp({**base, "_renderer": {"provider": provider, "model": model, "quality": quality}})
+            fixes = list(rec.get("fixes", [])) if rec.get("base_fp") == base_fp else []
+            attempt = rec.get("attempt_idx", 0) if rec.get("base_fp") == base_fp else 0
+            man = dict(base, fixes=fixes) if fixes else base
+            fp = _fp({**man, "_base_fp": base_fp, "_attempt": attempt})
+            raw = out / f"{iid}.raw.png"
+            c = CP.compile_manifest({k: v for k, v in man.items() if k != "_id"}, contract)
+            prompt_file = out / f"{iid}.prompt.txt"
+            prompt_bytes = (c.prompt + "\n").encode("utf-8")
+            prompt_sha = hashlib.sha256(prompt_bytes).hexdigest()
+            if (rec.get("base_fp") != base_fp or rec.get("fp") != fp or rec.get("prompt_sha256") != prompt_sha
+                    or _sha(prompt_file) != prompt_sha or _sha(raw) != rec.get("raw_sha256")
+                    or not raw.is_file()):
+                fmt_def = D.formats()[base["format"]]
+                pending_meta.append({
+                    "iid": iid, "base": base, "base_fp": base_fp, "attempt": attempt, "fp": fp,
+                    "raw": raw, "prompt_file": prompt_file, "prompt_bytes": prompt_bytes, "prompt_sha": prompt_sha,
+                    "job": {
+                        "id": iid, "prompt": c.prompt, "out": raw, "size": c.size,
+                        "refs": [Path(r["path"]) for r in c.references],
+                        "transparent": bool(fmt_def.get("transparent")),
+                        "tag": f"batch:{iid}",
+                    },
+                })
+        if pending_meta and B.should_use_openai_batch(provider, len(pending_meta), explicit=openai_batch):
+            for meta in pending_meta:
+                rec = items.setdefault(meta["iid"], {})
+                if rec.get("base_fp") != meta["base_fp"]:
+                    rec.clear()
+                rec["base_fp"] = meta["base_fp"]
+                meta["prompt_file"].write_bytes(meta["prompt_bytes"])
+            try:
+                batch_res = B.generate_openai_batch(
+                    [meta["job"] for meta in pending_meta],
+                    model=model,
+                    quality=quality,
+                    state_file=out / "openai-batch-state.json",
+                    log=log,
+                )
+            except B.BackendError as e:
+                for meta in pending_meta:
+                    items[meta["iid"]].update(status="gen_failed", error=f"{e.kind}：{e}")
+                    batch_failed.add(meta["iid"])
+                if e.kind in STOP_KINDS:
+                    stop["flag"] = True
+                log(f"OpenAI Batch 出图失败：{e.kind}")
+                save()
+            else:
+                for meta in pending_meta:
+                    iid = meta["iid"]
+                    rec = items[iid]
+                    r = batch_res[iid]
+                    if isinstance(r, B.BackendError):
+                        rec.update(status="gen_failed", error=f"{r.kind}：{r}")
+                        batch_failed.add(iid)
+                        if r.kind in STOP_KINDS:
+                            stop["flag"] = True
+                        log(f"{iid} Batch 出图失败：{r.kind}")
+                        continue
+                    rec.update(
+                        fp=meta["fp"], style=meta["base"]["style"], attempt_idx=meta["attempt"],
+                        provider=r.provider, model=r.model, prompt_sha256=meta["prompt_sha"],
+                        raw_sha256=_sha(meta["raw"]), batch=True,
+                        est_usd=round((rec.get("est_usd") or 0) + (r.est_usd or 0), 4), review=None,
+                    )
+                    rec.pop("review_source", None)
+                    log(f"{iid} Batch 出图完成（5 折）")
+                save()
+    todo = [m for m in rest if m["_id"] not in batch_failed]
     with ThreadPoolExecutor(max_workers=max(1, jobs)) as ex:
-        list(ex.map(lambda m: do(m, ref), rest))
+        list(ex.map(lambda m: do(m, ref), todo))
     save()
     state["summary"] = {"total": len(ms), "passed": sum(1 for v in items.values() if v.get("status") == "passed"),
                         "failed": [k for k, v in items.items() if v.get("status") in {"failed", "export_failed", "blocked"}],
