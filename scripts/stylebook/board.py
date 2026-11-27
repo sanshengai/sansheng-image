@@ -101,7 +101,7 @@ def infer_keyframe_size(shot_type: str = "", scene: str = "") -> str:
     return "中景"
 
 
-def _adapt_lighting_for_setting(base_light: str, setting: str, scene: str) -> str:
+def _adapt_lighting_for_setting(base_light: str, setting: str, scene: str, *, anti_drift: bool = False) -> str:
     """根据实际时段/室内外把光影描述具象到光源、方向、光比和空气介质（精炼无重复）。"""
     probe = f"{setting} {scene}".lower()
     if any(k in probe for k in ("oil lamp", "lamplight", "lamplit", "candle", "torch", "firelight")):
@@ -115,11 +115,23 @@ def _adapt_lighting_for_setting(base_light: str, setting: str, scene: str) -> st
     elif any(k in probe for k in ("snow", "winter")) and any(k in probe for k in ("overcast", "gray", "grey", "cold")):
         lead = "crisp directional overcast winter skylight with subtle snow bounce and pale atmospheric depth"
     elif any(k in probe for k in ("overcast", "rain", "mist", "fog")):
-        lead = "soft directional overcast skylight with gentle shadow separation and humid atmospheric depth"
+        lead = (
+            "flat uniform pale cool-grey overcast daylight with constant exposure throughout"
+            if anti_drift
+            else "soft directional overcast skylight with gentle shadow separation and humid atmospheric depth"
+        )
     elif any(k in probe for k in ("tent", "hall", "room", "palace", "inside", "indoors", "study", "workshop")):
-        lead = "directional daylight from side windows or open doorways carving clear light and shadow on faces"
+        lead = (
+            "flat uniform soft neutral diffused indoor daylight with constant brightness throughout"
+            if anti_drift
+            else "directional daylight from side windows or open doorways carving clear light and shadow on faces"
+        )
     else:
-        lead = "clear directional angled sunlight with natural highlight-to-shadow volume and contact shadows"
+        lead = (
+            "flat uniform diffused overcast daylight with constant brightness throughout, no visible sun disc"
+            if anti_drift
+            else "clear directional angled sunlight with natural highlight-to-shadow volume and contact shadows"
+        )
     parts = [lead]
     if setting.strip():
         parts.append(setting.strip().rstrip("."))
@@ -129,6 +141,8 @@ def _adapt_lighting_for_setting(base_light: str, setting: str, scene: str) -> st
 
 
 _INDOOR_PROBE_RE = re.compile(r"\b(?:inside\s+a|indoors?|tent|palace\s+hall|government\s+hall|chamber|study|room|workshop|temple)\b", re.I)
+_EXPLICIT_AERIAL_RE = re.compile(r"\b(?:aerial|drone|bird'?s-eye)\b|航拍|俯拍", re.I)
+_DARK_TIME_RE = re.compile(r"\b(?:night|midnight|moonlit|dusk|sunset|twilight|dawn|sunrise|oil\s+lamp|lamplight|lamplit|candle|torch|firelight)\b", re.I)
 
 
 def _sanitize_indoor_guard(text: str, is_indoor: bool) -> str:
@@ -156,6 +170,7 @@ def compile_keyframe_prompt(
     foreground: str = "",
     aspect: str = "16:9",
     extra_rules: str = "",
+    anti_drift: bool = False,
 ) -> str:
     """视频分镜首帧统一 4 决定摄影编译器（光影 / 色彩 / 质感 / 构图与安全焦段，精简高信噪比）。"""
     if isinstance(preset, str):
@@ -180,8 +195,10 @@ def compile_keyframe_prompt(
         framing_bits.append(f"foreground framing: {foreground.strip().rstrip('.')}")
     elif size_zh in ("远景", "全景"):
         framing_bits.append("layered foreground-midground-horizon depth")
+    if anti_drift and size_zh in ("远景", "全景") and not _EXPLICIT_AERIAL_RE.search(f"{shot_type} {scene}"):
+        framing_bits.append("grounded eye-level tripod perspective with stable foreground anchor, no sheer parapet or steep cliff downward drop-off")
 
-    light_txt = _adapt_lighting_for_setting(spec.get("light", ""), setting, scene)
+    light_txt = _adapt_lighting_for_setting(spec.get("light", ""), setting, scene, anti_drift=anti_drift)
     blocks = []
     lead = " ".join(x.strip().rstrip(".") + "." for x in (anchor, scene) if x and x.strip())
     if lead:
@@ -206,6 +223,12 @@ def compile_keyframe_prompt(
         "no beautification, nobody looks into camera",
         "no readable text, signs or watermarks",
     ]
+    if anti_drift:
+        is_dark = bool(_DARK_TIME_RE.search(f"{setting} {scene}"))
+        if is_indoor and not is_dark:
+            guard_bits.append("solid opaque interior walls, no bright open or lattice windows, no glowing hanging lanterns or moving sunbeams")
+        elif not is_indoor and not is_dark:
+            guard_bits.append("no visible sun disc, no warm sunset glare, flat constant exposure")
     clean_guard = _sanitize_indoor_guard(guard.strip().rstrip("."), is_indoor)
     if clean_guard:
         guard_bits.append(clean_guard)

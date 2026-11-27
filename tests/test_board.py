@@ -214,3 +214,43 @@ def test_compile_keyframe_prompt_cinematography_presets_and_guards():
     with pytest.raises(ValueError, match="未知电影感首帧预设"):
         BD.compile_keyframe_prompt(scene="Wide shot.", preset="nonexistent-preset")
 
+
+def test_compile_keyframe_prompt_anti_drift_mode_preserves_default_and_guards_i2v():
+    # Default anti_drift=False preserves legacy behavior
+    legacy_indoor = BD.compile_keyframe_prompt(
+        scene="Inside a quiet wooden study, a closed blue thread-stitched book rests on an oak table.",
+        preset="oriental-historical-clear",
+    )
+    assert "side windows or open doorways" in legacy_indoor
+    assert "no bright open or lattice windows" not in legacy_indoor
+
+    # anti_drift=True indoor daytime -> opaque wall, no bright windows/lanterns/sunbeams
+    safe_indoor = BD.compile_keyframe_prompt(
+        scene="Inside a quiet wooden study, a closed blue thread-stitched book rests on an oak table.",
+        preset="oriental-historical-clear",
+        anti_drift=True,
+    )
+    assert "flat uniform soft neutral diffused indoor daylight" in safe_indoor
+    assert "no bright open or lattice windows" in safe_indoor
+    assert "side windows or open doorways" not in safe_indoor
+
+    # anti_drift=True outdoor wide shot -> flat overcast, no visible sun disc, grounded eye-level tripod
+    safe_outdoor = BD.compile_keyframe_prompt(
+        scene="Wide shot of a quiet stone irrigation canal bordering neatly divided green fields.",
+        preset="oriental-historical-clear",
+        shot_type="全景",
+        anti_drift=True,
+    )
+    assert "no visible sun disc" in safe_outdoor
+    assert "grounded eye-level tripod perspective" in safe_outdoor
+
+    # Explicit aerial shot keeps aerial framing even under anti_drift=True
+    aerial = BD.compile_keyframe_prompt(
+        scene="High aerial bird's-eye view over a walled town.",
+        preset="oriental-historical-clear",
+        shot_type="远景",
+        anti_drift=True,
+    )
+    assert "grounded eye-level tripod perspective" not in aerial
+
+
