@@ -4,6 +4,8 @@
 
 ## [未发布]
 
+- 加固 OpenAI 官方 Batch 批量出图的稳定性（`scripts/stylebook/backends/openai_batch.py`）：① 自动按 160 MB 上限切分 Batch JSONL 文件，避免多参考图 base64 编码后超出 Files API 200 MB 单文件限制；单分片沿用原端点状态键，多分片按 `#shardN` 独立记录断点并支持中断续接；② 轮询批次状态、下载输出／错误文件与拉取图片链接时，对 5xx／限流／网络抖动等可重试错误自动指数退避重试，鉴权与参数错误仍立即失败；默认行为与旧状态文件完全兼容。（PATCH：加固既有 Batch 传输与容错，命令与配置契约不变）
+
 ## [2.8.0] -- 2026-11-26
 
 - 新增 OpenAI 官方 Batch API 5 折批量出图支持（`scripts/stylebook/backends/openai_batch.py`、`make`、`batch`、`raw-batch`、`setup`）：① 支持 OpenAI 官方端点（`https://api.openai.com/v1`）下 `gpt-image-2.6-sunburst` / `gpt-image-2.6-flare` 等 `gpt-image-*` 模型的异步批跑，按有无参考图自动分流 `/v1/images/generations` 与 `/v1/images/edits` 两个端点，费用估算按 5 折计入成本日志并写断点状态文件 `openai-batch-state.json`（中断可续等不重复提交）；② `config.json` 新增可选 `batch_threshold`（亦支持 `setup --batch-threshold` 与环境变量 `SANSHENG_IMAGE_OPENAI_BATCH_THRESHOLD`），`make`、`batch`、`raw-batch` 新增 `--openai-batch` / `--no-openai-batch` 覆盖开关；多页系列仍先实时生成并验收母版，其余页达阈值再整批 5 折出图；③ 新增 `raw-batch` 子命令与 `raw-generate --model` 可选参数，方便上游项目直接批量原生出图。默认未配置阈值时完全保持原有同步行为不变，第三方中转端点默认拦截不自动切入 Batch。（MINOR：新增兼容可选批量模式与子命令，既有配置、模型默认与同步契约保持不变）

@@ -282,3 +282,145 @@ def test_batch_run_uses_openai_batch_and_skips_regen(B, tmp_path, monkeypatch):
     assert all(st["items"][f"p{i:02d}"]["status"] == "generated" for i in range(1, 5))
     assert all(st["items"][f"p{i:02d}"].get("batch") is True for i in range(1, 5))
 
+
+def test_run_openai_batch_auto_shards_oversized_jsonl_and_resumes(B, tmp_path, monkeypatch):
+    import stylebook.backends.openai_batch as ob
+
+    ref_img = tmp_path / "ref.png"
+    ref_img.write_bytes(_png_bytes("green", (64, 64)))
+    out_png_b64 = base64.b64encode(_png_bytes("navy", (1024, 1024))).decode("ascii")
+
+    # 按单条 edit 行大小设定分片上限，确保 3 条任务切为 2 个分片（2 + 1 或 1 + 1 + 1）
+    sample_job = {"id": "e1", "prompt": "p1", "out": tmp_path / "e1.png", "size": (1024, 1024), "refs": [ref_img]}
+    _, sample_line = ob._request_line(sample_job, model="gpt-image-2.6-sunburst", default_quality="normal")
+    one_line_bytes = len(json.dumps(sample_line, ensure_ascii=False).encode("utf-8")) + 1
+    shard_limit = int(one_line_bytes * 2.2)
+
+    uploaded_sizes: list[int] = []
+    created_batches: list[dict] = []
+    batch_job_ids: dict[str, list[str]] = {}
+
+    def fake_post_multipart(url, fields, files, headers, timeout=300):
+        raw = files[0][1].read_bytes()
+        uploaded_sizes.append(len(raw))
+        lines = [json.loads(x) for x in raw.decode("utf-8").splitlines() if x.strip()]
+        fid = f"file-{len(uploaded_sizes)}"
+        batch_job_ids[fid] = [row["custom_id"] for row in lines]
+        return {"id": fid, "status": "processed"}
+
+    def fake_post_json(url, payload, headers, timeout=120):
+        bid = f"batch-{len(created_batches) + 1}"
+        created_batches.append({"id": bid, **payload})
+        batch_job_ids[bid] = batch_job_ids[payload["input_file_id"]]
+        return {"id": bid, "status": "validating"}
+
+    def fake_get(url, headers, timeout=60):
+        if "/batches/" in url:
+            bid = url.rsplit("/", 1)[-1]
+            return 200, json.dumps({
+                "id": bid, "status": "completed",
+                "output_file_id": f"out-{bid}",
+                "request_counts": {"total": len(batch_job_ids[bid]), "completed": len(batch_job_ids[bid]), "failed": 0},
+            }).encode()
+        if "/files/out-" in url:
+            bid = url.split("/files/out-", 1)[1].split("/content", 1)[0]
+            rows = [
+                {"custom_id": cid, "response": {"status_code": 200, "body": {"data": [{"b64_json": out_png_b64}]}}}
+                for cid in batch_job_ids[bid]
+            ]
+            return 200, ("\n".join(json.dumps(r) for r in rows) + "\n").encode()
+        raise AssertionError(f"unexpected GET {url}")
+
+    monkeypatch.setattr(ob, "post_multipart", fake_post_multipart)
+    monkeypatch.setattr(ob, "post_json", fake_post_json)
+    monkeypatch.setattr(ob, "get", fake_get)
+
+    jobs = [
+        {"id": f"e{i}", "prompt": f"p{i}", "out": tmp_path / f"e{i}.png", "size": (1024, 1024), "refs": [ref_img]}
+        for i in range(1, 4)
+    ]
+    state_file = tmp_path / "sharded-state.json"
+    res = ob.run_openai_batch(
+        jobs,
+        model="gpt-image-2.6-sunburst",
+        quality="normal",
+        state_file=state_file,
+        max_file_bytes=shard_limit,
+        poll_interval=0,
+        sleep=lambda _: None,
+    )
+
+    assert len(created_batches) == 2
+    assert all(b["endpoint"] == "/v1/images/edits" for b in created_batches)
+    assert all(sz <= shard_limit for sz in uploaded_sizes)
+    assert all(isinstance(res[f"e{i}"], B.Result) and (tmp_path / f"e{i}.png").is_file() for i in range(1, 4))
+
+    saved = json.loads(state_file.read_text(encoding="utf-8"))
+    assert sorted(saved["batches"].keys()) == ["/v1/images/edits#shard1", "/v1/images/edits#shard2"]
+
+    # 断点续接：分片批次状态复用，不重复上传和建批
+    res2 = ob.run_openai_batch(
+        jobs,
+        model="gpt-image-2.6-sunburst",
+        quality="normal",
+        state_file=state_file,
+        max_file_bytes=shard_limit,
+        poll_interval=0,
+        sleep=lambda _: None,
+    )
+    assert len(created_batches) == 2 and len(uploaded_sizes) == 2
+    assert all(isinstance(res2[f"e{i}"], B.Result) for i in range(1, 4))
+
+
+def test_run_openai_batch_retries_transient_errors_and_fails_fast_on_auth(B, tmp_path, monkeypatch):
+    import stylebook.backends.openai_batch as ob
+
+    out_png_b64 = base64.b64encode(_png_bytes("gold", (1024, 1024))).decode("ascii")
+    sleeps: list[float] = []
+    poll_calls = {"n": 0}
+    dl_calls = {"n": 0}
+
+    monkeypatch.setattr(ob, "post_multipart", lambda *a, **k: {"id": "file-1"})
+    monkeypatch.setattr(ob, "post_json", lambda *a, **k: {"id": "batch-1", "status": "validating"})
+
+    def fake_get_flaky(url, headers, timeout=60):
+        if "/batches/batch-1" in url:
+            poll_calls["n"] += 1
+            if poll_calls["n"] == 1:
+                return 503, b"service unavailable"
+            if poll_calls["n"] == 2:
+                raise B.BackendError("network", "temporary reset", retryable=True)
+            return 200, json.dumps({
+                "id": "batch-1", "status": "completed",
+                "output_file_id": "out-1",
+                "request_counts": {"total": 1, "completed": 1, "failed": 0},
+            }).encode()
+        if "/files/out-1/content" in url:
+            dl_calls["n"] += 1
+            if dl_calls["n"] == 1:
+                return 502, b"bad gateway"
+            row = {"custom_id": "g1", "response": {"status_code": 200, "body": {"data": [{"b64_json": out_png_b64}]}}}
+            return 200, (json.dumps(row) + "\n").encode()
+        raise AssertionError(f"unexpected GET {url}")
+
+    monkeypatch.setattr(ob, "get", fake_get_flaky)
+    jobs = [{"id": "g1", "prompt": "p1", "out": tmp_path / "g1.png", "size": (1024, 1024), "refs": []}]
+    res = ob.run_openai_batch(jobs, model="gpt-image-2.6-sunburst", poll_interval=0, sleep=sleeps.append)
+    assert isinstance(res["g1"], B.Result) and (tmp_path / "g1.png").is_file()
+    assert poll_calls["n"] == 3 and dl_calls["n"] == 2 and len(sleeps) == 3
+
+    # 反例：401 鉴权失败不可重试，必须立即抛出且不 sleep
+    auth_sleeps: list[float] = []
+    auth_calls = {"n": 0}
+
+    def fake_get_auth(url, headers, timeout=60):
+        auth_calls["n"] += 1
+        return 401, b"invalid api key"
+
+    monkeypatch.setattr(ob, "get", fake_get_auth)
+    with pytest.raises(B.BackendError) as exc:
+        ob.run_openai_batch(jobs, model="gpt-image-2.6-sunburst", poll_interval=0, sleep=auth_sleeps.append)
+    assert exc.value.kind == "auth"
+    assert auth_calls["n"] == 1 and auth_sleeps == []
+
+
